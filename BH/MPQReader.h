@@ -56,14 +56,6 @@
 #define ITEM_GROUP_SKULL				0x00000800
 #define ITEM_GROUP_RUNE					0x00001000
 
-
-typedef bool (WINAPI *MPQOpenArchive)(const char *, DWORD, DWORD, HANDLE *);
-typedef bool (WINAPI *MPQCloseArchive)(HANDLE);
-typedef bool (WINAPI *MPQOpenFile)(HANDLE, const char *, DWORD, HANDLE *);
-typedef bool (WINAPI *MPQGetSize)(HANDLE, DWORD *);
-typedef bool (WINAPI *MPQReadFile)(HANDLE, VOID *, DWORD, DWORD *, LPOVERLAPPED);
-typedef bool (WINAPI *MPQCloseFile)(HANDLE);
-
 class MPQArchive {
 public:
 	std::string name;

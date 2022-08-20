@@ -1,5 +1,7 @@
-#include "MPQReader.h"
+#include "D2Ptrs.h"
+
 #include "BH.h"
+#include "MPQReader.h"
 
 std::map<std::string, MPQData*> MpqDataMap;
 std::string MpqVersion;
@@ -7,21 +9,14 @@ std::string MpqVersion;
 #define SFILE_INVALID_SIZE 0xFFFFFFFF
 #define STREAM_FLAG_READ_ONLY 0x00000100  // Stream is read only
 
-MPQOpenArchive SFileOpenArchive;
-MPQCloseArchive SFileCloseArchive;
-MPQOpenFile SFileOpenFileEx;
-MPQGetSize SFileGetFileSize;
-MPQReadFile SFileReadFile;
-MPQCloseFile SFileCloseFile;
-
 MPQArchive::MPQArchive(const char *filename) : name(filename), error(ERROR_SUCCESS) {
-	if (!SFileOpenArchive(filename, 0, STREAM_FLAG_READ_ONLY, &hMpq)) {
+	if (!STORM_SFileOpenArchive(filename, 0, STREAM_FLAG_READ_ONLY, &hMpq)) {
 		error = GetLastError();
 	}
 }
 MPQArchive::~MPQArchive() {
 	if (hMpq != NULL) {
-		SFileCloseArchive(hMpq);
+		STORM_SFileCloseArchive(hMpq);
 	}
 }
 HANDLE MPQArchive::GetHandle() {
@@ -30,13 +25,13 @@ HANDLE MPQArchive::GetHandle() {
 
 
 MPQFile::MPQFile(MPQArchive *archive, const char *filename) : name(filename), error(ERROR_SUCCESS) {
-	if (!SFileOpenFileEx(archive->GetHandle(), filename, 0, &hMpqFile)) {
+	if (!STORM_SFileOpenFileEx(archive->GetHandle(), filename, 0, &hMpqFile)) {
 		error = GetLastError();
 	}
 }
 MPQFile::~MPQFile() {
 	if (hMpqFile != NULL) {
-		SFileCloseFile(hMpqFile);
+		STORM_SFileCloseFile(hMpqFile);
 	}
 }
 HANDLE MPQFile::GetHandle() {
@@ -49,7 +44,7 @@ MPQData::MPQData(MPQFile *file) : error(ERROR_SUCCESS) {
 	std::string buffer;
 	char szBuffer[0x10000];
 	while (dwBytes > 0) {
-		SFileReadFile(file->GetHandle(), szBuffer, sizeof(szBuffer), &dwBytes, NULL);
+		STORM_SFileReadFile(file->GetHandle(), szBuffer, sizeof(szBuffer), &dwBytes, NULL);
 		if (dwBytes > 0) {
 			buffer.append(szBuffer, dwBytes);
 		}
@@ -81,76 +76,60 @@ MPQData::MPQData(MPQFile *file) : error(ERROR_SUCCESS) {
 }
 MPQData::~MPQData() {}
 
-// To handle servers with customized mpq files, try to read Patch_D2.mpq using Stormlib
-// (http://www.zezula.net/en/mpq/stormlib.html). We load the StormLib dll with LoadLibrary
-// to avoid imposing any run- or compile-time dependencies on the user. If we can't load
-// the dll or read the mpq, we will fall back on a hard-coded list of the standard items.
-//
-// We do all this in the injector and write the info to a temp file because of problems
-// calling LoadLibrary in the injected dll.
-// Update: Can now load the dll from BH.dll, so no need to write to external files anymore
+/*
+ * To handle servers with customized mpq files, try to read
+ * Patch_D2.mpq. If we can't load the dll or read the mpq, we will fall
+ * back on a hard-coded list of the standard items.
+ */
 bool ReadMPQFiles(std::string fileName) {
 	int successfulFileCount = 0, desiredFileCount = 0;
-	HMODULE dllHandle = LoadLibrary((BH::path + "StormLib.dll").c_str());
-	if (dllHandle) {
-		SFileOpenArchive = (MPQOpenArchive)GetProcAddress(dllHandle, "SFileOpenArchive");
-		SFileCloseArchive = (MPQCloseArchive)GetProcAddress(dllHandle, "SFileCloseArchive");
-		SFileOpenFileEx = (MPQOpenFile)GetProcAddress(dllHandle, "SFileOpenFileEx");
-		SFileGetFileSize = (MPQGetSize)GetProcAddress(dllHandle, "SFileGetFileSize");
-		SFileReadFile = (MPQReadFile)GetProcAddress(dllHandle, "SFileReadFile");
-		SFileCloseFile = (MPQCloseFile)GetProcAddress(dllHandle, "SFileCloseFile");
-
-		HANDLE pMutex = CreateMutex(NULL, true, "Global\\BH_PATCH_D2_MPQ_MUTEX");
-		WaitForSingleObject(
+	HANDLE pMutex = CreateMutex(NULL, true, "Global\\BH_PATCH_D2_MPQ_MUTEX");
+	WaitForSingleObject(
 			pMutex,    // handle to mutex
 			INFINITE);  // no time-out interval
 
-		if (SFileOpenArchive && SFileCloseArchive && SFileOpenFileEx && SFileCloseFile && SFileGetFileSize && SFileReadFile) {
-			MPQArchive archive(fileName.c_str());
+	MPQArchive archive(fileName.c_str());
 
-			const int NUM_MPQS = 15;
-			std::string mpqFiles[NUM_MPQS] = {
-				"UniqueItems",
-				"Armor",
-				"Weapons",
-				"Misc",
-				"ItemTypes",
-				"ItemStatCost",
-				"Properties",
-				"Runes",
-				"SetItems",
-				"skills",
-				"MagicPrefix",
-				"MagicSuffix",
-				"RarePrefix",
-				"RareSuffix",
-				"CharStats"
-			};
-			if (archive.error == ERROR_SUCCESS) {
-				for (int i = 0; i < NUM_MPQS; i++){
-					std::string path = "data\\global\\excel\\" + mpqFiles[i] + ".txt";
-					MPQFile mpqFile(&archive, path.c_str()); desiredFileCount++;
-					if (mpqFile.error == ERROR_SUCCESS) {
-						successfulFileCount++;
-						std::string key = mpqFiles[i];
-						std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-						MpqDataMap[key] = new MPQData(&mpqFile);
-					}
-				}
-			}
-			// read mpq version
-			std::string path = "data\\version.txt";
-			MPQFile mpqFile(&archive, path.c_str());
+	const int NUM_MPQS = 15;
+	std::string mpqFiles[NUM_MPQS] = {
+		"UniqueItems",
+		"Armor",
+		"Weapons",
+		"Misc",
+		"ItemTypes",
+		"ItemStatCost",
+		"Properties",
+		"Runes",
+		"SetItems",
+		"skills",
+		"MagicPrefix",
+		"MagicSuffix",
+		"RarePrefix",
+		"RareSuffix",
+		"CharStats"
+	};
+	if (archive.error == ERROR_SUCCESS) {
+		for (int i = 0; i < NUM_MPQS; i++){
+			std::string path = "data\\global\\excel\\" + mpqFiles[i] + ".txt";
+			MPQFile mpqFile(&archive, path.c_str()); desiredFileCount++;
 			if (mpqFile.error == ERROR_SUCCESS) {
-				MPQData mpqversion(&mpqFile);
-				MpqVersion = mpqversion.fields[0];
+				successfulFileCount++;
+				std::string key = mpqFiles[i];
+				std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+				MpqDataMap[key] = new MPQData(&mpqFile);
 			}
 		}
-		FreeLibrary(dllHandle);
-
-		ReleaseMutex(pMutex);
-		CloseHandle(pMutex);
 	}
+	// read mpq version
+	std::string path = "data\\version.txt";
+	MPQFile mpqFile(&archive, path.c_str());
+	if (mpqFile.error == ERROR_SUCCESS) {
+		MPQData mpqversion(&mpqFile);
+		MpqVersion = mpqversion.fields[0];
+	}
+
+	ReleaseMutex(pMutex);
+	CloseHandle(pMutex);
 	return true;
 }
 
