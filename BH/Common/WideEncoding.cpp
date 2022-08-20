@@ -43,81 +43,106 @@ static std::ofstream& GetLogger() {
   return logger;
 }
 
-} // namespace
-
-std::wstring Utf8ToWide(std::string_view utf8_str) {
+static std::wstring MultiByteStrToWideStr(
+    std::string_view src, UINT code_page) {
   size_t required_length = MultiByteToWideChar(
-      CP_UTF8,
+      code_page,
       MB_ERR_INVALID_CHARS,
-      utf8_str.data(),
-      utf8_str.length(),
+      src.data(),
+      src.length(),
       nullptr,
       0);
   if (required_length == 0) {
-    GetLogger() << "MultiByteToWideChar failed with error code 0x"
+    GetLogger() << "[WARNING] "
+        << "MultiByteToWideChar failed with error code 0x"
         << std::hex
         << GetLastError()
+        << " for code page "
+        << code_page
         << std::endl;
   }
 
-  std::wstring wide_str(required_length, L'\0');
+  std::wstring dest(required_length, L'\0');
   int num_characters_written = MultiByteToWideChar(
-      CP_UTF8,
+      code_page,
       MB_ERR_INVALID_CHARS,
-      utf8_str.data(),
-      utf8_str.length(),
-      wide_str.data(),
+      src.data(),
+      src.length(),
+      dest.data(),
       required_length);
   if (num_characters_written == 0) {
-    GetLogger() << "MultiByteToWideChar failed with error code 0x"
+    GetLogger() << "[WARNING] "
+        << "MultiByteToWideChar failed with error code 0x"
         << std::hex
         << GetLastError()
+        << " for code page "
+        << code_page
         << std::endl;
   }
 
-  return wide_str;
+  return dest;
 }
 
-/**
- * Converts a wide string into a UTF-8 encoded string.
- */
-std::string WideToUtf8(std::wstring_view wide_str) {
+static std::string WideStrToMultiByteStr(
+    std::wstring_view src, UINT code_page) {
   int required_length = WideCharToMultiByte(
-      CP_UTF8,
+      code_page,
       WC_ERR_INVALID_CHARS,
-      wide_str.data(),
-      wide_str.length(),
+      src.data(),
+      src.length(),
       nullptr,
       0,
       nullptr,
       nullptr);
   if (required_length == 0) {
-    GetLogger() << "[SEVERE] "
+    GetLogger() << "[WARNING] "
         << "WideCharToMultiByte failed with error code 0x"
         << std::hex
         << GetLastError()
+        << " for code page "
+        << code_page
         << std::endl;
   }
 
-  std::string utf8_str(required_length, '\0');
+  std::string dest(required_length, '\0');
   int num_characters_written = WideCharToMultiByte(
-      CP_UTF8,
+      code_page,
       WC_ERR_INVALID_CHARS,
-      wide_str.data(),
-      wide_str.length(),
-      utf8_str.data(),
+      src.data(),
+      src.length(),
+      dest.data(),
       required_length,
       nullptr,
       nullptr);
   if (num_characters_written == 0) {
-    GetLogger() << "[SEVERE] "
+    GetLogger() << "[WARNING] "
         << "WideCharToMultiByte failed with error code 0x"
         << std::hex
         << GetLastError()
+        << " for code page "
+        << code_page
         << std::endl;
   }
 
-  return utf8_str;
+  return dest;
+}
+
+} // namespace
+
+std::wstring LocalToWide(std::string_view local_str) {
+  return MultiByteStrToWideStr(local_str, CP_ACP);
+}
+
+std::wstring Utf8ToWide(std::string_view utf8_str) {
+  return MultiByteStrToWideStr(utf8_str, CP_UTF8);
+}
+
+std::string WideToLocal(std::wstring_view wide_str) {
+  return WideStrToMultiByteStr(wide_str, CP_ACP);
+}
+
+std::string WideToUtf8(std::wstring_view wide_str) {
+  return WideStrToMultiByteStr(wide_str, CP_UTF8);
 }
 
 } // namespace common::wide

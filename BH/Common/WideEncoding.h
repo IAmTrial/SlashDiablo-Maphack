@@ -31,9 +31,21 @@
 namespace common::wide {
 
 /**
+ * Converts a string encoded with the current locale into a wide
+ * string.
+ */
+std::wstring LocalToWide(std::string_view local_str);
+
+/**
  * Converts a UTF-8 encoded string into a wide string.
  */
 std::wstring Utf8ToWide(std::string_view utf8_str);
+
+/**
+ * Converts a wide string into a string encoded with the current
+ * locale.
+ */
+std::string WideToLocal(std::wstring_view wide_str);
 
 /**
  * Converts a wide string into a UTF-8 encoded string.
