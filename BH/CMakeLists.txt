@@ -24,7 +24,8 @@ set(SOURCE_FILES "AsyncDrawBuffer.cpp"
                  "Task.cpp")
 
 set(COMMON_SOURCES
-    "Common/Input.cpp")
+    "Common/Input.cpp"
+    "Common/WideEncoding.cpp")
 
 set(MODULE_SOURCES "Modules/Module.cpp"
                    "Modules/ModuleManager.cpp"
