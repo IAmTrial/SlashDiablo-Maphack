@@ -1,5 +1,9 @@
 project(BH)
 
+# Define requirements for C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED true)
+
 set(SOURCE_FILES "AsyncDrawBuffer.cpp"
                  "BH.cpp"
                  "BitReader.cpp"
