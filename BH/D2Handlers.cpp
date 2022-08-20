@@ -123,7 +123,7 @@ BOOL __fastcall RealmPacketRecv(BYTE* pPacket) {
 DWORD __fastcall GamePacketRecv(BYTE* pPacket, DWORD dwSize) {
 	switch(pPacket[0])
 	{
-		case 0xAE: if(!BH::cGuardLoaded) return false; break;
+		case 0xAE: return false;
 		case 0x26: {
 			char* pName = (char*)pPacket+10;
 			char* pMessage = (char*)pPacket + strlen(pName) + 11;
