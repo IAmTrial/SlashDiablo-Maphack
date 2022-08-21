@@ -23,6 +23,9 @@ set(SOURCE_FILES "AsyncDrawBuffer.cpp"
                  "TableReader.cpp"
                  "Task.cpp")
 
+set(COMMON_SOURCES
+    "Common/Input.cpp")
+
 set(MODULE_SOURCES "Modules/Module.cpp"
                    "Modules/ModuleManager.cpp"
                    "Modules/AutoTele/AutoTele.cpp"
@@ -52,7 +55,7 @@ set(DRAWING_SOURCES "Drawing/Hook.cpp"
                     "Drawing/UI/UI.cpp"
                     "Drawing/UI/UITab.cpp")
 
-set(SOURCE_FILES ${SOURCE_FILES} ${MODULE_SOURCES} ${DRAWING_SOURCES})
+set(SOURCE_FILES ${SOURCE_FILES} ${COMMON_SOURCES} ${MODULE_SOURCES} ${DRAWING_SOURCES})
 add_library(BH SHARED ${SOURCE_FILES})
 target_compile_definitions(BH PRIVATE NOMINMAX)
 target_include_directories(BH PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/cpp-lru-cache/include)
