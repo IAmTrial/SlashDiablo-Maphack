@@ -11,9 +11,8 @@
 #include "D2Structs.h"
 
 /*
- * MPQInit handles the data we can initialize from MPQ files, provided we
- * are able to load StormLib. It also provides defaults in case we cannot
- * read the MPQ archive.
+ * MPQInit handles the data we can initialize from MPQ files. It also
+ * provides defaults in case we cannot read the MPQ archive.
  */
 
 extern unsigned int STAT_MAX;
