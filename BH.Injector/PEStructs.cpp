@@ -1,8 +1,10 @@
 #include "PEStructs.h"
+
+#include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -354,7 +356,7 @@ namespace PE {
 				uint funcOffset = RVAToOffset(exports.AddressOfFunctions, sec, nSec);
 				uint ordinalOffset = RVAToOffset(exports.AddressOfNameOrdinals, sec, nSec);
 
-				uint length = min(exports.NumberOfFunctions, exports.NumberOfNames);
+				uint length = std::min(exports.NumberOfFunctions, exports.NumberOfNames);
 
 				vector<string> names;
 				vector<uint> addresses;

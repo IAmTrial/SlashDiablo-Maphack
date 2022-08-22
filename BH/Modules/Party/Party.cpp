@@ -1,4 +1,7 @@
 #include "Party.h"
+
+#include <limits>
+
 #include "../../D2Ptrs.h"
 #include "../../BH.h"
 #include "../../D2Stubs.h"
@@ -80,7 +83,7 @@ void Party::CheckParty() {
 		do {
 			if(!_stricmp(Party->szName, MyRoster->szName))
 				continue;
-			current_min_party_id = min(Party->wPartyId, current_min_party_id);
+			current_min_party_id = std::min(Party->wPartyId, current_min_party_id);
 		} while (Party=Party->pNext);
 
 		// third pass: do stuff

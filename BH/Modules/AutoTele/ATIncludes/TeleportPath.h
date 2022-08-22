@@ -19,6 +19,8 @@
 #include <math.h>
 //#include <stdio.h>
 
+#include <limits>
+
 class CTeleportPath  
 {
 public:	
@@ -203,7 +205,7 @@ DWORD CTeleportPath::FindTeleportPath(POINT ptStart, POINT ptEnd, LPPOINT lpBuff
 
 void CTeleportPath::Block(POINT pos, int nRange)
 {
-	nRange = max(nRange, 1);
+	nRange = std::max(nRange, 1);
 
 	for (int i = pos.x - nRange; i < pos.x + nRange; i++)
 	{

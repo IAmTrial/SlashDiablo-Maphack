@@ -23,6 +23,8 @@
 #include <windows.h>
 #include <search.h>
 #include <assert.h>
+
+#include <limits>
 #ifndef ASSERT
 #define ASSERT(x) assert(x)
 #endif
@@ -254,8 +256,8 @@ SIZE CMatrix<TYPE, ARG_TYPE>::ExportData(TYPE** ppBuffer, int cx, int cy) const
 	if (ppBuffer == NULL || cx <= 0 || cy <= 0 || !IsCreated())
 		return cz;
 
-	cz.cx = min(cx, m_cx);
-	cz.cy = min(cy, m_cy);
+	cz.cx = std::min(cx, m_cx);
+	cz.cy = std::min(cy, m_cy);
 
 	for (int i = 0; i < cz.cx; i++)
 	{
