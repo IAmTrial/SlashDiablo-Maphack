@@ -54,5 +54,6 @@ set(DRAWING_SOURCES "Drawing/Hook.cpp"
 
 set(SOURCE_FILES ${SOURCE_FILES} ${MODULE_SOURCES} ${DRAWING_SOURCES})
 add_library(BH SHARED ${SOURCE_FILES})
+target_compile_definitions(BH PRIVATE NOMINMAX)
 target_include_directories(BH PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/cpp-lru-cache/include)
-target_link_libraries(BH ${STORM_LIBRARY} Shlwapi)
+target_link_libraries(BH Shlwapi)

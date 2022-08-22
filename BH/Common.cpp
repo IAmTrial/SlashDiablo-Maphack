@@ -43,12 +43,17 @@
 *
 */
 
+#include "Common.h"
+
+#include <windows.h>
+
+#include <limits>
 #include <string>
 #include <vector>
-#include <Windows.h>
-#include "BH.h"
-#include "Common.h"
 #include <memory>
+
+#include "BH.h"
+
 using namespace std;
 
 void Tokenize(const string& str,
@@ -418,16 +423,16 @@ POINT CalculatePointOnTrack(const POINT& ptOrigin, int nRadius, int nAngle)
 POINT CalculateRandomPosition(const POINT& ptOrigin, int nRadiusMin, int nRadiusMax, int nAngleMin/*=0*/, int nAngleMax/*=360*/)
 {
 	// Data validation
-	nRadiusMin = max(0, nRadiusMin);
-	nRadiusMax = max(0, nRadiusMax);
+	nRadiusMin = std::max(0, nRadiusMin);
+	nRadiusMax = std::max(0, nRadiusMax);
 
 	NormalizeAngle(nAngleMin);
 	NormalizeAngle(nAngleMax);
 
-	const int R1 = min(nRadiusMin, nRadiusMax);
-	const int R2 = max(nRadiusMin, nRadiusMax);
-	const int A1 = min(nAngleMin, nAngleMax);
-	const int A2 = max(nAngleMin, nAngleMax);
+	const int R1 = std::min(nRadiusMin, nRadiusMax);
+	const int R2 = std::max(nRadiusMin, nRadiusMax);
+	const int A1 = std::min(nAngleMin, nAngleMax);
+	const int A2 = std::max(nAngleMin, nAngleMax);
 
 	const int R = (R1 == R2) ? R1 : (R1 + (::rand() % (R2 - R1))); // Final radius
 	const int A = (A1 == A2) ? A1 : (A1 + (::rand() % (A2 - A1))); // Final angle
