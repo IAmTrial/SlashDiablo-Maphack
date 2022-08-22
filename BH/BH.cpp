@@ -19,7 +19,6 @@ Config* BH::itemConfig;
 Drawing::UI* BH::settingsUI;
 Drawing::StatsDisplay* BH::statsDisplay;
 bool BH::initialized;
-bool BH::cGuardLoaded;
 WNDPROC BH::OldWNDPROC;
 map<string, Toggle>* BH::MiscToggles;
 map<string, Toggle>* BH::MiscToggles2;
@@ -49,21 +48,11 @@ unsigned int index = 0;
 bool BH::Startup(HINSTANCE instance, VOID* reserved) {
 
 	BH::instance = instance;
-	if (reserved != NULL) {
-		cGuardModule* pModule = (cGuardModule*)reserved;
-		if (!pModule)
-			return FALSE;
-		path.assign(pModule->szPath);
-		cGuardLoaded = true;
-	}
-	else {
-		char szPath[MAX_PATH];
-		GetModuleFileName(BH::instance, szPath, MAX_PATH);
-		PathRemoveFileSpec(szPath);
-		path.assign(szPath);
-		path += "\\";
-		cGuardLoaded = false;
-	}
+	char szPath[MAX_PATH];
+	GetModuleFileName(BH::instance, szPath, MAX_PATH);
+	PathRemoveFileSpec(szPath);
+	path.assign(szPath);
+	path += "\\";
 
 
 	initialized = false;

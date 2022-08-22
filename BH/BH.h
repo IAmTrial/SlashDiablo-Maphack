@@ -43,7 +43,6 @@ namespace BH {
 	extern map<string, bool>* BnetBools;
 	extern map<string, bool>* GamefilterBools;
 	extern map<size_t, string> drops;
-	extern bool cGuardLoaded;
 	extern bool initialized;
 	extern Patch* oogDraw;
 

@@ -39,10 +39,6 @@ void ScreenInfo::OnLoad() {
 	d2VersionText->SetColor(White);
 	d2VersionText->SetFont(1);
 
-	if (BH::cGuardLoaded) {
-		Texthook* cGuardText = new Texthook(Perm, 790, 23, "�c4cGuard Loaded");
-		cGuardText->SetAlignment(Right);
-	}
 	gameTimer = GetTickCount();
 	nTotalGames = 0;
 	szGamesToLevel = "N/A";
@@ -565,9 +561,8 @@ std::string ScreenInfo::ReplaceAutomapTokens(std::string& v) {
 	return result;
 }
 
-void ScreenInfo::OnAutomapDraw() {		
-	int y = 6+(BH::cGuardLoaded?16:0);
-
+void ScreenInfo::OnAutomapDraw() {
+	int y = 6;
 	for (vector<string>::iterator it = automapInfo.begin(); it < automapInfo.end(); it++) {
 		string key = ReplaceAutomapTokens(*it);
 		if (key.length() > 0) {
