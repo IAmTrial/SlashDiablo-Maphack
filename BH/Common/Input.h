@@ -32,6 +32,13 @@
 
 namespace common::input {
 
+/**
+ * A Virtual-Key with associated hexadecimal value and symbol constant
+ * names.
+ *
+ * Information on Virtual-Key can be found at
+ * https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+ */
 struct VirtualKey {
   /**
    * The Virtual-Key hexadecimal value associated with the key.
@@ -56,12 +63,23 @@ struct VirtualKey {
    */
   std::string_view common_name;
 
+  /**
+   * Gets a constant that represents an unset VirtualKey.
+   */
   static inline constexpr VirtualKey GetUnset() {
     return VirtualKey { 0x00, "None", "None", "Not Set" };
   }
 
+  /**
+   * Gets a Virtual-Key by its hexadecimal code value.
+   */
   static const VirtualKey& GetFromCode(BYTE code);
 
+  /**
+   * Gets a Virtual-Key by its symbol constant name. If there is no
+   * Virtual-Key with such a symbol name, then the function returns
+   * nullopt.
+   */
   static std::optional<VirtualKey> GetFromSymbolName(
       std::string_view symbol_name);
 };
