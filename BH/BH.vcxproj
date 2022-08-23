@@ -144,6 +144,7 @@ if defined D2Path (
     <ClCompile Include="BH.cpp" />
     <ClCompile Include="BitReader.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Common\Input.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="D2Handlers.cpp" />
     <ClCompile Include="D2Helpers.cpp" />
@@ -192,6 +193,7 @@ if defined D2Path (
     <ClInclude Include="BitReader.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonStructs.h" />
+    <ClInclude Include="Common\Input.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="D2DataTables.h" />

@@ -1,6 +1,14 @@
 #include "Keyhook.h"
+
 #include "../../../D2Ptrs.h"
 #include "../../../Common.h"
+#include "../../../Common/Input.h"
+
+namespace {
+
+using common::input::VirtualKey;
+
+} // namespace
 
 using namespace std;
 using namespace Drawing;
@@ -41,7 +49,6 @@ bool Keyhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 }
 
 void Keyhook::OnDraw() {
-	KeyCode keyCode = GetKeyCode(GetKey());
 	string prefix = "";
 	bool IsInRange = InRange(*p_D2CLIENT_MouseX, *p_D2CLIENT_MouseY);
 	if (name.length() > 0) {
@@ -51,7 +58,9 @@ void Keyhook::OnDraw() {
 			prefix = name + "\377c4 ";
 	}
 
-	string text = prefix + keyCode.literalName;
+	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
+	string text(prefix);
+	text.append(virtualKey.common_name);
 	if (timeout) {
 		unsigned int time = (unsigned int)(3 - floor((double)(GetTickCount() - timeout) / 1000));
 		if (time <= 0)
@@ -83,11 +92,13 @@ bool Keyhook::OnKey(bool up, BYTE kkey, LPARAM lParam) {
 }
 
 unsigned int Keyhook::GetXSize() {
-	KeyCode keyCode = GetKeyCode(GetKey());
 	string prefix = "";
 	if (name.length() > 0)
-		prefix = name + ":ÿc4 ";
-	string text = prefix + keyCode.literalName;
+		prefix = name + ":" "\xFF" "c4 ";
+
+	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
+	string text = prefix;
+	text.append(virtualKey.common_name);
 	DWORD width, fileNo;
 	wchar_t* wString = AnsiToUnicode(text.c_str());
 	DWORD oldFont = D2WIN_SetTextSize(0);

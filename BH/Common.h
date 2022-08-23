@@ -73,14 +73,6 @@ std::string Trim(std::string source);
 
 void PrintText(DWORD Color, char *szText, ...);
 
-struct KeyCode {
-	std::string name;
-	unsigned int value;
-	std::string literalName;
-};
-
-KeyCode GetKeyCode(unsigned int nKey);
-KeyCode GetKeyCode(const char* name);
 ULONGLONG BHGetTickCount(void);
 
 std::string string_format(const std::string fmt_str, ...);

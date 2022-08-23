@@ -1,7 +1,22 @@
 #include "Config.h"
-#include "BH.h"
+
+#include <stddef.h>
+
 #include <algorithm>
+#include <optional>
 #include <sstream>
+#include <string>
+#include <string_view>
+
+#include "BH.h"
+#include "Common.h"
+#include "Common/Input.h"
+
+namespace {
+
+using common::input::VirtualKey;
+
+} // namespace
 
 /* Parse()
 Parse the configuration file and stores the results in a key->value pair.
@@ -258,8 +273,17 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 	contents[key].toggle = &value;
 	contents[key].type = CTToggle;
 
-	ret.toggle = GetKeyCode(Trim(contents[key].value.substr(contents[key].value.find_first_of(",") + 1)).c_str()).value;
-	ret.state = StringToBool(Trim(contents[key].value.substr(0, contents[key].value.find_first_of(","))));
+	size_t delimiterIndex = contents[key].value.find_first_of(",");
+
+	// Read virtual-key string and get mapped code.
+	std::string virtualKeyStr = Trim(contents[key].value.substr(delimiterIndex + 1));
+	std::optional<VirtualKey> virtualKeyOptional =
+			VirtualKey::GetFromSymbolName(virtualKeyStr);
+	VirtualKey virtualKey =
+			virtualKeyOptional.value_or(VirtualKey::GetUnset());
+
+	ret.toggle = virtualKey.code;
+	ret.state = StringToBool(Trim(contents[key].value.substr(0, delimiterIndex)));
 
 	value = ret;
 	return ret;
@@ -278,14 +302,17 @@ unsigned int Config::ReadKey(std::string key, std::string toggle, unsigned int &
 	contents[key].pointer = &value;
 	contents[key].type = CTKey;
 
-	//Grab the proper key code and make s ure it's valid
-	KeyCode ret = GetKeyCode(contents[key].value.c_str());
-	if (ret.value == 0) {
-		value = GetKeyCode(toggle.c_str()).value;
+	// Grab the proper key code and make sure it's valid
+	std::optional<VirtualKey> virtualKeyOptional =
+			VirtualKey::GetFromSymbolName(contents[key].value);
+	if (!virtualKeyOptional.has_value()) {
+		virtualKeyOptional = VirtualKey::GetFromSymbolName(toggle);
 	}
-	value = ret.value;
+	VirtualKey virtualKey = virtualKeyOptional.value_or(VirtualKey::GetUnset());
 
-	return ret.value;
+	value = virtualKey.code;
+
+	return virtualKey.code;
 }
 
 /* ReadArray(std::string key)
@@ -536,29 +563,43 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		return true;
 	}
 	case CTToggle: {
-		unsigned int toggle = GetKeyCode(Trim(entry.value.substr(entry.value.find_first_of(",") + 1)).c_str()).value;
-		bool state = StringToBool(Trim(entry.value.substr(0, entry.value.find_first_of(","))));
+		size_t delimiterIndex = entry.value.find_first_of(",");
 
-		if (entry.toggle->toggle == toggle && entry.toggle->state == state)
+		// Get the virtual-key for the old Toggle.
+		std::string virtualKeyStr = Trim(entry.value.substr(delimiterIndex + 1));
+		std::optional<VirtualKey> oldVirtualKeyOptional =
+				VirtualKey::GetFromSymbolName(virtualKeyStr);
+		VirtualKey oldVirtualKey =
+				oldVirtualKeyOptional.value_or(VirtualKey::GetUnset());
+
+		bool state = StringToBool(Trim(entry.value.substr(0, delimiterIndex)));
+
+		if (entry.toggle->toggle == oldVirtualKey.code && entry.toggle->state == state)
 			return false;
 
 		stringstream stream;
-		KeyCode newKey = GetKeyCode(entry.toggle->toggle);
+		const VirtualKey& newKey = VirtualKey::GetFromCode(entry.toggle->toggle);
 
-		stream << ((entry.toggle->state) ? "True" : "False") << ", " << newKey.name;
+		stream << ((entry.toggle->state) ? "True" : "False") << ", " << newKey.symbol_name;
 
 		value = stream.str();
 		return true;
 	}
 	case CTKey: {
-		unsigned int currentKey = *((unsigned int*)entry.pointer);
-		KeyCode code = GetKeyCode(entry.value.c_str());
+		unsigned int currentKeyCode = *((unsigned int*)entry.pointer);
 
-		if (code.value == currentKey)
+		// Get the virtual-key for the old Key.
+		std::optional<VirtualKey> oldVirtualKeyOptional =
+				VirtualKey::GetFromSymbolName(entry.value);
+		VirtualKey oldVirtualKey =
+				oldVirtualKeyOptional.value_or(VirtualKey::GetUnset());
+
+		if (oldVirtualKey.code == currentKeyCode) {
 			return false;
+		}
 
-		KeyCode newCode = GetKeyCode(currentKey);
-		value = newCode.name;
+		const VirtualKey& newVirtualKey = VirtualKey::GetFromCode(currentKeyCode);
+		value = newVirtualKey.symbol_name;
 		return true;
 	}
 	}
