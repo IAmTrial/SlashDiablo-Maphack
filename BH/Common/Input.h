@@ -84,6 +84,6 @@ struct VirtualKey {
       std::string_view symbol_name);
 };
 
-} // common::input
+}  // namespace common::input
 
-#endif // BH_COMMON_INPUT_H_
+#endif  // BH_COMMON_INPUT_H_

@@ -94,7 +94,7 @@ bool Keyhook::OnKey(bool up, BYTE kkey, LPARAM lParam) {
 unsigned int Keyhook::GetXSize() {
 	string prefix = "";
 	if (name.length() > 0)
-		prefix = name + ":�c4 ";
+		prefix = name + ":" "\xFF" "c4 ";
 
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
 	string text = prefix;

@@ -361,7 +361,7 @@ static std::unordered_map<std::string_view, VirtualKey>
   return table;
 }
 
-} // namespace
+}  // namespace
 
 const VirtualKey& VirtualKey::GetFromCode(BYTE code) {
   static constexpr std::array<VirtualKey, std::numeric_limits<BYTE>::max()>
@@ -383,4 +383,4 @@ std::optional<VirtualKey> VirtualKey::GetFromSymbolName(
   return std::make_optional(find_result->second);
 }
 
-} // namespace common::input
+}  // namespace common::input
