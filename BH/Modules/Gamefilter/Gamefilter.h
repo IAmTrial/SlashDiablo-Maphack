@@ -17,7 +17,7 @@ struct Control;
 
 class Gamefilter : public Module {
 	private:
-		std::map<string, bool> bools;
+		std::map<std::string, bool> bools;
 		bool* showDiff;
 		bool* showGs;		
 
@@ -40,7 +40,7 @@ class Gamefilter : public Module {
 		void OnRealmPacketRecv(BYTE* pPacket, bool* blockPacket);
 		void OnOOGDraw();
 
-		std::map<string, bool>* GetBools() { return &bools; }
+		std::map<std::string, bool>* GetBools() { return &bools; }
 
 		static void CreateGamelist();
 		static void __stdcall DestroyGamelist(Control* pControl);

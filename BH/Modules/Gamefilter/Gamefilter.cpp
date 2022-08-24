@@ -5,11 +5,9 @@
 #include <sstream>
 #include "../../BH.h"
 
-using namespace std;
-
-list<GameListEntry*> Gamefilter::gameList;
-vector<GameListEntry*> Gamefilter::filterVector;
-vector<wchar_t*> Gamefilter::gServerVector;
+std::list<GameListEntry*> Gamefilter::gameList;
+std::vector<GameListEntry*> Gamefilter::filterVector;
+std::vector<wchar_t*> Gamefilter::gServerVector;
 Control* Gamefilter::filterBox;
 int Gamefilter::refreshTime;
 
@@ -76,8 +74,8 @@ void Gamefilter::OnRealmPacketRecv(BYTE* pPacket, bool* blockPacket) {
 	}
 	if(pPacket[0] == 0x05 && filterBox)
 	{		
-		wstring wFilter(filterBox->wText);
-		string sFilter(wFilter.begin(), wFilter.end());
+		std::wstring wFilter(filterBox->wText);
+		std::string sFilter(wFilter.begin(), wFilter.end());
 
 		GameListEntry* pEntry = new GameListEntry;
 
@@ -97,7 +95,7 @@ void Gamefilter::OnRealmPacketRecv(BYTE* pPacket, bool* blockPacket) {
 
 		if(!gameList.empty())
 		{
-			for(list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
+			for(std::list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
 				if(!(*ListEntry)->sGameName.compare(pEntry->sGameName))
 				{
 					delete pEntry;
@@ -106,7 +104,7 @@ void Gamefilter::OnRealmPacketRecv(BYTE* pPacket, bool* blockPacket) {
 				}
 		}
 
-		string sGameName;
+		std::string sGameName;
 
 		for(unsigned int i = 0; i < sFilter.length(); i++)
 			sFilter[i] = ::toupper(sFilter[i]);
@@ -126,7 +124,7 @@ void Gamefilter::OnRealmPacketRecv(BYTE* pPacket, bool* blockPacket) {
 			memset(pText->wText, NULL, 64);
 			memset(pText->wText2, NULL, 12);
 
-			wstring wGameName(pEntry->sGameName.begin(), pEntry->sGameName.end());
+			std::wstring wGameName(pEntry->sGameName.begin(), pEntry->sGameName.end());
 
 			wcscpy_s(pText->wText, 64, wGameName.c_str());
 			pText->wText2[0] = pEntry->bPlayers+0x30;
@@ -197,9 +195,9 @@ void Gamefilter::OnRealmPacketRecv(BYTE* pPacket, bool* blockPacket) {
 
 BOOL __stdcall Gamefilter::Filterbox_InputHandler(Control* pControl, DWORD dwLength, CHAR* pChar)
 {
-	wstring wInput(pControl->wText);
+	std::wstring wInput(pControl->wText);
 
-	string sFilter(wInput.begin(), wInput.end());
+	std::string sFilter(wInput.begin(), wInput.end());
 
 	if(dwLength > 0)
 		sFilter+=*pChar;
@@ -222,7 +220,7 @@ VOID Gamefilter::CreateGamelist(VOID)
 {
 	if(!gameList.empty())
 	{
-		for(list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
+		for(std::list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
 			delete (*ListEntry);
 
 		gameList.clear();
@@ -246,7 +244,7 @@ VOID __stdcall Gamefilter::DestroyGamelist(Control* pControl)
 		{
 			if(!gameList.empty())
 			{
-				for(list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
+				for(std::list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
 					delete (*ListEntry);
 
 				gameList.clear();
@@ -267,9 +265,9 @@ void Gamefilter::OnOOGDraw() {
 	// filterBox is instantiated in the create game box handler, so we can't
 	// draw the join game screen until we have it
 	if((*p_D2MULTI_GameListControl) && filterBox) {
-		wstringstream wFilterStream;
-		wstring wFilterString = L"Games: ";
-		wstring wFilter = filterBox->wText;
+		std::wstringstream wFilterStream;
+		std::wstring wFilterString = L"Games: ";
+		std::wstring wFilter = filterBox->wText;
 
 		wFilterStream << (int)(*p_D2MULTI_GameListControl)->dwSelectEnd;
 		wFilterString += wFilterStream.str().c_str();
@@ -309,7 +307,7 @@ void Gamefilter::OnOOGDraw() {
 	}
 }
 
-void Gamefilter::BuildGameList(string sFilter)
+void Gamefilter::BuildGameList(std::string sFilter)
 {
 	if(!gameList.empty() && (*p_D2MULTI_GameListControl))
 	{
@@ -339,9 +337,9 @@ void Gamefilter::BuildGameList(string sFilter)
 			pText = pNext;
 		}
 
-		for(list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
+		for(std::list<GameListEntry*>::iterator ListEntry = gameList.begin(); ListEntry != gameList.end(); ListEntry++)
 		{
-			string sGameName((*ListEntry)->sGameName.c_str());
+			std::string sGameName((*ListEntry)->sGameName.c_str());
 
 			for(UINT i = 0; i < sGameName.length(); i++)
 				sGameName[i] = ::toupper(sGameName[i]);
@@ -359,7 +357,7 @@ void Gamefilter::BuildGameList(string sFilter)
 				memset(pText->wText, NULL, 64);
 				memset(pText->wText2, NULL, 12);
 
-				wstring wGameName((*ListEntry)->sGameName.begin(), (*ListEntry)->sGameName.end());
+				std::wstring wGameName((*ListEntry)->sGameName.begin(), (*ListEntry)->sGameName.end());
 
 				wcscpy_s(pText->wText, 64, wGameName.c_str());
 				pText->wText2[0] = (*ListEntry)->bPlayers+0x30;

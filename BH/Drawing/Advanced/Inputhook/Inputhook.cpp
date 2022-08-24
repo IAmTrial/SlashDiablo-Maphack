@@ -3,7 +3,6 @@
 #include "../../Basic/Framehook/Framehook.h"
 #include "../../../Common.h"
 
-using namespace std;
 using namespace Drawing;
 
 Inputhook::Inputhook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int xSize, std::string formatString, ...) :
@@ -42,7 +41,7 @@ Inputhook::Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned 
 	SetCursorPosition(text.length());
  }
 
- void Inputhook::SetText(string newText, ...) {
+ void Inputhook::SetText(std::string newText, ...) {
 	char buffer[4096];
 	va_list arg;
 	va_start(arg, newText);
@@ -131,7 +130,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 	 RECT pRect  = {GetX(), GetY(), GetX() + GetXSize(), GetY() + height[GetFont()] + 4};
 	 D2GFX_DrawRectangle(GetX(), GetY(), GetX() + GetXSize(), GetY() + height[GetFont()] + 4, 0, BTFull);
 	 Framehook::DrawRectStub(&pRect);
-	 string drawnText = text;
+	 std::string drawnText = text;
 
 	 //Draw the text in!
 	 int len = drawnText.length() - textPos;
@@ -141,8 +140,8 @@ unsigned int Inputhook::GetCharacterLimit() {
 
 	 
 	 if (IsSelected()) {
-		 drawnText.insert(GetSelectionPosition() + GetSelectionLength(), "ÿc0");
-		 drawnText.insert(GetSelectionPosition(), "ÿc9");
+		 drawnText.insert(GetSelectionPosition() + GetSelectionLength(), "ï¿½c0");
+		 drawnText.insert(GetSelectionPosition(), "ï¿½c9");
 	 }
 
 	
@@ -241,7 +240,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 						return true;
 					
 					Lock();
-					string mText = text.substr(GetSelectionPosition(), GetSelectionLength());
+					std::string mText = text.substr(GetSelectionPosition(), GetSelectionLength());
 			
 					HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, (mText.size() + 1) * sizeof(CHAR)); 
 					char* szStr = (char*)GlobalLock(hGlobal);
@@ -295,7 +294,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 		return false;
  }
 
- void Inputhook::InputText(string newText) {
+ void Inputhook::InputText(std::string newText) {
 	 Lock();
 
 	 //If we have text selected, replace the text with the new text

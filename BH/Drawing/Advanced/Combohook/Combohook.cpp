@@ -4,7 +4,6 @@
 #include "../../../D2Ptrs.h"
 
 using namespace Drawing;
-using namespace std;
 
 Combohook::Combohook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int xSize, unsigned int* index, std::vector<std::string> opts)
 	: Hook(visibility, x, y) {
@@ -34,7 +33,7 @@ bool Combohook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 	}
 	if (active && x >= GetX() && y >= GetY() && x <= GetX() + GetXSize() && y <= GetY() + ((options.size() + 1) * (GetYSize() + 4))) {
 		int n = 0;
-		for (vector<string>::iterator it = options.begin(); it < options.end(); it++,n++) {
+		for (std::vector<std::string>::iterator it = options.begin(); it < options.end(); it++,n++) {
 			unsigned int textY = (GetY() + GetYSize() + 4 + (n * (GetYSize() + 4)));
 			bool hovering = x >= GetX() && y >= textY && x <= GetX() + GetXSize() && y <= textY + GetYSize() + 4;
 			if (hovering && up) {
@@ -62,7 +61,7 @@ void Combohook::OnDraw() {
 		unsigned int mouseX = (*p_D2CLIENT_MouseX);
 		unsigned int mouseY = (*p_D2CLIENT_MouseY);
 		unsigned int n = 0;
-		for (vector<string>::iterator it = options.begin(); it < options.end(); it++,n++) {
+		for (std::vector<std::string>::iterator it = options.begin(); it < options.end(); it++,n++) {
 			unsigned int textY = (GetY() + GetYSize() + 4 + (n * (GetYSize() + 4)));
 			bool hovering = mouseX >= GetX() && mouseY >= textY && mouseX <= GetX() + GetXSize() && mouseY <= textY + GetYSize() + 4;
 			Texthook::Draw(GetX() + 5, textY + 2, 0, GetFont(), hovering?Tan:Gold, *it);

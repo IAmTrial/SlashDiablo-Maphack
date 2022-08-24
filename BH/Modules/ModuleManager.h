@@ -4,11 +4,10 @@
 #include <Windows.h>
 
 class Module;
-using namespace std;
 
 class ModuleManager {
 	private:
-		map<string, Module*> moduleList;
+		std::map<std::string, Module*> moduleList;
 
 		void FixName(std::string& name);
 
@@ -18,7 +17,7 @@ class ModuleManager {
 
 		// Module Management
 		void Add(Module* module);
-		Module* Get(string name);
+		Module* Get(std::string name);
 		void Remove(Module* module);
 
 		void LoadModules();

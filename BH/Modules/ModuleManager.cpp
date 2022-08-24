@@ -30,7 +30,7 @@ void ModuleManager::Add(Module* module) {
 	moduleList[name] = module;
 }
 
-Module* ModuleManager::Get(string name) {
+Module* ModuleManager::Get(std::string name) {
 	// Get a pointer to a module
 	if (moduleList.count(name) > 0) {
 		return moduleList[name];
@@ -48,25 +48,25 @@ void ModuleManager::Remove(Module* module) {
 }
 
 void ModuleManager::LoadModules() {
-	for (map<string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
+	for (std::map<std::string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
 		(*it).second->Load();
 	}
 }
 
 void ModuleManager::UnloadModules() {
-	for (map<string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
+	for (std::map<std::string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
 		(*it).second->Unload();
 	}
 }
 
 void ModuleManager::ReloadConfig() {
-	for (map<string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
+	for (std::map<std::string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
 		(*it).second->LoadConfig();
 	}
 }
 
 void ModuleManager::MpqLoaded() {
-	for (map<string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
+	for (std::map<std::string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
 		(*it).second->MpqLoaded();
 	}
 }
@@ -81,16 +81,16 @@ bool ModuleManager::UserInput(wchar_t* module, wchar_t* msg, bool fromGame) {
 	if (name.compare("reload") == 0)
 	{
 		ReloadConfig();
-		Print("ÿc4BH:ÿc0 Successfully reloaded configuration.");
+		Print("\xFF" "c4BH:" "\xFF" "c0 Successfully reloaded configuration.");
 		return true;
 	}
 
 	if (name.compare("save") == 0) {
 		BH::config->Write();
-		Print("ÿc4BH:ÿc0 Successfully saved configuration.");
+		Print("\xFF" "c4BH:" "\xFF" "c0 Successfully saved configuration.");
 	}
 
-	for (map<string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
+	for (std::map<std::string, Module*>::iterator it = moduleList.begin(); it != moduleList.end(); ++it) {
 		if (name.compare((*it).first) == 0) {
 			__raise it->second->UserInput(msg, fromGame, &block);
 		}

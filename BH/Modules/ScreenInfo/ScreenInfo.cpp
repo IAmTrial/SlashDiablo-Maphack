@@ -13,7 +13,7 @@
 
 using namespace Drawing;
 
-map<std::string, Toggle> ScreenInfo::Toggles;
+std::map<std::string, Toggle> ScreenInfo::Toggles;
 
 void ScreenInfo::OnLoad() {
 	LoadConfig();
@@ -51,7 +51,7 @@ void ScreenInfo::OnLoad() {
 	automap["LASTXPPERCENT"] = szLastXpGainPer;
 	automap["LASTXPPERSEC"] = szLastXpPerSec;
 	automap["LASTGAMETIME"] = szLastGameTime;
-	automap["SESSIONGAMECOUNT"] = to_string(nTotalGames);
+	automap["SESSIONGAMECOUNT"] = std::to_string(nTotalGames);
 }
 
 void ScreenInfo::LoadConfig() {
@@ -66,14 +66,14 @@ void ScreenInfo::LoadConfig() {
 	runDetailsColumns.clear();
 	BH::config->ReadMapList("Run Details", runDetailsColumns);
 
-	const string delimiter = ",";
-	szColumnHeader = accumulate(runDetailsColumns.begin(), runDetailsColumns.end(), string(),
-		[delimiter](const string& s, const pair<const string, const string>& p) {
-		return s + (s.empty() ? string() : delimiter) + p.first;
+	const std::string delimiter = ",";
+	szColumnHeader = accumulate(runDetailsColumns.begin(), runDetailsColumns.end(), std::string(),
+		[delimiter](const std::string& s, const std::pair<const std::string, const std::string>& p) {
+		return s + (s.empty() ? std::string() : delimiter) + p.first;
 	});
-	szColumnData = accumulate(runDetailsColumns.begin(), runDetailsColumns.end(), string(),
-		[delimiter](const string& s, const pair<const string, const string>& p) {
-		return s + (s.empty() ? string() : delimiter) + p.second;
+	szColumnData = accumulate(runDetailsColumns.begin(), runDetailsColumns.end(), std::string(),
+		[delimiter](const std::string& s, const std::pair<const std::string, const std::string>& p) {
+		return s + (s.empty() ? std::string() : delimiter) + p.second;
 	});
 
 	BH::config->ReadAssoc("Skill Warning", SkillWarnings);
@@ -82,7 +82,7 @@ void ScreenInfo::LoadConfig() {
 		if (StringToBool((*it).second)) {
 			// If the key is a number, it means warn when that state expires
 			DWORD stateId = 0;
-			stringstream ss((*it).first);
+			std::stringstream ss((*it).first);
 			if (!(ss >> stateId).fail()) {
 				SkillWarningMap[stateId] = GetStateCode(stateId).name;
 			}
@@ -115,7 +115,7 @@ void ScreenInfo::OnGameJoin() {
 
 	if (bFailedToWrite) {
 		bFailedToWrite = false;
-		string path = ReplaceAutomapTokens(szSavePath);
+		std::string path = ReplaceAutomapTokens(szSavePath);
 		for (int i = 0; i < 5; i++) {
 			PrintText(Red, "FILE \"%s\" IS LOCKED BY ANOTHER PROCESS! LAST RUN DATA WAS NOT SAVED!", ReplaceAutomapTokens(szSavePath));
 		}
@@ -131,28 +131,28 @@ void ScreenInfo::OnGameJoin() {
 		szLastXpPerSec = "N/A";
 		szLastGameTime = "N/A";
 	}
-	fill_n(aPlayerCountAverage, 8, 0);
+	std::fill_n(aPlayerCountAverage, 8, 0);
 
 	BnetData* pData = (*p_D2LAUNCH_BnData);
 
 	char* szDiff[3] = { "Normal", "Nightmare", "Hell" };
-	currentPlayer = string(pUnit->pPlayerData->szName);
+	currentPlayer = std::string(pUnit->pPlayerData->szName);
 	startLevel = (int)D2COMMON_GetUnitStat(pUnit, STAT_LEVEL, 0);
 	double startPctExp = ((double)startExperience - ExpByLevel[startLevel - 1]) / (ExpByLevel[startLevel] - ExpByLevel[startLevel - 1]) * 100.0;
 
 	time_t t
-		= chrono::system_clock::to_time_t(chrono::system_clock::now());
+		= std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-	string path = ReplaceAutomapTokens(szSavePath);
+	std::string path = ReplaceAutomapTokens(szSavePath);
 
 	automap["JOINDATE"] = FormatTime(t, "%F");
 	automap["JOINTIME"] = FormatTime(t, "%T%z");
-	automap["CHARLEVEL"] = to_string(startLevel);
-	automap["CHARLEVELPERCENT"] = to_string(static_cast<double>(startLevel) + (startPctExp / 100.0));
-	automap["CHARXPPERCENT"] = to_string(startPctExp);
-	automap["CHARXP"] = to_string(startExperience);
+	automap["CHARLEVEL"] = std::to_string(startLevel);
+	automap["CHARLEVELPERCENT"] = std::to_string(static_cast<double>(startLevel) + (startPctExp / 100.0));
+	automap["CHARXPPERCENT"] = std::to_string(startPctExp);
+	automap["CHARXP"] = std::to_string(startExperience);
 	automap["GAMENAME"] = pData->szGameName;
-	string runname = SimpleGameName(pData->szGameName);
+	std::string runname = SimpleGameName(pData->szGameName);
 	automap["RUNNAME"] = runname;
 	if (runcounter.find(runname) == runcounter.end()) {
 		runcounter[runname] = 0;
@@ -163,10 +163,10 @@ void ScreenInfo::OnGameJoin() {
 	automap["GAMEDIFF"] = szDiff[D2CLIENT_GetDifficulty()];
 	automap["ACCOUNTNAME"] = pData->szAccountName;
 	automap["CHARNAME"] = pUnit->pPlayerData->szName;
-	automap["SESSIONGAMECOUNT"] = to_string(++nTotalGames);
+	automap["SESSIONGAMECOUNT"] = std::to_string(++nTotalGames);
 
 	/*
-	string p = ReplaceAutomapTokens(szSavePath);
+	std::string p = ReplaceAutomapTokens(szSavePath);
 	cRunData = new Config(p + ".dat");
 	if (!cRunData->Parse()) {
 		cRunData->SetConfigName(p + ".dat");
@@ -212,22 +212,22 @@ int	ScreenInfo::GetPlayerCount() {
 	return i;
 }
 
-string ScreenInfo::SimpleGameName(const string& gameName) {
+std::string ScreenInfo::SimpleGameName(const std::string& gameName) {
 	std::smatch match;
-	if (regex_search(gameName, match, regex("^(.*?)(\\d+)$")) && match.size() == 3) {
+	if (std::regex_search(gameName, match, std::regex("^(.*?)(\\d+)$")) && match.size() == 3) {
 		return match.format("$1");
 	}
 	return gameName;
 }
 
-string ScreenInfo::FormatTime(time_t t, const char* format) {
-	stringstream ss;
-	ss << put_time(std::localtime(&t), format);
+std::string ScreenInfo::FormatTime(time_t t, const char* format) {
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&t), format);
 	return ss.str();
 }
 
 void ScreenInfo::OnKey(bool up, BYTE key, LPARAM lParam, bool* block) {	
-	for (map<string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
+	for (std::map<std::string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
 		if (key == (*it).second.toggle) {
 			*block = true;
 			if (up) {
@@ -507,15 +507,15 @@ void ScreenInfo::OnDraw() {
 		areaLevel = levelTxt->wMonLvl[D2CLIENT_GetDifficulty()];
 	}
 
-	automap["CURRENTCHARLEVEL"] = to_string(currentLevel);
-	automap["CURRENTCHARLEVELPERCENT"] = to_string(static_cast<double>(currentLevel) + (pExp / 100.0));
-	automap["CURRENTCHARXPPERCENT"] = to_string(pExp);
-	automap["CURRENTCHARXP"] = to_string(currentExperience);
+	automap["CURRENTCHARLEVEL"] = std::to_string(currentLevel);
+	automap["CURRENTCHARLEVELPERCENT"] = std::to_string(static_cast<double>(currentLevel) + (pExp / 100.0));
+	automap["CURRENTCHARXPPERCENT"] = std::to_string(pExp);
+	automap["CURRENTCHARXP"] = std::to_string(currentExperience);
 	automap["LEVEL"] = level;
 	automap["PING"] = szPing;
 	automap["GAMETIME"] = gameTime;
 	automap["REALTIME"] = szTime;
-	automap["AREALEVEL"] = to_string(areaLevel);
+	automap["AREALEVEL"] = std::to_string(areaLevel);
 	aPlayerCountAverage[GetPlayerCount() - 1]++;
 
 	delete [] level;	
@@ -551,7 +551,7 @@ std::string ScreenInfo::ReplaceAutomapTokens(std::string& v) {
 	result.assign(v.c_str());
 
 	for (auto const& am : automap) {
-		if (result.find("%" + am.first + "%") == string::npos)
+		if (result.find("%" + am.first + "%") == std::string::npos)
 			continue;
 		if (am.second.length() == 0)
 			result.replace(result.find("%" + am.first + "%"), am.first.length() + 2, "");
@@ -563,8 +563,8 @@ std::string ScreenInfo::ReplaceAutomapTokens(std::string& v) {
 
 void ScreenInfo::OnAutomapDraw() {
 	int y = 6;
-	for (vector<string>::iterator it = automapInfo.begin(); it < automapInfo.end(); it++) {
-		string key = ReplaceAutomapTokens(*it);
+	for (std::vector<std::string>::iterator it = automapInfo.begin(); it < automapInfo.end(); it++) {
+		std::string key = ReplaceAutomapTokens(*it);
 		if (key.length() > 0) {
 			Texthook::Draw(*p_D2CLIENT_ScreenSizeX - 10, y, Right,0,Gold,"%s", key.c_str());
 			y += 16;
@@ -576,10 +576,10 @@ void ScreenInfo::AddDrop(UnitAny* pItem) {
 	ScreenInfo::AddDrop(GetItemName(pItem), pItem->pItemPath->dwPosX, pItem->pItemPath->dwPosY);
 }
 
-void ScreenInfo::AddDrop(const string& name, unsigned int x, unsigned int y) {
+void ScreenInfo::AddDrop(const std::string& name, unsigned int x, unsigned int y) {
 	size_t h = 0;
-	hash_combine(h, hash<string>{}(name));
-	hash_combine(h, hash<long>{}(x << 8 | y));
+	hash_combine(h, std::hash<std::string>{}(name));
+	hash_combine(h, std::hash<long>{}(x << 8 | y));
 	BH::drops[h] = name;
 }
 
@@ -680,39 +680,39 @@ void ScreenInfo::OnGameExit() {
 
 	char buffer[128];
 	sprintf_s(buffer, sizeof(buffer), "%.2f", gamesToLevel);
-	szGamesToLevel = string(buffer);
+	szGamesToLevel = std::string(buffer);
 
 	sprintf_s(buffer, sizeof(buffer), "%d:%.2d:%.2d", timeToLevel / 3600, (timeToLevel / 60) % 60, timeToLevel % 60);
-	szTimeToLevel = string(buffer);
+	szTimeToLevel = std::string(buffer);
 
 	sprintf_s(buffer, sizeof(buffer), "%s%00.2f%%", lastExpGainPct >= 0 ? "+" : "", lastExpGainPct);
-	szLastXpGainPer = string(buffer);
+	szLastXpGainPer = std::string(buffer);
 
 	FormattedXPPerSec(buffer, lastExpPerSecond);
-	szLastXpPerSec = string(buffer);
+	szLastXpPerSec = std::string(buffer);
 
 	sprintf_s(buffer, sizeof(buffer), "%.2d:%.2d:%.2d", lastGameLength / 3600, (lastGameLength / 60) % 60, lastGameLength % 60);
-	szLastGameTime = string(buffer);
+	szLastGameTime = std::string(buffer);
 
-	const string delimiter = ", ";
-	string drops = accumulate(BH::drops.begin(), BH::drops.end(), string(),
-	[delimiter](const string& s, const pair<const size_t, string>& p) {
-		return s + (s.empty() ? string() : delimiter) + p.second;
+	const std::string delimiter = ", ";
+	std::string drops = std::accumulate(BH::drops.begin(), BH::drops.end(), std::string(),
+	[delimiter](const std::string& s, const std::pair<const size_t, std::string>& p) {
+		return s + (s.empty() ? std::string() : delimiter) + p.second;
 	});
 	BH::drops.clear();
 
-	drops = regex_replace(drops, regex("\xFF" "c."), "");
-	drops = regex_replace(drops, regex("\n"), " ");
+	drops = std::regex_replace(drops, std::regex("\xFF" "c."), "");
+	drops = std::regex_replace(drops, std::regex("\n"), " ");
 
 	automap["GAMESTOLVL"] = szGamesToLevel;
 	automap["TIMETOLVL"] = szTimeToLevel;
-	automap["LASTXPGAINED"] = to_string(xpGained);
+	automap["LASTXPGAINED"] = std::to_string(xpGained);
 	automap["LASTXPPERCENTGAINED"] = szLastXpGainPer;
 	automap["LASTXPPERSEC"] = szLastXpPerSec;
-	automap["LASTXPPERSECLONG"] = to_string(lastExpPerSecond);
+	automap["LASTXPPERSECLONG"] = std::to_string(lastExpPerSecond);
 	automap["LASTGAMETIME"] = szLastGameTime;
-	automap["LASTGAMETIMESEC"] = to_string(lastGameLength);
-	automap["DROPS"] = regex_replace(drops, regex("\xFF" "c."), "");
+	automap["LASTGAMETIMESEC"] = std::to_string(lastGameLength);
+	automap["DROPS"] = std::regex_replace(drops, std::regex("\xFF" "c."), "");
 
 	int idx = 0;
 	for (int i = 0; i < 8; i++) {
@@ -720,7 +720,7 @@ void ScreenInfo::OnGameExit() {
 			idx = i;
 		}
 	}
-	automap["AVGPLAYERCOUNT"] = to_string(idx + 1);
+	automap["AVGPLAYERCOUNT"] = std::to_string(idx + 1);
 
 	MephistoBlocked = false;
 	DiabloBlocked = false;
@@ -750,9 +750,9 @@ void ScreenInfo::WriteRunTrackerData() {
 		return;
 	}
 	if (!exist) {
-		os << ReplaceAutomapTokens(szColumnHeader) << endl; 
+		os << ReplaceAutomapTokens(szColumnHeader) << std::endl; 
 	}
-	os << ReplaceAutomapTokens(szColumnData) << endl;
+	os << ReplaceAutomapTokens(szColumnData) << std::endl;
 }
 
 void ScreenInfo::DrawPopup(wchar_t* buffName, int x, int y) {	
@@ -760,11 +760,11 @@ void ScreenInfo::DrawPopup(wchar_t* buffName, int x, int y) {
 	D2WIN_DrawRectText(buffName, x - textWidth / 2, y - 2, White, DRAW_MODE_ALPHA_50, White);
 }
 
-vector<wstring> ScreenInfo::strBreakApart(wstring str, wchar_t delimiter) {
-	wstring temp;
-	vector<wstring> parts;
-	wstringstream wss(str);
-	while (getline(wss, temp, delimiter))
+std::vector<std::wstring> ScreenInfo::strBreakApart(std::wstring str, wchar_t delimiter) {
+	std::wstring temp;
+	std::vector<std::wstring> parts;
+	std::wstringstream wss(str);
+	while (std::getline(wss, temp, delimiter))
 		parts.push_back(temp);
 
 	return parts;

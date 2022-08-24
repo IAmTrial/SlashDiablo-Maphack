@@ -16,7 +16,7 @@ typedef struct Vector_t
 
 class AutoTele : public Module {
 	private:
-		std::map<string, Toggle> Toggles;
+		std::map<std::string, Toggle> Toggles;
 		unsigned int NextKey, OtherKey, WPKey, PrevKey;
 		unsigned int Colors[6];
 		Drawing::UITab* settingsTab;
@@ -54,7 +54,7 @@ class AutoTele : public Module {
 		void OnKey(bool up, BYTE key, LPARAM lParam, bool* block);
 		void OnGamePacketRecv(BYTE* packet, bool* block);
 
-		std::map<string, Toggle>* GetToggles() { return &Toggles; }
+		std::map<std::string, Toggle>* GetToggles() { return &Toggles; }
 		void GetVectors();
 
 		static Level* GetLevel(Act* pAct, int level);

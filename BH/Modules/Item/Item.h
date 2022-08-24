@@ -54,8 +54,8 @@ struct UnitAny;
 
 class Item : public Module {
 	private:
-		static map<std::string, Toggle> Toggles;
-		static unordered_set<string> no_ilvl_codes;
+		static std::map<std::string, Toggle> Toggles;
+		static std::unordered_set<std::string> no_ilvl_codes;
 		unsigned int showPlayer;
 		static UnitAny* viewingUnit;
 		Drawing::UITab* settingsTab;
@@ -81,10 +81,10 @@ class Item : public Module {
 		void OnLoop();
 		void OnKey(bool up, BYTE key, LPARAM lParam, bool* block);
 		void OnLeftClick(bool up, unsigned int x, unsigned int y, bool* block);
-		std::map<string, Toggle>* GetToggles() { return &Toggles; }
+		std::map<std::string, Toggle>* GetToggles() { return &Toggles; }
 
 		static void __fastcall ItemNamePatch(wchar_t *name, UnitAny *item);
-		static void OrigGetItemName(UnitAny *item, string &itemName, char *code);
+		static void OrigGetItemName(UnitAny *item, std::string &itemName, char *code);
 		static void __stdcall OnProperties(wchar_t *wTxt);
 		static BOOL __stdcall OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStats, int nStat, wchar_t* wOut);
 		static void __stdcall OnPropertyBuild(wchar_t* wOut, int nStat, UnitAny* pItem, int nStatParam);

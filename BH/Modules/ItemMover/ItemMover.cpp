@@ -535,7 +535,7 @@ void ItemMover::OnGamePacketRecv(BYTE* packet, bool* block) {
 					auto pingLevel = -1;
 					auto color = UNDEFINED_COLOR;
 
-					for (vector<Rule*>::iterator it = MapRuleList.begin(); it != MapRuleList.end(); it++) {
+					for (std::vector<Rule*>::iterator it = MapRuleList.begin(); it != MapRuleList.end(); it++) {
 						if ((*it)->Evaluate(NULL, &item)) {
 							nameWhitelisted = true;
 							// skip map and notification if ping level requirement is not met
@@ -552,7 +552,7 @@ void ItemMover::OnGamePacketRecv(BYTE* packet, bool* block) {
 						}
 					}
 					// Don't block items that have a white-listed name
-					for (vector<Rule*>::iterator it = DoNotBlockRuleList.begin(); it != DoNotBlockRuleList.end(); it++) {
+					for (std::vector<Rule*>::iterator it = DoNotBlockRuleList.begin(); it != DoNotBlockRuleList.end(); it++) {
 						if ((*it)->Evaluate(NULL, &item)) {
 							nameWhitelisted = true;
 							break;
@@ -586,7 +586,7 @@ void ItemMover::OnGamePacketRecv(BYTE* packet, bool* block) {
 						}
 					}
 					else if (!showOnMap && !nameWhitelisted) {
-						for (vector<Rule*>::iterator it = IgnoreRuleList.begin(); it != IgnoreRuleList.end(); it++) {
+						for (std::vector<Rule*>::iterator it = IgnoreRuleList.begin(); it != IgnoreRuleList.end(); it++) {
 							if ((*it)->Evaluate(NULL, &item)) {
 								*block = true;
 								//PrintText(1, "Blocking item: %s, %s, %d", item.name.c_str(), item.code, item.amount);

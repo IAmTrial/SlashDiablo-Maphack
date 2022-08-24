@@ -2,23 +2,21 @@
 #include <string>
 #include "ModuleManager.h"
 
-using namespace std;
-
 class Module {
 	private:
 		friend class ModuleManager;
 
-		string name;
+		std::string name;
 		bool active;
 
 		void Load();
 		void Unload();
 
 	public:
-		Module(string name);
+		Module(std::string name);
 		virtual ~Module();
 
-		string GetName() { return name; };
+		std::string GetName() { return name; };
 		bool IsActive() { return active; };
 
 		// Module Events

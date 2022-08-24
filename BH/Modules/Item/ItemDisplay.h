@@ -139,11 +139,11 @@ public:
 	Condition() {}
 	virtual ~Condition() {}
 
-	static const string tokenDelims;
-	static void BuildConditions(vector<Condition*> &conditions, string token);
-	static void ProcessConditions(vector<Condition*> &rawConditions, vector<Condition*> &processedConditions);
-	static void AddOperand(vector<Condition*> &conditions, Condition *cond);
-	static void AddNonOperand(vector<Condition*> &conditions, Condition *cond);
+	static const std::string tokenDelims;
+	static void BuildConditions(std::vector<Condition*> &conditions, std::string token);
+	static void ProcessConditions(std::vector<Condition*> &rawConditions, std::vector<Condition*> &processedConditions);
+	static void AddOperand(std::vector<Condition*> &conditions, Condition *cond);
+	static void AddNonOperand(std::vector<Condition*> &conditions, Condition *cond);
 
 	bool Evaluate(UnitItemInfo *uInfo, ItemInfo *info, Condition *arg1, Condition *arg2);
 
@@ -446,10 +446,10 @@ private:
 	BYTE operation;
 	unsigned int type;
 	unsigned int targetStat;
-	std::map<string, string> classSkillList;
-	std::map<string, string> skillList;
-	vector<unsigned int> goodClassSkills;
-	vector<unsigned int> goodTabSkills;
+	std::map<std::string, std::string> classSkillList;
+	std::map<std::string, std::string> skillList;
+	std::vector<unsigned int> goodClassSkills;
+	std::vector<unsigned int> goodTabSkills;
 	void Init();
 	bool EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Condition *arg2);
 	bool EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2);
@@ -510,7 +510,7 @@ private:
 class PartialCondition : public Condition
 {
 public:
-	PartialCondition(BYTE op, int target_count, vector<string> tokens)
+	PartialCondition(BYTE op, int target_count, std::vector<std::string> tokens)
 		: operation(op), target_count(target_count) {
 		for (auto token : tokens) {
 			make_count_subrule(token);	
@@ -523,8 +523,8 @@ public:
 private:
 	BYTE operation;
 	const int target_count;
-	vector<Rule> rules; // TODO: should be const, but Rule::Evalate needs to be modified
-	void make_count_subrule(string token);
+	std::vector<Rule> rules; // TODO: should be const, but Rule::Evalate needs to be modified
+	void make_count_subrule(std::string token);
 	bool EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Condition *arg2);
 	bool EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2);
 };
@@ -557,16 +557,16 @@ private:
 class AddCondition : public Condition
 {
 public:
-	AddCondition(string& k, BYTE op, unsigned int target) : key(k), operation(op), targetStat(target) { 
+	AddCondition(std::string& k, BYTE op, unsigned int target) : key(k), operation(op), targetStat(target) { 
 		conditionType = CT_Operand;
 		Init();
 	};
 private:
 	BYTE operation;
-	vector<string> codes;
-	vector<DWORD> stats;
+	std::vector<std::string> codes;
+	std::vector<DWORD> stats;
 	unsigned int targetStat;
-	string key;
+	std::string key;
 	void Init();
 	bool EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Condition *arg2);
 	bool EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2);
@@ -576,24 +576,24 @@ extern TrueCondition *trueCondition;
 extern FalseCondition *falseCondition;
 
 struct ActionReplace {
-	string key;
-	string value;
+	std::string key;
+	std::string value;
 };
 
 struct ColorReplace {
-	string key;
+	std::string key;
 	int value;
 };
 
 struct SkillReplace {
-	string key;
+	std::string key;
 	int value;
 };
 
 struct Action {
 	bool stopProcessing;
-	string name;
-	string description;
+	std::string name;
+	std::string description;
 	int colorOnMap;
 	int borderColor;
 	int dotColor;
@@ -617,11 +617,11 @@ struct Action {
 };
 
 struct Rule {
-	vector<Condition*> conditions;
+	std::vector<Condition*> conditions;
 	Action action;
-	vector<Condition*> conditionStack;
+	std::vector<Condition*> conditionStack;
 
-	Rule(vector<Condition*> &inputConditions, string *str);
+	Rule(std::vector<Condition*> &inputConditions, std::string *str);
 
 	// TODO: Should this really be defined in the header? This will force it to be inlined AFAIK. -ybd
 	// Evaluate conditions which are in Reverse Polish Notation
@@ -675,55 +675,55 @@ struct Rule {
 	}
 };
 
-class ItemDescLookupCache : public RuleLookupCache<string> {
-	string make_cached_T(UnitItemInfo *uInfo) override;
-	string to_str(const string &name) override;
+class ItemDescLookupCache : public RuleLookupCache<std::string> {
+	std::string make_cached_T(UnitItemInfo *uInfo) override;
+	std::string to_str(const std::string &name) override;
 
 		public:
 		ItemDescLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<string>(RuleList) {}
+			RuleLookupCache<std::string>(RuleList) {}
 };
 
-class ItemNameLookupCache : public RuleLookupCache<string, const string &> {
-	string make_cached_T(UnitItemInfo *uInfo, const string &name) override;
-	string to_str(const string &name) override;
+class ItemNameLookupCache : public RuleLookupCache<std::string, const std::string &> {
+	std::string make_cached_T(UnitItemInfo *uInfo, const std::string &name) override;
+	std::string to_str(const std::string &name) override;
 
 		public:
 		ItemNameLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<string, const string&>(RuleList) {}
+			RuleLookupCache<std::string, const std::string&>(RuleList) {}
 };
 
-class MapActionLookupCache : public RuleLookupCache<vector<Action>> {
-	vector<Action> make_cached_T(UnitItemInfo *uInfo) override;
-	string to_str(const vector<Action> &actions);
+class MapActionLookupCache : public RuleLookupCache<std::vector<Action>> {
+	std::vector<Action> make_cached_T(UnitItemInfo *uInfo) override;
+	std::string to_str(const std::vector<Action> &actions);
 
 		public:
 		MapActionLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<vector<Action>>(RuleList) {}
+			RuleLookupCache<std::vector<Action>>(RuleList) {}
 };
 
 class IgnoreLookupCache : public RuleLookupCache<bool> {
 	bool make_cached_T(UnitItemInfo *uInfo) override;
-	string to_str(const bool &ignore);
+	std::string to_str(const bool &ignore);
 
 		public:
 		IgnoreLookupCache(const std::vector<Rule*> &RuleList) :
 			RuleLookupCache<bool>(RuleList) {}
 };
 
-extern vector<Rule*> RuleList;
-extern vector<Rule*> NameRuleList;
-extern vector<Rule*> DescRuleList;
-extern vector<Rule*> MapRuleList;
-extern vector<Rule*> DoNotBlockRuleList;
-extern vector<Rule*> IgnoreRuleList;
-extern vector<pair<string, string>> rules;
+extern std::vector<Rule*> RuleList;
+extern std::vector<Rule*> NameRuleList;
+extern std::vector<Rule*> DescRuleList;
+extern std::vector<Rule*> MapRuleList;
+extern std::vector<Rule*> DoNotBlockRuleList;
+extern std::vector<Rule*> IgnoreRuleList;
+extern std::vector<std::pair<std::string, std::string>> rules;
 extern ItemDescLookupCache item_desc_cache;
 extern ItemNameLookupCache item_name_cache;
 extern MapActionLookupCache map_action_cache;
 extern IgnoreLookupCache do_not_block_cache;
 extern IgnoreLookupCache ignore_cache;
-extern map<string, string> condition_group;
+extern std::map<std::string, std::string> condition_group;
 
 namespace ItemDisplay {
 	void InitializeItemRules();
@@ -731,15 +731,15 @@ namespace ItemDisplay {
 	bool UntestedSettingsUsed();
 }
 StatProperties *GetStatProperties(unsigned int stat);
-void BuildAction(string *str, Action *act);
-string ParseDescription(Action *act);
-int ParsePingLevel(Action *act, const string& reg_string);
-int ParseMapColor(Action *act, const string& reg_string);
+void BuildAction(std::string *str, Action *act);
+std::string ParseDescription(Action *act);
+int ParsePingLevel(Action *act, const std::string& reg_string);
+int ParseMapColor(Action *act, const std::string& reg_string);
 void HandleUnknownItemCode(char *code, char *tag);
-BYTE GetOperation(string *op);
+BYTE GetOperation(std::string *op);
 inline bool IntegerCompare(unsigned int Lvalue, int operation, unsigned int Rvalue);
-void GetItemName(UnitItemInfo *uInfo, string &name);
-void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &action_name);
+void GetItemName(UnitItemInfo *uInfo, std::string &name);
+void SubstituteNameVariables(UnitItemInfo *uInfo, std::string &name, const std::string &action_name);
 int GetDefense(ItemInfo *item);
 BYTE GetAffixLevel(BYTE ilvl, BYTE qlvl, BYTE mlvl);
 BYTE GetRequiredLevel(UnitAny* item);

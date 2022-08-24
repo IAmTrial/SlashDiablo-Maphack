@@ -43,7 +43,7 @@ void StatsDisplay::LoadConfig(){
 
 	BH::config->ReadToggle("Stats on Right", "None", false, Toggles["Stats on Right"]);
 
-	vector<pair<string, string>> stats;
+	std::vector<std::pair<std::string, std::string>> stats;
 	BH::config->ReadMapList("Stat Screen", stats);
 	for (unsigned int i = 0; i < stats.size(); i++) {
 		std::transform(stats[i].first.begin(), stats[i].first.end(), stats[i].first.begin(), ::tolower);
@@ -56,7 +56,7 @@ void StatsDisplay::LoadConfig(){
 			// Getting rid of the check for sp->saveParamBits > 0 to display weapon mastery values
 			// if a param is supplied it will be used
 			int num = -1;
-			stringstream ss(Trim(stats[i].second));
+			std::stringstream ss(Trim(stats[i].second));
 			if (!(ss >> num).fail() && num > 0) {
 				customStat->useValue = true;
 				customStat->value = num;

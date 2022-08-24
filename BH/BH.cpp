@@ -11,7 +11,7 @@
 #include "TableReader.h"
 #include "Task.h"
 
-string BH::path;
+std::string BH::path;
 HINSTANCE BH::instance;
 ModuleManager* BH::moduleManager;
 Config* BH::config;
@@ -20,11 +20,11 @@ Drawing::UI* BH::settingsUI;
 Drawing::StatsDisplay* BH::statsDisplay;
 bool BH::initialized;
 WNDPROC BH::OldWNDPROC;
-map<string, Toggle>* BH::MiscToggles;
-map<string, Toggle>* BH::MiscToggles2;
-map<string, bool>* BH::BnetBools;
-map<string, bool>* BH::GamefilterBools;
-map<size_t, string> BH::drops;
+std::map<std::string, Toggle>* BH::MiscToggles;
+std::map<std::string, Toggle>* BH::MiscToggles2;
+std::map<std::string, bool>* BH::BnetBools;
+std::map<std::string, bool>* BH::GamefilterBools;
+std::map<size_t, std::string> BH::drops;
 
 Patch* patches[] = {
 	new Patch(Call, D2CLIENT, { 0x44230, 0x45280 }, (int)GameLoop_Interception, 7),
@@ -87,7 +87,7 @@ void BH::Initialize()
 	if(!config->Parse()) {
 		config->SetConfigName("BH_Default.cfg");
 		if(!config->Parse()) {
-			string msg = "Could not find BH settings.\nAttempted to load " +
+			std::string msg = "Could not find BH settings.\nAttempted to load " +
 				path + "BH_settings.cfg (failed).\nAttempted to load "+
 				path + "BH_Default.cfg (failed).\n\nDefaults loaded.";
 			MessageBox(NULL, msg.c_str(), "Failed to load BH config", MB_OK);

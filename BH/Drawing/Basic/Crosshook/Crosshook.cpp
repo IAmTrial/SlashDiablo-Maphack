@@ -2,7 +2,6 @@
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 
-using namespace std;
 using namespace Drawing;
 
 /* Basic Hook Initializer
