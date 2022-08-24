@@ -39,19 +39,17 @@ namespace common::str_util {
  */
 
 template <typename CharT>
-constexpr std::basic_string_view<CharT> Trim(const CharT* str) {
+std::basic_string<CharT> Trim(const CharT* str) {
   return Trim<CharT>(std::basic_string_view<CharT>(str));
 }
 
 template <typename CharT>
-constexpr std::basic_string_view<CharT> Trim(
-    const std::basic_string<CharT>& str) {
+std::basic_string<CharT> Trim(const std::basic_string<CharT>& str) {
   return Trim<CharT>(std::basic_string_view<CharT>(str));
 }
 
 template <typename CharT>
-constexpr std::basic_string_view<CharT> Trim(
-    std::basic_string_view<CharT> str) {
+std::basic_string<CharT> Trim(std::basic_string_view<CharT> str) {
   using size_type = typename std::basic_string_view<CharT>::size_type;
 
   static constexpr CharT kWhitespaceChars[] = {
@@ -66,7 +64,7 @@ constexpr std::basic_string_view<CharT> Trim(
 
   size_type trim_front_index = str.find_first_not_of(kWhitespaceChars);
   if (trim_front_index == std::basic_string_view<CharT>::npos) {
-    return std::basic_string_view<CharT>();
+    return std::basic_string<CharT>();
   }
 
   size_type trim_back_index = str.find_last_not_of(kWhitespaceChars);

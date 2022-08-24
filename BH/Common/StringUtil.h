@@ -39,23 +39,21 @@ namespace common::str_util {
  * ending whitespace removed.
  */
 template <typename CharT>
-constexpr std::basic_string_view<CharT> Trim(const CharT* str);
+std::basic_string<CharT> Trim(const CharT* str);
 
 /**
  * Returns a view of the specified string, with the starting and
  * ending whitespace removed.
  */
 template <typename CharT>
-constexpr std::basic_string_view<CharT> Trim(
-    const std::basic_string<CharT>& str);
+std::basic_string<CharT> Trim(const std::basic_string<CharT>& str);
 
 /**
  * Returns a view of the specified string, with the starting and
  * ending whitespace removed.
  */
 template <typename CharT>
-constexpr std::basic_string_view<CharT> Trim(
-    std::basic_string_view<CharT> str);
+std::basic_string<CharT> Trim(std::basic_string_view<CharT> str);
 
 }  // namespace common::str_util
 

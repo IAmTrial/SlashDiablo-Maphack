@@ -303,7 +303,7 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 			virtualKeyOptional.value_or(VirtualKey::GetUnset());
 
 	ret.toggle = virtualKey.code;
-	ret.state = StringToBool(stateStr);
+	ret.state = StringToBool(Trim(stateStr));
 
 	value = ret;
 	return ret;
