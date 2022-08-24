@@ -11,10 +11,12 @@
 #include "BH.h"
 #include "Common.h"
 #include "Common/Input.h"
+#include "Common/StringUtil.h"
 
 namespace {
 
 using ::common::input::VirtualKey;
+using ::common::str_util::Trim;
 
 }  // namespace
 
@@ -57,10 +59,18 @@ bool Config::Parse() {
 
 		ConfigEntry entry;
 		entry.line = lineNo;
-		entry.key = Trim(line.substr(0, line.find_first_of(":")));
-		entry.value = Trim(line.substr(line.find_first_of(":") + 1));
 
-		entry.comment = line.substr(line.find_first_of(":") + 1, line.find(entry.value) - line.find_first_of(":") - 1);
+		// Parse the key and value.
+		size_t keyValueDelimiterIndex = line.find_first_of(":");
+
+		std::string_view keyStr(line.c_str(), keyValueDelimiterIndex);
+		entry.key.assign(Trim(keyStr));
+
+		std::string_view valueStr(line);
+		valueStr.remove_prefix(keyValueDelimiterIndex + 1);
+		entry.value.assign(Trim(valueStr));
+
+		entry.comment = line.substr(keyValueDelimiterIndex + 1, line.find(entry.value) - keyValueDelimiterIndex - 1);
 		entry.pointer = NULL;
 
 		//Store them!
@@ -118,26 +128,29 @@ bool Config::Write() {
 			continue;
 		}
 
-		std::string key = Trim((*it).substr(0, (*it).find_first_of(":")));
+		size_t keyValueDelimiterIndex = it->find_first_of(":");
+		std::string_view rawKeyStr(it->c_str(), keyValueDelimiterIndex);
+		std::string keyStr = Trim(rawKeyStr);
+
 		*it = *it + comment;
 
 		for (std::map<ConfigEntry, std::string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
 		{
-			if ((*cit).first.key.compare(key) != 0)
+			if ((*cit).first.key.compare(keyStr) != 0)
 				continue;
 
 			if ((*cit).second.size() == 0)
 			{
 				*it = "//Purge";
-				contents[key].value = "";
+				contents[keyStr].value = "";
 				changed.erase((*cit).first);
 				break;
 			}
 
 			std::stringstream newLine;
-			newLine << key << ":" << (*cit).first.comment << (*cit).second << comment;
+			newLine << keyStr << ":" << (*cit).first.comment << (*cit).second << comment;
 			*it = newLine.str();
-			contents[key].value = (*cit).second;
+			contents[keyStr].value = (*cit).second;
 
 			changed.erase((*cit).first);
 			break;
@@ -273,22 +286,24 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 	contents[key].toggle = &value;
 	contents[key].type = CTToggle;
 
-	size_t stateVKeyDelimiterIndex = contents[key].value.find_first_of(",");
+	size_t stateVkeydelimiterIndex = contents[key].value.find_first_of(",");
 
 	// Read state string.
-	std::string stateStr =
-			Trim(contents[key].value.substr(0, stateVKeyDelimiterIndex));
+	std::string_view rawStateStr(
+			contents[key].value.c_str(), stateVkeydelimiterIndex);
+	std::string_view stateStr = Trim(rawStateStr);
 
 	// Read virtual-key string and get mapped code.
-	std::string virtualKeyStr =
-			Trim(contents[key].value.substr(stateVKeyDelimiterIndex + 1));
+	std::string_view rawVirtualKeyStr(contents[key].value);
+	rawVirtualKeyStr.remove_prefix(stateVkeydelimiterIndex + 1);
+	std::string virtualKeyStr = Trim(rawVirtualKeyStr);
 	std::optional<VirtualKey> virtualKeyOptional =
 			VirtualKey::GetFromSymbolName(virtualKeyStr);
 	VirtualKey virtualKey =
 			virtualKeyOptional.value_or(VirtualKey::GetUnset());
 
 	ret.toggle = virtualKey.code;
-	ret.state = StringToBool(std::move(stateStr));
+	ret.state = StringToBool(stateStr);
 
 	value = ret;
 	return ret;
@@ -568,14 +583,17 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 		return true;
 	}
 	case CTToggle: {
-		size_t delimiterIndex = entry.value.find_first_of(",");
+		size_t stateVkeydelimiterIndex = entry.value.find_first_of(",");
 
-		// Get the state for the old Toggle.
-		std::string oldStateStr = Trim(entry.value.substr(0, delimiterIndex));
+		// Read state string for the old Toggle.
+		std::string_view rawOldStateStr(
+				entry.value.c_str(), stateVkeydelimiterIndex);
+		std::string oldStateStr = Trim(rawOldStateStr);
 
 		// Get the virtual-key for the old Toggle.
-		std::string oldVirtualKeyStr =
-				Trim(entry.value.substr(delimiterIndex + 1));
+		std::string_view rawOldVirtualKeyStr(
+				entry.value.c_str(), stateVkeydelimiterIndex + 1);
+		std::string oldVirtualKeyStr = Trim(rawOldVirtualKeyStr);
 		std::optional<VirtualKey> oldVirtualKeyOptional =
 				VirtualKey::GetFromSymbolName(oldVirtualKeyStr);
 
