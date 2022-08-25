@@ -14,9 +14,9 @@
 
 namespace {
 
-using common::input::VirtualKey;
+using ::common::input::VirtualKey;
 
-} // namespace
+}  // namespace
 
 /* Parse()
 Parse the configuration file and stores the results in a key->value pair.
@@ -273,17 +273,22 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 	contents[key].toggle = &value;
 	contents[key].type = CTToggle;
 
-	size_t delimiterIndex = contents[key].value.find_first_of(",");
+	size_t stateVKeyDelimiterIndex = contents[key].value.find_first_of(",");
+
+	// Read state string.
+	std::string stateStr =
+			Trim(contents[key].value.substr(0, stateVKeyDelimiterIndex));
 
 	// Read virtual-key string and get mapped code.
-	std::string virtualKeyStr = Trim(contents[key].value.substr(delimiterIndex + 1));
+	std::string virtualKeyStr =
+			Trim(contents[key].value.substr(stateVKeyDelimiterIndex + 1));
 	std::optional<VirtualKey> virtualKeyOptional =
 			VirtualKey::GetFromSymbolName(virtualKeyStr);
 	VirtualKey virtualKey =
 			virtualKeyOptional.value_or(VirtualKey::GetUnset());
 
 	ret.toggle = virtualKey.code;
-	ret.state = StringToBool(Trim(contents[key].value.substr(0, delimiterIndex)));
+	ret.state = StringToBool(std::move(stateStr));
 
 	value = ret;
 	return ret;
@@ -565,16 +570,20 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 	case CTToggle: {
 		size_t delimiterIndex = entry.value.find_first_of(",");
 
+		// Get the state for the old Toggle.
+		std::string oldStateStr = Trim(entry.value.substr(0, delimiterIndex));
+
 		// Get the virtual-key for the old Toggle.
-		std::string virtualKeyStr = Trim(entry.value.substr(delimiterIndex + 1));
+		std::string oldVirtualKeyStr =
+				Trim(entry.value.substr(delimiterIndex + 1));
 		std::optional<VirtualKey> oldVirtualKeyOptional =
-				VirtualKey::GetFromSymbolName(virtualKeyStr);
+				VirtualKey::GetFromSymbolName(oldVirtualKeyStr);
+
+		bool oldState = StringToBool(std::move(oldStateStr));
 		VirtualKey oldVirtualKey =
 				oldVirtualKeyOptional.value_or(VirtualKey::GetUnset());
 
-		bool state = StringToBool(Trim(entry.value.substr(0, delimiterIndex)));
-
-		if (entry.toggle->toggle == oldVirtualKey.code && entry.toggle->state == state)
+		if (entry.toggle->toggle == oldVirtualKey.code && entry.toggle->state == oldState)
 			return false;
 
 		stringstream stream;
