@@ -32,9 +32,9 @@
 #include <array>
 #include <limits>
 #include <optional>
-#include <unordered_map>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 namespace common::input {
 namespace {
