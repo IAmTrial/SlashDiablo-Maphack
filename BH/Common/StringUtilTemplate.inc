@@ -69,8 +69,8 @@ std::basic_string<CharT> Trim(std::basic_string_view<CharT> str) {
 
   size_type trim_back_index = str.find_last_not_of(kWhitespaceChars);
 
-  return str.substr(
-      trim_front_index, (trim_back_index + 1) - trim_front_index);
+  return std::basic_string<CharT>(
+      str.substr(trim_front_index, (trim_back_index + 1) - trim_front_index));
 }
 
 }  // namespace common::str_util
