@@ -3,7 +3,7 @@
 #include "../Basic/Framehook/Framehook.h"
 #include "../../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 UITab::~UITab() {
 	ui->Lock();
@@ -37,3 +37,5 @@ void UITab::OnDraw() {
 		Framehook::Draw(GetTabX(), GetTabY(), GetTabSize(), TAB_HEIGHT, 0, (ui->IsActive()?BTNormal:BTHighlight));
 	Texthook::Draw(GetTabX() + (GetTabSize() / 2), GetTabY() + 2, Center, 0, IsActive()?Grey:isHovering?Tan:Gold, name);
 }
+
+}  // namespace Drawing

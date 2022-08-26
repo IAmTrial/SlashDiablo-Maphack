@@ -3,7 +3,7 @@
 #include "../../Basic/Framehook/Framehook.h"
 #include "../../../Common.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 Inputhook::Inputhook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int xSize, std::string formatString, ...) :
  Hook(visibility, x, y) {
@@ -343,3 +343,5 @@ void Inputhook::Erase(unsigned int pos, unsigned int len) {
 	SetCursorPosition(pos);
 	Unlock();
 }
+
+}  // namespace Drawing

@@ -7,9 +7,14 @@
 #include "../../D2Stubs.h"
 #include "../../D2Helpers.h"
 
-using namespace Drawing;
-Drawing::Hook* PartyHook;
-Drawing::Hook* LootHook;
+namespace {
+
+using ::Drawing::Hook;
+
+}  // namespace
+
+Hook* PartyHook;
+Hook* LootHook;
 
 void Party::OnLoad() {
 	BH::config->ReadToggle("Party Enabled", "None", true, Toggles["Enabled"]);

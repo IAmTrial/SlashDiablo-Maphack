@@ -13,7 +13,7 @@ using ::common::str_util::Trim;
 
 }  // namespace
 
-using namespace Drawing;
+namespace Drawing {
 
 StatsDisplay *StatsDisplay::display;
 
@@ -424,3 +424,5 @@ bool StatsDisplay::OnClick(bool up, unsigned int x, unsigned int y) {
 	}
 	return false;
 }
+
+}  // namespace Drawing

@@ -15,7 +15,19 @@
 
 #pragma optimize( "", off)
 
-using namespace Drawing;
+namespace {
+
+using ::Drawing::Center;
+using ::Drawing::Checkhook;
+using ::Drawing::Colorhook;
+using ::Drawing::Combohook;
+using ::Drawing::Hook;
+using ::Drawing::Keyhook;
+using ::Drawing::Texthook;
+using ::Drawing::UITab;
+
+}  // namespace
+
 Patch* weatherPatch = new Patch(Jump, D2COMMON, { 0x6CC56, 0x30C36 }, (int)Weather_Interception, 5);
 Patch* lightingPatch = new Patch(Call, D2CLIENT, { 0xA9A37, 0x233A7 }, (int)Lighting_Interception, 6);
 Patch* infraPatch = new Patch(Call, D2CLIENT, { 0x66623, 0xB4A23 }, (int)Infravision_Interception, 7);

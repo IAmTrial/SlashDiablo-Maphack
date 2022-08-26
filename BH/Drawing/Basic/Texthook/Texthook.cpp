@@ -2,7 +2,7 @@
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 /* Basic Hook Initializer
  *		Used for just drawing basic text on screen.
@@ -255,3 +255,5 @@ bool Texthook::Draw(unsigned int x, unsigned int y, int align, unsigned int font
 	delete[] buffer;
 	return true;
 }
+
+}  // namespace Drawing

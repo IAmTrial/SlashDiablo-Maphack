@@ -11,7 +11,15 @@
 #include <numeric>
 #include <filesystem>
 
-using namespace Drawing;
+namespace {
+
+using ::Drawing::Center;
+using ::Drawing::OutOfGame;
+using ::Drawing::Perm;
+using ::Drawing::Right;
+using ::Drawing::Texthook;
+
+}  // namespace
 
 std::map<std::string, Toggle> ScreenInfo::Toggles;
 

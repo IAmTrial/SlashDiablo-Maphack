@@ -18,13 +18,19 @@ using ::common::str_util::Trim;
 
 }  // namespace
 
-std::map<std::string, Toggle> StashExport::Toggles;
-std::map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
+namespace {
+
+using ::Drawing::Checkhook;
+using ::Drawing::Combohook;
+using ::Drawing::UITab;
+
+}  // namespace
+
+map<std::string, Toggle> StashExport::Toggles;
+map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
 UnitAny* StashExport::viewingUnit;
 
 #define NAMEOF(statid) (AllStatList[statid]->name)
-
-using namespace Drawing;
 
 void StashExport::OnLoad() {
 	LoadConfig();

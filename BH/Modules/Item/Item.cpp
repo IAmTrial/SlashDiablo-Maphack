@@ -52,6 +52,16 @@
 #include "../../MPQInit.h"
 #include "lrucache.hpp"
 
+namespace {
+
+using ::Drawing::Checkhook;
+using ::Drawing::Combohook;
+using ::Drawing::Keyhook;
+using ::Drawing::Texthook;
+using ::Drawing::UITab;
+
+}  // namespace
+
 ItemsTxtStat* GetAllStatModifier(ItemsTxtStat* pStats, int nStats, int nStat, ItemsTxtStat* pOrigin);
 ItemsTxtStat* GetItemsTxtStatByMod(ItemsTxtStat* pStats, int nStats, int nStat, int nStatParam);
 RunesTxt* GetRunewordTxtById(int rwId);
@@ -78,8 +88,6 @@ Patch* permShowItems2 = new Patch(Call, D2CLIENT, { 0xC0E9A, 0x1A89A }, (int)Per
 Patch* permShowItems3 = new Patch(Call, D2CLIENT, { 0x59483, 0x4EA13 }, (int)PermShowItemsPatch2_ASM, 6);
 Patch* permShowItems4 = new Patch(Call, D2CLIENT, { 0x5908A, 0x4E61A }, (int)PermShowItemsPatch3_ASM, 6);
 Patch* permShowItems5 = new Patch(Call, D2CLIENT, { 0xA6BA3, 0x63443 }, (int)PermShowItemsPatch4_ASM, 6);
-
-using namespace Drawing;
 
 void Item::OnLoad() {
 	LoadConfig();
