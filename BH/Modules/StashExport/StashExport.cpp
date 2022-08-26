@@ -26,8 +26,8 @@ using ::Drawing::UITab;
 
 }  // namespace
 
-map<std::string, Toggle> StashExport::Toggles;
-map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
+std::map<std::string, Toggle> StashExport::Toggles;
+std::map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
 UnitAny* StashExport::viewingUnit;
 
 #define NAMEOF(statid) (AllStatList[statid]->name)
