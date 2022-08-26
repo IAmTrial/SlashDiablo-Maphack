@@ -1,10 +1,16 @@
-#include "../../../D2Ptrs.h"
-#include "../../../Common.h"
 #include "Colorhook.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+
+#include <string>
+
+#include "../../../Common.h"
+#include "../../../D2Ptrs.h"
 #include "../../Basic/Boxhook/Boxhook.h"
+#include "../../Basic/Crosshook/Crosshook.h"
 #include "../../Basic/Framehook/Framehook.h"
 #include "../../Basic/Texthook/Texthook.h"
-#include "../../Basic/Crosshook/Crosshook.h"
 
 namespace Drawing {
 

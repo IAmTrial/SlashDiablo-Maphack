@@ -1,15 +1,31 @@
-#define _DEFINE_PTRS
 #include "BH.h"
-#include <Shlwapi.h>
-#include <psapi.h>
-#include "D2Ptrs.h"
-#include "D2Intercepts.h"
+
+#include <stddef.h>
+#include <windows.h>
+#include <shlwapi.h>
+
+#include <chrono>
+#include <functional>
+#include <map>
+#include <string>
+#include <thread>
+
+#include "Config.h"
 #include "D2Handlers.h"
+#include "D2Intercepts.h"
+#include "Drawing.h"
 #include "Modules.h"
+#include "Modules/ModuleManager.h"
 #include "MPQReader.h"
-#include "MPQInit.h"
+#include "Patch.h"
 #include "TableReader.h"
 #include "Task.h"
+
+// #include "MPQInit.h"
+
+#define _DEFINE_PTRS
+#include "D2Ptrs.h"
+#undef _DEFINE_PTRS
 
 std::string BH::path;
 HINSTANCE BH::instance;

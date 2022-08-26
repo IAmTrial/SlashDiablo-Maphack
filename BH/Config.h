@@ -1,11 +1,13 @@
 #pragma once
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <Windows.h>
-#include <map>
+
+#include <windows.h>
+
 #include <list>
-#include "Common.h"
+#include <map>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 struct Toggle {
 	unsigned int toggle;
