@@ -24,12 +24,16 @@
 
 #include "Input.h"
 
+#include <ctype.h>
 #include <stddef.h>
 #include <windows.h>
 
+#include <algorithm>
 #include <array>
 #include <limits>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace common::input {
@@ -38,7 +42,7 @@ namespace {
 /**
  * This table is only used for initialization purposes.
  */
-static constexpr std::array<VirtualKey, 258> kVirtualKeyTable = {{
+static constexpr std::array<VirtualKey, 259> kVirtualKeyTable = {{
   VirtualKey::GetUnset(),
 
   { VK_LBUTTON, "VK_LBUTTON", "VK_LBUTTON", "Left mouse button" },
@@ -72,12 +76,13 @@ static constexpr std::array<VirtualKey, 258> kVirtualKeyTable = {{
   { VK_HANGEUL, "VK_HANGEUL", "VK_HANGEUL", "IME Hanguel mode" },
   { VK_HANGUL, "VK_HANGUL", "VK_HANGUL", "IME Hangul mode" },
 
-  { 0x16, "VK_IME_ON", "VK_IME_ON", "IME On" },
+  { VK_IME_ON, "VK_IME_ON", "VK_IME_ON", "IME On" },
   { VK_JUNJA, "VK_JUNJA", "VK_JUNJA", "IME Junja mode" },
   { VK_FINAL, "VK_FINAL", "VK_FINAL", "IME final mode" },
   { VK_HANJA, "VK_HANJA", "VK_HANJA", "IME Hanja mode" },
   { VK_KANJI, "VK_KANJI", "VK_KANJI", "IME Kanji mode" },
-  { 0x17, "VK_IME_OFF", "VK_IME_OFF", "IME Off" },
+  { VK_IME_OFF, "VK_IME_OFF", "VK_IME_OFF", "IME Off" },
+
   { VK_ESCAPE, "VK_ESCAPE", "VK_ESCAPE", "ESC key" },
   { VK_CONVERT, "VK_CONVERT", "VK_CONVERT", "IME convert" },
   { VK_NONCONVERT, "VK_NONCONVERT", "VK_NONCONVERT", "IME nonconvert" },
@@ -133,7 +138,7 @@ static constexpr std::array<VirtualKey, 258> kVirtualKeyTable = {{
   { 0x4C, "VK_L", "VK_L", "L key" },
   { 0x4D, "VK_M", "VK_M", "M key" },
   { 0x4E, "VK_N", "VK_N", "N key" },
-  { 0x5F, "VK_O", "VK_O", "O key" },
+  { 0x4F, "VK_O", "VK_O", "O key" },
   { 0x50, "VK_P", "VK_P", "P key" },
   { 0x51, "VK_Q", "VK_Q", "Q key" },
   { 0x52, "VK_R", "VK_R", "R key" },
@@ -332,12 +337,17 @@ static constexpr std::array<VirtualKey, 258> kVirtualKeyTable = {{
   { VK_NONAME, "VK_NONAME", "VK_NONAME", "Reserved" },
   { VK_PA1, "VK_PA1", "VK_PA1", "PA1 key" },
   { VK_OEM_CLEAR, "VK_OEM_CLEAR", "VK_OEM_CLEAR", "Clear key" },
+
+  { 0xFF, "None", "None", "Reserved" },
 }};
 
 static inline constexpr std::array<
-    VirtualKey, std::numeric_limits<BYTE>::max()>
+    VirtualKey, std::numeric_limits<BYTE>::max() + 1>
         InitVirtualKeyByCodeTable() {
-  std::array<VirtualKey, std::numeric_limits<BYTE>::max()> table = {};
+  // The array size needs to be +1 to ensure constexpr satisfaction.
+  // This is due to the compiler thinking there might be an index
+  // out-of-bounds write.
+  std::array<VirtualKey, std::numeric_limits<BYTE>::max() + 1> table = {};
 
   size_t i = 0;
   for (const VirtualKey& virtual_key : kVirtualKeyTable) {
@@ -350,12 +360,35 @@ static inline constexpr std::array<
   return table;
 }
 
-static std::unordered_map<std::string_view, VirtualKey>
+static std::unordered_map<std::string, VirtualKey>
     InitVirtualKeyBySymbolNameTable() {
-  std::unordered_map<std::string_view, VirtualKey> table;
+  std::unordered_map<std::string, VirtualKey> table(
+      kVirtualKeyTable.size());
   for (const VirtualKey& virtual_key : kVirtualKeyTable) {
-    table[virtual_key.symbol_name] = virtual_key;
-    table[virtual_key.old_symbol_name] = virtual_key;
+    // Initialize the table keys with lowercase symbol names.
+    std::string lower_symbol_name(virtual_key.symbol_name);
+    std::transform(
+        lower_symbol_name.cbegin(),
+        lower_symbol_name.cend(),
+        lower_symbol_name.begin(),
+        &tolower);
+
+    table.insert(std::make_pair(std::move(lower_symbol_name), virtual_key));
+
+    // Avoid doing unnecessary work.
+    if (virtual_key.symbol_name == virtual_key.old_symbol_name) {
+      continue;
+    }
+
+    std::string lower_old_symbol_name(virtual_key.old_symbol_name);
+    std::transform(
+        lower_old_symbol_name.cbegin(),
+        lower_old_symbol_name.cend(),
+        lower_old_symbol_name.begin(),
+        &tolower);
+
+    table.insert(
+        std::make_pair(std::move(lower_old_symbol_name), virtual_key));
   }
 
   return table;
@@ -364,23 +397,37 @@ static std::unordered_map<std::string_view, VirtualKey>
 }  // namespace
 
 const VirtualKey& VirtualKey::GetFromCode(BYTE code) {
-  static constexpr std::array<VirtualKey, std::numeric_limits<BYTE>::max()>
-      kSortedVirtualKeyTable = InitVirtualKeyByCodeTable();
+  static constexpr std::array kSortedVirtualKeyByCodeTable =
+      InitVirtualKeyByCodeTable();
 
-  return kSortedVirtualKeyTable[code];
+  return kSortedVirtualKeyByCodeTable[code];
 }
 
 std::optional<VirtualKey> VirtualKey::GetFromSymbolName(
     std::string_view symbol_name) {
-  static const std::unordered_map<std::string_view, VirtualKey>
-      kVirtualKeyTable = InitVirtualKeyBySymbolNameTable();
+  static const std::unordered_map<std::string, VirtualKey>
+      kVirtualKeyBySymbolNameTable = InitVirtualKeyBySymbolNameTable();
 
-  const auto& find_result = kVirtualKeyTable.find(symbol_name);
-  if (find_result == kVirtualKeyTable.cend()) {
+  // Defense against arbitrary string parsing.
+  if (symbol_name.length() > 64) {
     return std::nullopt;
   }
 
-  return std::make_optional(find_result->second);
+  // Case-insensitive compare.
+  std::string lower_symbol_name(symbol_name);
+  std::transform(
+      lower_symbol_name.cbegin(),
+      lower_symbol_name.cend(),
+      lower_symbol_name.begin(),
+      &tolower);
+
+  const auto& find_result =
+      kVirtualKeyBySymbolNameTable.find(lower_symbol_name);
+  if (find_result == kVirtualKeyBySymbolNameTable.cend()) {
+    return std::nullopt;
+  }
+
+  return find_result->second;
 }
 
 }  // namespace common::input
