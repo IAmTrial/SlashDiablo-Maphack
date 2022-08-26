@@ -35,21 +35,21 @@ namespace common::str_util {
  */
 
 /**
- * Returns a view of the specified string, with the starting and
+ * Returns a copy of the specified string, with the starting and
  * ending whitespace removed.
  */
 template <typename CharT>
 std::basic_string<CharT> Trim(const CharT* str);
 
 /**
- * Returns a view of the specified string, with the starting and
+ * Returns a copy of the specified string, with the starting and
  * ending whitespace removed.
  */
 template <typename CharT>
 std::basic_string<CharT> Trim(const std::basic_string<CharT>& str);
 
 /**
- * Returns a view of the specified string, with the starting and
+ * Returns a copy of the specified string, with the starting and
  * ending whitespace removed.
  */
 template <typename CharT>
