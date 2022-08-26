@@ -2,7 +2,6 @@
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 
-using namespace std;
 using namespace Drawing;
 
 /* Basic Hook Initializer
@@ -179,7 +178,7 @@ bool Texthook::OnRightClick(bool up, unsigned int x, unsigned int y) {
 /* GetTextSize(string text, unsigned int font)
  *	Returns the dimensions of the given text!
  */
-POINT Texthook::GetTextSize(string text, unsigned int font) {
+POINT Texthook::GetTextSize(std::string text, unsigned int font) {
 	unsigned int height[] = {10,11,18,24,10,13,7,13,10,12,8,8,7,12};
 	DWORD width, fileNo;
 	wchar_t* wString = AnsiToUnicode(text.c_str());

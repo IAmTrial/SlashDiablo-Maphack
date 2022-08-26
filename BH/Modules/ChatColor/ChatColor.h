@@ -8,7 +8,7 @@
 class ChatColor : public Module {
 private:
 	std::atomic<bool> inGame;
-	std::map<string, unsigned int> whisperColors;
+	std::map<std::string, unsigned int> whisperColors;
 	void UpdateInGame();
 public:
 	ChatColor() : Module("Chat Color") {};

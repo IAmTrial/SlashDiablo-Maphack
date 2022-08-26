@@ -15,7 +15,7 @@ UI::UI(std::string name, unsigned int xSize, unsigned int ySize) {
 	SetXSize(xSize);
 	SetYSize(ySize);
 	SetName(name);
-	string path = BH::path + "UI.ini";
+	std::string path = BH::path + "UI.ini";
 	int x = GetPrivateProfileInt(name.c_str(), "X", 0, path.c_str());
 	SetX(x);
 	int y = GetPrivateProfileInt(name.c_str(), "Y", 0, path.c_str());
@@ -38,11 +38,11 @@ UI::UI(std::string name, unsigned int xSize, unsigned int ySize) {
 }
 UI::~UI() {
 	Lock();
-	WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "Minimized", to_string<bool>(IsMinimized()).c_str(), string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), std::string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), std::string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "Minimized", to_string<bool>(IsMinimized()).c_str(), std::string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), std::string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), std::string(BH::path + "UI.ini").c_str());
 
 	while(Tabs.size() > 0) {
 		delete (*Tabs.begin());
@@ -115,7 +115,7 @@ void UI::OnDraw() {
 	EnsureInBounds();
 	if (IsMinimized()) {
 		int n = 0;
-		for (list<UI*>::iterator it = Minimized.begin(); it != Minimized.end(); it++, n++)
+		for (std::list<UI*>::iterator it = Minimized.begin(); it != Minimized.end(); it++, n++)
 			if ((*it) == this)
 				break;
 
@@ -171,7 +171,7 @@ void UI::OnDraw() {
 		Framehook::Draw(GetX(), GetY(), GetXSize(), GetYSize(), 0, (IsActive()?BTNormal:BTOneHalf));
 		Framehook::Draw(GetX(), GetY(), GetXSize(), TITLE_BAR_HEIGHT, 0, BTNormal);
 		Texthook::Draw(GetX() + 4, GetY () + 3, false, 0, InTitle((*p_D2CLIENT_MouseX), (*p_D2CLIENT_MouseY))?Silver:White, GetName());
-		for (list<UITab*>::iterator it = Tabs.begin(); it != Tabs.end(); it++)
+		for (std::list<UITab*>::iterator it = Tabs.begin(); it != Tabs.end(); it++)
 			(*it)->OnDraw();
 	}
 }
@@ -211,10 +211,10 @@ void UI::SetDragged(bool state, bool write_file) {
 	Lock(); 
 	dragged = state; 
 	if (!state && write_file) {
-		WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), string(BH::path + "UI.ini").c_str());
-		WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), string(BH::path + "UI.ini").c_str());
-		WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), string(BH::path + "UI.ini").c_str());
-		WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), string(BH::path + "UI.ini").c_str());
+		WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), std::string(BH::path + "UI.ini").c_str());
+		WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), std::string(BH::path + "UI.ini").c_str());
+		WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), std::string(BH::path + "UI.ini").c_str());
+		WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), std::string(BH::path + "UI.ini").c_str());
 	}
 	Unlock(); 
 }
@@ -237,14 +237,14 @@ void UI::SetMinimized(bool newState) {
 	} else
 		Minimized.remove(this); 
 	minimized = newState; 
-	WritePrivateProfileString(name.c_str(), "Minimized", to_string<bool>(newState).c_str(), string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "Minimized", to_string<bool>(newState).c_str(), std::string(BH::path + "UI.ini").c_str());
 	Unlock(); 
 };
 
 bool UI::OnLeftClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 	if (IsMinimized()) {
 		int n = 0;
-		for (list<UI*>::iterator it = Minimized.begin(); it != Minimized.end(); it++, n++)
+		for (std::list<UI*>::iterator it = Minimized.begin(); it != Minimized.end(); it++, n++)
 			if ((*it) == this)
 				break;
 		int yPos = GetMinimizedY() - (n * (TITLE_BAR_HEIGHT + 4));
@@ -302,7 +302,7 @@ bool UI::OnLeftClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 		SetActive(true);
 		Sort(this);
 		if (up) {
-			for (list<UITab*>::iterator it = Tabs.begin(); it != Tabs.end(); it++) {
+			for (std::list<UITab*>::iterator it = Tabs.begin(); it != Tabs.end(); it++) {
 				if ((*it)->IsHovering(mouseX, mouseY)) {
 					SetCurrentTab(*it);
 					return true;
@@ -327,7 +327,7 @@ bool UI::OnRightClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 
 void UI::Sort(UI* zero) {
 	int zOrder = 1;
-	for (list<UI*>::iterator it = UIs.begin(); it != UIs.end(); it++, zOrder++) {
+	for (std::list<UI*>::iterator it = UIs.begin(); it != UIs.end(); it++, zOrder++) {
 		if ((*it) == zero) {
 			(*it)->SetZOrder(0);
 			zOrder--;
@@ -350,7 +350,7 @@ bool ZSortDraw (UI* one, UI* two) {
 
 void UI::Draw() {
 	UIs.sort(ZSortDraw);
-	for (list<UI*>::iterator it = UIs.begin(); it!=UIs.end(); ++it) {
+	for (std::list<UI*>::iterator it = UIs.begin(); it!=UIs.end(); ++it) {
 			(*it)->Lock();
 			(*it)->OnDraw();
 			(*it)->Unlock();
@@ -359,7 +359,7 @@ void UI::Draw() {
 
 bool UI::LeftClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 	UIs.sort(ZSortClick);
-	for (list<UI*>::iterator it = UIs.begin(); it!=UIs.end(); ++it) {
+	for (std::list<UI*>::iterator it = UIs.begin(); it!=UIs.end(); ++it) {
 		(*it)->Lock();
 		if ((*it)->OnLeftClick(up, mouseX, mouseY)) {
 			(*it)->Unlock();
@@ -372,7 +372,7 @@ bool UI::LeftClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 
 bool UI::RightClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 	UIs.sort(ZSortClick);
-	for (list<UI*>::iterator it = UIs.begin(); it!=UIs.end(); ++it) {
+	for (std::list<UI*>::iterator it = UIs.begin(); it!=UIs.end(); ++it) {
 		(*it)->Lock();
 		if ((*it)->OnRightClick(up, mouseX, mouseY)) {
 			(*it)->Unlock();

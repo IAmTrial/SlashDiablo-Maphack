@@ -6,7 +6,7 @@ struct Control;
 
 class Bnet : public Module {
 	private:
-		std::map<string, bool> bools;
+		std::map<std::string, bool> bools;
 		bool* showLastGame;
 		bool* showLastPass;
 		bool* nextInstead;
@@ -31,7 +31,7 @@ class Bnet : public Module {
 		void InstallPatches();
 		void RemovePatches();
 
-		std::map<string, bool>* GetBools() { return &bools; }
+		std::map<std::string, bool>* GetBools() { return &bools; }
 
 		static VOID __fastcall NextGamePatch(Control* box, BOOL (__stdcall *FunCallBack)(Control*, DWORD, DWORD));
 		static VOID __fastcall NextPassPatch(Control* box, BOOL(__stdcall *FunCallBack)(Control*, DWORD, DWORD));

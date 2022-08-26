@@ -1,7 +1,7 @@
 #include "Module.h"
 #include "../BH.h"
 
-Module::Module(string name) : name(name), active(false) {
+Module::Module(std::string name) : name(name), active(false) {
 	BH::moduleManager->Add(this);
 }
 

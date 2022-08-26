@@ -9,8 +9,8 @@
 #include "../../Constants.h"
 #include <algorithm>
 
-map<std::string, Toggle> StashExport::Toggles;
-map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
+std::map<std::string, Toggle> StashExport::Toggles;
+std::map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
 UnitAny* StashExport::viewingUnit;
 
 #define NAMEOF(statid) (AllStatList[statid]->name)
@@ -345,7 +345,7 @@ void StashExport::WriteStash() {
 		CreateDirectory((BH::path + "\\stash\\").c_str(), NULL);
 
 		std::string path = BH::path + "\\stash\\" + pInfo->szAccountName + "_" + unit->pPlayerData->szName + ".txt";
-		fstream file(path, std::ofstream::out | std::ofstream::trunc);
+		std::fstream file(path, std::ofstream::out | std::ofstream::trunc);
 		if (!file.is_open()){
 			PrintText(1, "Failed to open %s for writing", path.c_str());
 			return;
@@ -422,7 +422,7 @@ void StashExport::OnKey(bool up, BYTE key, LPARAM lParam, bool* block) {
 			WriteStash();
 		}
 	}
-	for (map<string, Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
+	for (std::map<std::string, Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
 		if (key == (*it).second.toggle) {
 			*block = true;
 			if (up) {

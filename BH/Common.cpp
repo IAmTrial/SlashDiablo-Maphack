@@ -54,18 +54,16 @@
 
 #include "BH.h"
 
-using namespace std;
-
-void Tokenize(const string& str,
-                      vector<string>& tokens,
-                      const string& delimiters = " ")
+void Tokenize(const std::string& str,
+                      std::vector<std::string>& tokens,
+                      const std::string& delimiters = " ")
 {
     // Skip delimiters at beginning.
-    string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+    std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
     // Find first "non-delimiter".
-    string::size_type pos     = str.find_first_of(delimiters, lastPos);
+    std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
 
-    while (string::npos != pos || string::npos != lastPos)
+    while (std::string::npos != pos || std::string::npos != lastPos)
     {
         // Found a token, add it to the vector.
         tokens.push_back(str.substr(lastPos, pos - lastPos));
@@ -97,7 +95,7 @@ char* UnicodeToAnsi(const wchar_t* str)
 std::wstring GetColorCode(int ColNo)
 {
 	wchar_t* pCol = D2LANG_GetLocaleText(3994);
-	wostringstream Result;
+	std::wostringstream Result;
 	Result << pCol << (wchar_t) (ColNo + '0');
 	return Result.str();
 }

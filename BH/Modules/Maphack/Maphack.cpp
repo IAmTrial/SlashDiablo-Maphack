@@ -110,7 +110,7 @@ void Maphack::ReadConfig() {
 	for (auto it = MonsterColors.cbegin(); it != MonsterColors.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		std::stringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
@@ -123,7 +123,7 @@ void Maphack::ReadConfig() {
 	for (auto it = SuperUniqueColors.cbegin(); it != SuperUniqueColors.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		std::stringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		}
@@ -138,7 +138,7 @@ void Maphack::ReadConfig() {
 	for (auto it = MonsterLines.cbegin(); it != MonsterLines.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		std::stringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
@@ -151,7 +151,7 @@ void Maphack::ReadConfig() {
 	for (auto it = MonsterHides.cbegin(); it != MonsterHides.cend(); it++) {
 		// If the key is a number, it means do not draw this monster on map
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		std::stringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
@@ -312,7 +312,7 @@ void Maphack::OnLoad() {
 
 	new Texthook(settingsTab, 6, (Y += 15), "Reveal Type:");
 
-	vector<string> options;
+	std::vector<std::string> options;
 	options.push_back("Game");
 	options.push_back("Act");
 	options.push_back("Level");
@@ -328,7 +328,7 @@ void Maphack::OnKey(bool up, BYTE key, LPARAM lParam, bool* block) {
 			BH::ReloadConfig();
 		return;
 	}
-	for (map<string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
+	for (std::map<std::string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
 		if (key == (*it).second.toggle) {
 			*block = true;
 			if (up) {
@@ -422,7 +422,7 @@ void Maphack::OnDraw() {
 				uInfo.itemCode[3] = 0;
 				if (ItemAttributeMap.find(uInfo.itemCode) != ItemAttributeMap.end()) {
 					uInfo.attrs = ItemAttributeMap[uInfo.itemCode];
-					vector<Action> actions = map_action_cache.Get(&uInfo);
+					std::vector<Action> actions = map_action_cache.Get(&uInfo);
 					for (auto &action : actions) {
 						if (action.colorOnMap != UNDEFINED_COLOR ||
 								action.borderColor != UNDEFINED_COLOR ||
@@ -516,8 +516,8 @@ void Maphack::OnAutomapDraw() {
 					}
 
 					//Determine immunities
-					string szImmunities[] = { "\377c0p", "\377c8i", "\377c1i", "\377c9i", "\377c3i", "\377c2i" };
-					string szResistances[] = { "\377c7r", "\377c8r", "\377c1r", "\377c9r", "\377c3r", "\377c2r" };
+					std::string szImmunities[] = { "\377c0p", "\377c8i", "\377c1i", "\377c9i", "\377c3i", "\377c2i" };
+					std::string szResistances[] = { "\377c7r", "\377c8r", "\377c1r", "\377c9r", "\377c3r", "\377c2r" };
 					DWORD dwImmunities[] = {
 						STAT_DMGREDUCTIONPCT,
 						STAT_MAGICDMGREDUCTIONPCT,
@@ -526,7 +526,7 @@ void Maphack::OnAutomapDraw() {
 						STAT_COLDRESIST,
 						STAT_POISONRESIST
 					};
-					string immunityText;
+					std::string immunityText;
 					for (int n = 0; n < 6; n++) {
 						int nImm = D2COMMON_GetUnitStat(unit, dwImmunities[n], 0);
 						if (nImm >= 100) {
@@ -540,8 +540,8 @@ void Maphack::OnAutomapDraw() {
 					std::unordered_map<unsigned int, bool> enhancements;
 
 					//Determine Enchantments
-					string enchantText;
-					string szEnchantments[] = {"\377c3m", "\377c1e", "\377c9e", "\377c3e"};
+					std::string enchantText;
+					std::string szEnchantments[] = {"\377c3m", "\377c1e", "\377c9e", "\377c3e"};
 						
 					for (int n = 0; n < 9; n++) {
 						if (Toggles["Monster Enchantments"].state && unit->pMonsterData->fBoss) {
@@ -632,7 +632,7 @@ void Maphack::OnAutomapDraw() {
 					uInfo.itemCode[3] = 0;
 					if (ItemAttributeMap.find(uInfo.itemCode) != ItemAttributeMap.end()) {
 						uInfo.attrs = ItemAttributeMap[uInfo.itemCode];
-						const vector<Action> actions = map_action_cache.Get(&uInfo);
+						const std::vector<Action> actions = map_action_cache.Get(&uInfo);
 						for (auto &action : actions) {
 							// skip action if the ping level requirement isn't met
 							if (action.pingLevel > Item::GetPingLevel()) continue;
@@ -696,9 +696,9 @@ void Maphack::OnAutomapDraw() {
 		}
 		if (!Toggles["Display Level Names"].state)
 			return;
-		for (list<LevelList*>::iterator it = automapLevels.begin(); it != automapLevels.end(); it++) {
+		for (std::list<LevelList*>::iterator it = automapLevels.begin(); it != automapLevels.end(); it++) {
 			if (player->pAct->dwAct == (*it)->act) {
-				string tombStar = ((*it)->levelId == player->pAct->pMisc->dwStaffTombLevel) ? "\377c2*" : "\377c4";
+				std::string tombStar = ((*it)->levelId == player->pAct->pMisc->dwStaffTombLevel) ? "\377c2*" : "\377c4";
 				POINT unitLoc;
 				Hook::ScreenToAutomap(&unitLoc, (*it)->x, (*it)->y);
 				char* name = UnicodeToAnsi(D2CLIENT_GetLevelName((*it)->levelId));
@@ -805,7 +805,7 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
 				S.Level = *(BYTE*)&packet[8+(3*i)];
 				Skills[Id].push_back(S);
 			}
-			//for(vector<BaseSkill>::iterator it = Skills[Id].begin();  it != Skills[Id].end(); it++)
+			//for(std::vector<BaseSkill>::iterator it = Skills[Id].begin();  it != Skills[Id].end(); it++)
 			//	PrintText(1, "Skill %d, Level %d", it->Skill, it->Level);
 			break;
 		}

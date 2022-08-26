@@ -13,7 +13,7 @@ struct StateCode {
 struct StateWarning {
 	std::string name;
 	ULONGLONG startTicks;
-	StateWarning(string n, ULONGLONG ticks) : name(n), startTicks(ticks) {}
+	StateWarning(std::string n, ULONGLONG ticks) : name(n), startTicks(ticks) {}
 };
 
 struct Buff {
@@ -24,9 +24,9 @@ struct Buff {
 
 class ScreenInfo : public Module {
 	private:
-		map<string, string> SkillWarnings;
+		std::map<std::string, std::string> SkillWarnings;
 		std::vector<std::string> automapInfo;
-		std::map<DWORD, string> SkillWarningMap;
+		std::map<DWORD, std::string> SkillWarningMap;
 		std::deque<StateWarning*> CurrentWarnings;
 		Drawing::Texthook* bhText;
 		Drawing::Texthook* mpqVersionText;
@@ -43,7 +43,7 @@ class ScreenInfo : public Module {
 		bool ReceivedQuestPacket;
 		DWORD startExperience;
 		int startLevel;
-		string currentPlayer;
+		std::string currentPlayer;
 		DWORD currentExperience;
 		int currentLevel;
 		double currentExpGainPct;
@@ -59,37 +59,37 @@ class ScreenInfo : public Module {
 		//Config* cRunData;
 		bool bFailedToWrite = false;
 		int nTotalGames;
-		string szGamesToLevel;
-		string szTimeToLevel;
-		string szLastXpGainPer;
-		string szLastXpPerSec;
-		string szLastGameTime;
+		std::string szGamesToLevel;
+		std::string szTimeToLevel;
+		std::string szLastXpGainPer;
+		std::string szLastXpPerSec;
+		std::string szLastGameTime;
 		int aPlayerCountAverage[8];
 
-		string szSavePath;
-		string szColumnHeader;
-		string szColumnData;
+		std::string szSavePath;
+		std::string szColumnHeader;
+		std::string szColumnData;
 
-		map<string, string> automap;
-		map<string, int> runcounter;
-		vector<pair<string, string>> runDetailsColumns;
-		map<string, unsigned int> runs;
+		std::map<std::string, std::string> automap;
+		std::map<std::string, int> runcounter;
+		std::vector<std::pair<std::string, std::string>> runDetailsColumns;
+		std::map<std::string, unsigned int> runs;
 
-		string SimpleGameName(const string& gameName);
+		std::string SimpleGameName(const std::string& gameName);
 		int	GetPlayerCount();
 		void FormattedXPPerSec(char* buffer, double xpPerSec);
-		string FormatTime(time_t t, const char* format);
+		std::string FormatTime(time_t t, const char* format);
 		CellFile* cf;
 		void* mpqH;
 		BOOL manageBuffs;
 		BOOL manageConv;
 		int resTracker;
 		BOOL cellLoaded;
-		vector<Buff> activeBuffs;
-		vector<BYTE> buffs;
-		vector<wchar_t*> buffNames;
+		std::vector<Buff> activeBuffs;
+		std::vector<BYTE> buffs;
+		std::vector<wchar_t*> buffNames;
 	public:
-		static map<std::string, Toggle> Toggles;
+		static std::map<std::string, Toggle> Toggles;
 
 		ScreenInfo() :
 			Module("Screen Info"), warningTicks(BHGetTickCount()), packetRequests(0),
@@ -112,10 +112,10 @@ class ScreenInfo : public Module {
 		std::string ReplaceAutomapTokens(std::string& v);		
 		void WriteRunTrackerData();
 		void DrawPopup(wchar_t* buffName, int x, int y);
-		vector<wstring> strBreakApart(wstring str, wchar_t delimiter);
+		std::vector<std::wstring> strBreakApart(std::wstring str, wchar_t delimiter);
 
 		static void AddDrop(UnitAny* item);
-		static void AddDrop(const string& name, unsigned int x, unsigned int y);
+		static void AddDrop(const std::string& name, unsigned int x, unsigned int y);
 };
 
 StateCode GetStateCode(unsigned int nKey);

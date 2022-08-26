@@ -29,7 +29,7 @@ bool Config::Parse() {
 		return false;
 
 	//Open the configuration file
-	fstream file(BH::path + configName);
+	std::fstream file(BH::path + configName);
 	if (!file.is_open())
 		return false;
 
@@ -44,7 +44,7 @@ bool Config::Parse() {
 		lineNo++;
 		std::string comment;
 		//Remove any comments from the config
-		if (line.find("//") != string::npos) {
+		if (line.find("//") != std::string::npos) {
 			comment = line.substr(line.find("//"));
 			line = line.erase(line.find("//"));
 		}
@@ -64,8 +64,8 @@ bool Config::Parse() {
 		entry.pointer = NULL;
 
 		//Store them!
-		contents.insert(pair<string, ConfigEntry>(entry.key, entry));
-		orderedKeyVals.push_back(pair<string, string>(entry.key, entry.value));
+		contents.insert(std::pair<std::string, ConfigEntry>(entry.key, entry));
+		orderedKeyVals.push_back(std::pair<std::string, std::string>(entry.key, entry.value));
 	}
 	file.close();
 	return true;
@@ -77,12 +77,12 @@ bool Config::Write() {
 		return false;
 
 	//Open the configuration file
-	fstream file(BH::path + configName);
+	std::fstream file(BH::path + configName);
 	if (!file.is_open())
 		return false;
 
 	//Read in the configuration value
-	vector<string> configLines;
+	std::vector<std::string> configLines;
 	char line[2048];
 	while (!file.eof()) {
 		file.getline(line, 2048);
@@ -90,12 +90,12 @@ bool Config::Write() {
 	}
 	file.close();
 
-	map<ConfigEntry, string> changed;
-	for (map<string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); ++it) {
-		string newValue;
+	std::map<ConfigEntry, std::string> changed;
+	for (std::map<std::string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); ++it) {
+		std::string newValue;
 		if (!HasChanged((*it).second, newValue))
 			continue;
-		pair<ConfigEntry, string> change;
+		std::pair<ConfigEntry, std::string> change;
 		change.first = (*it).second;
 		change.second = newValue.c_str();
 		changed.insert(change);
@@ -104,10 +104,10 @@ bool Config::Write() {
 	if (changed.size() == 0)
 		return true;
 
-	for (vector<string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
+	for (std::vector<std::string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
 		//Remove any comments from the config
-		string comment;
-		if ((*it).find_first_of("//") != string::npos) {
+		std::string comment;
+		if ((*it).find_first_of("//") != std::string::npos) {
 			comment = (*it).substr((*it).find_first_of("//"));
 			(*it) = (*it).erase((*it).find_first_of("//"));
 		}
@@ -118,10 +118,10 @@ bool Config::Write() {
 			continue;
 		}
 
-		string key = Trim((*it).substr(0, (*it).find_first_of(":")));
+		std::string key = Trim((*it).substr(0, (*it).find_first_of(":")));
 		*it = *it + comment;
 
-		for (map<ConfigEntry, string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
+		for (std::map<ConfigEntry, std::string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
 		{
 			if ((*cit).first.key.compare(key) != 0)
 				continue;
@@ -134,7 +134,7 @@ bool Config::Write() {
 				break;
 			}
 
-			stringstream newLine;
+			std::stringstream newLine;
 			newLine << key << ":" << (*cit).first.comment << (*cit).second << comment;
 			*it = newLine.str();
 			contents[key].value = (*cit).second;
@@ -144,24 +144,24 @@ bool Config::Write() {
 		}
 	}
 
-	for (map<ConfigEntry, string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
+	for (std::map<ConfigEntry, std::string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
 	{
-		stringstream newConfig;
+		std::stringstream newConfig;
 
 		newConfig << (*cit).first.key << ": " << (*cit).second;
 
 		configLines.push_back(newConfig.str());
 	}
 
-	ofstream outFile(BH::path + configName);
-	for (vector<string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
+	std::ofstream outFile(BH::path + configName);
+	for (std::vector<std::string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
 		if ((*it).compare("//Purge") == 0)
 			continue;
 
 		if (std::next(it) == configLines.end())
 			outFile << (*it);
 		else
-			outFile << (*it) << endl;
+			outFile << (*it) << std::endl;
 	}
 	outFile.close();
 
@@ -323,13 +323,13 @@ unsigned int Config::ReadKey(std::string key, std::string toggle, unsigned int &
 /* ReadArray(std::string key)
 *	Reads in a index-based array from the array
 */
-vector<string> Config::ReadArray(std::string key, vector<string> &value) {
+std::vector<std::string> Config::ReadArray(std::string key, std::vector<std::string> &value) {
 	int currentIndex = 0;
 	value.clear();
 	while (true) {
-		stringstream index;
+		std::stringstream index;
 		index << currentIndex;
-		string currentKey = key + "[" + index.str() + "]";
+		std::string currentKey = key + "[" + index.str() + "]";
 		if (contents.find(currentKey) == contents.end())
 			break;
 		value.push_back(contents[currentKey].value);
@@ -346,11 +346,11 @@ vector<string> Config::ReadArray(std::string key, vector<string> &value) {
 *		Value[Test]: 0
 *		Value[Pickles]: 1
 */
-map<string, string> Config::ReadAssoc(std::string key, map<string, string> &value) {
+std::map<std::string, std::string> Config::ReadAssoc(std::string key, std::map<std::string, std::string> &value) {
 
-	for (map<string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
+	for (std::map<std::string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
 		if (!(*it).first.find(key + "[")) {
-			pair<string, string> assoc;
+			std::pair<std::string, std::string> assoc;
 			//Pull the value from between the []'s
 			assoc.first = (*it).first.substr((*it).first.find("[") + 1, (*it).first.length() - (*it).first.find("[") - 2);
 			// Check if key is already defined in map
@@ -370,11 +370,11 @@ map<string, string> Config::ReadAssoc(std::string key, map<string, string> &valu
 	return value;
 }
 
-map<string, bool> Config::ReadAssoc(std::string key, map<string, bool> &value) {
+std::map<std::string, bool> Config::ReadAssoc(std::string key, std::map<std::string, bool> &value) {
 
-	for (map<string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
+	for (std::map<std::string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
 		if (!(*it).first.find(key + "[")) {
-			pair<string, bool> assoc;
+			std::pair<std::string, bool> assoc;
 			assoc.first = (*it).first.substr((*it).first.find("[") + 1, (*it).first.length() - (*it).first.find("[") - 2);
 			transform(assoc.first.begin(), assoc.first.end(), assoc.first.begin(), ::tolower);
 
@@ -394,15 +394,15 @@ map<string, bool> Config::ReadAssoc(std::string key, map<string, bool> &value) {
 	return value;
 }
 
-map<string, unsigned int> Config::ReadAssoc(std::string key, map<string, unsigned int> &value) {
+std::map<std::string, unsigned int> Config::ReadAssoc(std::string key, std::map<std::string, unsigned int> &value) {
 
-	for (map<string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
-		if ((*it).first.find(key + "[") != string::npos) {
-			pair<string, unsigned int> assoc;
+	for (std::map<std::string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
+		if ((*it).first.find(key + "[") != std::string::npos) {
+			std::pair<std::string, unsigned int> assoc;
 			//Pull the value from between the []'s
 			assoc.first = (*it).first.substr((*it).first.find("[") + 1, (*it).first.length() - (*it).first.find("[") - 2);
 			//Simply store the value that was after the :
-			if ((*it).second.value.find("0x") != string::npos)
+			if ((*it).second.value.find("0x") != std::string::npos)
 				from_string<unsigned int>(assoc.second, (*it).second.value, std::hex);
 			else
 				from_string<unsigned int>(assoc.second, (*it).second.value, std::dec);
@@ -422,11 +422,11 @@ map<string, unsigned int> Config::ReadAssoc(std::string key, map<string, unsigne
 	return value;
 }
 
-vector<pair<string, string>> Config::ReadMapList(std::string key, vector<pair<string, string>>& values) {
+std::vector<std::pair<std::string, std::string>> Config::ReadMapList(std::string key, std::vector<std::pair<std::string, std::string>>& values) {
 
-	for (vector<pair<string, string>>::iterator it = orderedKeyVals.begin(); it != orderedKeyVals.end(); it++) {
+	for (std::vector<std::pair<std::string, std::string>>::iterator it = orderedKeyVals.begin(); it != orderedKeyVals.end(); it++) {
 		if (!(*it).first.find(key + "[")) {
-			pair<string, string> assoc;
+			std::pair<std::string, std::string> assoc;
 			//Pull the value from between the []'s
 			assoc.first = (*it).first.substr((*it).first.find("[") + 1, (*it).first.length() - (*it).first.find("[") - 2);
 			//Also store the value
@@ -438,13 +438,13 @@ vector<pair<string, string>> Config::ReadMapList(std::string key, vector<pair<st
 	return values;
 }
 
-list<string> Config::GetDefinedKeys() {
-	std::list<string> ret;
+std::list<std::string> Config::GetDefinedKeys() {
+	std::list<std::string> ret;
 
-	for (map<string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
-		string key = (*it).first;
+	for (std::map<std::string, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); it++) {
+		std::string key = (*it).first;
 
-		if (key.find("[") != string::npos)
+		if (key.find("[") != std::string::npos)
 			key = key.substr(0, key.find("["));
 
 		ret.push_back(key);
@@ -453,7 +453,7 @@ list<string> Config::GetDefinedKeys() {
 	return ret;
 }
 
-bool Config::HasChanged(ConfigEntry entry, string& value) {
+bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 	if (entry.type != CTToggle && entry.pointer == NULL)
 		return false;
 
@@ -474,7 +474,7 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		int storedInt = 0;
 		std::stringstream stream;
 		bool hex = false;
-		if (entry.value.find("0x") != string::npos) {
+		if (entry.value.find("0x") != std::string::npos) {
 			from_string<int>(storedInt, entry.value, std::hex);
 			stream << std::hex;
 			hex = true;
@@ -491,7 +491,7 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		return true;
 	}
 	case CTString: {
-		string currentString = *((string*)entry.pointer);
+		std::string currentString = *((std::string*)entry.pointer);
 
 		if (currentString.compare(entry.value) == 0)
 			return false;
@@ -500,8 +500,8 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		return true;
 	}
 	case CTArray: {
-		vector<string> valTest = *((vector<string>*)entry.pointer);
-		string ind = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
+		std::vector<std::string> valTest = *((std::vector<std::string>*)entry.pointer);
+		std::string ind = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
 		int index = atoi(ind.c_str());
 
 		if (index >= valTest.size()) {
@@ -509,7 +509,7 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 			return true;
 		}
 
-		string currentString = valTest.at(index);
+		std::string currentString = valTest.at(index);
 
 		if (currentString.compare(entry.value) == 0)
 			return false;
@@ -519,10 +519,10 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 	}
 
 	case CTAssoc: {
-		string assocKey = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
-		map<string, string> valTest = *((map<string, string>*)entry.pointer);
+		std::string assocKey = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
+		std::map<std::string, std::string> valTest = *((std::map<std::string, std::string>*)entry.pointer);
 
-		string currentString = valTest[assocKey];
+		std::string currentString = valTest[assocKey];
 
 		if (currentString.compare(entry.value) == 0)
 			return false;
@@ -531,9 +531,9 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		return true;
 	}
 	case CTAssocBool: {
-		string assocKey = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
-		transform(assocKey.begin(), assocKey.end(), assocKey.begin(), ::tolower);
-		map<string, bool> valTest = *((map<string, bool>*)entry.pointer);
+		std::string assocKey = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
+		std::transform(assocKey.begin(), assocKey.end(), assocKey.begin(), ::tolower);
+		std::map<std::string, bool> valTest = *((std::map<std::string, bool>*)entry.pointer);
 
 		bool currentBool = valTest[assocKey];
 
@@ -544,14 +544,14 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		return true;
 	}
 	case CTAssocInt: {
-		string assocKey = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
-		map<string, unsigned int> valTest = *((map<string, unsigned int>*)entry.pointer);
+		std::string assocKey = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
+		std::map<std::string, unsigned int> valTest = *((std::map<std::string, unsigned int>*)entry.pointer);
 		int currentInt = valTest[assocKey];
 
 		int storedInt = 0;
 		std::stringstream stream;
 		bool hex = false;
-		if (entry.value.find("0x") != string::npos) {
+		if (entry.value.find("0x") != std::string::npos) {
 			from_string<int>(storedInt, entry.value, std::hex);
 			stream << std::hex;
 			hex = true;
@@ -586,7 +586,7 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		if (entry.toggle->toggle == oldVirtualKey.code && entry.toggle->state == oldState)
 			return false;
 
-		stringstream stream;
+		std::stringstream stream;
 		const VirtualKey& newKey = VirtualKey::GetFromCode(entry.toggle->toggle);
 
 		stream << ((entry.toggle->state) ? "True" : "False") << ", " << newKey.symbol_name;

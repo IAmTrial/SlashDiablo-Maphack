@@ -3,7 +3,6 @@
 #include "../D2Ptrs.h"
 
 using namespace Drawing;
-using namespace std;
 
 std::list<Hook*> Hook::Hooks;
 
@@ -335,7 +334,7 @@ bool Hook::LeftClick(bool up, unsigned int x, unsigned int y) {
 		Colorhook::current->OnLeftClick(up, x, y);
 		return true;
 	}
-	for (list<Hook*>::iterator it = Hooks.begin(); it!=Hooks.end(); ++it)
+	for (std::list<Hook*>::iterator it = Hooks.begin(); it!=Hooks.end(); ++it)
 		if ((*it)->IsActive())
 			if ((*it)->OnLeftClick(up, x, y))
 				block = true;

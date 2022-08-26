@@ -7,8 +7,6 @@
 #include <list>
 #include "Common.h"
 
-using namespace std;
-
 struct Toggle {
 	unsigned int toggle;
 	bool state;
@@ -50,9 +48,9 @@ class Config {
 private:
 	std::string configName;
 	std::map<std::string, ConfigEntry> contents;
-	vector<pair<string, string>> orderedKeyVals;
+	std::vector<std::pair<std::string, std::string>> orderedKeyVals;
 
-	static bool HasChanged(ConfigEntry entry, string& value);
+	static bool HasChanged(ConfigEntry entry, std::string& value);
 	static bool StringToBool(std::string input);
 public:
 	Config(std::string name) : configName(name) {};
@@ -72,9 +70,9 @@ public:
 	unsigned int    	ReadInt(std::string key, unsigned int& value);
 	unsigned int		ReadKey(std::string key, std::string toggle, unsigned int &value);
 	Toggle				ReadToggle(std::string key, std::string toggle, bool defaultState, Toggle& value);
-	std::vector<string> ReadArray(std::string key, std::vector<string>& value);
-	map<string, string> ReadAssoc(std::string key, std::map<string, string>& value);
-	map<string, unsigned int> ReadAssoc(std::string key, std::map<string, unsigned int>& value);
-	map<string, bool> ReadAssoc(std::string key, std::map<string, bool>& value);
-	vector<pair<string, string>> ReadMapList(std::string key, vector<pair<string,string>>& value);
+	std::vector<std::string> ReadArray(std::string key, std::vector<std::string>& value);
+	std::map<std::string, std::string> ReadAssoc(std::string key, std::map<std::string, std::string>& value);
+	std::map<std::string, unsigned int> ReadAssoc(std::string key, std::map<std::string, unsigned int>& value);
+	std::map<std::string, bool> ReadAssoc(std::string key, std::map<std::string, bool>& value);
+	std::vector<std::pair<std::string, std::string>> ReadMapList(std::string key, std::vector<std::pair<std::string,std::string>>& value);
 };

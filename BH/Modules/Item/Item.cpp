@@ -56,8 +56,8 @@ ItemsTxtStat* GetAllStatModifier(ItemsTxtStat* pStats, int nStats, int nStat, It
 ItemsTxtStat* GetItemsTxtStatByMod(ItemsTxtStat* pStats, int nStats, int nStat, int nStatParam);
 RunesTxt* GetRunewordTxtById(int rwId);
 
-map<std::string, Toggle> Item::Toggles;
-unordered_set<string> Item::no_ilvl_codes;
+std::map<std::string, Toggle> Item::Toggles;
+std::unordered_set<std::string> Item::no_ilvl_codes;
 unsigned int Item::filterLevelSetting = 0;
 unsigned int Item::pingLevelSetting = 0;
 unsigned int Item::trackerPingLevelSetting = -1;
@@ -156,15 +156,15 @@ void Item::LoadConfig() {
 
 void Item::LoadNoIlvlCodes() {
 	// this method does not support saving back to the file
-	vector<pair<string, string>> no_ilvls;
+	std::vector<std::pair<std::string, std::string>> no_ilvls;
 
 	BH::itemConfig->ReadMapList("No Item Level", no_ilvls);
 
 	no_ilvl_codes.clear();
 
-	string buf;
+	std::string buf;
 	for (auto & entry: no_ilvls) {
-		stringstream ss(entry.second);
+		std::stringstream ss(entry.second);
 		while (ss >> buf) {
 			no_ilvl_codes.insert(buf);
 		}
@@ -260,7 +260,7 @@ void Item::DrawSettings() {
 
 	new Texthook(settingsTab, 4, y, "Filter Level:");
 
-	vector<string> options;
+	std::vector<std::string> options;
 	options.push_back("0 - None");
 	options.push_back("1 - Minimal");
 	options.push_back("2 - Moderate");
@@ -269,7 +269,7 @@ void Item::DrawSettings() {
 
 	new Texthook(settingsTab, 234, y, "Ping Tiers <=:");
 
-	vector<string> ping_options;
+	std::vector<std::string> ping_options;
 	ping_options.push_back("0");
 	ping_options.push_back("1");
 	ping_options.push_back("2");
@@ -344,7 +344,7 @@ void Item::OnKey(bool up, BYTE key, LPARAM lParam, bool* block) {
 			return;
 		}
 	}
-	for (map<string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
+	for (std::map<std::string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
 		if (key == (*it).second.toggle) {
 			*block = true;
 			if (up) {
@@ -377,7 +377,7 @@ int CreateUnitItemInfo(UnitItemInfo *uInfo, UnitAny *item) {
 void __fastcall Item::ItemNamePatch(wchar_t *name, UnitAny *item)
 {
 	char* szName = UnicodeToAnsi(name);
-	string itemName = szName;
+	std::string itemName = szName;
 	char* code = D2COMMON_GetItemText(item->dwTxtFileNo)->szCode;
 
 	if (Toggles["Advanced Item Display"].state) {
@@ -405,7 +405,7 @@ void __fastcall Item::ItemNamePatch(wchar_t *name, UnitAny *item)
 	// \xFF" "c9 (yellow)
 
 	/* Test code to display item codes */
-	//string test3 = test_code;
+	//std::string test3 = test_code;
 	//itemName += " {" + test3 + "}";
 
 	MultiByteToWideChar(CODE_PAGE, MB_PRECOMPOSED, itemName.c_str(), itemName.length(), name, itemName.length());
@@ -413,7 +413,7 @@ void __fastcall Item::ItemNamePatch(wchar_t *name, UnitAny *item)
 	delete[] szName;
 }
 
-void Item::OrigGetItemName(UnitAny *item, string &itemName, char *code)
+void Item::OrigGetItemName(UnitAny *item, std::string &itemName, char *code)
 {
 	bool displayItemLevel = Toggles["Show iLvl"].state;
 	if (Toggles["Shorten Item Names"].state)
@@ -586,7 +586,7 @@ void Item::OrigGetItemName(UnitAny *item, string &itemName, char *code)
 	{
 		if (Toggles["Show Rune Numbers"].state && D2COMMON_GetItemText(item->dwTxtFileNo)->nType == 74)
 		{
-			itemName = to_string(item->dwTxtFileNo - 609) + " - " + itemName;
+			itemName = std::to_string(item->dwTxtFileNo - 609) + " - " + itemName;
 		}
 		else
 		{
@@ -595,7 +595,7 @@ void Item::OrigGetItemName(UnitAny *item, string &itemName, char *code)
 				int sockets = D2COMMON_GetUnitStat(item, STAT_SOCKETS, 0);
 				if (sockets > 0)
 				{
-					itemName += "(" + to_string(sockets) + ")";
+					itemName += "(" + std::to_string(sockets) + ")";
 				}
 			}
 
@@ -607,7 +607,7 @@ void Item::OrigGetItemName(UnitAny *item, string &itemName, char *code)
 			/*show iLvl unless it is equal to 1*/
 			if (displayItemLevel && item->pItemData->dwItemLevel != 1)
 			{
-				itemName += " L" + to_string(item->pItemData->dwItemLevel);
+				itemName += " L" + std::to_string(item->pItemData->dwItemLevel);
 			}
 		}
 	}
@@ -616,16 +616,16 @@ void Item::OrigGetItemName(UnitAny *item, string &itemName, char *code)
 		if (Toggles["Show Sockets"].state) {
 			int sockets = D2COMMON_GetUnitStat(item, STAT_SOCKETS, 0);
 			if (sockets > 0)
-				itemName += "(" + to_string(sockets) + ")";
+				itemName += "(" + std::to_string(sockets) + ")";
 		}
 		if (Toggles["Show Ethereal"].state && item->pItemData->dwFlags & ITEM_ETHEREAL)
 			itemName += "(Eth)";
 
 		if (displayItemLevel)
-			itemName += "(L" + to_string(item->pItemData->dwItemLevel) + ")";
+			itemName += "(L" + std::to_string(item->pItemData->dwItemLevel) + ")";
 
 		if (Toggles["Show Rune Numbers"].state && D2COMMON_GetItemText(item->dwTxtFileNo)->nType == 74)
-			itemName = "[" + to_string(item->dwTxtFileNo - 609) + "]" + itemName;
+			itemName = "[" + std::to_string(item->dwTxtFileNo - 609) + "]" + itemName;
 	}
 
 	/*Affix (Colors) Color Mod*/
@@ -715,7 +715,7 @@ void __stdcall Item::OnProperties(wchar_t * wTxt)
 	// Add description
 	if (Toggles["Advanced Item Display"].state) {
 		int aLen = wcslen(wTxt);
-		string desc = item_desc_cache.Get(&uInfo);
+		std::string desc = item_desc_cache.Get(&uInfo);
 		if (desc != "") {
 			auto chars_written = MultiByteToWideChar(CODE_PAGE, MB_PRECOMPOSED, desc.c_str(), -1, wDesc, 128);
 			swprintf_s(wTxt + aLen, MAXLEN - aLen,

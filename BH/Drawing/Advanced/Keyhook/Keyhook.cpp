@@ -10,7 +10,6 @@ using common::input::VirtualKey;
 
 } // namespace
 
-using namespace std;
 using namespace Drawing;
 
 /* Basic Hook Initializer
@@ -49,7 +48,7 @@ bool Keyhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 }
 
 void Keyhook::OnDraw() {
-	string prefix = "";
+	std::string prefix = "";
 	bool IsInRange = InRange(*p_D2CLIENT_MouseX, *p_D2CLIENT_MouseY);
 	if (name.length() > 0) {
 		if(IsInRange)
@@ -59,7 +58,7 @@ void Keyhook::OnDraw() {
 	}
 
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
-	string text(prefix);
+	std::string text(prefix);
 	text.append(virtualKey.common_name);
 	if (timeout) {
 		unsigned int time = (unsigned int)(3 - floor((double)(GetTickCount() - timeout) / 1000));
@@ -67,7 +66,7 @@ void Keyhook::OnDraw() {
 			timeout = 0;
 		char num[100];
 		_itoa_s(time, num, 100, 10);
-		text = prefix + string(num) + " secs";
+		text = prefix + std::string(num) + " secs";
 	}
 	DWORD size = D2WIN_SetTextSize(0);
 	wchar_t* keyText = AnsiToUnicode(text.c_str());
@@ -92,12 +91,12 @@ bool Keyhook::OnKey(bool up, BYTE kkey, LPARAM lParam) {
 }
 
 unsigned int Keyhook::GetXSize() {
-	string prefix = "";
+	std::string prefix = "";
 	if (name.length() > 0)
 		prefix = name + ":" "\xFF" "c4 ";
 
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
-	string text = prefix;
+	std::string text = prefix;
 	text.append(virtualKey.common_name);
 	DWORD width, fileNo;
 	wchar_t* wString = AnsiToUnicode(text.c_str());

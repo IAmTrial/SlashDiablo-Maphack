@@ -7,7 +7,6 @@
 #include "../../D2Stubs.h"
 #include "../../D2Helpers.h"
 
-using namespace std;
 using namespace Drawing;
 Drawing::Hook* PartyHook;
 Drawing::Hook* LootHook;
@@ -94,7 +93,7 @@ void Party::CheckParty() {
 			if (pData && pData->nCharFlags & PLAYER_TYPE_HARDCORE) {
 				CurrentParty[Party->szName] = true;
 				if (Toggles["LootEnabled"].state) {
-					string s(Party->szName);
+					std::string s(Party->szName);
 					if (LootingPermission.find(s) == LootingPermission.end()) {
 						//PrintText(1, "Enabling loot for %s.", s.c_str());
 						BYTE PacketData[7] = {0x5d,1,1,0,0,0,0};
@@ -180,7 +179,7 @@ void Party::OnKey(bool up, BYTE key, LPARAM lParam, bool* block)  {
 		return;
 	}
 
-	for (map<string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
+	for (std::map<std::string,Toggle>::iterator it = Toggles.begin(); it != Toggles.end(); it++) {
 		if (key == (*it).second.toggle) {
 			*block = true;
 			if (up) {

@@ -65,24 +65,24 @@ SkillReplace skills[] = {
 };
 
 std::map<std::string, int> UnknownItemCodes;
-vector<pair<string, string>> rules;
-map<string, string> condition_group;
-vector<Rule*> RuleList;
-vector<Rule*> NameRuleList;
-vector<Rule*> DescRuleList;
-vector<Rule*> MapRuleList;
-vector<Rule*> DoNotBlockRuleList;
-vector<Rule*> IgnoreRuleList;
+std::vector<std::pair<std::string, std::string>> rules;
+std::map<std::string, std::string> condition_group;
+std::vector<Rule*> RuleList;
+std::vector<Rule*> NameRuleList;
+std::vector<Rule*> DescRuleList;
+std::vector<Rule*> MapRuleList;
+std::vector<Rule*> DoNotBlockRuleList;
+std::vector<Rule*> IgnoreRuleList;
 BYTE LastConditionType;
 
 TrueCondition *trueCondition = new TrueCondition();
 FalseCondition *falseCondition = new FalseCondition();
 
 // Helper function to get a list of strings
-vector<string> split(const string &s, char delim) {
-	vector<string> result;
-	stringstream ss(s);
-	string item;
+std::vector<std::string> split(const std::string &s, char delim) {
+	std::vector<std::string> result;
+	std::stringstream ss(s);
+	std::string item;
 	while (getline(ss, item, delim)) {
 		result.push_back(item);
 	}
@@ -164,9 +164,9 @@ BYTE RuneNumberFromItemCode(char *code){
 }
 
 // Find the item description. This code is called only when there's a cache miss
-string ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
-	string new_name;
-	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
+std::string ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
+	std::string new_name;
+	for (std::vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			SubstituteNameVariables(uInfo, new_name, (*it)->action.description);
 			if ((*it)->action.stopProcessing) {
@@ -177,7 +177,7 @@ string ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 	return new_name;
 }
 
-string ItemDescLookupCache::to_str(const string &name) {
+std::string ItemDescLookupCache::to_str(const std::string &name) {
 	size_t start_pos = 0;
 	std::string itemName(name);
 	while ((start_pos = itemName.find('\n', start_pos)) != std::string::npos) {
@@ -188,9 +188,9 @@ string ItemDescLookupCache::to_str(const string &name) {
 }
 
 // Find the item name. This code is called only when there's a cache miss
-string ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const string &name) {
-	string new_name(name);
-	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
+std::string ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const std::string &name) {
+	std::string new_name(name);
+	for (std::vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			SubstituteNameVariables(uInfo, new_name, (*it)->action.name);
 			if ((*it)->action.stopProcessing) {
@@ -200,7 +200,7 @@ string ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const string &nam
 	}
 	// if the item is on the ignore list and not the map list, warn the user that this item is normally blocked
 	bool blocked = ignore_cache.Get(uInfo);
-	vector<Action> actions = map_action_cache.Get(uInfo);
+	std::vector<Action> actions = map_action_cache.Get(uInfo);
 	if (blocked) {
 		bool has_map_action = false;
 		for (auto &action : actions) {
@@ -220,7 +220,7 @@ string ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const string &nam
 	return new_name;
 }
 
-string ItemNameLookupCache::to_str(const string &name) {
+std::string ItemNameLookupCache::to_str(const std::string &name) {
 	size_t start_pos = 0;
 	std::string itemName(name);
 	while ((start_pos = itemName.find('\n', start_pos)) != std::string::npos) {
@@ -230,9 +230,9 @@ string ItemNameLookupCache::to_str(const string &name) {
 	return itemName;
 }
 
-vector<Action> MapActionLookupCache::make_cached_T(UnitItemInfo *uInfo) {
-	vector<Action> actions;
-	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
+std::vector<Action> MapActionLookupCache::make_cached_T(UnitItemInfo *uInfo) {
+	std::vector<Action> actions;
+	for (std::vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			actions.push_back((*it)->action);
 		}
@@ -240,8 +240,8 @@ vector<Action> MapActionLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 	return actions;
 }
 
-string MapActionLookupCache::to_str(const vector<Action> &actions) {
-	string name;
+std::string MapActionLookupCache::to_str(const std::vector<Action> &actions) {
+	std::string name;
 	for (auto &action : actions) {
 		name += action.name + " ";
 	}
@@ -249,7 +249,7 @@ string MapActionLookupCache::to_str(const vector<Action> &actions) {
 }
 
 bool IgnoreLookupCache::make_cached_T(UnitItemInfo *uInfo) {
-	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
+	for (std::vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			return true;
 		}
@@ -257,7 +257,7 @@ bool IgnoreLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 	return false;
 }
 
-string IgnoreLookupCache::to_str(const bool &ignore) {
+std::string IgnoreLookupCache::to_str(const bool &ignore) {
 	return ignore ? "blocked" : "not blocked";
 }
 
@@ -268,12 +268,12 @@ MapActionLookupCache map_action_cache(MapRuleList);
 IgnoreLookupCache do_not_block_cache(DoNotBlockRuleList);
 IgnoreLookupCache ignore_cache(IgnoreRuleList);
 
-void GetItemName(UnitItemInfo *uInfo, string &name) {
-	string new_name = item_name_cache.Get(uInfo, name);
+void GetItemName(UnitItemInfo *uInfo, std::string &name) {
+	std::string new_name = item_name_cache.Get(uInfo, name);
 	name.assign(new_name);
 }
 
-void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &action_name) {
+void SubstituteNameVariables(UnitItemInfo *uInfo, std::string &name, const std::string &action_name) {
 	char origName[128], sockets[4], code[4], ilvl[4], alvl[4], craft_alvl[4], runename[16] = "", runenum[4] = "0";
 	char gemtype[16] = "", gemlevel[16] = "", sellValue[16] = "", statVal[16] = "";
 	char lvlreq[4], wpnspd[4], rangeadder[4];
@@ -311,7 +311,7 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &ac
 		sprintf_s(gemtype, "%s", GetGemTypeString(GetGemType(uInfo->attrs)));
 	}
 
-	string baseName = UnicodeToAnsi(D2LANG_GetLocaleText(txt->nLocaleTxtNo));
+	std::string baseName = UnicodeToAnsi(D2LANG_GetLocaleText(txt->nLocaleTxtNo));
 
 	ActionReplace replacements[] = {
 		{"NAME", origName},
@@ -348,13 +348,13 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &ac
 			}
 		}
 		
-		while (name.find("%" + replacements[n].key + "%") != string::npos) {
+		while (name.find("%" + replacements[n].key + "%") != std::string::npos) {
 			name.replace(name.find("%" + replacements[n].key + "%"), replacements[n].key.length() + 2, replacements[n].value);
 		}
 	}
 
 	// stat replacements
-	if (name.find("%STAT-") != string::npos) {
+	if (name.find("%STAT-") != std::string::npos) {
 		std::regex stat_reg("%STAT-([0-9]{1,4})%", std::regex_constants::ECMAScript);
 		std::smatch stat_match;
 
@@ -424,7 +424,7 @@ BYTE GetRequiredLevel(UnitAny* item) {
 	return rlvl;
 }
 
-BYTE GetOperation(string *op) {
+BYTE GetOperation(std::string *op) {
 	if (op->length() < 1) {
 		return NONE;
 	} else if ((*op)[0] == '=') {
@@ -455,14 +455,14 @@ bool IntegerCompare(unsigned int Lvalue, BYTE operation, unsigned int Rvalue) {
 	}
 }
 
-void removeSubstrs(string& s, const string& p) {
-	string::size_type n = p.length();
-	for (string::size_type i = s.find(p); i != string::npos; i = s.find(p))
+void removeSubstrs(std::string& s, const std::string& p) {
+	std::string::size_type n = p.length();
+	for (std::string::size_type i = s.find(p); i != std::string::npos; i = s.find(p))
 		s.erase(i, n);
 }
 
 std::string without_invis_chars(const std::string &name) {
-	string wo_invis_chars(name);
+	std::string wo_invis_chars(name);
 	ColorReplace colors[] = {
 		MAP_COLOR_REPLACEMENTS
 	};
@@ -495,9 +495,9 @@ namespace ItemDisplay {
 
 		BH::itemConfig->ReadMapList("ItemDisplay", rules);
 		for (unsigned int i = 0; i < rules.size(); i++) {
-			string buf;
-			stringstream ss(rules[i].first);
-			vector<string> tokens;
+			std::string buf;
+			std::stringstream ss(rules[i].first);
+			std::vector<std::string> tokens;
 			while (ss >> buf) {
 				// check if buf matches any user idendified strings, and replace it if so
 				// todo: make config groups nestable?
@@ -505,8 +505,8 @@ namespace ItemDisplay {
 				// e.g. `the_group && other_group` works but not `(the_group)`
 				if (condition_group.count(buf)) {
 
-					string buf2;
-					stringstream ssg(condition_group[buf]);
+					std::string buf2;
+					std::stringstream ssg(condition_group[buf]);
 
 					// enclose group with parens
 					tokens.push_back("(");
@@ -522,8 +522,8 @@ namespace ItemDisplay {
 			}
 
 			LastConditionType = CT_None;
-			vector<Condition*> RawConditions;
-			for (vector<string>::iterator tok = tokens.begin(); tok < tokens.end(); tok++) {
+			std::vector<Condition*> RawConditions;
+			for (std::vector<std::string>::iterator tok = tokens.begin(); tok < tokens.end(); tok++) {
 				Condition::BuildConditions(RawConditions, (*tok));
 			}
 			Rule *r = new Rule(RawConditions, &(rules[i].second));
@@ -558,7 +558,7 @@ namespace ItemDisplay {
 				IgnoreRuleList.push_back(r);
 			}
 		}
-		cout << "Finished initializing item rules" << endl << endl;
+		std::cout << "Finished initializing item rules" << std::endl << std::endl;
 	}
 
 	void UninitializeItemRules() {
@@ -583,14 +583,14 @@ namespace ItemDisplay {
 	}
 }
 
-Rule::Rule(vector<Condition*> &inputConditions, string *str) {
+Rule::Rule(std::vector<Condition*> &inputConditions, std::string *str) {
 	Condition::ProcessConditions(inputConditions, conditions);
 	if (str != NULL) BuildAction(str, &action);
 	conditionStack.reserve(conditions.size()); // TODO: too large?
 }
 
-void BuildAction(string *str, Action *act) {
-	act->name = string(str->c_str());
+void BuildAction(std::string *str, Action *act) {
+	act->name = std::string(str->c_str());
 
 	// upcase all text in a %replacement_string%
 	// for some reason \w wasn't catching _, so I added it to the groups
@@ -619,14 +619,14 @@ void BuildAction(string *str, Action *act) {
 	act->description = ParseDescription(act);
 
 	size_t noTracking = act->name.find("%NOTRACK%");
-	if (noTracking != string::npos) {
+	if (noTracking != std::string::npos) {
 		act->name.replace(noTracking, 9, "");
 		act->noTracking = true;
 	}
 
 	// legacy support:
 	size_t map = act->name.find("%MAP%");
-	if (map != string::npos) {
+	if (map != std::string::npos) {
 		int mapColor = MAP_COLOR_WHITE;
 		size_t lastColorPos = 0;
 		ColorReplace colors[] = {
@@ -634,7 +634,7 @@ void BuildAction(string *str, Action *act) {
 		};
 		for (int n = 0; n < sizeof(colors) / sizeof(colors[0]); n++) {
 			size_t pos = act->name.find("%" + colors[n].key + "%");
-			if (pos != string::npos && pos < map && pos >= lastColorPos) {
+			if (pos != std::string::npos && pos < map && pos >= lastColorPos) {
 				mapColor = colors[n].value;
 				lastColorPos = pos;
 			}
@@ -647,24 +647,24 @@ void BuildAction(string *str, Action *act) {
 	}
 
 	size_t done = act->name.find("%CONTINUE%");
-	if (done != string::npos) {
+	if (done != std::string::npos) {
 		act->name.replace(done, 10, "");
 		act->stopProcessing = false;
 	}
 }
 
-string ParseDescription(Action *act) {
+std::string ParseDescription(Action *act) {
 	size_t l_idx = act->name.find("{");
 	size_t r_idx = act->name.find("}");
-	if (l_idx == string::npos || r_idx == string::npos || l_idx > r_idx) return "";
+	if (l_idx == std::string::npos || r_idx == std::string::npos || l_idx > r_idx) return "";
 	size_t start_idx = l_idx + 1;
 	size_t len = r_idx - start_idx;
-	string desc_string = act->name.substr(start_idx, len);
+	std::string desc_string = act->name.substr(start_idx, len);
 	act->name.replace(l_idx, len+2, "");
 	return desc_string;
 }
 
-int ParseMapColor(Action *act, const string& key_string) {
+int ParseMapColor(Action *act, const std::string& key_string) {
 	std::regex pattern("%" + key_string + "-([a-f0-9]{1,4})%",
 		std::regex_constants::ECMAScript | std::regex_constants::icase);
 	int color = UNDEFINED_COLOR;
@@ -679,7 +679,7 @@ int ParseMapColor(Action *act, const string& key_string) {
 	return color;
 }
 
-int ParsePingLevel(Action *act, const string& key_string) {
+int ParsePingLevel(Action *act, const std::string& key_string) {
 	std::regex pattern("%" + key_string + "-([0-9])%",
 		std::regex_constants::ECMAScript | std::regex_constants::icase);
 	int ping_level = 0;
@@ -694,12 +694,12 @@ int ParsePingLevel(Action *act, const string& key_string) {
 	return ping_level;
 }
 
-const string Condition::tokenDelims = "<=>";
+const std::string Condition::tokenDelims = "<=>";
 
 // Implements the shunting-yard algorithm to evaluate condition expressions
 // Returns a vector of conditions in Reverse Polish Notation
-void Condition::ProcessConditions(vector<Condition*> &inputConditions, vector<Condition*> &processedConditions) {
-	vector<Condition*> conditionStack;
+void Condition::ProcessConditions(std::vector<Condition*> &inputConditions, std::vector<Condition*> &processedConditions) {
+	std::vector<Condition*> conditionStack;
 	unsigned int size = inputConditions.size();
 	for (unsigned int c = 0; c < size; c++) {
 		Condition *input = inputConditions[c];
@@ -763,18 +763,18 @@ PartialCondition::~PartialCondition() {
 	}
 }
 
-void PartialCondition::make_count_subrule(string rule_str) {
+void PartialCondition::make_count_subrule(std::string rule_str) {
 	BYTE LastConditionTypeOld = LastConditionType;
 	LastConditionType = CT_None;
-	vector<Condition*> RawConditions;
-	string buf;
-	vector<string> tokens;
-	stringstream ss(rule_str);
+	std::vector<Condition*> RawConditions;
+	std::string buf;
+	std::vector<std::string> tokens;
+	std::stringstream ss(rule_str);
 	while (ss >> buf) {
 		tokens.push_back(buf);
 	}
 	for (auto &token : tokens) {
-		//string token(s.substr(last, next-last));
+		//std::string token(s.substr(last, next-last));
 		//PrintText(1, "In BuildConditions. token=%s", token.c_str());
 		Condition::BuildConditions(RawConditions, token);
 		//PrintText(1, "In BuildConditions. RawConditions.size=%d", RawConditions.size());
@@ -787,8 +787,8 @@ void PartialCondition::make_count_subrule(string rule_str) {
 	LastConditionType = LastConditionTypeOld;
 }
 
-void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
-	vector<Condition*> endConditions;
+void Condition::BuildConditions(std::vector<Condition*> &conditions, std::string token) {
+	std::vector<Condition*> endConditions;
 	int i;
 
 	// Since we don't have a real parser, things will break if [!()] appear in
@@ -821,22 +821,22 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		}
 	}
 	if (i < (int)(token.length() - 1)) {
-		token.erase(i + 1, string::npos);
+		token.erase(i + 1, std::string::npos);
 	}
 
 	size_t delPos = token.find_first_of(tokenDelims);
-	string key;
-	string delim = "";
+	std::string key;
+	std::string delim = "";
 	int value = 0;
-	string valueStr;
-	if (delPos != string::npos) {
+	std::string valueStr;
+	if (delPos != std::string::npos) {
 		key = Trim(token.substr(0, delPos));
 		delim = token.substr(delPos, 1);
 		valueStr = Trim(token.substr(delPos + 1));
 		if (valueStr.length() > 0) {
-			stringstream ss(valueStr);
+			std::stringstream ss(valueStr);
 			if ((ss >> value).fail()) {
-				cout << "Error processing value for token: " << token << endl;
+				std::cout << "Error processing value for token: " << token << std::endl;
 				return;  // TODO: returning errors
 			}
 		}
@@ -861,8 +861,8 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_SOCKETS, 0, operation, value));
 	} else if (key.compare(0, 3, "SET") == 0) {
 		std::smatch match;
-		if (regex_search(key, match, regex("^SET([0-9]{1,4})$")) && match.size() == 2) {
-			int id = stoi(match[1], nullptr, 10);
+		if (std::regex_search(key, match, std::regex("^SET([0-9]{1,4})$")) && match.size() == 2) {
+			int id = std::stoi(match[1], nullptr, 10);
 			Condition::AddOperand(conditions, new QualityIdCondition(ITEM_QUALITY_SET, id));
 		} else {
 			Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_SET));
@@ -873,7 +873,7 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_RARE));
 	} else if (key.compare(0, 3, "UNI") == 0) {
 		std::smatch match;
-		if (regex_search(key, match, regex("^UNI([0-9]{1,4})$")) && match.size() == 2) {
+		if (regex_search(key, match, std::regex("^UNI([0-9]{1,4})$")) && match.size() == 2) {
 			int id = stoi(match[1], nullptr, 10);
 			Condition::AddOperand(conditions, new QualityIdCondition(ITEM_QUALITY_UNIQUE, id));
 		} else {
@@ -1116,28 +1116,28 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		}
 	} else if (key.compare(0, 2, "SK") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(2));
+		std::stringstream ss(key.substr(2));
 		if ((ss >> num).fail() || num < 0 || num > (int)SKILL_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_SINGLESKILL, num, operation, value));
 	} else if (key.compare(0, 2, "OS") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(2));
+		std::stringstream ss(key.substr(2));
 		if ((ss >> num).fail() || num < 0 || num > (int)SKILL_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_NONCLASSSKILL, num, operation, value));
 	} else if (key.compare(0, 4, "CHSK") == 0) { // skills granted by charges
 		int num = -1;
-		stringstream ss(key.substr(4));
+		std::stringstream ss(key.substr(4));
 		if ((ss >> num).fail() || num < 0 || num > (int)SKILL_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ChargedCondition(operation, num, value));
 	} else if (key.compare(0, 4, "CLSK") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(4));
+		std::stringstream ss(key.substr(4));
 		if ((ss >> num).fail() || num < 0 || num >= CLASS_NA) {
 			return;
 		}
@@ -1146,21 +1146,21 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_ALLSKILLS, 0, operation, value));
 	} else if (key.compare(0, 5, "TABSK") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(5));
+		std::stringstream ss(key.substr(5));
 		if ((ss >> num).fail() || num < 0 || num > SKILLTAB_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_SKILLTAB, num, operation, value));
 	} else if (key.compare(0, 4, "STAT") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(4));
+		std::stringstream ss(key.substr(4));
 		if ((ss >> num).fail() || num < 0 || num > (int)STAT_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(num, 0, operation, value));
 	} else if (key.compare(0, 8, "CHARSTAT") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(8));
+		std::stringstream ss(key.substr(8));
 		if ((ss >> num).fail() || num < 0 || num > (int)STAT_MAX) {
 			return;
 		}
@@ -1188,16 +1188,16 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		// backup the last condition type
 		//PrintText(1, "COUNT match with valueStr=%s", valueStr.c_str());
 		int i = 0; // Token index
-		string s(valueStr);
-		const string delimiter = ","; // Partial conditions are delimited by commas, e.g., COUNT=2,FRES>30,LRES>30,CRES>30
+		std::string s(valueStr);
+		const std::string delimiter = ","; // Partial conditions are delimited by commas, e.g., COUNT=2,FRES>30,LRES>30,CRES>30
 		size_t last = 0; 
 		size_t next = 0;
 		int min_conditions = 0; // minimum number of conditions required to match
-		vector<Rule> rule_vec;
-		vector<string> tokens;
-		while ((next = s.find(delimiter, last)) != string::npos) {
+		std::vector<Rule> rule_vec;
+		std::vector<std::string> tokens;
+		while ((next = s.find(delimiter, last)) != std::string::npos) {
 			if (i==0) {
-				stringstream ss(s.substr(last, next-last));
+				std::stringstream ss(s.substr(last, next-last));
 				if ((ss >> min_conditions).fail()) {
 					// TODO: Error handling
 					return;
@@ -1218,16 +1218,16 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 		Condition::AddOperand(conditions, new PartialCondition(operation, min_conditions, tokens));
 	} else if ( token.length() > 0 ){
 		PrintText(1, "Ignored ItemDisplay token: %s", token.c_str());
-		cout << "Ignored ItemDisplay token: " << token << endl;
+		std::cout << "Ignored ItemDisplay token: " << token << std::endl;
 	}
-	for (vector<Condition*>::iterator it = endConditions.begin(); it != endConditions.end(); it++) {
+	for (std::vector<Condition*>::iterator it = endConditions.begin(); it != endConditions.end(); it++) {
 		Condition::AddNonOperand(conditions, (*it));
 	}
 }
 
 // Insert extra AND operators to stay backwards compatible with old config
 // that implicitly ANDed all conditions
-void Condition::AddOperand(vector<Condition*> &conditions, Condition *cond) {
+void Condition::AddOperand(std::vector<Condition*> &conditions, Condition *cond) {
 	if (LastConditionType == CT_Operand || LastConditionType == CT_RightParen) {
 		conditions.push_back(new AndOperator());
 	}
@@ -1235,7 +1235,7 @@ void Condition::AddOperand(vector<Condition*> &conditions, Condition *cond) {
 	LastConditionType = CT_Operand;
 }
 
-void Condition::AddNonOperand(vector<Condition*> &conditions, Condition *cond) {
+void Condition::AddNonOperand(std::vector<Condition*> &conditions, Condition *cond) {
 	if ((cond->conditionType == CT_NegationOperator || cond->conditionType == CT_LeftParen) &&
 		(LastConditionType == CT_Operand || LastConditionType == CT_RightParen)) {
 		conditions.push_back(new AndOperator());
@@ -1509,7 +1509,7 @@ bool EDCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Co
 	}
 
 	DWORD value = 0;
-	for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+	for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 		if (prop->stat == stat) {
 			value += prop->value;
 		}
@@ -1534,7 +1534,7 @@ bool DurabilityCondition::EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1,
 }
 bool DurabilityCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2) {
 	DWORD value = 0;
-	for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+	for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 		if (prop->stat == STAT_ENHANCEDMAXDURABILITY) {
 			value += prop->value;
 		}
@@ -1561,7 +1561,7 @@ bool ChargedCondition::EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Co
 }
 bool ChargedCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2) {
 	DWORD num = 0;
-	for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+	for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 		if (prop->stat == STAT_CHARGED && prop->skill == skill) {
 			num = (prop->level > num) ? prop->level : num; // use the highest level charges for the comparison
 			//PrintText(1, "Found charged skill. skill=%u level=%u", prop->skill, prop->level);
@@ -1601,7 +1601,7 @@ bool FoolsCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1,
 	// 3 = Fools
 
 	unsigned int value = 0;
-	for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+	for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 		if (prop->stat == STAT_MAXDAMAGEPERLEVEL) {
 			value += 1;
 		}
@@ -1692,35 +1692,35 @@ bool ItemStatCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *ar
 	case STAT_DEFENSE:
 		return IntegerCompare(GetDefense(info), operation, targetStat);
 	case STAT_NONCLASSSKILL:
-		for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+		for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 			if (prop->stat == STAT_NONCLASSSKILL && prop->skill == itemStat2) {
 				num += prop->value;
 			}
 		}
 		return IntegerCompare(num, operation, targetStat);
 	case STAT_SINGLESKILL:
-		for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+		for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 			if (prop->stat == STAT_SINGLESKILL && prop->skill == itemStat2) {
 				num += prop->value;
 			}
 		}
 		return IntegerCompare(num, operation, targetStat);
 	case STAT_CLASSSKILLS:
-		for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+		for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 			if (prop->stat == STAT_CLASSSKILLS && prop->characterClass == itemStat2) {
 				num += prop->value;
 			}
 		}
 		return IntegerCompare(num, operation, targetStat);
 	case STAT_SKILLTAB:
-		for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+		for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 			if (prop->stat == STAT_SKILLTAB && (prop->characterClass * 8 + prop->tab) == itemStat2) {
 				num += prop->value;
 			}
 		}
 		return IntegerCompare(num, operation, targetStat);
 	default:
-		for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+		for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 			if (prop->stat == itemStat) {
 				num += prop->value;
 			}
@@ -1767,7 +1767,7 @@ bool ResistAllCondition::EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, 
 }
 bool ResistAllCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2) {
 	int fRes = 0, lRes = 0, cRes = 0, pRes = 0;
-	for (vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
+	for (std::vector<ItemProperty>::iterator prop = info->properties.begin(); prop < info->properties.end(); prop++) {
 		if (prop->stat == STAT_FIRERESIST) {
 			fRes += prop->value;
 		} else if (prop->stat == STAT_LIGHTNINGRESIST) {
@@ -1814,7 +1814,7 @@ bool AddCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, C
 
 int GetDefense(ItemInfo *item) {
 	int def = item->defense;
-	for (vector<ItemProperty>::iterator prop = item->properties.begin(); prop < item->properties.end(); prop++) {
+	for (std::vector<ItemProperty>::iterator prop = item->properties.begin(); prop < item->properties.end(); prop++) {
 		if (prop->stat == STAT_ENHANCEDDEFENSE) {
 			def *= (prop->value + 100);
 			def /= 100;

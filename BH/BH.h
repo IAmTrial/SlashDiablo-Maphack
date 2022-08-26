@@ -8,8 +8,6 @@
 #include "Drawing.h"
 #include "Patch.h"
 
-using namespace std;
-
 //boosts  hash_combine
 //https://stackoverflow.com/a/19195373/597419
 template <class T>
@@ -30,7 +28,7 @@ struct cGuardModule
 };
 
 namespace BH {
-	extern string path;
+	extern std::string path;
 	extern HINSTANCE instance;
 	extern ModuleManager* moduleManager;
 	extern Config* config;
@@ -38,11 +36,11 @@ namespace BH {
 	extern Drawing::UI* settingsUI;
 	extern Drawing::StatsDisplay* statsDisplay;
 	extern WNDPROC OldWNDPROC;
-	extern map<string, Toggle>* MiscToggles;
-	extern map<string, Toggle>* MiscToggles2;
-	extern map<string, bool>* BnetBools;
-	extern map<string, bool>* GamefilterBools;
-	extern map<size_t, string> drops;
+	extern std::map<std::string, Toggle>* MiscToggles;
+	extern std::map<std::string, Toggle>* MiscToggles2;
+	extern std::map<std::string, bool>* BnetBools;
+	extern std::map<std::string, bool>* GamefilterBools;
+	extern std::map<size_t, std::string> drops;
 	extern bool initialized;
 	extern Patch* oogDraw;
 
