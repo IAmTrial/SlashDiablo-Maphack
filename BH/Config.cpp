@@ -63,12 +63,14 @@ bool Config::Parse() {
 		// Parse the key and value.
 		size_t keyValueDelimiterIndex = line.find_first_of(":");
 
-		std::string_view keyStr(line.c_str(), keyValueDelimiterIndex);
-		entry.key.assign(Trim(keyStr));
+		std::string_view rawKeyStr(line.c_str(), keyValueDelimiterIndex);
+		std::string keyStr = Trim(rawKeyStr);
+		entry.key = std::move(keyStr);
 
-		std::string_view valueStr(line);
-		valueStr.remove_prefix(keyValueDelimiterIndex + 1);
-		entry.value.assign(Trim(valueStr));
+		std::string_view rawValueStr(line);
+		rawValueStr.remove_prefix(keyValueDelimiterIndex + 1);
+		std::string valueStr = Trim(rawValueStr);
+		entry.value = std::move(valueStr);
 
 		entry.comment = line.substr(keyValueDelimiterIndex + 1, line.find(entry.value) - keyValueDelimiterIndex - 1);
 		entry.pointer = NULL;
@@ -291,7 +293,7 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 	// Read state string.
 	std::string_view rawStateStr(
 			contents[key].value.c_str(), stateVkeydelimiterIndex);
-	std::string_view stateStr = Trim(rawStateStr);
+	std::string stateStr = Trim(rawStateStr);
 
 	// Read virtual-key string and get mapped code.
 	std::string_view rawVirtualKeyStr(contents[key].value);
@@ -303,7 +305,7 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 			virtualKeyOptional.value_or(VirtualKey::GetUnset());
 
 	ret.toggle = virtualKey.code;
-	ret.state = StringToBool(Trim(stateStr));
+	ret.state = StringToBool(stateStr);
 
 	value = ret;
 	return ret;
