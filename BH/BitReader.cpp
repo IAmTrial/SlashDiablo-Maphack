@@ -1,6 +1,5 @@
 #include "BitReader.h"
 
-
 bool BitReader::readBool() {
 	return read(1) > 0;
 }

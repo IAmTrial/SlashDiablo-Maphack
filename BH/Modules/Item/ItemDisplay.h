@@ -1,11 +1,13 @@
 #pragma once
-#include "../../Constants.h"
-#include "../../D2Ptrs.h"
-#include "../../Config.h"
+
+#include <windows.h>
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include "../../D2Structs.h"
 #include "../../MPQInit.h"
-#include "../../BH.h"
-#include <cstdlib>
-#include <regex>
 #include "../../RuleLookupCache.h"
 
 #define EXCEPTION_INVALID_STAT			1
@@ -20,6 +22,8 @@
 
 #define DEAD_COLOR        0xdead
 #define UNDEFINED_COLOR   0xbeef
+
+struct Rule;
 
 // Properties that can appear on an item from incoming packets
 struct ItemProperty {

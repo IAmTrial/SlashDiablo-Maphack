@@ -46,6 +46,9 @@
 #ifndef COMMONSTRUCTS_H__
 #define COMMONSTRUCTS_H__
 
+#include <wchar.h>
+#include <windows.h>
+
 struct UnitAny;
 struct StormMsg;
 struct CellContext;

@@ -1,5 +1,8 @@
 #pragma once
+
+#include <string>
 #include <vector>
+
 #include "../../Hook.h"
 
 namespace Drawing {

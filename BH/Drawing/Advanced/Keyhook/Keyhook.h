@@ -1,5 +1,9 @@
 #pragma once
 
+#include <windows.h>
+
+#include <string>
+
 #include "../../Hook.h"
 
 namespace Drawing {

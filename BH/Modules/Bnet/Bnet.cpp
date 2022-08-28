@@ -1,6 +1,20 @@
 #include "Bnet.h"
-#include "../../D2Ptrs.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include <map>
+#include <regex>
+#include <string>
+
 #include "../../BH.h"
+#include "../../Common.h"
+#include "../../D2Ptrs.h"
+#include "../../D2Structs.h"
+#include "../../Patch.h"
+#include "../Module.h"
 
 unsigned int Bnet::failToJoin;
 std::string Bnet::lastName;

@@ -1,10 +1,18 @@
 #pragma once
-#include "../Module.h"
-#include "../../Constants.h"
+
+#include <windows.h>
+
+#include <functional>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "../../Config.h"
-#include "../../Drawing.h"
-#include "../../JSONObject.h"
+#include "../../Drawing/UI/UITab.h"
 #include "../../Mustache.h"
+#include "../../JSONObject.h"
+#include "../Module.h"
 
 #define MAX_FUNCTION 23
 

@@ -1,9 +1,12 @@
 #pragma once
-#include "../../D2Structs.h"
-#include "../Module.h"
-#include "../../Config.h"
-#include "../../Common.h"
+
+#include <windows.h>
+
 #include <atomic>
+#include <map>
+#include <string>
+
+#include "../Module.h"
 
 class ChatColor : public Module {
 private:

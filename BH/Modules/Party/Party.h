@@ -1,7 +1,12 @@
 #pragma once
-#include "../Module.h"
+
+#include <windows.h>
+
+#include <map>
+#include <string>
+
 #include "../../Config.h"
-#include "../../Drawing.h"
+#include "../Module.h"
 
 #define PARTY_NOT_IN_PARTY 0x00
 #define PARTY_IN_PARTY 0x01

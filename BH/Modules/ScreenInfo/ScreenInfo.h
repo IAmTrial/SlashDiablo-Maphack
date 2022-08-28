@@ -1,9 +1,19 @@
 #pragma once
-#include "../../D2Structs.h"
-#include "../Module.h"
-#include "../../Config.h"
-#include "../../Drawing.h"
+
+#include <wchar.h>
+#include <windows.h>
+
 #include <deque>
+#include <map>
+#include <string>
+#include <vector>
+#include <utility>
+
+#include "../../Common.h"
+#include "../../Config.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/Basic/Texthook/Texthook.h"
+#include "../Module.h"
 
 struct StateCode {
 	std::string name;

@@ -1,6 +1,11 @@
 #pragma once
-#include "JSONObject.h"
+
 #include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "JSONObject.h"
 
 class TableReader;
 class Tables;

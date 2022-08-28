@@ -1,7 +1,10 @@
 #pragma once
+
+#include <wchar.h>
+#include <windows.h>
+
 #include <map>
 #include <string>
-#include <Windows.h>
 
 class Module;
 

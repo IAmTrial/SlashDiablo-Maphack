@@ -1,4 +1,9 @@
-#include <Windows.h>
+#include "D2Stubs.h"
+
+#include <windows.h>
+
+#include "CommonStructs.h"
+#include "D2Structs.h"
 #include "D2Ptrs.h"
 
 DWORD __declspec(naked) __fastcall D2CLIENT_GetUnitName_STUB(DWORD UnitAny)

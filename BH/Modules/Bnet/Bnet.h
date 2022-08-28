@@ -1,6 +1,12 @@
 #pragma once
-#include "../Module.h"
+
+#include <windows.h>
+
+#include <map>
 #include <regex>
+#include <string>
+
+#include "../Module.h"
 
 struct Control;
 

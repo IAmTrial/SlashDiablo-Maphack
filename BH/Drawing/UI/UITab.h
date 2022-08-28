@@ -1,4 +1,7 @@
 #pragma once
+
+#include <string>
+
 #include "../Hook.h"
 #include "UI.h"
 

@@ -1,8 +1,17 @@
 #pragma once
-#include "../../D2Structs.h"
-#include "../Module.h"
+
+#include <windows.h>
+
+#include <list>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "../../Config.h"
-#include "../../Drawing.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../Module.h"
 
 enum MaphackReveal {
 	MaphackRevealGame = 0,

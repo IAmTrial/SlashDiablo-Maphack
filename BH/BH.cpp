@@ -10,22 +10,30 @@
 #include <string>
 #include <thread>
 
+#include "Common.h"
 #include "Config.h"
+#include "Constants.h"
 #include "D2Handlers.h"
 #include "D2Intercepts.h"
-#include "Drawing.h"
-#include "Modules.h"
+#include "D2Ptrs.h"
+#include "Drawing/Stats/StatsDisplay.h"
+#include "Drawing/UI/UI.h"
+#include "Modules/AutoTele/AutoTele.h"
+#include "Modules/Bnet/Bnet.h"
+#include "Modules/ChatColor/ChatColor.h"
+#include "Modules/Gamefilter/Gamefilter.h"
+#include "Modules/Item/Item.h"
+#include "Modules/ItemMover/ItemMover.h"
+#include "Modules/Maphack/Maphack.h"
 #include "Modules/ModuleManager.h"
+#include "Modules/Party/Party.h"
+#include "Modules/ScreenInfo/ScreenInfo.h"
+#include "Modules/StashExport/StashExport.h"
+#include "MPQInit.h"
 #include "MPQReader.h"
 #include "Patch.h"
 #include "TableReader.h"
 #include "Task.h"
-
-// #include "MPQInit.h"
-
-#define _DEFINE_PTRS
-#include "D2Ptrs.h"
-#undef _DEFINE_PTRS
 
 std::string BH::path;
 HINSTANCE BH::instance;

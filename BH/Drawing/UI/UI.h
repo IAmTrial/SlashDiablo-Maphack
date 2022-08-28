@@ -1,8 +1,10 @@
 #pragma once
 
-#include <Windows.h>
-#include <string>
+#include <windows.h>
+
 #include <list>
+#include <string>
+
 #include "../Hook.h"
 
 namespace Drawing {

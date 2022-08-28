@@ -1,5 +1,6 @@
 #pragma once
-#include "Task.h"
+
+#include <functional>
 
 class DrawBuffer;
 class DrawDirective;

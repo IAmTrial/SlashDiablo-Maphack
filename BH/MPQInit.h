@@ -1,14 +1,11 @@
 #pragma once
-#include <Windows.h>
-#include <algorithm>
-#include <locale>
-#include <cstdlib>
-#include <fstream>
+
+#include <windows.h>
+
 #include <map>
+#include <string>
 #include <unordered_map>
-#include "Constants.h"
-#include "Common.h"
-#include "D2Structs.h"
+#include <vector>
 
 /*
  * MPQInit handles the data we can initialize from MPQ files. It also

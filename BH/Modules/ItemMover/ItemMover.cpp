@@ -1,9 +1,25 @@
 #include "ItemMover.h"
-#include "../Item/Item.h"
+
+#include <windows.h>
+
+#include <cstddef>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 #include "../../BH.h"
-#include "../../D2Ptrs.h"
-#include "../../D2Stubs.h"
+#include "../../BitReader.h"
+#include "../../Common.h"
 #include "../../D2Helpers.h"
+#include "../../D2Ptrs.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/Advanced/Keyhook/Keyhook.h"
+#include "../../Drawing/Basic/Texthook/Texthook.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../../MPQInit.h"
+#include "../Item/Item.h"
+#include "../Item/ItemDisplay.h"
+#include "../Module.h"
 #include "../ScreenInfo/ScreenInfo.h"
 
 // This module was inspired by the RedVex plugin "Item Mover", written by kaiks.

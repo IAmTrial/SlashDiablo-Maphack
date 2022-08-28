@@ -1,5 +1,11 @@
 #include "D2Version.h"
-#include <Windows.h>
+
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <windows.h>
+
+#include <string>
 
 #pragma comment(lib,"Version.lib")
 

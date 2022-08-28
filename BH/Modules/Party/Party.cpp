@@ -1,11 +1,20 @@
 #include "Party.h"
 
-#include <limits>
+#include <string.h>
+#include <windows.h>
 
-#include "../../D2Ptrs.h"
+#include <algorithm>
+#include <map>
+#include <string>
+
 #include "../../BH.h"
-#include "../../D2Stubs.h"
+#include "../../Config.h"
+#include "../../Constants.h"
 #include "../../D2Helpers.h"
+#include "../../D2Ptrs.h"
+#include "../../Drawing/Advanced/Checkhook/Checkhook.h"
+#include "../../Drawing/Hook.h"
+#include "../Module.h"
 
 namespace {
 

@@ -1,6 +1,11 @@
 #include "AsyncDrawBuffer.h"
-#include <Windows.h>
+
+#include <windows.h>
+
+#include <functional>
 #include <vector>
+
+#include "Task.h"
 
 class DrawItem {
 public:

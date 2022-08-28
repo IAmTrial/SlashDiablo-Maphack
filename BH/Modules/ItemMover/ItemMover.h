@@ -1,12 +1,13 @@
 #pragma once
-#include "../../D2Structs.h"
-#include "../../Drawing.h"
-#include "../Module.h"
-#include "../../Config.h"
-#include "../../Common.h"
+
+#include <stddef.h>
+#include <windows.h>
+
 #include "../../BitReader.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/UI/UITab.h"
 #include "../Item/ItemDisplay.h"
-#include "../../MPQInit.h"
+#include "../Module.h"
 
 extern int INVENTORY_WIDTH;
 extern int INVENTORY_HEIGHT;

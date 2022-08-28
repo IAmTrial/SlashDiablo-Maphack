@@ -43,11 +43,13 @@
 *
 */
 
-#include <Windows.h>
 
 #pragma once
 #ifndef D2DATATABLES_H
 #define D2DATATABLES_H
+
+#include <wchar.h>
+#include <windows.h>
 
 struct ArenaTxt
 {

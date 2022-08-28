@@ -1,7 +1,18 @@
-#include "D2Ptrs.h"
-
-#include "BH.h"
 #include "MPQReader.h"
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <windows.h>
+
+#include <algorithm>
+#include <map>
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "Constants.h"
+#include "D2Ptrs.h"
 
 std::map<std::string, MPQData*> MpqDataMap;
 std::string MpqVersion;

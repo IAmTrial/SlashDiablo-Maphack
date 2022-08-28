@@ -48,6 +48,7 @@
 #include <locale.h>
 #include <math.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -58,11 +59,10 @@
 #include <memory>
 #include <string>
 #include <sstream>
-#include <utility>
 #include <vector>
 
-#include "Constants.h"
 #include "BH.h"
+#include "Constants.h"
 #include "D2Ptrs.h"
 
 void Tokenize(const std::string& str,

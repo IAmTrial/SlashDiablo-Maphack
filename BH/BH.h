@@ -8,7 +8,8 @@
 #include <string>
 
 #include "Config.h"
-#include "Drawing.h"
+#include "Drawing/Stats/StatsDisplay.h"
+#include "Drawing/UI/UI.h"
 #include "Modules/ModuleManager.h"
 #include "Patch.h"
 

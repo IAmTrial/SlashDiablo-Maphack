@@ -1,8 +1,14 @@
-#include "D2Ptrs.h"
-#include "BH.h"
-#include "D2Stubs.h"
+#include "D2Handlers.h"
 
-#include <iterator>
+#include <stddef.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include "BH.h"
+#include "D2Ptrs.h"
+#include "Drawing/Hook.h"
+#include "Drawing/Stats/StatsDisplay.h"
+#include "Drawing/UI/UI.h"
 
 void GameDraw() {
 	__raise BH::moduleManager->OnDraw();

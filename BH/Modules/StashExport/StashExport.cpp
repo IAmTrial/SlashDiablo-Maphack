@@ -1,16 +1,28 @@
 #include "StashExport.h"
 
-#include <algorithm>
+#include <windows.h>
+
+#include <functional>
+#include <fstream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "../../BH.h"
+#include "../../Common.h"
 #include "../../Common/StringUtil.h"
-#include "../../Constants.h"
+#include "../../Config.h"
 #include "../../D2Ptrs.h"
-#include "../../D2Stubs.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/Advanced/Checkhook/Checkhook.h"
+#include "../../Drawing/Advanced/Combohook/Combohook.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../../JSONObject.h"
 #include "../../MPQInit.h"
+#include "../../Mustache.h"
 #include "../../TableReader.h"
-#include "../Item/ItemDisplay.h"
-#include "../Item/Item.h"
+#include "../Module.h"
 
 namespace {
 

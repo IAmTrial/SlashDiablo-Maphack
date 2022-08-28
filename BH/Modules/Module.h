@@ -1,5 +1,10 @@
 #pragma once
+
+#include <wchar.h>
+#include <windows.h>
+
 #include <string>
+
 #include "ModuleManager.h"
 
 class Module {

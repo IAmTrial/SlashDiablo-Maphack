@@ -1,7 +1,12 @@
 #include "Combohook.h"
+
+#include <string>
+#include <vector>
+
+#include "../../../D2Ptrs.h"
 #include "../../Basic/Framehook/Framehook.h"
 #include "../../Basic/Texthook/Texthook.h"
-#include "../../../D2Ptrs.h"
+#include "../../Hook.h"
 
 namespace Drawing {
 

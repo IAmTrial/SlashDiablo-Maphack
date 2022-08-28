@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 VOID GameDraw_Interception();
 void GameAutomapDraw_Interception();
 VOID OOGDraw_Interception();

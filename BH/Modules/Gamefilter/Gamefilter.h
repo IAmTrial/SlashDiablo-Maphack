@@ -1,8 +1,14 @@
 #pragma once
-#include "../Module.h"
-#include <Windows.h>
+
+#include <wchar.h>
+#include <windows.h>
+
 #include <list>
+#include <map>
+#include <string>
 #include <vector>
+
+#include "../Module.h"
 
 struct GameListEntry
 {

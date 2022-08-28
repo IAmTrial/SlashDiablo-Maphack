@@ -1,5 +1,13 @@
 #include "Patch.h"
+
+#include <string.h>
+#include <windows.h>
+
+#include <string>
+#include <vector>
+
 #include "D2Version.h"
+
 std::vector<Patch*> Patch::Patches;
 
 Patch::Patch(PatchType type, Dll dll, Offsets offsets, int function, int length) 
