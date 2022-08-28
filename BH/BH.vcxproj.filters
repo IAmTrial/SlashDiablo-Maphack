@@ -9,6 +9,7 @@
     <ClCompile Include="D2Handlers.cpp" />
     <ClCompile Include="D2Helpers.cpp" />
     <ClCompile Include="D2Intercepts.cpp" />
+    <ClCompile Include="D2Ptrs.cpp" />
     <ClCompile Include="D2Stubs.cpp" />
     <ClCompile Include="D2Version.cpp" />
     <ClCompile Include="DllMain.cpp" />
@@ -65,7 +66,6 @@
     <ClInclude Include="D2Structs.h" />
     <ClInclude Include="D2Stubs.h" />
     <ClInclude Include="D2Version.h" />
-    <ClInclude Include="Drawing.h" />
     <ClInclude Include="Drawing\Advanced\Checkhook\Checkhook.h" />
     <ClInclude Include="Drawing\Advanced\Colorhook\Colorhook.h" />
     <ClInclude Include="Drawing\Advanced\Combohook\Combohook.h" />
@@ -81,7 +81,6 @@
     <ClInclude Include="Drawing\UI\UI.h" />
     <ClInclude Include="Drawing\UI\UITab.h" />
     <ClInclude Include="JSONObject.h" />
-    <ClInclude Include="Modules.h" />
     <ClInclude Include="Modules\AutoTele\ATIncludes\ArrayEx.h" />
     <ClInclude Include="Modules\AutoTele\ATIncludes\CMapIncludes.h" />
     <ClInclude Include="Modules\AutoTele\ATIncludes\CollisionMap.h" />
