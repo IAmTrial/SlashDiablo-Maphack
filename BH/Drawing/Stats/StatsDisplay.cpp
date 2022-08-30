@@ -1,9 +1,17 @@
 #include "StatsDisplay.h"
+
+#include "../../BH.h"
+#include "../../Common/StringUtil.h"
+#include "../../D2Ptrs.h"
 #include "../Basic/Texthook/Texthook.h"
 #include "../Basic/Framehook/Framehook.h"
 #include "../Basic/Boxhook/Boxhook.h"
-#include "../../D2Ptrs.h"
-#include "../../BH.h"
+
+namespace {
+
+using ::common::str_util::Trim;
+
+}  // namespace
 
 using namespace Drawing;
 

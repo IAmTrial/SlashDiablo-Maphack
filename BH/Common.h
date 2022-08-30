@@ -69,8 +69,6 @@ bool IsTrue(const char *str);
 bool StringToBool(std::string str);
 int StringToNumber(std::string str);
 
-std::string Trim(std::string source);
-
 void PrintText(DWORD Color, char *szText, ...);
 
 ULONGLONG BHGetTickCount(void);

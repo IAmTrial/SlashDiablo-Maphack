@@ -109,5 +109,7 @@
     <ClInclude Include="TableReader.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="Common\Input.h" />
+    <ClInclude Include="Common\StringUtil.h" />
+    <ClInclude Include="Common\StringUtilTemplate.inc" />
   </ItemGroup>
 </Project>

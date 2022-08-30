@@ -1,13 +1,22 @@
 #include "StashExport.h"
-#include "../../D2Ptrs.h"
+
+#include <algorithm>
+
 #include "../../BH.h"
+#include "../../Common/StringUtil.h"
+#include "../../Constants.h"
+#include "../../D2Ptrs.h"
 #include "../../D2Stubs.h"
+#include "../../MPQInit.h"
+#include "../../TableReader.h"
 #include "../Item/ItemDisplay.h"
 #include "../Item/Item.h"
-#include "../../TableReader.h"
-#include "../../MPQInit.h"
-#include "../../Constants.h"
-#include <algorithm>
+
+namespace {
+
+using ::common::str_util::Trim;
+
+}  // namespace
 
 std::map<std::string, Toggle> StashExport::Toggles;
 std::map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> StashExport::MustacheTemplates;
@@ -220,8 +229,7 @@ void StashExport::GetItemInfo(UnitAny* pItem, JSONObject* pBuffer){
 		txt->szCode[3],
 		0
 	};
-	std::string code = cCode;
-	code = Trim(code);
+	std::string code = Trim(cCode);
 
 	BYTE nType = txt->nType;
 	if (nType >= 96 && nType <= 102) { // is gem?

@@ -1,5 +1,13 @@
 #include "ItemDisplay.h"
+
+#include "../../Common/StringUtil.h"
 #include "Item.h"
+
+namespace {
+
+using ::common::str_util::Trim;
+
+}  // namespace
 
 // All the types able to be combined with the + operator
 #define COMBO_STATS					\
@@ -830,9 +838,12 @@ void Condition::BuildConditions(std::vector<Condition*> &conditions, std::string
 	int value = 0;
 	std::string valueStr;
 	if (delPos != std::string::npos) {
-		key = Trim(token.substr(0, delPos));
+		key = Trim(std::string_view(token.c_str(), delPos));
 		delim = token.substr(delPos, 1);
-		valueStr = Trim(token.substr(delPos + 1));
+		valueStr =
+				Trim(
+						std::string_view(
+								token.c_str() + delPos + 1, token.length() - (delPos + 1)));
 		if (valueStr.length() > 0) {
 			std::stringstream ss(valueStr);
 			if ((ss >> value).fail()) {
