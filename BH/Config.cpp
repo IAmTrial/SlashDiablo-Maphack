@@ -64,13 +64,11 @@ bool Config::Parse() {
 		size_t keyValueDelimiterIndex = line.find_first_of(":");
 
 		std::string_view rawKeyStr(line.c_str(), keyValueDelimiterIndex);
-		std::string keyStr = Trim(rawKeyStr);
-		entry.key = std::move(keyStr);
+		entry.key = Trim(rawKeyStr);
 
 		std::string_view rawValueStr(line);
 		rawValueStr.remove_prefix(keyValueDelimiterIndex + 1);
-		std::string valueStr = Trim(rawValueStr);
-		entry.value = std::move(valueStr);
+		entry.value = Trim(rawValueStr);
 
 		entry.comment = line.substr(keyValueDelimiterIndex + 1, line.find(entry.value) - keyValueDelimiterIndex - 1);
 		entry.pointer = NULL;
@@ -591,6 +589,7 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 		std::string_view rawOldStateStr(
 				entry.value.c_str(), stateVkeydelimiterIndex);
 		std::string oldStateStr = Trim(rawOldStateStr);
+		bool oldState = StringToBool(std::move(oldStateStr));
 
 		// Get the virtual-key for the old Toggle.
 		std::string_view rawOldVirtualKeyStr(
@@ -598,8 +597,6 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 		std::string oldVirtualKeyStr = Trim(rawOldVirtualKeyStr);
 		std::optional<VirtualKey> oldVirtualKeyOptional =
 				VirtualKey::GetFromSymbolName(oldVirtualKeyStr);
-
-		bool oldState = StringToBool(std::move(oldStateStr));
 		VirtualKey oldVirtualKey =
 				oldVirtualKeyOptional.value_or(VirtualKey::GetUnset());
 

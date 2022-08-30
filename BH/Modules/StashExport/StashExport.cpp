@@ -229,7 +229,7 @@ void StashExport::GetItemInfo(UnitAny* pItem, JSONObject* pBuffer){
 		txt->szCode[3],
 		0
 	};
-	std::string code(Trim(cCode));
+	std::string code = Trim(cCode);
 
 	BYTE nType = txt->nType;
 	if (nType >= 96 && nType <= 102) { // is gem?
