@@ -2,7 +2,7 @@
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 /* Basic Hook Initializer
  *		Used for just drawing basic crosses of screen.
@@ -67,3 +67,5 @@ bool Crosshook::Draw(unsigned int x, unsigned int y, unsigned int color) {
 		D2GFX_DrawLine(x + szLines[n][0], y + szLines[n][1], x + szLines[n+1][0], y + szLines[n+1][1], color, -1);
 	return true;
 }
+
+}  // namespace Drawing

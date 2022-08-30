@@ -3,7 +3,7 @@
 #include "../../Basic/Texthook/Texthook.h"
 #include "../../../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 Combohook::Combohook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int xSize, unsigned int* index, std::vector<std::string> opts)
 	: Hook(visibility, x, y) {
@@ -68,3 +68,5 @@ void Combohook::OnDraw() {
 		}
 	}
 }
+
+}  // namespace Drawing

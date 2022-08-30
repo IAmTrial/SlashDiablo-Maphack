@@ -2,7 +2,7 @@
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 /* Basic Hook Initializer
  *		Used for just drawing basic framees on screen.
@@ -150,3 +150,5 @@ bool Framehook::Draw(unsigned int x, unsigned int y, unsigned int xSize, unsigne
 	Framehook::DrawRectStub(&pRect);
 	return true;
 }
+
+}  // namespace Drawing

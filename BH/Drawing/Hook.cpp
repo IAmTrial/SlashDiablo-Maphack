@@ -2,7 +2,7 @@
 #include "Advanced/Colorhook/Colorhook.h"
 #include "../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 std::list<Hook*> Hook::Hooks;
 
@@ -370,3 +370,5 @@ bool Hook::KeyClick(bool bUp, BYTE bKey, LPARAM lParam) {
 				block = true;
 	return block;
 }
+
+}  // namespace Drawing

@@ -3,7 +3,8 @@
 #include "../../../D2Ptrs.h"
 #include "../../Basic/Framehook/Framehook.h"
 
-using namespace Drawing;
+namespace Drawing {
+
 /* Basic Hook Initializer
  *		Used for drawing a checkbox on screen.
  */
@@ -180,3 +181,5 @@ bool Checkhook::OnRightClick(bool up, unsigned int x, unsigned int y) {
 	}
 	return false;
 }
+
+}  // namespace Drawing

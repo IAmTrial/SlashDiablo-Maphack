@@ -5,7 +5,7 @@
 #include "../Basic/Texthook/Texthook.h"
 #include "../Basic/Framehook/Framehook.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 std::list<UI*> UI::UIs;
 std::list<UI*> UI::Minimized;
@@ -382,3 +382,5 @@ bool UI::RightClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 	}
 	return false;
 }
+
+}  // namespace Drawing

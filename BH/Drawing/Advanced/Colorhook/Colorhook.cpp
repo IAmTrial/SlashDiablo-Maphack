@@ -6,7 +6,7 @@
 #include "../../Basic/Texthook/Texthook.h"
 #include "../../Basic/Crosshook/Crosshook.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 Colorhook* Colorhook::current;
 
@@ -145,3 +145,5 @@ void Colorhook::OnDraw() {
 	}
 	Unlock();
 }
+
+}  // namespace Drawing

@@ -6,11 +6,11 @@
 
 namespace {
 
-using common::input::VirtualKey;
+using ::common::input::VirtualKey;
 
-} // namespace
+}  // namespace
 
-using namespace Drawing;
+namespace Drawing {
 
 /* Basic Hook Initializer
  *		Used for just drawing basics.
@@ -110,3 +110,5 @@ unsigned int Keyhook::GetXSize() {
 unsigned int Keyhook::GetYSize() {
 	return 10;
 }
+
+}  // namespace Drawing

@@ -2,7 +2,7 @@
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 
-using namespace Drawing;
+namespace Drawing {
 
 /* Basic Hook Initializer
  *		Used for just drawing basic boxes on screen.
@@ -139,3 +139,5 @@ bool Boxhook::Draw(unsigned int x, unsigned int y, unsigned int xSize, unsigned 
 	D2GFX_DrawRectangle(x, y, x + xSize, y + ySize, color, trans);
 	return true;
 }
+
+}  // namespace Drawing

@@ -16,52 +16,54 @@ struct DisplayedStat {
 };
 
 namespace Drawing {
-	class StatsDisplay;
 
-	class StatsDisplay : public HookGroup {
-		private:
-			std::map<std::string, Toggle> Toggles;
-			static StatsDisplay *display;
-			std::string name;
-			unsigned int x, y, xSize, ySize;
-			unsigned int statsKey;
-			bool active, minimized;
-			CRITICAL_SECTION crit;
-			std::vector<DisplayedStat*> customStats;
-		public:
-			StatsDisplay(std::string name);
-			~StatsDisplay();
+class StatsDisplay;
 
-			void LoadConfig();
+class StatsDisplay : public HookGroup {
+	private:
+		std::map<std::string, Toggle> Toggles;
+		static StatsDisplay *display;
+		std::string name;
+		unsigned int x, y, xSize, ySize;
+		unsigned int statsKey;
+		bool active, minimized;
+		CRITICAL_SECTION crit;
+		std::vector<DisplayedStat*> customStats;
+	public:
+		StatsDisplay(std::string name);
+		~StatsDisplay();
 
-			void Lock() { EnterCriticalSection(&crit); };
-			void Unlock() { LeaveCriticalSection(&crit); };
+		void LoadConfig();
 
-			std::string GetName() { return name; };
-			unsigned int GetX() { return x; };
-			unsigned int GetY() { return y; };
-			unsigned int GetXSize() { return xSize; };
-			unsigned int GetYSize() { return ySize; };
-			bool IsActive() { return active; };
-			bool IsMinimized() { return minimized; };
+		void Lock() { EnterCriticalSection(&crit); };
+		void Unlock() { LeaveCriticalSection(&crit); };
 
-			bool InRange(unsigned int x, unsigned int y);
+		std::string GetName() { return name; };
+		unsigned int GetX() { return x; };
+		unsigned int GetY() { return y; };
+		unsigned int GetXSize() { return xSize; };
+		unsigned int GetYSize() { return ySize; };
+		bool IsActive() { return active; };
+		bool IsMinimized() { return minimized; };
 
-			void SetX(unsigned int newX);
-			void SetY(unsigned int newY);
-			void SetXSize(unsigned int newXSize);
-			void SetYSize(unsigned int newYSize);
-			void SetName(std::string newName) { Lock(); name = newName;  Unlock(); };
-			void SetActive(bool newState) { Lock(); active = newState; Unlock(); };
-			void SetMinimized(bool newState) { Lock(); minimized = newState; Unlock(); };
+		bool InRange(unsigned int x, unsigned int y);
 
-			void OnDraw();
-			static void Draw();
+		void SetX(unsigned int newX);
+		void SetY(unsigned int newY);
+		void SetXSize(unsigned int newXSize);
+		void SetYSize(unsigned int newYSize);
+		void SetName(std::string newName) { Lock(); name = newName;  Unlock(); };
+		void SetActive(bool newState) { Lock(); active = newState; Unlock(); };
+		void SetMinimized(bool newState) { Lock(); minimized = newState; Unlock(); };
 
-			bool OnClick(bool up, unsigned int mouseX, unsigned int mouseY);
-			static bool Click(bool up, unsigned int mouseX, unsigned int mouseY);
+		void OnDraw();
+		static void Draw();
 
-			bool OnKey(bool up, BYTE key, LPARAM lParam);
-			static bool KeyClick(bool bUp, BYTE bKey, LPARAM lParam);
-	};
+		bool OnClick(bool up, unsigned int mouseX, unsigned int mouseY);
+		static bool Click(bool up, unsigned int mouseX, unsigned int mouseY);
+
+		bool OnKey(bool up, BYTE key, LPARAM lParam);
+		static bool KeyClick(bool bUp, BYTE bKey, LPARAM lParam);
 };
+
+}  // namespace Drawing
