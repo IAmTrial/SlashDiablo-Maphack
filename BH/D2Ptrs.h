@@ -468,7 +468,7 @@ ASMPTR(D2MULTI, ChannelInput_I, 0xD5B0, 0x11B80)
 // D2Cmp Ordinals
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-FUNCPTR(D2CMP, InitCellFile, void __stdcall, (void *cellfile, CellFile **outptr, char *srcfile, DWORD lineno, DWORD filever, char *filename), -10006, -10008)
+FUNCPTR(D2CMP, InitCellFile, void __stdcall, (void *cellfile, CellFile **outptr, const char *srcfile, DWORD lineno, DWORD filever, const char *filename), -10006, -10008)
 FUNCPTR(D2CMP, DeleteCellFile, void __stdcall, (CellFile *cellfile), -10106, -10084)
 
 
@@ -515,7 +515,7 @@ FUNCPTR(D2WIN, GetTextSize, DWORD __fastcall, (wchar_t *wStr, DWORD* dwWidth, DW
 FUNCPTR(D2WIN, SetTextSize, DWORD __fastcall, (DWORD dwSize), -10184, -10047)
 FUNCPTR(D2WIN, GetTextWidth, int __fastcall, (const wchar_t * wStr), -10028, -10150)
 
-FUNCPTR(D2WIN, SetControlText, void* __fastcall, (Control* box, wchar_t* txt), -10042, -10007)
+FUNCPTR(D2WIN, SetControlText, void* __fastcall, (Control* box, const wchar_t* txt), -10042, -10007)
 FUNCPTR(D2WIN, GetTextWidthFileNo, DWORD __fastcall, (wchar_t *wStr, DWORD* dwWidth, DWORD* dwFileNo), -10177, -10179)
 
 FUNCPTR(D2WIN, CreateImage, Control* __fastcall, (int xPos, int yPos, int SizeX, int SizeY, CellFile* pCellFile, BOOL(__stdcall* OnClick)(Control*), void* a7, BOOL(__stdcall* KeyHandle)(Control*)), -10127, -10203) //Updated 1.13c

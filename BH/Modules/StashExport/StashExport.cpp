@@ -419,14 +419,15 @@ void StashExport::WriteStash() {
 		else { /* text */
 			std::string tmpltName = options.at(exportType);
 			if (MustacheTemplates.find(tmpltName) != MustacheTemplates.end()){
-				buffer = Mustache::renderTemplate(MustacheTemplates[tmpltName].get(), Mustache::Context(data, [](std::string name) -> Mustache::AMustacheTemplate*{
+				Mustache::Context ctx(data, [](std::string name) -> Mustache::AMustacheTemplate*{
 					auto tmpl = MustacheTemplates.find(name);
 					if (tmpl != MustacheTemplates.end()){
 						return tmpl->second.get();
 					}
 
 					return nullptr;
-				}));
+				});
+				buffer = Mustache::renderTemplate(MustacheTemplates[tmpltName].get(), ctx);
 			}
 		}
 		
@@ -588,7 +589,7 @@ std::function<JSONObject*(UnitAny*, JSONObject*, JSONObject*, JSONElement*, int,
 	&SKILL_FUNCTION
 };
 
-char* QUALITY_NAMES[] = {
+const char* QUALITY_NAMES[] = {
 	"None",
 	"Inferior",
 	"Normal",

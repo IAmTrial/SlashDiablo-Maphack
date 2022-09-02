@@ -66,7 +66,7 @@ public:
         SIZE CopyMapData(WORD** ppBuffer, int cx, int cy) const;
         BOOL CopyMapData(WordMatrix& rBuffer) const;
         BOOL ReportCollisionType(POINT ptOrigin, long lRadius) const;
-        int CCollisionMap::GetLevelExits(LPLevelExit* lpLevel);
+        int GetLevelExits(LPLevelExit* lpLevel);
 
         ////////////////////////////////////////////////////////////
         // Convertions

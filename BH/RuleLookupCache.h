@@ -12,23 +12,23 @@
 
 #include <lrucache.hpp>
 
-struct UnitItemInfo;
-struct Rule;
+#include "Modules/Item/ItemDisplay/Rule.h"
+#include "Modules/Item/ItemDisplay/UnitItemInfo.h"
 
 template <typename T, typename... Args>
 class RuleLookupCache {
 	std::unique_ptr<cache::lru_cache<DWORD, std::pair<DWORD, T>>> cache;
 	
 	protected:
-	const std::vector<Rule*> &RuleList;
-	virtual T make_cached_T(UnitItemInfo *uInfo, Args&&... pack) = 0;
+	const std::vector<::bh::modules::item::Rule*> &RuleList;
+	virtual T make_cached_T(::bh::modules::item::UnitItemInfo *uInfo, Args&&... pack) = 0;
 	virtual std::string to_str(const T &cached_T) {
 		// This function only needs to be implemented for debug printing
 		return std::string("???");
 	}
 
 	public:
-	RuleLookupCache(const std::vector<Rule*> &rule_list) 
+	RuleLookupCache(const std::vector<::bh::modules::item::Rule*> &rule_list) 
 		: RuleList(rule_list), cache(new cache::lru_cache<DWORD, std::pair<DWORD, T>>(100)) {}
 
 	void ResetCache() {
@@ -37,7 +37,7 @@ class RuleLookupCache {
 	}
 	
 	// TODO: UnitItemInfo should probably be const, but call to Evaluate needs non-const
-	T Get(UnitItemInfo *uInfo, Args&&... pack) {
+	T Get(::bh::modules::item::UnitItemInfo *uInfo, Args&&... pack) {
 		// leave this false. doesn't work 
 		static DWORD last_printed_guid = 0; // to prevent excessive printing
 		DWORD guid = uInfo->item->dwUnitId; // global unique identifier

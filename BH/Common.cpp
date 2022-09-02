@@ -113,7 +113,7 @@ std::wstring GetColorCode(int ColNo)
 
 // This function prints at most 151 characters (152 including null)
 // TODO: Fix this so this limitation
-void PrintText(DWORD Color, char *szText, ...) {
+void PrintText(DWORD Color, const char *szText, ...) {
 	char szBuffer[152] = {0};
 	va_list Args;
 	va_start(Args, szText);

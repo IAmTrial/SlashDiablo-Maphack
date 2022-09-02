@@ -72,9 +72,9 @@ void Colorhook::SetColor(unsigned int newColor) {
 bool Colorhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 	if (Colorhook::current == this && x >= 310 && y >= 205 && x <= 490 && y <= 385 && up) {
 		SetColor(curColor);
-		Colorhook::current = false;
+		Colorhook::current = nullptr;
 		return true;
-	} else if (InRange(x,y) && Colorhook::current == false) {
+	} else if (InRange(x,y) && Colorhook::current == nullptr) {
 		if (up)
 			Colorhook::current = this;
 		return true;
@@ -84,7 +84,7 @@ bool Colorhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 
 bool Colorhook::OnRightClick(bool up, unsigned int x, unsigned int y) {
 	if (Colorhook::current == this) {
-		Colorhook::current = false;
+		Colorhook::current = nullptr;
 		return true;
 	}
 	return false;

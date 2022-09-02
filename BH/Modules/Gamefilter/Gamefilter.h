@@ -30,7 +30,7 @@ class Gamefilter : public Module {
 	public:
 		static std::list<GameListEntry*> gameList;
 		static std::vector<GameListEntry*> filterVector;
-		static std::vector<wchar_t*> gServerVector;
+		static std::vector<const wchar_t*> gServerVector;
 		static Control* filterBox;
 		static int refreshTime;
 	

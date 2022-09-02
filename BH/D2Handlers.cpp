@@ -147,7 +147,8 @@ DWORD __fastcall GameInput(wchar_t* wMsg)
 	bool hasCmd = wcslen(wMsg) > 1 && wMsg[0] == '.';
 	if(hasCmd)
 	{
-		wchar_t *buf = wMsg+1, *ctx = NULL, *seps = L" ";
+		wchar_t *buf = wMsg+1, *ctx = NULL;
+		const wchar_t* seps = L" ";
 		wchar_t* token = wcstok_s(buf, seps, &ctx);
 		wchar_t* wparam = buf+wcslen(token)+1;
 		int len = wcslen(wparam)+1;
@@ -165,7 +166,8 @@ DWORD __fastcall ChannelInput(wchar_t* wMsg)
 	bool hasCmd = wcslen(wMsg) > 1 && wMsg[0] == '.';
 	if(hasCmd)
 	{
-		wchar_t *buf = wMsg+1, *ctx = NULL, *seps = L" ";
+		wchar_t *buf = wMsg+1, *ctx = NULL;
+		const wchar_t* seps = L" ";
 		wchar_t* token = wcstok_s(buf, seps, &ctx);
 		wchar_t* wparam = buf+wcslen(token)+1;
 		int len = wcslen(wparam)+1;

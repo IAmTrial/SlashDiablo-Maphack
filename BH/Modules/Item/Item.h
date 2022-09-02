@@ -57,7 +57,7 @@
 #include "../../D2Structs.h"
 #include "../../Drawing/UI/UITab.h"
 #include "../Module.h"
-#include "ItemDisplay.h"
+#include "ItemDisplay/UnitItemInfo.h"
 
 struct UnitAny;
 
@@ -123,8 +123,7 @@ void PermShowItemsPatch2_ASM();
 void PermShowItemsPatch3_ASM();
 void PermShowItemsPatch4_ASM();
 
-struct UnitItemInfo;
-int CreateUnitItemInfo(UnitItemInfo *uInfo, UnitAny *item);
+int CreateUnitItemInfo(::bh::modules::item::UnitItemInfo *uInfo, UnitAny *item);
 
 // reset all rule lookup caches
 void ResetCaches();

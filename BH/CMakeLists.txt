@@ -1,7 +1,7 @@
 project(BH)
 
 # Define requirements for C++
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 set(SOURCE_FILES "AsyncDrawBuffer.cpp"
@@ -26,6 +26,14 @@ set(SOURCE_FILES "AsyncDrawBuffer.cpp"
 
 set(COMMON_SOURCES
     "Common/Input.cpp")
+
+set(ITEM_DISPLAY_SOURCES
+    "Modules/Item/ItemDisplay/Action.cpp"
+    "Modules/Item/ItemDisplay/Condition.cpp"
+    "Modules/Item/ItemDisplay/GemRune.cpp"
+    "Modules/Item/ItemDisplay/ItemHelper.cpp"
+    "Modules/Item/ItemDisplay/LookupCache.cpp"
+    "Modules/Item/ItemDisplay/Rule.cpp")
 
 set(MODULE_SOURCES "Modules/Module.cpp"
                    "Modules/ModuleManager.cpp"
@@ -56,7 +64,7 @@ set(DRAWING_SOURCES "Drawing/Hook.cpp"
                     "Drawing/UI/UI.cpp"
                     "Drawing/UI/UITab.cpp")
 
-set(SOURCE_FILES ${SOURCE_FILES} ${COMMON_SOURCES} ${MODULE_SOURCES} ${DRAWING_SOURCES})
+set(SOURCE_FILES ${SOURCE_FILES} ${COMMON_SOURCES} ${ITEM_DISPLAY_SOURCES} ${MODULE_SOURCES} ${DRAWING_SOURCES})
 add_library(BH SHARED ${SOURCE_FILES})
 target_compile_definitions(BH PRIVATE NOMINMAX)
 target_include_directories(BH PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/cpp-lru-cache/include)

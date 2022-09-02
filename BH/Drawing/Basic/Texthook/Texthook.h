@@ -67,7 +67,7 @@ class Texthook : public Hook {
 
 		//Static draw text function
 		static bool Draw(unsigned int x, unsigned int y, int align, unsigned int font, TextColor color, std::string text, ...);
-		static bool Draw(unsigned int x, unsigned int y, int align, unsigned int font, TextColor color, wchar_t* text, ...);
+		static bool Draw(unsigned int x, unsigned int y, int align, unsigned int font, TextColor color, const wchar_t* text, ...);
 };
 
 }  // namespace Drawing
