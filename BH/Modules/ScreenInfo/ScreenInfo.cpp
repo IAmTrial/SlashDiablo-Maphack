@@ -1,15 +1,38 @@
 #include "Screeninfo.h"
-#include "../../BH.h"
-#include "../../D2Ptrs.h"
-#include "../../D2Stubs.h"
-#include "../Item/ItemDisplay.h"
-#include "../../MPQReader.h"
-#include "../../D2Version.h"
-#include "../../D2Helpers.h"
+
+#include <stddef.h>
 #include <time.h>
-#include <iomanip>
-#include <numeric>
+#include <wchar.h>
+#include <windows.h>
+
+#include <algorithm>
+#include <chrono>
+#include <deque>
 #include <filesystem>
+#include <fstream>
+#include <functional>
+#include <ios>
+#include <iomanip>
+#include <map>
+#include <numeric>
+#include <ostream>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <utility>
+
+#include "../../BH.h"
+#include "../../Common.h"
+#include "../../Config.h"
+#include "../../Constants.h"
+#include "../../D2Helpers.h"
+#include "../../D2Ptrs.h"
+#include "../../D2Structs.h"
+#include "../../D2Version.h"
+#include "../../Drawing/Basic/Texthook/Texthook.h"
+#include "../../MPQReader.h"
+#include "../Module.h"
 
 namespace {
 

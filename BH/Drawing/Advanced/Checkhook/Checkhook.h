@@ -1,7 +1,9 @@
 #pragma once
+
+#include <string>
+
 #include "../../../Constants.h"
 #include "../../Hook.h"
-#include "../../Basic/Texthook/Texthook.h"
 
 namespace Drawing {
 

@@ -1,11 +1,27 @@
 #include "StatsDisplay.h"
 
+#include <windows.h>
+
+#include <algorithm>
+#include <list>
+#include <map>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "../../BH.h"
+#include "../../Common.h"
 #include "../../Common/StringUtil.h"
+#include "../../Config.h"
+#include "../../Constants.h"
 #include "../../D2Ptrs.h"
-#include "../Basic/Texthook/Texthook.h"
-#include "../Basic/Framehook/Framehook.h"
+#include "../../D2Structs.h"
+#include "../../MPQInit.h"
 #include "../Basic/Boxhook/Boxhook.h"
+#include "../Basic/Framehook/Framehook.h"
+#include "../Basic/Texthook/Texthook.h"
+#include "../Hook.h"
 
 namespace {
 

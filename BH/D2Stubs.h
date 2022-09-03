@@ -1,5 +1,9 @@
 #pragma once
-#include <Windows.h>
+
+#include <windows.h>
+
+#include "CommonStructs.h"
+#include "D2Structs.h"
 
 DWORD __fastcall D2CLIENT_GetUnitName_STUB(DWORD UnitAny);
 DWORD __fastcall D2CLIENT_InitAutomapLayer(DWORD nLayerNo);

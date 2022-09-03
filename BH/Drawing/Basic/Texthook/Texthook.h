@@ -1,7 +1,11 @@
 #pragma once
+
+#include <wchar.h>
+
+#include <string>
+
 #include "../../../Constants.h"
 #include "../../Hook.h"
-#include <string>
 
 namespace Drawing {
 

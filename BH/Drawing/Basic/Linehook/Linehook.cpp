@@ -1,6 +1,7 @@
 #include "Linehook.h"
-#include "../../../Common.h"
+
 #include "../../../D2Ptrs.h"
+#include "../../Hook.h"
 
 namespace Drawing {
 

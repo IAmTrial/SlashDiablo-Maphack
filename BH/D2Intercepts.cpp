@@ -1,3 +1,7 @@
+#include "D2Intercepts.h"
+
+#include <windows.h>
+
 #include "D2Handlers.h"
 #include "D2Ptrs.h"
 

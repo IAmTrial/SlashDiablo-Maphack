@@ -1,7 +1,18 @@
 #include "Checkhook.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include <string>
+
+#include "../../../Constants.h"
 #include "../../../Common.h"
 #include "../../../D2Ptrs.h"
 #include "../../Basic/Framehook/Framehook.h"
+#include "../../Basic/Texthook/Texthook.h"
+#include "../../Hook.h"
 
 namespace Drawing {
 

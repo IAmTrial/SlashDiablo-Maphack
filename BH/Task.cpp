@@ -1,6 +1,10 @@
 #include "Task.h"
-#include <Windows.h>
+
 #include <concurrent_queue.h>
+#include <windows.h>
+
+#include <functional>
+#include <memory>
 #include <vector>
 
 class TaskHolder {

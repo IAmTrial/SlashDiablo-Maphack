@@ -1,5 +1,6 @@
+#include <windows.h>
+
 #include "BH.h"
-#include <Windows.h>
 
 BOOL WINAPI DllMain(HMODULE instance, DWORD reason, VOID* reserved) {
 	switch(reason) {

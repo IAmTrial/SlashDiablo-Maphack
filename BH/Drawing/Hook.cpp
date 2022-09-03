@@ -1,6 +1,11 @@
 #include "Hook.h"
-#include "Advanced/Colorhook/Colorhook.h"
+
+#include <windows.h>
+
+#include <list>
+
 #include "../D2Ptrs.h"
+#include "Advanced/Colorhook/Colorhook.h"
 
 namespace Drawing {
 

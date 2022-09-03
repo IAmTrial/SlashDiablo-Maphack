@@ -44,12 +44,19 @@
 */
 
 #pragma once
-// Macros adapted from lord2800's macros.
-#include "Patch.h"
-#include "D2Version.h"
+
+#include <stddef.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include "CommonStructs.h"
+#include "D2DataTables.h"
 #include "D2Structs.h"
 #include "D2Stubs.h"
+#include "D2Version.h"
+#include "Patch.h"
 
+// Macros adapted from lord2800's macros.
 
 #ifdef _DEFINE_PTRS
 #define FUNCPTR(dll, name, callingret, args, ...) \

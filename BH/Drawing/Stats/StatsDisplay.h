@@ -1,13 +1,13 @@
 #pragma once
 
-#include <Windows.h>
-#include <algorithm>
+#include <windows.h>
+
+#include <map>
 #include <string>
-#include <list>
-#include "../Hook.h"
-#include "../../MPQInit.h"
-#include "../../Drawing.h"
+#include <vector>
+
 #include "../../Config.h"
+#include "../Hook.h"
 
 struct DisplayedStat {
 	std::string name;

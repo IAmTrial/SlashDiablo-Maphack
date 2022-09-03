@@ -1,7 +1,28 @@
 #include "AutoTele.h"
+
+#include <stddef.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include <map>
+#include <string>
+
 #include "../../BH.h"
-#include "ATIncludes\CMapIncludes.h"
-#include "ATIncludes\Vectors.h"
+#include "../../Config.h"
+#include "../../D2Ptrs.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/Advanced/Checkhook/Checkhook.h"
+#include "../../Drawing/Advanced/Colorhook/Colorhook.h"
+#include "../../Drawing/Basic/Crosshook/Crosshook.h"
+#include "../../Drawing/Basic/Linehook/Linehook.h"
+#include "../../Drawing/Basic/Texthook/Texthook.h"
+#include "../../Drawing/Hook.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../Module.h"
+#include "ATIncludes/ArrayEx.h"
+#include "ATIncludes/CollisionMap.h"
+#include "ATIncludes/TeleportPath.h"
+#include "ATIncludes/Vectors.h"
 
 namespace {
 

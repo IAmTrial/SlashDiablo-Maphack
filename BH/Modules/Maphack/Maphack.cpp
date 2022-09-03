@@ -1,16 +1,38 @@
 /* Maphack Module
  *
  */
-#include "../../D2Ptrs.h"
-#include "../../D2Helpers.h"
-#include "../../D2Stubs.h"
-#include "../../D2Intercepts.h"
+
 #include "Maphack.h"
-#include "../../BH.h"
-#include "../../Drawing.h"
-#include "../Item/ItemDisplay.h"
-#include "../Item/Item.h"
+
+#include <wchar.h>
+#include <windows.h>
+
+#include <list>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "../../AsyncDrawBuffer.h"
+#include "../../BH.h"
+#include "../../Config.h"
+#include "../../Constants.h"
+#include "../../D2DataTables.h"
+#include "../../D2Helpers.h"
+#include "../../D2Ptrs.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/Basic/Boxhook/Boxhook.h"
+#include "../../Drawing/Basic/Crosshook/Crosshook.h"
+#include "../../Drawing/Basic/Linehook/Linehook.h"
+#include "../../Drawing/Basic/Texthook/Texthook.h"
+#include "../../Drawing/Advanced/Checkhook/Checkhook.h"
+#include "../../Drawing/Advanced/Colorhook/Colorhook.h"
+#include "../../Drawing/Advanced/Combohook/Combohook.h"
+#include "../../Drawing/Advanced/Keyhook/Keyhook.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../../Patch.h"
+#include "../Item/Item.h"
+#include "../Module.h"
 #include "../ScreenInfo/ScreenInfo.h"
 
 #pragma optimize( "", off)

@@ -1,6 +1,9 @@
 #include "Framehook.h"
-#include "../../../Common.h"
+
+#include <windows.h>
+
 #include "../../../D2Ptrs.h"
+#include "../../Hook.h"
 
 namespace Drawing {
 

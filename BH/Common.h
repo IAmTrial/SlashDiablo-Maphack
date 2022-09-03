@@ -44,10 +44,14 @@
 */
 
 #pragma once
+
+#include <wchar.h>
+#include <windows.h>
+
+#include <ios>
 #include <string>
-#include <vector>
 #include <sstream>
-#include "D2Ptrs.h"
+#include <vector>
 
 void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
 wchar_t* AnsiToUnicode(const char* str);

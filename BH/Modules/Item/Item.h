@@ -44,11 +44,20 @@
 */
 
 #pragma once
+
+#include <wchar.h>
+#include <windows.h>
+
+#include <map>
+#include <string>
 #include <unordered_set>
-#include "../Module.h"
-#include "../../Constants.h"
+
+#include "../../CommonStructs.h"
 #include "../../Config.h"
-#include "../../Drawing.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../Module.h"
+#include "ItemDisplay.h"
 
 struct UnitAny;
 

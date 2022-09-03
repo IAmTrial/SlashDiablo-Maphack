@@ -1,6 +1,15 @@
 #include "Texthook.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <wchar.h>
+
+#include <string>
+
 #include "../../../Common.h"
+#include "../../../Constants.h"
 #include "../../../D2Ptrs.h"
+#include "../../Hook.h"
 
 namespace Drawing {
 

@@ -1,6 +1,27 @@
 #include "ItemDisplay.h"
 
+#include <stdio.h>
+#include <stddef.h>
+#include <windows.h>
+
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <ostream>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "../../BH.h"
+#include "../../Common.h"
 #include "../../Common/StringUtil.h"
+#include "../../Constants.h"
+#include "../../D2Ptrs.h"
+#include "../../D2Structs.h"
+#include "../../MPQInit.h"
+#include "../../RuleLookupCache.h"
 #include "Item.h"
 
 namespace {

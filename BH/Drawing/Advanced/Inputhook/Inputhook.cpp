@@ -1,7 +1,17 @@
 #include "Inputhook.h"
-#include "../../../D2Ptrs.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include <string>
+
 #include "../../Basic/Framehook/Framehook.h"
+#include "../../Basic/Texthook/Texthook.h"
 #include "../../../Common.h"
+#include "../../../D2Ptrs.h"
+#include "../../Hook.h"
 
 namespace Drawing {
 
@@ -140,8 +150,8 @@ unsigned int Inputhook::GetCharacterLimit() {
 
 	 
 	 if (IsSelected()) {
-		 drawnText.insert(GetSelectionPosition() + GetSelectionLength(), "�c0");
-		 drawnText.insert(GetSelectionPosition(), "�c9");
+		 drawnText.insert(GetSelectionPosition() + GetSelectionLength(), "\xFF" "c0");
+		 drawnText.insert(GetSelectionPosition(), "\xFF" "c9");
 	 }
 
 	

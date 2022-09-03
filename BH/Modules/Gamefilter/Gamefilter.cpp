@@ -1,9 +1,23 @@
 #include "Gamefilter.h"
-#include "../../D2Ptrs.h"
-#include "../../D2Intercepts.h"
-#include "../../D2Stubs.h"
+
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+#include <wchar.h>
+#include <windows.h>
+
+#include <list>
+#include <map>
 #include <sstream>
+#include <string>
+#include <vector>
+
 #include "../../BH.h"
+#include "../../CommonStructs.h"
+#include "../../Constants.h"
+#include "../../D2Ptrs.h"
+#include "../../Patch.h"
+#include "../Module.h"
 
 std::list<GameListEntry*> Gamefilter::gameList;
 std::vector<GameListEntry*> Gamefilter::filterVector;

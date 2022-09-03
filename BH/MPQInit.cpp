@@ -1,4 +1,15 @@
 #include "MPQInit.h"
+
+#include <windows.h>
+
+#include <algorithm>
+#include <map>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "Constants.h"
 #include "MPQReader.h"
 
 unsigned int STAT_MAX;

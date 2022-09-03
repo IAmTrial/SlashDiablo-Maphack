@@ -1,8 +1,10 @@
 #pragma once
 
+#include <windows.h>
+
 #include <string>
+
 #include "../../Hook.h"
-#include "../../Basic/Texthook/Texthook.h"
 
 namespace Drawing {
 

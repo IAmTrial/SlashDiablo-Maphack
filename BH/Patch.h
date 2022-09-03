@@ -1,7 +1,9 @@
 #pragma once
-#include <vector>
+
+#include <windows.h>
+
 #include <string>
-#include <Windows.h>
+#include <vector>
 
 class Patch;
 

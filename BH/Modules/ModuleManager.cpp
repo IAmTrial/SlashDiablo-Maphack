@@ -1,9 +1,15 @@
 #include "ModuleManager.h"
-#include "Module.h"
-#include "../D2Helpers.h"
-#include "../BH.h"
+
+#include <wchar.h>
+#include <windows.h>
+
 #include <algorithm>
-#include <iterator>
+#include <map>
+#include <string>
+
+#include "../BH.h"
+#include "../D2Helpers.h"
+#include "Module.h"
 
 ModuleManager::ModuleManager() {
 

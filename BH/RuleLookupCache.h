@@ -3,13 +3,17 @@
 #ifndef RULE_LOOKUP_CACHE_H_
 #define RULE_LOOKUP_CACHE_H_
 
-struct UnitItemInfo;
-struct Rule;
+#include <windows.h>
 
 #include <memory>
-#include <vector>
+#include <string>
 #include <utility>
-#include "lrucache.hpp"
+#include <vector>
+
+#include <lrucache.hpp>
+
+struct UnitItemInfo;
+struct Rule;
 
 template <typename T, typename... Args>
 class RuleLookupCache {

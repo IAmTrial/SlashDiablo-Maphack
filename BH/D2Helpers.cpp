@@ -1,11 +1,19 @@
 #include "D2Helpers.h"
 
-#include <limits>
+#include <stdarg.h>
+#include <stdio.h>
+#include <windows.h>
+#include <wchar.h>
 
-#include "D2Ptrs.h"
-#include "D2Stubs.h"
+#include <algorithm>
+#include <string>
+
 #include "Common.h"
+#include "CommonStructs.h"
 #include "Constants.h"
+#include "D2Ptrs.h"
+#include "D2Structs.h"
+#include "D2Stubs.h"
 
 int quality_to_color[] = {
 	White, // none

@@ -1,8 +1,16 @@
-#include <fstream>
-#include <iterator>
-#include <algorithm>
 #include "TableReader.h"
+
+#include <ctype.h>
+
+#include <algorithm>
+#include <fstream>
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "BH.h"
+#include "JSONObject.h"
 #include "MPQReader.h"
 
 std::vector<std::string> tokenize(std::string line){

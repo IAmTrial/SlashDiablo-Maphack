@@ -1,8 +1,10 @@
 #pragma once
+
+#include <windows.h>
+
 #include <string>
-#include <vector>
-#include <sstream>
-#include <Windows.h>
+
+#include "CommonStructs.h"
 #include "D2Structs.h"
 
 #define INVALID_PARTY_ID 0xFFFF

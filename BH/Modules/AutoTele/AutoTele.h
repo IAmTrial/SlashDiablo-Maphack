@@ -1,10 +1,16 @@
 #pragma once
-#include "../../Constants.h"
-#include "../../D2Ptrs.h"
-#include "../Module.h"
-#include "../../Drawing.h"
+
+#include <stddef.h>
+#include <windows.h>
+
+#include <map>
+#include <string>
+
 #include "../../Config.h"
-#include "ATIncludes\ArrayEx.h"
+#include "../../D2Structs.h"
+#include "../../Drawing/UI/UITab.h"
+#include "../Module.h"
+#include "ATIncludes/ArrayEx.h"
 
 typedef struct Vector_t
 {
