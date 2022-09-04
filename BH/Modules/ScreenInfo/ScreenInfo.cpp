@@ -23,7 +23,7 @@
 #include <utility>
 
 #include "../../BH.h"
-#include "../../Common.h"
+#include "../../Common/StringUtil.h"
 #include "../../Config.h"
 #include "../../Constants.h"
 #include "../../D2Helpers.h"
@@ -41,6 +41,8 @@ using ::Drawing::OutOfGame;
 using ::Drawing::Perm;
 using ::Drawing::Right;
 using ::Drawing::Texthook;
+
+using ::common::str_util::ToBool;
 
 }  // namespace
 
@@ -110,7 +112,7 @@ void ScreenInfo::LoadConfig() {
 	BH::config->ReadAssoc("Skill Warning", SkillWarnings);
 	SkillWarningMap.clear();
 	for (auto it = SkillWarnings.cbegin(); it != SkillWarnings.cend(); it++) {
-		if (StringToBool((*it).second)) {
+		if (ToBool((*it).second).value_or(false)) {
 			// If the key is a number, it means warn when that state expires
 			DWORD stateId = 0;
 			std::stringstream ss((*it).first);

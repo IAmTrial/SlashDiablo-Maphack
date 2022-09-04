@@ -51,7 +51,6 @@ private:
 	std::vector<std::pair<std::string, std::string>> orderedKeyVals;
 
 	static bool HasChanged(ConfigEntry entry, std::string& value);
-	static bool StringToBool(std::string input);
 public:
 	Config(std::string name) : configName(name) {};
 

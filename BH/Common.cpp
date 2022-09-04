@@ -111,14 +111,6 @@ std::wstring GetColorCode(int ColNo)
 	return Result.str();
 }
 
-bool IsTrue(const char *str) {
-	return (_stricmp(str, "1") == 0 || _stricmp(str, "y") == 0 || _stricmp(str, "yes") == 0 || _stricmp(str, "true") == 0);
-}
-
-bool StringToBool(std::string str) {
-	return IsTrue(str.c_str());
-}
-
 int StringToNumber(std::string str) {
 	int ret;
 	if (!str.find("0x")) {

@@ -24,6 +24,7 @@
 namespace {
 
 using ::common::input::VirtualKey;
+using ::common::str_util::ToBool;
 using ::common::str_util::Trim;
 
 }  // namespace
@@ -211,8 +212,7 @@ bool Config::ReadBoolean(std::string key, bool& value) {
 	contents[key].pointer = (void*)&value;
 
 	//Convert string to boolean
-	const char* szValue = contents[key].value.c_str();
-	if ((_stricmp(szValue, "1") == 0) || (_stricmp(szValue, "y") == 0) || (_stricmp(szValue, "yes") == 0) || (_stricmp(szValue, "true") == 0))
+	if (ToBool(contents[key].value).value_or(false))
 		value = true;
 	else
 		value = false;
@@ -311,7 +311,7 @@ Toggle Config::ReadToggle(std::string key, std::string toggle, bool state, Toggl
 			virtualKeyOptional.value_or(VirtualKey::GetUnset());
 
 	ret.toggle = virtualKey.code;
-	ret.state = StringToBool(stateStr);
+	ret.state = ToBool(stateStr).value_or(false);
 
 	value = ret;
 	return ret;
@@ -402,11 +402,11 @@ std::map<std::string, bool> Config::ReadAssoc(std::string key, std::map<std::str
 			transform(assoc.first.begin(), assoc.first.end(), assoc.first.begin(), ::tolower);
 
 			if (value.find(assoc.first) == value.end()) {
-				assoc.second = StringToBool((*it).second.value);
+				assoc.second = ToBool((*it).second.value).value_or(false);
 				value.insert(assoc);
 			}
 			else {
-				value[assoc.first] = StringToBool((*it).second.value);
+				value[assoc.first] = ToBool((*it).second.value).value_or(false);
 			}
 
 			(*it).second.pointer = &value;
@@ -483,7 +483,7 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 	switch (entry.type) {
 	case CTBoolean: {
 		bool currentBool = *((bool*)entry.pointer);
-		bool storedBool = StringToBool(entry.value);
+		bool storedBool = ToBool(entry.value).value_or(false);
 
 		if (storedBool == currentBool)
 			return false;
@@ -560,7 +560,7 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 
 		bool currentBool = valTest[assocKey];
 
-		if (currentBool == StringToBool(entry.value))
+		if (currentBool == ToBool(entry.value).value_or(false))
 			return false;
 
 		value = currentBool ? "True" : "False";
@@ -597,7 +597,7 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 		std::string_view rawOldStateStr(
 				entry.value.c_str(), stateVkeydelimiterIndex);
 		std::string oldStateStr = Trim(rawOldStateStr);
-		bool oldState = StringToBool(std::move(oldStateStr));
+		bool oldState = ToBool(oldStateStr).value_or(false);
 
 		// Get the virtual-key for the old Toggle.
 		std::string_view rawOldVirtualKeyStr(
@@ -638,9 +638,4 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 	}
 	}
 	return false;
-}
-
-bool Config::StringToBool(std::string input) {
-	const char* boolStr = input.c_str();
-	return (_stricmp(boolStr, "1") == 0) || (_stricmp(boolStr, "y") == 0) || (_stricmp(boolStr, "yes") == 0) || (_stricmp(boolStr, "true") == 0);
 }

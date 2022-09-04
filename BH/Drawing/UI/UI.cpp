@@ -7,6 +7,7 @@
 
 #include "../../BH.h"
 #include "../../Common.h"
+#include "../../Common/StringUtil.h"
 #include "../../D2Ptrs.h"
 #include "../Basic/Texthook/Texthook.h"
 #include "../Basic/Framehook/Framehook.h"
@@ -14,6 +15,11 @@
 #include "UITab.h"
 
 namespace Drawing {
+namespace {
+
+using ::common::str_util::ToBool;
+
+}  // namespace
 
 std::list<UI*> UI::UIs;
 std::list<UI*> UI::Minimized;
@@ -34,7 +40,7 @@ UI::UI(std::string name, unsigned int xSize, unsigned int ySize) {
 	SetMinimizedY(minY);
 	char activeStr[20];
 	GetPrivateProfileString(name.c_str(), "Minimized", "true", activeStr, 20, path.c_str());
-	if (StringToBool(activeStr)) {
+	if (ToBool(activeStr).value_or(false) || strcmp(activeStr, "1") == 0) {
 		SetMinimized(true);
 		Minimized.push_back(this);
 	} else {
@@ -48,7 +54,7 @@ UI::~UI() {
 	Lock();
 	WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), std::string(BH::path + "UI.ini").c_str());
 	WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), std::string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "Minimized", to_string<bool>(IsMinimized()).c_str(), std::string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "Minimized", IsMinimized() ? "true" : "false", std::string(BH::path + "UI.ini").c_str());
 	WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), std::string(BH::path + "UI.ini").c_str());
 	WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), std::string(BH::path + "UI.ini").c_str());
 
@@ -245,7 +251,7 @@ void UI::SetMinimized(bool newState) {
 	} else
 		Minimized.remove(this); 
 	minimized = newState; 
-	WritePrivateProfileString(name.c_str(), "Minimized", to_string<bool>(newState).c_str(), std::string(BH::path + "UI.ini").c_str());
+	WritePrivateProfileString(name.c_str(), "Minimized", newState ? "true" : "false", std::string(BH::path + "UI.ini").c_str());
 	Unlock(); 
 };
 
