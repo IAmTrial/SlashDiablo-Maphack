@@ -69,7 +69,7 @@ constexpr CharT ToLowerChar(CharT ch) {
 }  // namespace ascii
 
 /**
- * String property functions
+ * String-to-type functions
  */
 
 template <typename CharT>

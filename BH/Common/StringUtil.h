@@ -67,7 +67,7 @@ constexpr CharT ToLowerChar(CharT ch);
 }  // namespace ascii
 
 /**
- * String property functions
+ * String-to-type functions
  */
 
 // TODO (Mir Drualga): Make this constexpr in C++20.
