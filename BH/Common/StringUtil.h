@@ -261,5 +261,6 @@ constexpr std::optional<IntT> ToIntegerFromDigit(CharT ch, int base);
 }  // namespace common::str_util
 
 #include "StringUtilTemplate.inc"
+#include "StringUtilStaticTests.inc"
 
 #endif  // BH_COMMON_STRING_UTIL_H_
