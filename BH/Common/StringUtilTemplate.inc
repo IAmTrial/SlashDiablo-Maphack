@@ -29,13 +29,51 @@
 #ifndef BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 #define BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 
+#include <optional>
 #include <string>
 #include <string_view>
 
+/*
+ * Unlike the forward declarations, everything constexpr needs to be
+ * declared in an upstream to downstream dependency order, otherwise
+ * the function will not be recognized as constexpr (due to inline
+ * rules).
+ *
+ * This means that anything with zero dependencies should sit near the
+ * top of this file.
+ */
+
 namespace common::str_util {
 
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToIntegerFromDigit(CharT ch, int base) {
+  // Only the values in interval [1, 36] are valid for base.
+  if (base < 1 || base > 36) {
+    return std::nullopt;
+  }
+
+  // This compare of CharT against char is safe, because 7-bit ASCII
+  // characters use the same value to represent characters in the
+  // 0-128 range. CharT being signed or unsigned does not matter.
+
+  std::optional<IntT> value = std::nullopt;
+  if (ch >= CharT('0') && ch <= CharT('9')) {
+    value = std::make_optional<IntT>(ch - CharT('0'));
+  } else if (ch >= CharT('a') && ch <= CharT('z')) {
+    value = std::make_optional<IntT>(ch - CharT('a') + 10);
+  } else if (ch >= CharT('A') && ch <= CharT('Z')) {
+    value = std::make_optional<IntT>(ch - CharT('A') + 10);
+  }
+
+  if (value >= IntT(base)) {
+    return std::nullopt;
+  }
+
+  return value;
+}
+
 /**
- * String transformation functions
+ * Non-constexpr functions
  */
 
 template <typename CharT>

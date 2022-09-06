@@ -25,6 +25,7 @@
 #ifndef BH_COMMON_STRING_UTIL_H_
 #define BH_COMMON_STRING_UTIL_H_
 
+#include <optional>
 #include <string>
 #include <string_view>
 
@@ -54,6 +55,14 @@ std::basic_string<CharT> Trim(const std::basic_string<CharT>& str);
  */
 template <typename CharT>
 std::basic_string<CharT> Trim(std::basic_string_view<CharT> str);
+
+/**
+ * Returns an integer value converted from a character. If the
+ * character is not a number, or cannot be represented with the
+ * integer type, then nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToIntegerFromDigit(CharT ch, int base);
 
 }  // namespace common::str_util
 
