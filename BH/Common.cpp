@@ -119,16 +119,6 @@ bool StringToBool(std::string str) {
 	return IsTrue(str.c_str());
 }
 
-int StringToNumber(std::string str) {
-	int ret;
-	if (!str.find("0x")) {
-		from_string<int>(ret, str, std::hex);
-	} else {
-		from_string<int>(ret, str, std::dec);
-	}
-	return ret;
-}
-
 // This function prints at most 151 characters (152 including null)
 // TODO: Fix this so this limitation
 void PrintText(DWORD Color, char *szText, ...) {

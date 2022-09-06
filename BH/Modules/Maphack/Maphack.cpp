@@ -15,6 +15,7 @@
 
 #include "../../AsyncDrawBuffer.h"
 #include "../../BH.h"
+#include "../../Common/StringUtil.h"
 #include "../../Config.h"
 #include "../../Constants.h"
 #include "../../D2DataTables.h"
@@ -47,6 +48,8 @@ using ::Drawing::Hook;
 using ::Drawing::Keyhook;
 using ::Drawing::Texthook;
 using ::Drawing::UITab;
+
+using ::common::str_util::ToInteger;
 
 }  // namespace
 
@@ -131,12 +134,34 @@ void Maphack::ReadConfig() {
 	std::vector<std::pair<std::string, std::string>> enhancementColorsString;
 	BH::config->ReadMapList("Enhancement Color", enhancementColorsString);
 	for (auto& entry : enhancementColorsString) {
-		enhancementColors.push_back(std::pair(StringToNumber(entry.first), StringToNumber(entry.second)));
+		std::optional enhancementOptional =
+				ToInteger<unsigned int>(entry.first);
+		if (!enhancementOptional.has_value()) {
+			continue;
+		}
+
+		std::optional colorOptional = ToInteger<unsigned int>(entry.second);
+		if (!colorOptional.has_value()) {
+			continue;
+		}
+
+		enhancementColors.push_back(
+				std::make_pair(*enhancementOptional, *colorOptional));
 	}
 	std::vector<std::pair<std::string, std::string>> auraColorsString;
 	BH::config->ReadMapList("Aura Color", auraColorsString);
 	for (auto& entry : auraColorsString) {
-		auraColors.push_back(std::pair(StringToNumber(entry.first), StringToNumber(entry.second)));
+		std::optional auraOptional = ToInteger<unsigned int>(entry.first);
+		if (!auraOptional.has_value()) {
+			continue;
+		}
+
+		std::optional colorOptional = ToInteger<unsigned int>(entry.second);
+		if (!colorOptional.has_value()) {
+			continue;
+		}
+
+		auraColors.push_back(std::make_pair(*auraOptional, *colorOptional));
 	}
 
 
@@ -148,8 +173,11 @@ void Maphack::ReadConfig() {
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
-			int monsterColor = StringToNumber((*it).second);
-			automapMonsterColors[monsterId] = monsterColor;
+			std::optional colorOptional = ToInteger<unsigned int>(it->second);
+			if (!colorOptional.has_value()) {
+				continue;
+			}
+			automapMonsterColors[monsterId] = *colorOptional;
 		}
 	}
 
@@ -162,8 +190,11 @@ void Maphack::ReadConfig() {
 			continue;
 		}
 		else {
-			int monsterColor = StringToNumber((*it).second);
-			automapSuperUniqueColors[monsterId] = monsterColor;
+			std::optional colorOptional = ToInteger<unsigned int>(it->second);
+			if (!colorOptional.has_value()) {
+				continue;
+			}
+			automapSuperUniqueColors[monsterId] = *colorOptional;
 		}
 	}
 
@@ -176,8 +207,11 @@ void Maphack::ReadConfig() {
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
-			int lineColor = StringToNumber((*it).second);
-			automapMonsterLines[monsterId] = lineColor;
+			std::optional colorOptional = ToInteger<unsigned int>(it->second);
+			if (!colorOptional.has_value()) {
+				continue;
+			}
+			automapMonsterLines[monsterId] = *colorOptional;
 		}
 	}
 

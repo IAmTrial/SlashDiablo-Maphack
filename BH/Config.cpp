@@ -24,6 +24,8 @@
 namespace {
 
 using ::common::input::VirtualKey;
+using ::common::str_util::IsHex;
+using ::common::str_util::ToInteger;
 using ::common::str_util::Trim;
 
 }  // namespace
@@ -232,12 +234,8 @@ int Config::ReadInt(std::string key, int& value) {
 	contents[key].type = CTInt;
 	contents[key].pointer = (void*)&value;
 
-	if (!contents[key].value.find("0x")) {
-		from_string<int>(value, contents[key].value, std::hex);
-	}
-	else {
-		from_string<int>(value, contents[key].value, std::dec);
-	}
+	std::optional valueOptional = ToInteger<int>(contents[key].value);
+	value = valueOptional.value_or(0);
 	return value;
 }
 
@@ -254,12 +252,9 @@ unsigned int Config::ReadInt(std::string key, unsigned int& value) {
 	contents[key].type = CTInt;
 	contents[key].pointer = &value;
 
-	if (!contents[key].value.find("0x")) {
-		from_string<unsigned int>(value, contents[key].value, std::hex);
-	}
-	else {
-		from_string<unsigned int>(value, contents[key].value, std::dec);
-	}
+	std::optional valueOptional =
+			ToInteger<unsigned int>(contents[key].value);
+	value = valueOptional.value_or(0);
 	return value;
 }
 
@@ -425,10 +420,12 @@ std::map<std::string, unsigned int> Config::ReadAssoc(std::string key, std::map<
 			//Pull the value from between the []'s
 			assoc.first = (*it).first.substr((*it).first.find("[") + 1, (*it).first.length() - (*it).first.find("[") - 2);
 			//Simply store the value that was after the :
-			if ((*it).second.value.find("0x") != std::string::npos)
-				from_string<unsigned int>(assoc.second, (*it).second.value, std::hex);
-			else
-				from_string<unsigned int>(assoc.second, (*it).second.value, std::dec);
+			std::optional mappingValueOptional =
+					ToInteger<unsigned int>(it->second.value);
+			if (!mappingValueOptional.has_value()) {
+				continue;
+			}
+			assoc.second = *mappingValueOptional;
 
 			if (value.find(assoc.first) == value.end()) {
 				value.insert(assoc);
@@ -496,21 +493,18 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 
 		int storedInt = 0;
 		std::stringstream stream;
-		bool hex = false;
-		if (entry.value.find("0x") != std::string::npos) {
-			from_string<int>(storedInt, entry.value, std::hex);
-			stream << std::hex;
-			hex = true;
-		}
-		else {
-			from_string<int>(storedInt, entry.value, std::dec);
-		}
+		storedInt = ToInteger<int>(entry.value).value_or(0);
 
 		if (currentInt == storedInt)
 			return false;
 
+		value.clear();
+		if (IsHex<int>(entry.value)) {
+			stream << std::hex;
+			value = "0x";
+		}
 		stream << currentInt;
-		value = ((hex) ? "0x" : "") + stream.str();
+		value += stream.str();
 		return true;
 	}
 	case CTString: {
@@ -523,9 +517,11 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 		return true;
 	}
 	case CTArray: {
+		using size_type = std::vector<std::string>::size_type;
+
 		std::vector<std::string> valTest = *((std::vector<std::string>*)entry.pointer);
 		std::string ind = entry.key.substr(entry.key.find("[") + 1, entry.key.length() - entry.key.find("[") - 2);
-		int index = atoi(ind.c_str());
+		size_type index = ToInteger<size_type>(ind).value_or(0);
 
 		if (index >= valTest.size()) {
 			value = "";
@@ -573,21 +569,18 @@ bool Config::HasChanged(ConfigEntry entry, std::string& value) {
 
 		int storedInt = 0;
 		std::stringstream stream;
-		bool hex = false;
-		if (entry.value.find("0x") != std::string::npos) {
-			from_string<int>(storedInt, entry.value, std::hex);
-			stream << std::hex;
-			hex = true;
-		}
-		else {
-			from_string<int>(storedInt, entry.value, std::dec);
-		}
+		storedInt = ToInteger<int>(entry.value).value_or(0);
 
 		if (currentInt == storedInt)
 			return false;
 
+		value.clear();
+		if (IsHex<int>(entry.value)) {
+			stream << std::hex;
+			value = "0x";
+		}
 		stream << currentInt;
-		value = ((hex) ? "0x" : "") + stream.str();
+		value += stream.str();
 		return true;
 	}
 	case CTToggle: {
