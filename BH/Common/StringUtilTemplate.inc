@@ -72,6 +72,55 @@ constexpr std::optional<IntT> ToIntegerFromDigit(CharT ch, int base) {
   return value;
 }
 
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBaseFromPrefix(
+    std::basic_string_view<CharT> str) {
+  using size_type = std::basic_string_view<CharT>::size_type;
+
+  if (str.empty()) {
+    return std::nullopt;
+  }
+
+  // Track the negative sign.
+  bool is_negative = (str[0] == CharT('-'));
+
+  size_type start_index = is_negative ? 1 : 0;
+  if (str[start_index] == CharT('0')) {
+    if (str.length() == start_index + 1) {
+      // The string is "0" or "-0", so the prefix is decimal.
+      return 10;
+    }
+    assert(str.length() > start_index + 1);
+
+    if (str[start_index + 1] == CharT('x')
+        || str[start_index + 1] == CharT('X')) {
+      // The string starts with "0x" or "0X", so the prefix is hexadecimal.
+      return 16;
+    }
+
+    // The string starts with "0", so the prefix is octal.
+    return 8;
+  }
+
+  if (str[start_index] >= CharT('1') && str[start_index] <= CharT('9')) {
+    // The prefix is decimal.
+    return 10;
+  }
+
+  return std::nullopt;
+}
+
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBaseFromPrefix(const CharT* str) {
+  return GetIntegerBaseFromPrefix<CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename CharT>
+std::optional<int> GetIntegerBaseFromPrefix(
+    const std::basic_string<CharT>& str) {
+  return GetIntegerBaseFromPrefix<CharT>(std::basic_string_view<CharT>(str));
+}
+
 /**
  * Non-constexpr functions
  */
