@@ -157,6 +157,34 @@ template <typename CharT>
 std::basic_string<CharT> Trim(std::basic_string_view<CharT> str);
 
 /**
+ * String-to-number functions
+ */
+
+/**
+ * Returns an integer value converted from a string. If the string is
+ * not a number, or cannot be represented with the interger type, then
+ * nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(const CharT* str);
+
+/**
+ * Returns an integer value converted from a string. If the string is
+ * not a number, or cannot be represented with the interger type, then
+ * nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(const std::basic_string<CharT>& str);
+
+/**
+ * Returns an integer value converted from a string. If the string is
+ * not a number, or cannot be represented with the interger type, then
+ * nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(std::basic_string_view<CharT> str);
+
+/**
  * Returns an integer value converted from a character. If the
  * character is not a number, or cannot be represented with the
  * integer type, then nullopt is returned instead.

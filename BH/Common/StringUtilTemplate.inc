@@ -31,6 +31,7 @@
 
 #include <assert.h>
 
+#include <limits>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -207,6 +208,107 @@ template <typename CharT>
 std::optional<int> GetIntegerBase(
     const std::basic_string<CharT>& str) {
   return GetIntegerBase<CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(std::basic_string_view<CharT> str) {
+  using size_type = std::basic_string_view<CharT>::size_type;
+  using numeric_limits = std::numeric_limits<IntT>;
+
+  if (str.empty()) {
+    return std::nullopt;
+  }
+
+  // Check if the digit is valid for the detected prefix's base. If
+  // it is valid, get the value.
+  std::optional<int> prefix_base_optional =
+      GetIntegerBaseFromPrefix<CharT>(str);
+  if (!prefix_base_optional.has_value()) {
+    return std::nullopt;
+  }
+  int prefix_base = *prefix_base_optional;
+
+  // Do not allow unsigned numbers to have negative numbers.
+  bool is_negative = (str[0] == '-');
+  if constexpr (!numeric_limits::is_signed) {
+    // We use std::numeric_limits::is_signed instead of <type_traits>
+    // std::is_signed so that custom integer-like types can be used
+    // in this function.
+    if (is_negative) {
+      return std::nullopt;
+    }
+  }
+
+  size_type start_index = (is_negative) ? 1 : 0;
+  switch (prefix_base) {
+    case 8: {
+      start_index += 1;
+      break;
+    }
+
+    case 10: {
+      break;
+    }
+
+    case 16: {
+      start_index += 2;
+      break;
+    }
+
+    default: {
+      // This should never happen.
+      assert(false);
+      return std::nullopt;
+    }
+  }
+
+  if (str.length() <= start_index) {
+    return std::nullopt;
+  }
+
+  // Convert the string to the integer type.
+  IntT limit =
+      is_negative ? numeric_limits::lowest() : numeric_limits::max();
+  IntT value = 0;
+  for (CharT ch : str.substr(start_index)) {
+    // Check if the string has too many digits.
+    if ((is_negative && value < (limit / prefix_base))
+        || (!is_negative && value > (limit / prefix_base))) {
+      return std::nullopt;
+    }
+    value *= prefix_base;
+
+    // Check if the digit is valid for the detected prefix's base.
+    // If it is valid, get the value.
+    std::optional<IntT> digit_optional =
+        ToIntegerFromDigit<IntT>(ch, prefix_base);
+    if (!digit_optional.has_value()) {
+      return std::nullopt;
+    }
+    IntT digit = *digit_optional;
+
+    // Check if add/sub of this digit to the value would go
+    // over/under the limit.
+    if ((is_negative && value < (limit + digit))
+      || (!is_negative && value > (limit - digit))) {
+      return std::nullopt;
+    }
+
+    value += (is_negative ? -1 : 1) * digit;
+  }
+
+  return value;
+}
+
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(const CharT* str) {
+  return ToInteger<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(
+    const std::basic_string<CharT>& str) {
+  return ToInteger<IntT, CharT>(std::basic_string_view<CharT>(str));
 }
 
 /**
