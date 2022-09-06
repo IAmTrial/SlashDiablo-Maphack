@@ -32,6 +32,42 @@
 namespace common::str_util {
 
 /**
+ * String property functions
+ */
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string. If the integer-base encoding could not be detected,
+ * then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBase(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string. If the integer-base encoding could not be detected,
+ * then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+std::optional<int> GetIntegerBase(const std::basic_string<CharT>& str);
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string. If the integer-base encoding could not be detected,
+ * then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBase(
+    std::basic_string_view<CharT> str);
+
+/**
  * Determines the integer-base encoding that matches the contents of
  * the string's prefix. If the integer-base encoding could not be
  * detected, then the function returns nullopt.

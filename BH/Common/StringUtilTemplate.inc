@@ -29,6 +29,8 @@
 #ifndef BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 #define BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 
+#include <assert.h>
+
 #include <optional>
 #include <string>
 #include <string_view>
@@ -139,6 +141,72 @@ constexpr bool IsHexDigit(CharT ch) {
 template <typename CharT>
 constexpr bool IsOctalDigit(CharT ch) {
   return IsDigitOfBase<CharT>(ch, 8);
+}
+
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBase(
+    std::basic_string_view<CharT> str) {
+  using size_type = std::basic_string_view<CharT>::size_type;
+
+  if (str.empty()) {
+    return std::nullopt;
+  }
+
+  std::optional<int> prefix_base_optional =
+      GetIntegerBaseFromPrefix<CharT>(str);
+  if (!prefix_base_optional.has_value()) {
+    return std::nullopt;
+  }
+  int prefix_base = *prefix_base_optional;
+
+  // Make sure our string meets minimum length requirement for the
+  // prefix's base.
+  size_type start_index = (str[0] == '-') ? 1 : 0;
+  switch (prefix_base) {
+    case 8: {
+      start_index += 1;
+      break;
+    }
+
+    case 10: {
+      break;
+    }
+
+    case 16: {
+      start_index += 2;
+      break;
+    }
+
+    default: {
+      // This should never happen.
+      assert(false);
+      return std::nullopt;
+    }
+  }
+
+  if (str.length() <= start_index) {
+    return std::nullopt;
+  }
+
+  // Check that all characters match with the prefix's base.
+  for (CharT ch : str.substr(start_index)) {
+    if (!IsDigitOfBase(ch, prefix_base)) {
+      return std::nullopt;
+    }
+  }
+
+  return prefix_base_optional;
+}
+
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBase(const CharT* str) {
+  return GetIntegerBase<CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename CharT>
+std::optional<int> GetIntegerBase(
+    const std::basic_string<CharT>& str) {
+  return GetIntegerBase<CharT>(std::basic_string_view<CharT>(str));
 }
 
 /**
