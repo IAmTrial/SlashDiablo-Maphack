@@ -121,6 +121,26 @@ std::optional<int> GetIntegerBaseFromPrefix(
   return GetIntegerBaseFromPrefix<CharT>(std::basic_string_view<CharT>(str));
 }
 
+template <typename CharT>
+constexpr bool IsDigitOfBase(CharT ch, int base) {
+  return ToIntegerFromDigit<unsigned char>(ch, base).has_value();
+}
+
+template <typename CharT>
+constexpr bool IsDecimalDigit(CharT ch) {
+  return IsDigitOfBase<CharT>(ch, 10);
+}
+
+template <typename CharT>
+constexpr bool IsHexDigit(CharT ch) {
+  return IsDigitOfBase<CharT>(ch, 16);
+}
+
+template <typename CharT>
+constexpr bool IsOctalDigit(CharT ch) {
+  return IsDigitOfBase<CharT>(ch, 8);
+}
+
 /**
  * Non-constexpr functions
  */

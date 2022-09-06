@@ -65,6 +65,37 @@ constexpr std::optional<int> GetIntegerBaseFromPrefix(
     std::basic_string_view<CharT> str);
 
 /**
+ * Returns true if the specified character is representable as a
+ * decimal number.
+ */
+template <typename CharT>
+constexpr bool IsDecimalDigit(CharT ch);
+
+/**
+ * Returns true if the specified character is representable as a
+ * number with the specified integer-base encoding.
+ *
+ * Only the values in the interval [1, 36] are valid for base. The
+ * function will always return false if an invalid base is specified.
+ */
+template <typename CharT>
+constexpr bool IsDigitOfBase(CharT ch, int base);
+
+/**
+ * Returns true if the specified character is representable as a
+ * hexadecimal number.
+ */
+template <typename CharT>
+constexpr bool IsHexDigit(CharT ch);
+
+/**
+ * Returns true if the specified character is representable as an
+ * octal number.
+ */
+template <typename CharT>
+constexpr bool IsOctalDigit(CharT ch);
+
+/**
  * String transformation functions
  */
 
