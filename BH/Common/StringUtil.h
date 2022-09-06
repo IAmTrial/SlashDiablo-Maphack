@@ -101,6 +101,28 @@ constexpr std::optional<int> GetIntegerBaseFromPrefix(
     std::basic_string_view<CharT> str);
 
 /**
+ * Returns true if the specified string is representable as a decimal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsDecimal(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is representable as a decimal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+bool IsDecimal(const std::basic_string<CharT>& str);
+
+/**
+ * Returns true if the specified string is representable as a decimal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsDecimal(std::basic_string_view<CharT> str);
+
+/**
  * Returns true if the specified character is representable as a
  * decimal number.
  */
@@ -118,11 +140,55 @@ template <typename CharT>
 constexpr bool IsDigitOfBase(CharT ch, int base);
 
 /**
+ * Returns true if the specified string is representable as a
+ * hexadecimal number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsHex(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is representable as a
+ * hexadecimal number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+bool IsHex(const std::basic_string<CharT>& str);
+
+/**
+ * Returns true if the specified string is representable as a
+ * hexadecimal number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsHex(std::basic_string_view<CharT> str);
+
+/**
  * Returns true if the specified character is representable as a
  * hexadecimal number.
  */
 template <typename CharT>
 constexpr bool IsHexDigit(CharT ch);
+
+/**
+ * Returns true if the specified string is representable as an octal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsOctal(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is representable as an octal
+ * number.
+ */
+template <typename CharT>
+bool IsOctal(const std::basic_string<CharT>& str);
+
+/**
+ * Returns true if the specified string is representable as an octal
+ * number.
+ */
+template <typename CharT>
+constexpr bool IsOctal(std::basic_string_view<CharT> str);
 
 /**
  * Returns true if the specified character is representable as an

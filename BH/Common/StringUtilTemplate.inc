@@ -311,6 +311,66 @@ constexpr std::optional<IntT> ToInteger(
   return ToInteger<IntT, CharT>(std::basic_string_view<CharT>(str));
 }
 
+template <typename IntT, typename CharT>
+constexpr bool IsDecimal(std::basic_string_view<CharT> str) {
+  std::optional<int> base_optional = GetIntegerBase<CharT>(str);
+  if (base_optional != 10) {
+    return false;
+  }
+
+  return ToInteger<IntT, CharT>(str).has_value();
+}
+
+template <typename IntT, typename CharT>
+constexpr bool IsDecimal(const CharT* str) {
+  return IsDecimal<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+bool IsDecimal(const std::basic_string<CharT>& str) {
+  return IsDecimal<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+constexpr bool IsHex(std::basic_string_view<CharT> str) {
+  std::optional<int> base_optional = GetIntegerBase<CharT>(str);
+  if (base_optional != 16) {
+    return false;
+  }
+
+  return ToInteger<IntT, CharT>(str).has_value();
+}
+
+template <typename IntT, typename CharT>
+constexpr bool IsHex(const CharT* str) {
+  return IsHex<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+bool IsHex(const std::basic_string<CharT>& str) {
+  return IsHex<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+constexpr bool IsOctal(std::basic_string_view<CharT> str) {
+  std::optional<int> base_optional = GetIntegerBase<CharT>(str);
+  if (base_optional != 8) {
+    return false;
+  }
+
+  return ToInteger<IntT, CharT>(str).has_value();
+}
+
+template <typename IntT, typename CharT>
+constexpr bool IsOctal(const CharT* str) {
+  return IsOctal<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
+template <typename IntT, typename CharT>
+bool IsOctal(const std::basic_string<CharT>& str) {
+  return IsOctal<IntT, CharT>(std::basic_string_view<CharT>(str));
+}
+
 /**
  * Non-constexpr functions
  */
