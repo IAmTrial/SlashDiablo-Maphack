@@ -26,6 +26,7 @@
 
 namespace {
 
+using ::common::str_util::ToBool;
 using ::common::str_util::Trim;
 
 }  // namespace
@@ -1657,7 +1658,7 @@ void SkillListCondition::Init() {
 	// Build character skills list
 	BH::itemConfig->ReadAssoc("ClassSkillsList", skillList);
 	for (auto it = skillList.cbegin(); it != skillList.cend(); it++) {
-		if (StringToBool((*it).second)) {
+		if (ToBool((*it).second).value_or(false)) {
 			goodClassSkills.push_back(stoi((*it).first));
 		}
 	}
@@ -1665,7 +1666,7 @@ void SkillListCondition::Init() {
 	// Build tab skills list
 	BH::itemConfig->ReadAssoc("TabSkillsList", classSkillList);
 	for (auto it = classSkillList.cbegin(); it != classSkillList.cend(); it++) {
-		if (StringToBool((*it).second)) {
+		if (ToBool((*it).second).value_or(false)) {
 			goodTabSkills.push_back(stoi((*it).first));
 		}
 	}

@@ -29,10 +29,83 @@
 #ifndef BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 #define BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 
+#include <optional>
 #include <string>
 #include <string_view>
 
 namespace common::str_util {
+namespace ascii {
+
+template <typename CharT>
+std::basic_string<CharT> ToLower(const CharT* str) {
+  return ToLower(std::basic_string_view<CharT>(str));
+}
+
+template <typename CharT>
+std::basic_string<CharT> ToLower(const std::basic_string<CharT>& str) {
+  return ToLower(std::basic_string_view<CharT>(str));
+}
+
+template <typename CharT>
+std::basic_string<CharT> ToLower(std::basic_string_view<CharT> str) {
+  std::basic_string<CharT> lower_str(str.cbegin(), str.cend());
+  for (CharT& ch : lower_str) {
+    ch = ToLowerChar(ch);
+  }
+
+  return lower_str;
+}
+
+template <typename CharT>
+constexpr CharT ToLowerChar(CharT ch) {
+  if (ch < CharT('A') || ch > CharT('Z')) {
+    return ch;
+  }
+
+  constexpr auto kLowerToUpperDiff = CharT('a') - CharT('A');
+  return ch + kLowerToUpperDiff;
+}
+
+}  // namespace ascii
+
+/**
+ * String-to-type functions
+ */
+
+template <typename CharT>
+std::optional<bool> ToBool(const CharT* str) {
+  return ToBool(std::basic_string_view<CharT>(str));
+}
+
+template <typename CharT>
+std::optional<bool> ToBool(const std::basic_string<CharT>& str) {
+  return ToBool(std::basic_string_view<CharT>(str.c_str(), str.length()));
+}
+
+template <typename CharT>
+std::optional<bool> ToBool(std::basic_string_view<CharT> str) {
+  constexpr CharT kTrueStr[] = {
+    CharT('t'), CharT('r'), CharT('u'), CharT('e'), CharT('\0')
+  };
+  constexpr std::basic_string_view<CharT> kTrueStrView = kTrueStr;
+  constexpr CharT kFalseStr[] = {
+    CharT('f'), CharT('a'), CharT('l'), CharT('s'), CharT('e'), CharT('\0')
+  };
+  constexpr std::basic_string_view<CharT> kFalseStrView = kFalseStr;
+
+  if (str.length() > kFalseStrView.length()) {
+    return std::nullopt;
+  }
+
+  std::basic_string<CharT> lower_str = ascii::ToLower(str);
+  if (lower_str == kTrueStrView) {
+    return std::make_optional(true);
+  } else if (lower_str == kFalseStrView) {
+    return std::make_optional(false);
+  }
+
+  return std::nullopt;
+}
 
 /**
  * String transformation functions
