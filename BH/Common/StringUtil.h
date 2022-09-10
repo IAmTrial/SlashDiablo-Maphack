@@ -98,6 +98,172 @@ template <typename CharT>
 std::optional<bool> ToBool(std::basic_string_view<CharT> str);
 
 /**
+ * String property functions
+ */
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string. If the integer-base encoding could not be detected,
+ * then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBase(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string. If the integer-base encoding could not be detected,
+ * then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+std::optional<int> GetIntegerBase(const std::basic_string<CharT>& str);
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string. If the integer-base encoding could not be detected,
+ * then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBase(
+    std::basic_string_view<CharT> str);
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string's prefix. If the integer-base encoding could not be
+ * detected, then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBaseFromPrefix(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string's prefix. If the integer-base encoding could not be
+ * detected, then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+std::optional<int> GetIntegerBaseFromPrefix(
+    const std::basic_string<CharT>& str);
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string's prefix. If the integer-base encoding could not be
+ * detected, then the function returns nullopt.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal.
+ */
+template <typename CharT>
+constexpr std::optional<int> GetIntegerBaseFromPrefix(
+    std::basic_string_view<CharT> str);
+
+/**
+ * Returns true if the specified string is representable as a decimal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsDecimal(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is representable as a decimal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+bool IsDecimal(const std::basic_string<CharT>& str);
+
+/**
+ * Returns true if the specified string is representable as a decimal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsDecimal(std::basic_string_view<CharT> str);
+
+/**
+ * Returns true if the specified character is representable as a
+ * decimal number.
+ */
+template <typename CharT>
+constexpr bool IsDecimalDigit(CharT ch);
+
+/**
+ * Returns true if the specified character is representable as a
+ * number with the specified integer-base encoding.
+ *
+ * Only the values in the interval [1, 36] are valid for base. The
+ * function will always return false if an invalid base is specified.
+ */
+template <typename CharT>
+constexpr bool IsDigitOfBase(CharT ch, int base);
+
+/**
+ * Returns true if the specified string is representable as a
+ * hexadecimal number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsHex(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is representable as a
+ * hexadecimal number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+bool IsHex(const std::basic_string<CharT>& str);
+
+/**
+ * Returns true if the specified string is representable as a
+ * hexadecimal number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsHex(std::basic_string_view<CharT> str);
+
+/**
+ * Returns true if the specified character is representable as a
+ * hexadecimal number.
+ */
+template <typename CharT>
+constexpr bool IsHexDigit(CharT ch);
+
+/**
+ * Returns true if the specified string is representable as an octal
+ * number with the specified integer type.
+ */
+template <typename IntT, typename CharT>
+constexpr bool IsOctal(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is representable as an octal
+ * number.
+ */
+template <typename CharT>
+bool IsOctal(const std::basic_string<CharT>& str);
+
+/**
+ * Returns true if the specified string is representable as an octal
+ * number.
+ */
+template <typename CharT>
+constexpr bool IsOctal(std::basic_string_view<CharT> str);
+
+/**
+ * Returns true if the specified character is representable as an
+ * octal number.
+ */
+template <typename CharT>
+constexpr bool IsOctalDigit(CharT ch);
+
+/**
  * String transformation functions
  */
 
@@ -122,8 +288,45 @@ std::basic_string<CharT> Trim(const std::basic_string<CharT>& str);
 template <typename CharT>
 std::basic_string<CharT> Trim(std::basic_string_view<CharT> str);
 
+/**
+ * String-to-number functions
+ */
+
+/**
+ * Returns an integer value converted from a string. If the string is
+ * not a number, or cannot be represented with the interger type, then
+ * nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(const CharT* str);
+
+/**
+ * Returns an integer value converted from a string. If the string is
+ * not a number, or cannot be represented with the interger type, then
+ * nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(const std::basic_string<CharT>& str);
+
+/**
+ * Returns an integer value converted from a string. If the string is
+ * not a number, or cannot be represented with the interger type, then
+ * nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToInteger(std::basic_string_view<CharT> str);
+
+/**
+ * Returns an integer value converted from a character. If the
+ * character is not a number, or cannot be represented with the
+ * integer type, then nullopt is returned instead.
+ */
+template <typename IntT, typename CharT>
+constexpr std::optional<IntT> ToIntegerFromDigit(CharT ch, int base);
+
 }  // namespace common::str_util
 
 #include "StringUtilTemplate.inc"
+#include "StringUtilStaticTests.inc"
 
 #endif  // BH_COMMON_STRING_UTIL_H_
