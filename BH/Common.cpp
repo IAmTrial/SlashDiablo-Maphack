@@ -111,14 +111,6 @@ std::wstring GetColorCode(int ColNo)
 	return Result.str();
 }
 
-bool IsTrue(const char *str) {
-	return (_stricmp(str, "1") == 0 || _stricmp(str, "y") == 0 || _stricmp(str, "yes") == 0 || _stricmp(str, "true") == 0);
-}
-
-bool StringToBool(std::string str) {
-	return IsTrue(str.c_str());
-}
-
 // This function prints at most 151 characters (152 including null)
 // TODO: Fix this so this limitation
 void PrintText(DWORD Color, char *szText, ...) {

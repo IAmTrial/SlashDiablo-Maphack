@@ -30,6 +30,72 @@
 #include <string_view>
 
 namespace common::str_util {
+namespace ascii {
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns a copy of the specified characters with all uppercase 7-bit
+ * ASCII characters converted to lowercase.
+ */
+template <typename CharT>
+std::basic_string<CharT> ToLower(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns a copy of the specified characters with all uppercase 7-bit
+ * ASCII characters converted to lowercase.
+ */
+template <typename CharT>
+std::basic_string<CharT> ToLower(const std::basic_string<CharT>& str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns a copy of the specified characters with all uppercase 7-bit
+ * ASCII characters converted to lowercase.
+ */
+template <typename CharT>
+std::basic_string<CharT> ToLower(std::basic_string_view<CharT> str);
+
+/**
+ * Returns the lowercase character for a specified character. If the
+ * character is not an uppercase character for 7-bit ASCII, then the
+ * function returns the unmodified character.
+ */
+template <typename CharT>
+constexpr CharT ToLowerChar(CharT ch);
+
+}  // namespace ascii
+
+/**
+ * String-to-type functions
+ */
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is equal to "true" via
+ * case-insensitive comparison. Returns false if the same comparison
+ * applies to "false". Otherwise, returns nullopt.
+ */
+template <typename CharT>
+std::optional<bool> ToBool(const CharT* str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is equal to "true" via
+ * case-insensitive comparison. Returns false if the same comparison
+ * applies to "false". Otherwise, returns nullopt.
+ */
+template <typename CharT>
+std::optional<bool> ToBool(const std::basic_string<CharT>& str);
+
+// TODO (Mir Drualga): Make this constexpr in C++20.
+/**
+ * Returns true if the specified string is equal to "true" via
+ * case-insensitive comparison. Returns false if the same comparison
+ * applies to "false". Otherwise, returns nullopt.
+ */
+template <typename CharT>
+std::optional<bool> ToBool(std::basic_string_view<CharT> str);
 
 /**
  * String property functions
