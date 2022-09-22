@@ -2,7 +2,7 @@ project(BH)
 
 # Define requirements for C++
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCE_FILES "AsyncDrawBuffer.cpp"
                  "BH.cpp"
