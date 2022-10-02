@@ -7,6 +7,8 @@
 #include "../../D2Structs.h"
 #include "../../Drawing/UI/UITab.h"
 #include "../Item/ItemDisplay.h"
+#include "../Item/ItemDisplay/ItemInfo.h"
+#include "../Item/ItemDisplay/ItemProperty.h"
 #include "../Module.h"
 
 extern int INVENTORY_WIDTH;
@@ -112,5 +114,5 @@ public:
 };
 
 
-void ParseItem(const unsigned char *data, ItemInfo *ii, bool *success);
-bool ProcessStat(unsigned int statId, BitReader &reader, ItemProperty &itemProp);
+void ParseItem(const unsigned char *data, ::bh::modules::item::ItemInfo *ii, bool *success);
+bool ProcessStat(unsigned int statId, BitReader &reader, ::bh::modules::item::ItemProperty &itemProp);

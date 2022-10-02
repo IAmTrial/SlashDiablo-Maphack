@@ -34,7 +34,7 @@ VersionID D2Version::GetGameVersionID() {
 
 // Taken from StackOverflow user crashmstr
 std::string D2Version::GetGameVersionString() {
-	LPSTR szVersionFile = "Game.exe";
+	LPCSTR szVersionFile = "Game.exe";
 	DWORD  verHandle = 0;
 	UINT   size = 0;
 	LPBYTE lpBuffer = NULL;

@@ -19,8 +19,30 @@
 #include "../../MPQInit.h"
 #include "../Item/Item.h"
 #include "../Item/ItemDisplay.h"
+#include "../Item/ItemDisplay/ColorConstants.h"
+#include "../Item/ItemDisplay/ConditionType.h"
+#include "../Item/ItemDisplay/ItemHelper.h"
+#include "../Item/ItemDisplay/ItemInfo.h"
+#include "../Item/ItemDisplay/ItemProperty.h"
+#include "../Item/ItemDisplay/Rule.h"
 #include "../Module.h"
 #include "../ScreenInfo/ScreenInfo.h"
+
+namespace {
+
+using ::bh::modules::item::DoNotBlockRuleList;
+using ::bh::modules::item::IgnoreRuleList;
+using ::bh::modules::item::MapRuleList;
+
+using ::bh::modules::item::GetStatProperties;
+using ::bh::modules::item::HandleUnknownItemCode;
+
+using ::bh::modules::item::ConditionType;
+using ::bh::modules::item::ItemInfo;
+using ::bh::modules::item::ItemProperty;
+using ::bh::modules::item::Rule;
+
+}  // namespace
 
 // This module was inspired by the RedVex plugin "Item Mover", written by kaiks.
 // Thanks to kaiks for sharing his code.
@@ -292,7 +314,7 @@ void ItemMover::OnLeftClick(bool up, unsigned int x, unsigned int y, bool* block
 	UnitAny *unit = D2CLIENT_GetPlayerUnit();
 	bool shiftState = ((GetKeyState(VK_LSHIFT) & 0x80) || (GetKeyState(VK_RSHIFT) & 0x80));
 	
-	if (up || !unit || !shiftState || D2CLIENT_GetCursorItem()>0 ||
+	if (up || !unit || !shiftState || D2CLIENT_GetCursorItem() != nullptr ||
 		(!D2CLIENT_GetUIState(UI_INVENTORY) && !D2CLIENT_GetUIState(UI_STASH)
 			&& !D2CLIENT_GetUIState(UI_CUBE) && !D2CLIENT_GetUIState(UI_NPCSHOP)) ||
 		!Init()) {

@@ -15,7 +15,7 @@ std::list<Hook*> Hook::Hooks;
  *		Used for just drawing basic things on screen.
  */
 Hook::Hook(HookVisibility visibility, unsigned int x, unsigned int y) : 
-visibility(visibility), x(x), y(y), z(1), active(true), alignment(None), group(false), left(false), right(false), leftVoid(false), rightVoid(false) {
+visibility(visibility), x(x), y(y), z(1), active(true), alignment(None), group(nullptr), left(nullptr), right(nullptr), leftVoid(nullptr), rightVoid(nullptr) {
 	InitializeCriticalSection(&crit);
 	Hooks.push_back(this);
 }
@@ -24,7 +24,7 @@ visibility(visibility), x(x), y(y), z(1), active(true), alignment(None), group(f
  *		Used in conjuction with other basic hooks to create an advanced hook.
  */
 Hook::Hook(HookGroup *group, unsigned int x, unsigned int y) :
-visibility(Group), x(x), y(y), z(1), active(true), alignment(None), group(group), left(false), right(false), leftVoid(false), rightVoid(false) {
+visibility(Group), x(x), y(y), z(1), active(true), alignment(None), group(group), left(nullptr), right(nullptr), leftVoid(nullptr), rightVoid(nullptr) {
 	InitializeCriticalSection(&crit);
 	Hooks.push_back(this);
 	group->Hooks.push_back(this);

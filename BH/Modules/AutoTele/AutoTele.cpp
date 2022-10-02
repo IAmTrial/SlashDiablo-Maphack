@@ -500,7 +500,7 @@ DWORD AutoTele::GetPlayerArea() {
 	return 0;
 }
 
-void AutoTele::PrintText(DWORD Color, char *szText, ...) {
+void AutoTele::PrintText(DWORD Color, const char *szText, ...) {
 	if(Toggles["Display Messages"].state) {
 		char szBuffer[152] = {0};
 		va_list Args;

@@ -59,7 +59,7 @@ DWORD __declspec(naked) __fastcall D2CLIENT_GetUIVar_STUB(DWORD varno)
 	}
 }
 
-__declspec(naked) CellFile* __fastcall D2CLIENT_LoadUiImage(CHAR* szPath)
+__declspec(naked) CellFile* __fastcall D2CLIENT_LoadUiImage(const CHAR* szPath)
 {
 	__asm
 	{

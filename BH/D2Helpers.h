@@ -12,8 +12,8 @@
 bool IsValidMonster(UnitAny *pUnit);
 int GetRelation(UnitAny* unit);
 RosterUnit* FindPlayerRoster(DWORD unitId);
-void Print(char* format, ...);
-void PartyPrint(char* format, ...);
+void Print(const char* format, ...);
+void PartyPrint(const char* format, ...);
 
 CellFile *LoadBmpCellFile(BYTE *buf1, int width, int height);
 CellFile *LoadBmpCellFile(char *filename);

@@ -21,7 +21,7 @@
 
 std::list<GameListEntry*> Gamefilter::gameList;
 std::vector<GameListEntry*> Gamefilter::filterVector;
-std::vector<wchar_t*> Gamefilter::gServerVector;
+std::vector<const wchar_t*> Gamefilter::gServerVector;
 Control* Gamefilter::filterBox;
 int Gamefilter::refreshTime;
 

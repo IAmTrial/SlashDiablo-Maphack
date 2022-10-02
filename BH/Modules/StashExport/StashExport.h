@@ -57,7 +57,7 @@ public:
 void ItemDesc_Interception();
 
 std::function<JSONObject*(UnitAny*, JSONObject*, JSONObject*, JSONElement*, int, int)> STAT_FUNCTIONS[];
-char* QUALITY_NAMES[];
+const char* QUALITY_NAMES[];
 IdNamePair NODE_PAGES[];
 IdNamePair CLASS_NAMES[];
 IdNamePair SKILL_TABS[];

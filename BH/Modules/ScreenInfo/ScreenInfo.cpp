@@ -168,7 +168,7 @@ void ScreenInfo::OnGameJoin() {
 
 	BnetData* pData = (*p_D2LAUNCH_BnData);
 
-	char* szDiff[3] = { "Normal", "Nightmare", "Hell" };
+	const char* const szDiff[3] = { "Normal", "Nightmare", "Hell" };
 	currentPlayer = std::string(pUnit->pPlayerData->szName);
 	startLevel = (int)D2COMMON_GetUnitStat(pUnit, STAT_LEVEL, 0);
 	double startPctExp = ((double)startExperience - ExpByLevel[startLevel - 1]) / (ExpByLevel[startLevel] - ExpByLevel[startLevel - 1]) * 100.0;
@@ -381,7 +381,7 @@ void ScreenInfo::OnDraw() {
 	// It's a kludge to peek into other modules for config info, but it just seems silly to
 	// create a new UI tab for each module with config parameters.
 	if ((*BH::MiscToggles)["Quest Drop Warning"].state) {
-		char *bossNames[3] = {"Mephisto", "Diablo", "Baal"};
+		const char * const bossNames[3] = {"Mephisto", "Diablo", "Baal"};
 		int xpac = pData->nCharFlags & PLAYER_TYPE_EXPANSION;
 		int doneDuriel = D2COMMON_GetQuestFlag2(quests, THE_SEVEN_TOMBS, QFLAG_REWARD_GRANTED);
 		int doneMephisto = D2COMMON_GetQuestFlag2(quests, THE_GUARDIAN, QFLAG_REWARD_GRANTED);
@@ -563,7 +563,7 @@ void ScreenInfo::OnOOGDraw() {
 }
 
 void ScreenInfo::FormattedXPPerSec(char* buffer, double xpPerSec) {
-	char* unit = "";
+	const char* unit = "";
 	if (xpPerSec > 1E9) {
 		xpPerSec /= 1E9;
 		unit = "B";
@@ -788,7 +788,7 @@ void ScreenInfo::WriteRunTrackerData() {
 	os << ReplaceAutomapTokens(szColumnData) << std::endl;
 }
 
-void ScreenInfo::DrawPopup(wchar_t* buffName, int x, int y) {	
+void ScreenInfo::DrawPopup(const wchar_t* buffName, int x, int y) {	
 	int textWidth = D2WIN_GetTextWidth(buffName);
 	D2WIN_DrawRectText(buffName, x - textWidth / 2, y - 2, White, DRAW_MODE_ALPHA_50, White);
 }

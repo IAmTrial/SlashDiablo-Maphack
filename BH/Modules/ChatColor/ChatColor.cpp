@@ -19,7 +19,7 @@ void ChatColor::Init() {
 	
 }
 
-void Print(DWORD color, char* format, ...) {
+void Print(DWORD color, const char* format, ...) {
 	va_list vaArgs;
 	va_start(vaArgs, format);
 	int len = _vscprintf(format, vaArgs) + 1;

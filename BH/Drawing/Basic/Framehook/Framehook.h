@@ -44,8 +44,8 @@ class Framehook : public Hook {
 		//Set the frame transparency.
 		void SetTransparency(BoxTrans trans);
 
-		//ASM Stub to move eax to ecx.
-		static DWORD _fastcall Framehook::DrawRectStub(RECT *pRect);
+			//ASM Stub to move eax to ecx.
+			static DWORD _fastcall DrawRectStub(RECT *pRect);
 
 		//Draw the text.
 		void OnDraw();

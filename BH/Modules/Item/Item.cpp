@@ -73,6 +73,24 @@
 #include "../../Patch.h"
 #include "../Module.h"
 #include "ItemDisplay.h"
+#include "ItemDisplay/ItemHelper.h"
+#include "ItemDisplay/LookupCache.h"
+#include "ItemDisplay/UnitItemInfo.h"
+
+namespace {
+
+using ::bh::modules::item::do_not_block_cache;
+using ::bh::modules::item::ignore_cache;
+using ::bh::modules::item::item_desc_cache;
+using ::bh::modules::item::item_name_cache;
+using ::bh::modules::item::map_action_cache;
+
+using ::bh::modules::item::GetAffixLevel;
+using ::bh::modules::item::GetItemName;
+using ::bh::modules::item::HandleUnknownItemCode;
+using ::bh::modules::item::UnitItemInfo;
+
+}  // namespace
 
 namespace {
 
@@ -260,7 +278,7 @@ void Item::DrawSettings() {
 	new Checkhook(settingsTab, 4, y, &Toggles["Always Show Item Stat Ranges"].state, "Always Show Item Stat Ranges");
 	new Keyhook(settingsTab, keyhook_x, y+2, &Toggles["Always Show Item Stat Ranges"].toggle, "");
 	y += 15;
-	
+
 	new Checkhook(settingsTab, 4, y, &Toggles["Advanced Item Display"].state, "Advanced Item Display");
 	new Keyhook(settingsTab, keyhook_x, y+2, &Toggles["Advanced Item Display"].toggle, "");
 	y += 15;
@@ -284,7 +302,7 @@ void Item::DrawSettings() {
 	new Checkhook(settingsTab, 4, y, &Toggles["Suppress Invalid Stats"].state, "Suppress Invalid Stats");
 	new Keyhook(settingsTab, keyhook_x, y+2, &Toggles["Suppress Invalid Stats"].toggle, "");
 	y += 15;
-	
+
 	new Keyhook(settingsTab, 4, y+2, &showPlayer, "Show Player's Gear:   ");
 	y += 15;
 
@@ -341,7 +359,7 @@ void Item::OnLoop() {
 	}
 	if (!D2CLIENT_GetUIState(0x01))
 		viewingUnit = NULL;
-	
+
 	if (Toggles["Advanced Item Display"].state) {
 		ItemDisplay::InitializeItemRules();
 	}
@@ -349,7 +367,7 @@ void Item::OnLoop() {
 	if (viewingUnit && viewingUnit->dwUnitId) {
 		if (!viewingUnit->pInventory){
 			viewingUnit = NULL;
-			D2CLIENT_SetUIVar(0x01, 1, 0);			
+			D2CLIENT_SetUIVar(0x01, 1, 0);
 		} else if (!D2CLIENT_FindServerSideUnit(viewingUnit->dwUnitId, viewingUnit->dwType)) {
 			viewingUnit = NULL;
 			D2CLIENT_SetUIVar(0x01, 1, 0);
@@ -633,7 +651,7 @@ void Item::OrigGetItemName(UnitAny *item, std::string &itemName, char *code)
 			{
 				itemName = "Eth " + itemName;
 			}
-	
+
 			/*show iLvl unless it is equal to 1*/
 			if (displayItemLevel && item->pItemData->dwItemLevel != 1)
 			{
@@ -803,7 +821,7 @@ void __stdcall Item::OnProperties(wchar_t * wTxt)
 	int quality = pItem->pItemData->dwQuality;
 	// Add alvl
 	if (Toggles["Advanced Item Display"].state && Toggles["Show iLvl"].state
-			&& ilvl != alvl 
+			&& ilvl != alvl
 			&& (quality == ITEM_QUALITY_MAGIC || quality == ITEM_QUALITY_RARE || quality == ITEM_QUALITY_CRAFT)) {
 		int aLen = wcslen(wTxt);
 		swprintf_s(wTxt + aLen, MAXLEN - aLen,
@@ -835,7 +853,7 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		return TRUE;
 
 	int stat_min, stat_max;
-	wchar_t* szProp = nullptr;
+	const wchar_t* szProp = nullptr;
 	bool ranged = true;
 	if (nStat == STAT_MINIMUMFIREDAMAGE) {
 		if (pDmgStats->nFireDmgRange == 0)
@@ -999,7 +1017,7 @@ void __stdcall Item::OnPropertyBuild(wchar_t* wOut, int nStat, UnitAny* pItem, i
 				all_stat = GetAllStatModifier(pTxt->hStats, 12, nStat, stat);
 			}
 		}
-		
+
 		if (stat != nullptr) {
 			int statMin = stat->dwMin;
 			int statMax = stat->dwMax;

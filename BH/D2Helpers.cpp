@@ -149,7 +149,7 @@ bool IsGameReady() {
 		player->pPath->yPos > 0;
 }
 
-void Print(char* format, ...)
+void Print(const char* format, ...)
 {
 	va_list vaArgs;
 	va_start(vaArgs, format);
@@ -167,7 +167,7 @@ void Print(char* format, ...)
 	delete[] str;
 }
 
-void PartyPrint(char* format, ...)
+void PartyPrint(const char* format, ...)
 {
 	va_list vaArgs;
 	va_start(vaArgs, format);

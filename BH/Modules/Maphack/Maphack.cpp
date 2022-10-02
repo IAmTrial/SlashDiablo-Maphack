@@ -33,8 +33,25 @@
 #include "../../Drawing/UI/UITab.h"
 #include "../../Patch.h"
 #include "../Item/Item.h"
+#include "../Item/ItemDisplay.h"
+#include "../Item/ItemDisplay/Action.h"
+#include "../Item/ItemDisplay/ColorConstants.h"
+#include "../Item/ItemDisplay/ItemHelper.h"
+#include "../Item/ItemDisplay/LookupCache.h"
+#include "../Item/ItemDisplay/UnitItemInfo.h"
 #include "../Module.h"
 #include "../ScreenInfo/ScreenInfo.h"
+
+namespace {
+
+using ::bh::modules::item::map_action_cache;
+
+using ::bh::modules::item::HandleUnknownItemCode;
+
+using ::bh::modules::item::Action;
+using ::bh::modules::item::UnitItemInfo;
+
+}  // namespace
 
 #pragma optimize( "", off)
 
@@ -1059,7 +1076,7 @@ AutomapLayer* Maphack::InitLayer(int level) {
 
 	//Insure we have found the Layer.
 	if (!layer)
-		return false;
+		return nullptr;
 
 	//Initalize the layer!
 	return (AutomapLayer*)D2CLIENT_InitAutomapLayer(layer->nLayerNo);

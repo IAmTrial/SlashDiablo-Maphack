@@ -61,7 +61,7 @@ std::wstring GetColorCode(int ColNo);
 template< class type> std::string to_string( const type & value)
 { std::stringstream ss; ss << value; return ss.str(); }
 
-void PrintText(DWORD Color, char *szText, ...);
+void PrintText(DWORD Color, const char *szText, ...);
 
 ULONGLONG BHGetTickCount(void);
 

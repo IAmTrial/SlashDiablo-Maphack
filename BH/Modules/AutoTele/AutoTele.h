@@ -45,7 +45,7 @@ class AutoTele : public Module {
 		POINT FindPresetLocation(DWORD dwType, DWORD dwTxtFileNo, DWORD Area);
 		bool GetSkill(WORD wSkillId);
 		bool SetSkill(WORD wSkillId, bool Left);
-		void PrintText(DWORD Color, char *szText, ...);
+		void PrintText(DWORD Color, const char *szText, ...);
 		bool CastOnMap(WORD x, WORD y, bool Left);
 		bool Interact(DWORD UnitId, DWORD UnitType);
 		DWORD GetUnitByXY(DWORD X, DWORD Y, Room2* pRoom);

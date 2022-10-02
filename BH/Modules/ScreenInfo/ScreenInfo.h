@@ -97,7 +97,7 @@ class ScreenInfo : public Module {
 		BOOL cellLoaded;
 		std::vector<Buff> activeBuffs;
 		std::vector<BYTE> buffs;
-		std::vector<wchar_t*> buffNames;
+		std::vector<const wchar_t*> buffNames;
 	public:
 		static std::map<std::string, Toggle> Toggles;
 
@@ -121,7 +121,7 @@ class ScreenInfo : public Module {
 
 		std::string ReplaceAutomapTokens(std::string& v);		
 		void WriteRunTrackerData();
-		void DrawPopup(wchar_t* buffName, int x, int y);
+		void DrawPopup(const wchar_t* buffName, int x, int y);
 		std::vector<std::wstring> strBreakApart(std::wstring str, wchar_t delimiter);
 
 		static void AddDrop(UnitAny* item);
