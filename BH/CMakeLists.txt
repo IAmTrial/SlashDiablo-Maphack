@@ -64,8 +64,20 @@ set(DRAWING_SOURCES "Drawing/Hook.cpp"
                     "Drawing/UI/UI.cpp"
                     "Drawing/UI/UITab.cpp")
 
+set(PCH_C_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/internal/pch.h"]]
+)
+
+set(PCH_CPP_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/internal/pch.hpp"
+)
+
 set(SOURCE_FILES ${SOURCE_FILES} ${COMMON_SOURCES} ${ITEM_DISPLAY_SOURCES} ${MODULE_SOURCES} ${DRAWING_SOURCES})
 add_library(BH SHARED ${SOURCE_FILES})
+target_precompile_headers(BH PRIVATE
+    "$<$<COMPILE_LANGUAGE:C>:${PCH_C_FILES}>"
+    "$<$<COMPILE_LANGUAGE:CXX>:${PCH_CPP_FILES}>"
+)
 target_compile_definitions(BH PRIVATE NOMINMAX)
 target_compile_options(BH PRIVATE /permissive)
 target_include_directories(BH PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/cpp-lru-cache/include)
