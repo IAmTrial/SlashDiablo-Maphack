@@ -11,23 +11,23 @@
 #include "Drawing/UI/UI.h"
 
 void GameDraw() {
-	__raise BH::moduleManager->OnDraw();
+	BH::moduleManager->OnDraw();
 	Drawing::UI::Draw();
 	Drawing::StatsDisplay::Draw();
 	Drawing::Hook::Draw(Drawing::InGame);
 }
 
 void GameAutomapDraw() {
-	__raise BH::moduleManager->OnAutomapDraw();
+	BH::moduleManager->OnAutomapDraw();
 }
 
 void OOGDraw() {
 	Drawing::Hook::Draw(Drawing::OutOfGame);
-	__raise BH::moduleManager->OnOOGDraw();
+	BH::moduleManager->OnOOGDraw();
 }
  
 void GameLoop() {
-	__raise BH::moduleManager->OnLoop();
+	BH::moduleManager->OnLoop();
 }
 
 DWORD WINAPI GameThread(VOID* lpvoid) {
@@ -35,12 +35,12 @@ DWORD WINAPI GameThread(VOID* lpvoid) {
 	while(true) {
 		if ((*p_D2WIN_FirstControl) && inGame) {
 			inGame = false;
-			__raise BH::moduleManager->OnGameExit();
+			BH::moduleManager->OnGameExit();
 			BH::config->Write();
 			BH::oogDraw->Install();
 		} else if (D2CLIENT_GetPlayerUnit() && !inGame) {
 			inGame = true;
-			__raise BH::moduleManager->OnGameJoin();
+			BH::moduleManager->OnGameJoin();
 			BH::oogDraw->Remove();
 		}
 		Sleep(10);
@@ -60,7 +60,7 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			blockEvent = true;
 		if (Drawing::StatsDisplay::Click(false, mouseX, mouseY))
 			blockEvent = true;
-		__raise BH::moduleManager->OnLeftClick(false, mouseX, mouseY, &blockEvent);
+		BH::moduleManager->OnLeftClick(false, mouseX, mouseY, &blockEvent);
 	}
 
 	if (uMsg == WM_LBUTTONUP) {
@@ -70,7 +70,7 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			blockEvent = true;
 		if (Drawing::StatsDisplay::Click(true, mouseX, mouseY))
 			blockEvent = true;
-		__raise BH::moduleManager->OnLeftClick(true, mouseX, mouseY, &blockEvent);
+		BH::moduleManager->OnLeftClick(true, mouseX, mouseY, &blockEvent);
 	}
 
 	if (uMsg == WM_RBUTTONDOWN) {
@@ -80,7 +80,7 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			blockEvent = true;
 		if (Drawing::StatsDisplay::Click(false, mouseX, mouseY))
 			blockEvent = true;
-		__raise BH::moduleManager->OnRightClick(false, mouseX, mouseY, &blockEvent);
+		BH::moduleManager->OnRightClick(false, mouseX, mouseY, &blockEvent);
 	}
 
 	if (uMsg == WM_RBUTTONUP) {
@@ -90,7 +90,7 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			blockEvent = true;
 		if (Drawing::StatsDisplay::Click(true, mouseX, mouseY))
 			blockEvent = true;
-		__raise BH::moduleManager->OnRightClick(true, mouseX, mouseY, &blockEvent);
+		BH::moduleManager->OnRightClick(true, mouseX, mouseY, &blockEvent);
 	}
 
 	if (!D2CLIENT_GetUIState(0x05)) {
@@ -99,7 +99,7 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				return NULL;
 			if (Drawing::StatsDisplay::KeyClick(false, wParam, lParam))
 				return NULL;
-			__raise BH::moduleManager->OnKey(false, wParam, lParam, &blockEvent);
+			BH::moduleManager->OnKey(false, wParam, lParam, &blockEvent);
 		}
 
 		if (uMsg == WM_KEYUP) {
@@ -107,7 +107,7 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				return NULL;
 			if (Drawing::StatsDisplay::KeyClick(true, wParam, lParam))
 				return NULL;
-			__raise BH::moduleManager->OnKey(true, wParam, lParam, &blockEvent);
+			BH::moduleManager->OnKey(true, wParam, lParam, &blockEvent);
 		}
 	}
 
@@ -116,13 +116,13 @@ LONG WINAPI GameWindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 BOOL ChatPacketRecv(DWORD dwSize,BYTE* pPacket) {
 	bool blockPacket = false;
-	__raise BH::moduleManager->OnChatPacketRecv(pPacket, &blockPacket);
+	BH::moduleManager->OnChatPacketRecv(pPacket, &blockPacket);
 	return !blockPacket;
 }
 
 BOOL __fastcall RealmPacketRecv(BYTE* pPacket) {
 	bool blockPacket = false;
-	__raise BH::moduleManager->OnRealmPacketRecv(pPacket, &blockPacket);
+	BH::moduleManager->OnRealmPacketRecv(pPacket, &blockPacket);
 	return !blockPacket;
 }
 
@@ -134,11 +134,11 @@ DWORD __fastcall GamePacketRecv(BYTE* pPacket, DWORD dwSize) {
 			char* pName = (char*)pPacket+10;
 			char* pMessage = (char*)pPacket + strlen(pName) + 11;
 			bool blockMessage = false;
-			__raise BH::moduleManager->OnChatMsg(pName, pMessage, true, &blockMessage);
+			BH::moduleManager->OnChatMsg(pName, pMessage, true, &blockMessage);
 			} break;
 	}
 	bool blockPacket = false;
-	__raise BH::moduleManager->OnGamePacketRecv(pPacket, &blockPacket);
+	BH::moduleManager->OnGamePacketRecv(pPacket, &blockPacket);
 	return !blockPacket;
 }
 
@@ -154,7 +154,7 @@ DWORD __fastcall GameInput(wchar_t* wMsg)
 		int len = wcslen(wparam)+1;
 		if(len > 0)
 		{
-			if(!BH::moduleManager->UserInput(token, wparam, true)) hasCmd = false;
+			if(!BH::moduleManager->OnUserInput(token, wparam, true)) hasCmd = false;
 		}
 	}
 
@@ -173,7 +173,7 @@ DWORD __fastcall ChannelInput(wchar_t* wMsg)
 		int len = wcslen(wparam)+1;
 		if(len > 0)
 		{
-			if(!BH::moduleManager->UserInput(token, wparam, false)) hasCmd = false;
+			if(!BH::moduleManager->OnUserInput(token, wparam, false)) hasCmd = false;
 			D2WIN_SetControlText(*p_D2MULTI_ChatInputBox, L"");
 		}
 	}
@@ -184,6 +184,6 @@ DWORD __fastcall ChannelInput(wchar_t* wMsg)
 BOOL __fastcall ChatHandler(char* user, char* msg)
 {
 	bool block = false;
-	__raise BH::moduleManager->OnChatMsg(user, msg, false, &block);
+	BH::moduleManager->OnChatMsg(user, msg, false, &block);
 	return block;
 }
