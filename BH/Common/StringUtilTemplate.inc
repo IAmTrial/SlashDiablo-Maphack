@@ -50,17 +50,17 @@ namespace common::str_util {
 namespace ascii {
 
 template <typename CharT>
-std::basic_string<CharT> ToLower(const CharT* str) {
+constexpr std::basic_string<CharT> ToLower(const CharT* str) {
   return ToLower(std::basic_string_view<CharT>(str));
 }
 
 template <typename CharT>
-std::basic_string<CharT> ToLower(const std::basic_string<CharT>& str) {
+constexpr std::basic_string<CharT> ToLower(const std::basic_string<CharT>& str) {
   return ToLower(std::basic_string_view<CharT>(str));
 }
 
 template <typename CharT>
-std::basic_string<CharT> ToLower(std::basic_string_view<CharT> str) {
+constexpr std::basic_string<CharT> ToLower(std::basic_string_view<CharT> str) {
   std::basic_string<CharT> lower_str(str.cbegin(), str.cend());
   for (CharT& ch : lower_str) {
     ch = ToLowerChar(ch);
@@ -86,17 +86,17 @@ constexpr CharT ToLowerChar(CharT ch) {
  */
 
 template <typename CharT>
-std::optional<bool> ToBool(const CharT* str) {
+constexpr std::optional<bool> ToBool(const CharT* str) {
   return ToBool(std::basic_string_view<CharT>(str));
 }
 
 template <typename CharT>
-std::optional<bool> ToBool(const std::basic_string<CharT>& str) {
+constexpr std::optional<bool> ToBool(const std::basic_string<CharT>& str) {
   return ToBool(std::basic_string_view<CharT>(str.c_str(), str.length()));
 }
 
 template <typename CharT>
-std::optional<bool> ToBool(std::basic_string_view<CharT> str) {
+constexpr std::optional<bool> ToBool(std::basic_string_view<CharT> str) {
   constexpr CharT kTrueStr[] = {
     CharT('t'), CharT('r'), CharT('u'), CharT('e'), CharT('\0')
   };
@@ -191,7 +191,7 @@ constexpr std::optional<int> GetIntegerBaseFromPrefix(const CharT* str) {
 }
 
 template <typename CharT>
-std::optional<int> GetIntegerBaseFromPrefix(
+constexpr std::optional<int> GetIntegerBaseFromPrefix(
     const std::basic_string<CharT>& str) {
   return GetIntegerBaseFromPrefix<CharT>(std::basic_string_view<CharT>(str));
 }
@@ -277,7 +277,7 @@ constexpr std::optional<int> GetIntegerBase(const CharT* str) {
 }
 
 template <typename CharT>
-std::optional<int> GetIntegerBase(
+constexpr std::optional<int> GetIntegerBase(
     const std::basic_string<CharT>& str) {
   return GetIntegerBase<CharT>(std::basic_string_view<CharT>(str));
 }
@@ -399,7 +399,7 @@ constexpr bool IsDecimal(const CharT* str) {
 }
 
 template <typename IntT, typename CharT>
-bool IsDecimal(const std::basic_string<CharT>& str) {
+constexpr bool IsDecimal(const std::basic_string<CharT>& str) {
   return IsDecimal<IntT, CharT>(std::basic_string_view<CharT>(str));
 }
 
@@ -419,7 +419,7 @@ constexpr bool IsHex(const CharT* str) {
 }
 
 template <typename IntT, typename CharT>
-bool IsHex(const std::basic_string<CharT>& str) {
+constexpr bool IsHex(const std::basic_string<CharT>& str) {
   return IsHex<IntT, CharT>(std::basic_string_view<CharT>(str));
 }
 

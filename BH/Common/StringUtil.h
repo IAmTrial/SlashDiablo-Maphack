@@ -32,29 +32,26 @@
 namespace common::str_util {
 namespace ascii {
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns a copy of the specified characters with all uppercase 7-bit
  * ASCII characters converted to lowercase.
  */
 template <typename CharT>
-std::basic_string<CharT> ToLower(const CharT* str);
+constexpr std::basic_string<CharT> ToLower(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns a copy of the specified characters with all uppercase 7-bit
  * ASCII characters converted to lowercase.
  */
 template <typename CharT>
-std::basic_string<CharT> ToLower(const std::basic_string<CharT>& str);
+constexpr std::basic_string<CharT> ToLower(const std::basic_string<CharT>& str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns a copy of the specified characters with all uppercase 7-bit
  * ASCII characters converted to lowercase.
  */
 template <typename CharT>
-std::basic_string<CharT> ToLower(std::basic_string_view<CharT> str);
+constexpr std::basic_string<CharT> ToLower(std::basic_string_view<CharT> str);
 
 /**
  * Returns the lowercase character for a specified character. If the
@@ -70,32 +67,29 @@ constexpr CharT ToLowerChar(CharT ch);
  * String-to-type functions
  */
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns true if the specified string is equal to "true" via
  * case-insensitive comparison. Returns false if the same comparison
  * applies to "false". Otherwise, returns nullopt.
  */
 template <typename CharT>
-std::optional<bool> ToBool(const CharT* str);
+constexpr std::optional<bool> ToBool(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns true if the specified string is equal to "true" via
  * case-insensitive comparison. Returns false if the same comparison
  * applies to "false". Otherwise, returns nullopt.
  */
 template <typename CharT>
-std::optional<bool> ToBool(const std::basic_string<CharT>& str);
+constexpr std::optional<bool> ToBool(const std::basic_string<CharT>& str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns true if the specified string is equal to "true" via
  * case-insensitive comparison. Returns false if the same comparison
  * applies to "false". Otherwise, returns nullopt.
  */
 template <typename CharT>
-std::optional<bool> ToBool(std::basic_string_view<CharT> str);
+constexpr std::optional<bool> ToBool(std::basic_string_view<CharT> str);
 
 /**
  * String property functions
@@ -111,7 +105,6 @@ std::optional<bool> ToBool(std::basic_string_view<CharT> str);
 template <typename CharT>
 constexpr std::optional<int> GetIntegerBase(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Determines the integer-base encoding that matches the contents of
  * the string. If the integer-base encoding could not be detected,
@@ -120,7 +113,7 @@ constexpr std::optional<int> GetIntegerBase(const CharT* str);
  * Only supports detection of octal, decimal, and hexadecimal.
  */
 template <typename CharT>
-std::optional<int> GetIntegerBase(const std::basic_string<CharT>& str);
+constexpr std::optional<int> GetIntegerBase(const std::basic_string<CharT>& str);
 
 /**
  * Determines the integer-base encoding that matches the contents of
@@ -143,7 +136,6 @@ constexpr std::optional<int> GetIntegerBase(
 template <typename CharT>
 constexpr std::optional<int> GetIntegerBaseFromPrefix(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Determines the integer-base encoding that matches the contents of
  * the string's prefix. If the integer-base encoding could not be
@@ -152,7 +144,7 @@ constexpr std::optional<int> GetIntegerBaseFromPrefix(const CharT* str);
  * Only supports detection of octal, decimal, and hexadecimal.
  */
 template <typename CharT>
-std::optional<int> GetIntegerBaseFromPrefix(
+constexpr std::optional<int> GetIntegerBaseFromPrefix(
     const std::basic_string<CharT>& str);
 
 /**
@@ -173,13 +165,12 @@ constexpr std::optional<int> GetIntegerBaseFromPrefix(
 template <typename IntT, typename CharT>
 constexpr bool IsDecimal(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns true if the specified string is representable as a decimal
  * number with the specified integer type.
  */
 template <typename IntT, typename CharT>
-bool IsDecimal(const std::basic_string<CharT>& str);
+constexpr bool IsDecimal(const std::basic_string<CharT>& str);
 
 /**
  * Returns true if the specified string is representable as a decimal
@@ -212,13 +203,12 @@ constexpr bool IsDigitOfBase(CharT ch, int base);
 template <typename IntT, typename CharT>
 constexpr bool IsHex(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns true if the specified string is representable as a
  * hexadecimal number with the specified integer type.
  */
 template <typename IntT, typename CharT>
-bool IsHex(const std::basic_string<CharT>& str);
+constexpr bool IsHex(const std::basic_string<CharT>& str);
 
 /**
  * Returns true if the specified string is representable as a
@@ -241,13 +231,12 @@ constexpr bool IsHexDigit(CharT ch);
 template <typename IntT, typename CharT>
 constexpr bool IsOctal(const CharT* str);
 
-// TODO (Mir Drualga): Make this constexpr in C++20.
 /**
  * Returns true if the specified string is representable as an octal
  * number.
  */
 template <typename CharT>
-bool IsOctal(const std::basic_string<CharT>& str);
+constexpr bool IsOctal(const std::basic_string<CharT>& str);
 
 /**
  * Returns true if the specified string is representable as an octal
