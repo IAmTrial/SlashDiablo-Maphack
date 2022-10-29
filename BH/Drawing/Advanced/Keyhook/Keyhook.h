@@ -14,22 +14,6 @@ class Keyhook : public Hook {
 		std::wstring label_;//Label to describe the hotkey
 		unsigned int timeout;//Timeout to change hotkey if clicked
 	public:
-		// TODO (Mir Drualga): Remove this constructor once UTF-8 use is confirmed.
-		Keyhook(
-				HookVisibility visibility,
-				unsigned int x,
-				unsigned int y,
-				unsigned int* key,
-				std::string label)
-						: Keyhook(std::move(visibility), x, y, key, FromUtf8(label)) {}
-		// TODO (Mir Drualga): Remove this constructor once UTF-8 use is confirmed.
-		Keyhook(
-				HookGroup* group,
-				unsigned int x,
-				unsigned int y,
-				unsigned int* key,
-				std::string label)
-						: Keyhook(group, x, y, key, FromUtf8(label)) {}
 		//Two Hook Initializations; one for basic hooks, one for grouped hooks.
 		Keyhook(
 				HookVisibility visibility,
