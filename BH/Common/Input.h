@@ -61,13 +61,13 @@ struct VirtualKey {
   /**
    * The human-readable name for the key.
    */
-  std::string_view common_name;
+  std::wstring_view common_name;
 
   /**
    * Gets a constant that represents an unset VirtualKey.
    */
   static inline constexpr VirtualKey GetUnset() {
-    return VirtualKey { 0x00, "None", "None", "Not Set" };
+    return VirtualKey { 0x00, "None", "None", L"Not Set" };
   }
 
   /**

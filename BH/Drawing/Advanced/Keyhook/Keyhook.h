@@ -11,15 +11,22 @@ namespace Drawing {
 class Keyhook : public Hook {
 	private:
 		unsigned int* key;//Pointer to the current key
-		std::string name;//Name of the hotkey
+		std::wstring label_;//Label to describe the hotkey
 		unsigned int timeout;//Timeout to change hotkey if clicked
 	public:
 		//Two Hook Initializations; one for basic hooks, one for grouped hooks.
-		Keyhook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int* key, std::string hotkeyName);
-		Keyhook(HookGroup* group, unsigned int x, unsigned int y, unsigned int* key, std::string hotkeyName);
-
-		std::string GetName() { return name; };
-		void SetName(std::string newName) { Lock(); name = newName; Unlock(); };
+		Keyhook(
+				HookVisibility visibility,
+				unsigned int x,
+				unsigned int y,
+				unsigned int* key,
+				std::wstring label);
+		Keyhook(
+				HookGroup* group,
+				unsigned int x,
+				unsigned int y,
+				unsigned int* key,
+				std::wstring label);
 
 		unsigned int GetKey() { return *key; };
 		void SetKey(unsigned int* newKey) { Lock(); key = newKey; Unlock(); };

@@ -422,10 +422,10 @@ void ItemMover::OnLoad() {
 	unsigned int x = 8;
 	unsigned int y = 7;
 	new Drawing::Texthook(settingsTab, x, y, "Keys (esc to clear)");
-	new Drawing::Keyhook(settingsTab, x, (y += 15), &TpKey ,  "Quick Town Portal:     ");
-	new Drawing::Keyhook(settingsTab, x, (y += 15), &HealKey, "Use Healing Potion:    ");
-	new Drawing::Keyhook(settingsTab, x, (y += 15), &ManaKey, "Use Mana Potion:       ");
-	new Drawing::Keyhook(settingsTab, x, (y += 15), &JuvKey,  "Use Rejuv Potion:      ");
+	new Drawing::Keyhook(settingsTab, x, (y += 15), &TpKey ,  L"Quick Town Portal:     ");
+	new Drawing::Keyhook(settingsTab, x, (y += 15), &HealKey, L"Use Healing Potion:    ");
+	new Drawing::Keyhook(settingsTab, x, (y += 15), &ManaKey, L"Use Mana Potion:       ");
+	new Drawing::Keyhook(settingsTab, x, (y += 15), &JuvKey,  L"Use Rejuv Potion:      ");
 
 	y += 7;
 
