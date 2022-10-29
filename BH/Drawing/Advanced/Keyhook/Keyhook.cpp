@@ -70,7 +70,7 @@ bool Keyhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 void Keyhook::OnDraw() {
 	std::wstring text;
 	bool IsInRange = InRange(*p_D2CLIENT_MouseX, *p_D2CLIENT_MouseY);
-	if (label_.length() > 0) {
+	if (!label_.empty()) {
 		if(IsInRange) {
 			text = std::format(L"{}{} ", label_, GetColorCode(TextColor::Tan));
 		} else {
@@ -110,14 +110,13 @@ bool Keyhook::OnKey(bool up, BYTE kkey, LPARAM lParam) {
 }
 
 unsigned int Keyhook::GetXSize() {
-	std::wstring prefix;
-	if (label_.length() > 0) {
-		prefix = std::format(L"{}:{}", label_, GetColorCode(TextColor::Gold));
+	std::wstring text;
+	if (!label_.empty()) {
+		text = std::format(L"{}:{}", label_, GetColorCode(TextColor::Gold));
 	}
-
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
-	std::wstring text = prefix;
-	text.append(virtualKey.common_name);
+	text += virtualKey.common_name;
+
 	DWORD width, fileNo;
 	DWORD oldFont = D2WIN_SetTextSize(0);
 	D2WIN_GetTextWidthFileNo(text.c_str(), &width, &fileNo);
