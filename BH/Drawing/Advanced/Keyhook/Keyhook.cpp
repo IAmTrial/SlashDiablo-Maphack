@@ -68,27 +68,26 @@ bool Keyhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 }
 
 void Keyhook::OnDraw() {
-	std::wstring prefix;
+	std::wstring text;
 	bool IsInRange = InRange(*p_D2CLIENT_MouseX, *p_D2CLIENT_MouseY);
 	if (label_.length() > 0) {
 		if(IsInRange) {
-			prefix = std::format(L"{}{} ", label_, GetColorCode(TextColor::Tan));
+			text = std::format(L"{}{} ", label_, GetColorCode(TextColor::Tan));
 		} else {
-			prefix = std::format(L"{}{} ", label_, GetColorCode(TextColor::Gold));
+			text = std::format(L"{}{} ", label_, GetColorCode(TextColor::Gold));
 		}
 	}
 
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
-	std::wstring text;
 	if (timeout) {
 		unsigned int time = (unsigned int)(3 - floor((GetTickCount() - timeout) / 1000.0));
 		if (time <= 0) {
 			timeout = 0;
 		}
-		
-		text = std::format(L"{}{} secs", prefix, time);
+
+		text += std::format(L"{} secs", time);
 	} else {
-		text = std::format(L"{}{}", prefix, virtualKey.common_name);
+		text += std::format(L"{}", virtualKey.common_name);
 	}
 	DWORD size = D2WIN_SetTextSize(0);
 	D2WIN_DrawText(text.c_str(), GetX(), GetY() + 10, IsInRange ? 7 : 4, 0);
@@ -123,7 +122,7 @@ unsigned int Keyhook::GetXSize() {
 	DWORD oldFont = D2WIN_SetTextSize(0);
 	D2WIN_GetTextWidthFileNo(text.c_str(), &width, &fileNo);
 	D2WIN_SetTextSize(oldFont);
-	return width; 
+	return width;
 }
 
 unsigned int Keyhook::GetYSize() {
