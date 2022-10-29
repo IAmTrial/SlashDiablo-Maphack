@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include <string>
+#include <format>
 #include <utility>
 
 #include "../../../D2Ptrs.h"
