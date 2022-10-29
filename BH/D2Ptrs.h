@@ -511,12 +511,12 @@ FUNCPTR(D2WIN, DrawText, void __fastcall, (const wchar_t *wStr, int xPos, int yP
 FUNCPTR(D2WIN, DrawFramedText, void __fastcall, (const wchar_t* wStr, int xPos, int yPos,int nColor, int centered), -10085, -10137)
 FUNCPTR(D2WIN, DrawRectText, void __fastcall, (const wchar_t* wStr, int X, int Y, int nRectColor, int nRectTrans, int nColor), -10013, -10078)
 
-FUNCPTR(D2WIN, GetTextSize, DWORD __fastcall, (wchar_t *wStr, DWORD* dwWidth, DWORD* dwFileNo), -10177, -10179)
+FUNCPTR(D2WIN, GetTextSize, DWORD __fastcall, (const wchar_t *wStr, DWORD* dwWidth, DWORD* dwFileNo), -10177, -10179)
 FUNCPTR(D2WIN, SetTextSize, DWORD __fastcall, (DWORD dwSize), -10184, -10047)
 FUNCPTR(D2WIN, GetTextWidth, int __fastcall, (const wchar_t * wStr), -10028, -10150)
 
 FUNCPTR(D2WIN, SetControlText, void* __fastcall, (Control* box, const wchar_t* txt), -10042, -10007)
-FUNCPTR(D2WIN, GetTextWidthFileNo, DWORD __fastcall, (wchar_t *wStr, DWORD* dwWidth, DWORD* dwFileNo), -10177, -10179)
+FUNCPTR(D2WIN, GetTextWidthFileNo, DWORD __fastcall, (const wchar_t *wStr, DWORD* dwWidth, DWORD* dwFileNo), -10177, -10179)
 
 FUNCPTR(D2WIN, CreateImage, Control* __fastcall, (int xPos, int yPos, int SizeX, int SizeY, CellFile* pCellFile, BOOL(__stdcall* OnClick)(Control*), void* a7, BOOL(__stdcall* KeyHandle)(Control*)), -10127, -10203) //Updated 1.13c
 FUNCPTR(D2WIN, CreateEditBox, Control* __fastcall, (DWORD dwPosX, DWORD dwPosY, DWORD _1, DWORD _2, DWORD _3, DWORD _4, DWORD _5, BOOL(__stdcall *pCallback)(wchar_t* wText), DWORD _6, DWORD _7, ControlPreferences* pPreferences), 0x161B0, 0x11A10)//1.13c
