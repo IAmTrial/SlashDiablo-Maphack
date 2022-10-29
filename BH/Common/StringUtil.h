@@ -25,6 +25,7 @@
 #ifndef BH_COMMON_STRING_UTIL_H_
 #define BH_COMMON_STRING_UTIL_H_
 
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -62,6 +63,76 @@ template <typename CharT>
 constexpr CharT ToLowerChar(CharT ch);
 
 }  // namespace ascii
+
+namespace wide {
+
+/**
+ * Returns a null-terminated wide string converted from a
+ * null-terminated UTF-8 string.
+ */
+template <
+    typename CharTraits,
+    typename WCharTraits,
+    typename WAllocator>
+std::basic_string<wchar_t, WCharTraits, WAllocator> FromUtf8(const char* src);
+
+/**
+ * Returns a null-terminated wide string converted from a
+ * null-terminated UTF-8 string.
+ */
+template <
+    typename CharTraits,
+    typename Allocator,
+    typename WCharTraits,
+    typename WAllocator>
+std::basic_string<wchar_t, WCharTraits, WAllocator> FromUtf8(
+    const std::basic_string<char, CharTraits, Allocator>& src);
+
+/**
+ * Returns a null-terminated wide string converted from a
+ * null-terminated UTF-8 string.
+ */
+template <
+    typename CharTraits,
+    typename WCharTraits,
+    typename WAllocator>
+std::basic_string<wchar_t, WCharTraits, WAllocator> FromUtf8(
+    std::basic_string_view<char, CharTraits> src);
+
+/**
+ * Returns a null-terminated UTF-8 string converted from a
+ * null-terminated wide string.
+ */
+template <
+    typename CharTraits,
+    typename Allocator,
+    typename WCharTraits>
+std::basic_string<char, CharTraits, Allocator> ToUtf8(const wchar_t* src);
+
+/**
+ * Returns a null-terminated UTF-8 string converted from a
+ * null-terminated wide string.
+ */
+template <
+    typename CharTraits,
+    typename Allocator,
+    typename WCharTraits,
+    typename WAllocator>
+std::basic_string<char, CharTraits, Allocator> ToUtf8(
+    const std::basic_string<wchar_t, WCharTraits, WAllocator>& src);
+
+/**
+ * Returns a null-terminated UTF-8 string converted from a
+ * null-terminated wide string.
+ */
+template <
+    typename CharTraits,
+    typename Allocator,
+    typename WCharTraits>
+std::basic_string<char, CharTraits, Allocator> ToUtf8(
+    std::basic_string_view<wchar_t, WCharTraits> src);
+
+}  // namespace wide
 
 /**
  * String-to-type functions

@@ -32,6 +32,8 @@
 #include <assert.h>
 
 #include <limits>
+#include <locale>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -80,6 +82,107 @@ constexpr CharT ToLowerChar(CharT ch) {
 }
 
 }  // namespace ascii
+
+namespace wide {
+
+template <
+    typename CharTraits = std::char_traits<char>,
+    typename WCharTraits = std::char_traits<wchar_t>,
+    typename WAllocator = std::allocator<wchar_t>>
+std::basic_string<wchar_t, WCharTraits, WAllocator> FromUtf8(
+    std::basic_string_view<char, CharTraits> src) {
+  using CodecvtChar16toChar8 = std::codecvt<char16_t, char8_t, mbstate_t>;
+
+  std::basic_string<wchar_t, WCharTraits, WAllocator> dest(
+      src.length(), '\0');
+
+  const CodecvtChar16toChar8& converter =
+      std::use_facet<CodecvtChar16toChar8>(std::locale());
+
+  mbstate_t state = { 0 };
+  const char* from_next;
+  wchar_t* to_next;
+  converter.in(
+      state,
+      reinterpret_cast<const char8_t*>(&src.front()),
+      reinterpret_cast<const char8_t*>(&src.back() + 1),
+      reinterpret_cast<const char8_t*&>(from_next),
+      reinterpret_cast<char16_t*>(&dest.front()),
+      reinterpret_cast<char16_t*>(&dest.back() + 1),
+      reinterpret_cast<char16_t*&>(to_next));
+  dest.resize(to_next - &dest.front());
+
+  return dest;
+}
+
+template <
+    typename CharTraits = std::char_traits<char>,
+    typename WCharTraits = std::char_traits<wchar_t>,
+    typename WAllocator = std::allocator<wchar_t>>
+std::basic_string<wchar_t, WCharTraits, WAllocator> FromUtf8(
+    const char* src) {
+  return FromUtf8(std::basic_string_view<char, CharTraits>(src));
+}
+
+template <
+    typename CharTraits = std::char_traits<char>,
+    typename Allocator = std::allocator<char>,
+    typename WCharTraits = std::char_traits<wchar_t>,
+    typename WAllocator = std::allocator<wchar_t>>
+std::basic_string<wchar_t, WCharTraits, WAllocator> FromUtf8(
+    const std::basic_string<char, CharTraits, Allocator>& src) {
+  return FromUtf8(std::basic_string_view<char, CharTraits>(src));
+}
+
+template <
+    typename CharTraits = std::char_traits<char>,
+    typename Allocator = std::allocator<char>,
+    typename WCharTraits = std::char_traits<wchar_t>>
+std::basic_string<char, CharTraits, Allocator> ToUtf8(
+    std::basic_string_view<wchar_t, WCharTraits> src) {
+  using CodecvtChar16toChar8 = std::codecvt<char16_t, char8_t, mbstate_t>;
+
+  std::basic_string<char, CharTraits, Allocator> dest(
+      src.length() * 3, '\0');
+
+  const CodecvtChar16toChar8& converter =
+      std::use_facet<CodecvtChar16toChar8>(std::locale());
+
+  mbstate_t state = { 0 };
+  const wchar_t* from_next;
+  char* to_next;
+  converter.out(
+      state,
+      reinterpret_cast<const char16_t*>(&src.front()),
+      reinterpret_cast<const char16_t*>(&src.back() + 1),
+      reinterpret_cast<const char16_t*&>(from_next),
+      reinterpret_cast<char8_t*>(&dest.front()),
+      reinterpret_cast<char8_t*>(&dest.back() + 1),
+      reinterpret_cast<char8_t*&>(to_next));
+  dest.resize(to_next - &dest.front());
+
+  return dest;
+}
+
+template <
+    typename CharTraits = std::char_traits<char>,
+    typename Allocator = std::allocator<char>,
+    typename WCharTraits = std::char_traits<wchar_t>>
+std::basic_string<char, CharTraits, Allocator> ToUtf8(const wchar_t* src) {
+  return ToUtf8(std::basic_string_view<wchar_t, WCharTraits>(src));
+}
+
+template <
+    typename CharTraits = std::char_traits<char>,
+    typename Allocator = std::allocator<char>,
+    typename WCharTraits = std::char_traits<wchar_t>,
+    typename WAllocator = std::allocator<wchar_t>>
+std::basic_string<char, CharTraits, Allocator> ToUtf8(
+    const std::basic_string<wchar_t, WCharTraits, WAllocator>& src) {
+  return ToUtf8(std::basic_string_view<wchar_t, WCharTraits>(src));
+}
+
+}  // namespace wide
 
 /**
  * String-to-type functions
