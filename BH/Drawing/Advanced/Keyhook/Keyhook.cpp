@@ -4,15 +4,19 @@
 #include <windows.h>
 
 #include <string>
+#include <utility>
 
 #include "../../../D2Ptrs.h"
 #include "../../../Common.h"
 #include "../../../Common/Input.h"
+#include "../../../Common/StringUtil.h"
+#include "../../../Constants.h"
 #include "../../Hook.h"
 
 namespace {
 
 using ::common::input::VirtualKey;
+using ::common::str_util::wide::FromUtf8;
 
 }  // namespace
 
@@ -21,23 +25,33 @@ namespace Drawing {
 /* Basic Hook Initializer
  *		Used for just drawing basics.
  */
-Keyhook::Keyhook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int* key, std::string hotkeyName) :
-Hook(visibility, x, y) {
+Keyhook::Keyhook(
+		HookVisibility visibility,
+		unsigned int x,
+		unsigned int y,
+		unsigned int* key,
+		std::wstring label)
+				: Hook(visibility, x, y),
+					label_(std::move(label)) {
 	//Correctly format the string from the given arguments.
 	timeout = 0;
 	SetKey(key);
-	SetName(hotkeyName);
 }
 
 /* Group Hook Initializer
  *		Used in conjuction with other basic hooks to create an advanced hook.
  */
-Keyhook::Keyhook(HookGroup *group, unsigned int x, unsigned int y, unsigned int* key, std::string hotkeyName) :
-Hook(group, x, y) {
+Keyhook::Keyhook(
+		HookGroup *group,
+		unsigned int x,
+		unsigned int y,
+		unsigned int* key,
+		std::wstring label)
+				: Hook(group, x, y),
+					label_(std::move(label)) {
 	//Correctly format the string from the given arguments.
 	timeout = 0;
 	SetKey(key);
-	SetName(hotkeyName);
 }
 
 bool Keyhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
@@ -54,30 +68,30 @@ bool Keyhook::OnLeftClick(bool up, unsigned int x, unsigned int y) {
 }
 
 void Keyhook::OnDraw() {
-	std::string prefix = "";
+	std::wstring prefix;
 	bool IsInRange = InRange(*p_D2CLIENT_MouseX, *p_D2CLIENT_MouseY);
-	if (name.length() > 0) {
-		if(IsInRange)
-			prefix = name + "\377c7 ";
-		else
-			prefix = name + "\377c4 ";
+	if (label_.length() > 0) {
+		if(IsInRange) {
+			prefix = std::format(L"{}{} ", label_, GetColorCode(TextColor::Tan));
+		} else {
+			prefix = std::format(L"{}{} ", label_, GetColorCode(TextColor::Gold));
+		}
 	}
 
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
-	std::string text(prefix);
-	text.append(virtualKey.common_name);
+	std::wstring text;
 	if (timeout) {
-		unsigned int time = (unsigned int)(3 - floor((double)(GetTickCount() - timeout) / 1000));
-		if (time <= 0)
+		unsigned int time = (unsigned int)(3 - floor((GetTickCount() - timeout) / 1000.0));
+		if (time <= 0) {
 			timeout = 0;
-		char num[100];
-		_itoa_s(time, num, 100, 10);
-		text = prefix + std::string(num) + " secs";
+		}
+		
+		text = std::format(L"{}{} secs", prefix, time);
+	} else {
+		text = std::format(L"{}{}", prefix, virtualKey.common_name);
 	}
 	DWORD size = D2WIN_SetTextSize(0);
-	wchar_t* keyText = AnsiToUnicode(text.c_str());
-	D2WIN_DrawText(keyText, GetX(), GetY() + 10, IsInRange?7:4, 0);
-	delete[] keyText;
+	D2WIN_DrawText(text.c_str(), GetX(), GetY() + 10, IsInRange ? 7 : 4, 0);
 	D2WIN_SetTextSize(size);
 }
 
@@ -97,19 +111,18 @@ bool Keyhook::OnKey(bool up, BYTE kkey, LPARAM lParam) {
 }
 
 unsigned int Keyhook::GetXSize() {
-	std::string prefix = "";
-	if (name.length() > 0)
-		prefix = name + ":" "\xFF" "c4 ";
+	std::wstring prefix;
+	if (label_.length() > 0) {
+		prefix = std::format(L"{}:{}", label_, GetColorCode(TextColor::Gold));
+	}
 
 	const VirtualKey& virtualKey = VirtualKey::GetFromCode(GetKey());
-	std::string text = prefix;
+	std::wstring text = prefix;
 	text.append(virtualKey.common_name);
 	DWORD width, fileNo;
-	wchar_t* wString = AnsiToUnicode(text.c_str());
 	DWORD oldFont = D2WIN_SetTextSize(0);
-	D2WIN_GetTextWidthFileNo(wString, &width, &fileNo);
+	D2WIN_GetTextWidthFileNo(text.c_str(), &width, &fileNo);
 	D2WIN_SetTextSize(oldFont);
-	delete[] wString;
 	return width; 
 }
 
