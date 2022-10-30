@@ -28,7 +28,7 @@ class StatsDisplay : public HookGroup {
 		unsigned int statsKey;
 		bool active, minimized;
 		CRITICAL_SECTION crit;
-		std::vector<DisplayedStat*> customStats;
+		std::vector<DisplayedStat> customStats;
 	public:
 		StatsDisplay(std::string name);
 		~StatsDisplay();
