@@ -89,6 +89,29 @@ static QuestBugState GetAndarielBuggedState(void* questInfo) {
 			: QuestBugState::kBugged;
 }
 
+static QuestBugState GetDurielBuggedState(void* questInfo) {
+	BOOL isUpdateQuestLog =
+			D2COMMON_GetQuestFlag(
+					questInfo,
+					THE_SEVEN_TOMBS,
+					QFLAG_UPDATE_QUEST_LOG);
+	BOOL isQuestCompletedBefore =
+			D2COMMON_GetQuestFlag(questInfo,
+					THE_SEVEN_TOMBS,
+					QFLAG_QUEST_COMPLETED_BEFORE);
+
+	// Duriel has not been killed yet.
+	if (!(isUpdateQuestLog || isQuestCompletedBefore)) {
+		return QuestBugState::kIncomplete;
+	}
+
+	BOOL isQuestMarkedComplete =
+			D2COMMON_GetQuestFlag(questInfo, THE_SEVEN_TOMBS, QFLAG_CUSTOM_1);
+	return isQuestMarkedComplete
+			? QuestBugState::kNotBugged
+			: QuestBugState::kBugged;
+}
+
 }  // namespace
 
 namespace Drawing {
@@ -436,8 +459,9 @@ void StatsDisplay::OnDraw() {
 		Texthook::Draw(column1, (y += 16), None, 6, Gold,
 			L"Andy Bugged:\377c0 %s", ToString(andyBugState));
 
+		QuestBugState duryBugState = GetDurielBuggedState(quests);
 		Texthook::Draw(column2, y, None, 6, Gold,
-			L"Dury Bugged:\377c0 %s", !hasDuryQuest ? L"n/a" : (D2COMMON_GetQuestFlag(quests, THE_SEVEN_TOMBS, QFLAG_CUSTOM_1) ? L"no" : L"yes"));
+			L"Dury Bugged:\377c0 %s", ToString(duryBugState));
 
 		if (customStats.size() > 0) {
 			y += 8;
