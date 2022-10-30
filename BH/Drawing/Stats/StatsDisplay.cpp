@@ -27,6 +27,91 @@ namespace {
 
 using ::common::str_util::Trim;
 
+enum class QuestBugState {
+	kIncomplete = 0,
+	kNotBugged = 1,
+	kBugged = 2,
+};
+
+template <typename CharT = wchar_t>
+static const CharT* ToString(QuestBugState questBugState) {
+	std::basic_string<CharT> bugText;
+	switch (questBugState) {
+		case QuestBugState::kIncomplete: {
+			static constexpr CharT kBugText[] = {
+				CharT('n'), CharT('/'), CharT('a'), CharT('\0')
+			};
+			
+			return kBugText;
+		}
+
+		case QuestBugState::kNotBugged: {
+			static constexpr CharT kBugText[] = {
+				CharT('n'), CharT('o'), CharT('\0')
+			};
+			
+			return kBugText;
+		}
+
+		case QuestBugState::kBugged: {
+			static constexpr CharT kBugText[] = {
+				CharT('y'), CharT('e'), CharT('s'), CharT('\0')
+			};
+			
+			return kBugText;
+		}
+	}
+}
+
+static QuestBugState GetAndarielBuggedState(void* questInfo) {
+	BOOL isRewardGranted =
+			D2COMMON_GetQuestFlag(
+					questInfo,
+					SISTERS_TO_THE_SLAUGHTER,
+					QFLAG_REWARD_GRANTED);
+	BOOL isRewardPending =
+			D2COMMON_GetQuestFlag(
+					questInfo,
+					SISTERS_TO_THE_SLAUGHTER,
+					QFLAG_REWARD_PENDING);
+	// Andariel has not been killed yet.
+	if (!(isRewardGranted || isRewardPending)) {
+		return QuestBugState::kIncomplete;
+	}
+
+	BOOL isQuestMarkedComplete =
+			D2COMMON_GetQuestFlag(
+					questInfo,
+					SISTERS_TO_THE_SLAUGHTER,
+					QFLAG_QUEST_COMPLETED_BEFORE);
+	return isQuestMarkedComplete
+			? QuestBugState::kNotBugged
+			: QuestBugState::kBugged;
+}
+
+static QuestBugState GetDurielBuggedState(void* questInfo) {
+	BOOL isUpdateQuestLog =
+			D2COMMON_GetQuestFlag(
+					questInfo,
+					THE_SEVEN_TOMBS,
+					QFLAG_UPDATE_QUEST_LOG);
+	BOOL isQuestCompletedBefore =
+			D2COMMON_GetQuestFlag(questInfo,
+					THE_SEVEN_TOMBS,
+					QFLAG_QUEST_COMPLETED_BEFORE);
+
+	// Duriel has not been killed yet.
+	if (!(isUpdateQuestLog || isQuestCompletedBefore)) {
+		return QuestBugState::kIncomplete;
+	}
+
+	BOOL isQuestMarkedComplete =
+			D2COMMON_GetQuestFlag(questInfo, THE_SEVEN_TOMBS, QFLAG_CUSTOM_1);
+	return isQuestMarkedComplete
+			? QuestBugState::kNotBugged
+			: QuestBugState::kBugged;
+}
+
 }  // namespace
 
 namespace Drawing {
@@ -367,16 +452,16 @@ void StatsDisplay::OnDraw() {
 		Texthook::Draw(column2, y, None, 6, Gold,
 				L"Cow King:\377c0 %s", D2COMMON_GetQuestFlag(quests, THE_SEARCH_FOR_CAIN, QFLAG_CUSTOM_6) ? L"killed" : L"alive");
 
-		bool hasAndyQuest = D2COMMON_GetQuestFlag(quests, SISTERS_TO_THE_SLAUGHTER, QFLAG_UPDATE_QUEST_LOG)
-			| D2COMMON_GetQuestFlag(quests, SISTERS_TO_THE_SLAUGHTER, QFLAG_QUEST_COMPLETED_BEFORE);
 		bool hasDuryQuest = D2COMMON_GetQuestFlag(quests, THE_SEVEN_TOMBS, QFLAG_UPDATE_QUEST_LOG)
 			| D2COMMON_GetQuestFlag(quests, THE_SEVEN_TOMBS, QFLAG_QUEST_COMPLETED_BEFORE);
 
+		QuestBugState andyBugState = GetAndarielBuggedState(quests);
 		Texthook::Draw(column1, (y += 16), None, 6, Gold,
-			L"Andy Bugged:\377c0 %s", !hasAndyQuest ? L"n/a" : (D2COMMON_GetQuestFlag(quests, SISTERS_TO_THE_SLAUGHTER, QFLAG_QUEST_COMPLETED_BEFORE) ? L"no" : L"yes"));
+			L"Andy Bugged:\377c0 %s", ToString(andyBugState));
 
+		QuestBugState duryBugState = GetDurielBuggedState(quests);
 		Texthook::Draw(column2, y, None, 6, Gold,
-			L"Dury Bugged:\377c0 %s", !hasDuryQuest ? L"n/a" : (D2COMMON_GetQuestFlag(quests, THE_SEVEN_TOMBS, QFLAG_CUSTOM_1) ? L"no" : L"yes"));
+			L"Dury Bugged:\377c0 %s", ToString(duryBugState));
 
 		if (customStats.size() > 0) {
 			y += 8;
