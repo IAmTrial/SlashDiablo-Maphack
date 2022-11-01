@@ -7,8 +7,8 @@
 #include <wchar.h>
 #include <windows.h>
 
-#include <format>
 #include <list>
+#include <format>
 #include <map>
 #include <string>
 #include <utility>
@@ -125,8 +125,10 @@ using ::Drawing::Center;
 using ::Drawing::Checkhook;
 using ::Drawing::Colorhook;
 using ::Drawing::Combohook;
+using ::Drawing::Crosshook;
 using ::Drawing::Hook;
 using ::Drawing::Keyhook;
+using ::Drawing::Linehook;
 using ::Drawing::Texthook;
 using ::Drawing::UITab;
 
@@ -623,7 +625,7 @@ void Maphack::OnAutomapDraw() {
 
 	automapDraw.draw([=](AsyncDrawBuffer &automapBuffer) -> void {
 		POINT MyPos;
-		Drawing::Hook::ScreenToAutomap(&MyPos,
+		Hook::ScreenToAutomap(&MyPos,
 			D2CLIENT_GetUnitX(D2CLIENT_GetPlayerUnit()),
 			D2CLIENT_GetUnitY(D2CLIENT_GetPlayerUnit()));
 		for (Room1* room1 = player->pAct->pRoom1; room1; room1 = room1->pRoomNext) {
@@ -727,20 +729,29 @@ void Maphack::OnAutomapDraw() {
 
 					xPos = unit->pPath->xPos;
 					yPos = unit->pPath->yPos;
-					automapBuffer.push([immunityText = std::move(immunityText), enchantText = std::move(enchantText), color, xPos, yPos, lineColor, MyPos]()->void{
-						POINT automapLoc;
-						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
-						if (!immunityText.empty()) {
-							Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText.c_str());
-						}
-						if (!enchantText.empty()) {
-							Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText.c_str());
-						}
-						Drawing::Crosshook::Draw(automapLoc.x, automapLoc.y, color);
-						if (lineColor != -1) {
-							Drawing::Linehook::Draw(MyPos.x, MyPos.y, automapLoc.x, automapLoc.y, lineColor);
-						}
-					});
+					automapBuffer.push(
+							[
+									immunityText = std::move(immunityText),
+									enchantText = std::move(enchantText),
+									color,
+									xPos,
+									yPos,
+									lineColor,
+									MyPos
+							] () -> void {
+								POINT automapLoc;
+								Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
+								if (!immunityText.empty()) {
+									Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText.c_str());
+								}
+								if (!enchantText.empty()) {
+									Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText.c_str());
+								}
+								Crosshook::Draw(automapLoc.x, automapLoc.y, color);
+								if (lineColor != -1) {
+									Linehook::Draw(MyPos.x, MyPos.y, automapLoc.x, automapLoc.y, lineColor);
+								}
+							});
 				}
 				else if (unit->dwType == UNIT_MISSILE && Toggles["Show Missiles"].state) {
 					int color = 255;
