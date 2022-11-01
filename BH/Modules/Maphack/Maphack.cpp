@@ -619,7 +619,7 @@ void Maphack::OnAutomapDraw() {
 	}
 
 	if (!IsInitialized()){
-		Drawing::Texthook::Draw(10, 70, Drawing::None, 12, Gold, "Loading MPQ Data...");
+		Texthook::Draw(10, 70, Drawing::None, 12, Gold, L"Loading MPQ Data...");
 	}
 	
 	automapDraw.draw([=](AsyncDrawBuffer &automapBuffer) -> void {
