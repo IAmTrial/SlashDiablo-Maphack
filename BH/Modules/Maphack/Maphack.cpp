@@ -52,6 +52,14 @@ using ::bh::modules::item::HandleUnknownItemCode;
 using ::bh::modules::item::Action;
 using ::bh::modules::item::UnitItemInfo;
 
+static constexpr std::array kEnchantments = std::to_array<BYTE>({
+		ENCH_FIRE_ENCHANTED,
+		ENCH_LIGHTNING_ENCHANTED,
+		ENCH_COLD_ENCHANTED,
+		ENCH_MANA_BURN,
+});
+static_assert(std::ranges::is_sorted(kEnchantments));
+
 static constexpr std::array kResistanceStats = std::to_array<DWORD>({
 		STAT_DMGREDUCTIONPCT,
 		STAT_MAGICDMGREDUCTIONPCT,
@@ -61,6 +69,23 @@ static constexpr std::array kResistanceStats = std::to_array<DWORD>({
 		STAT_POISONRESIST,
 });
 static_assert(std::ranges::is_sorted(kResistanceStats));
+
+static constexpr TextColor GetEnchantmentTextColor(BYTE enchantment) {
+	switch (enchantment) {
+		case ENCH_FIRE_ENCHANTED: {
+			return TextColor::Red;
+		}
+		case ENCH_LIGHTNING_ENCHANTED: {
+			return TextColor::Yellow;
+		}
+		case ENCH_COLD_ENCHANTED: {
+			return TextColor::Blue;
+		}
+		case ENCH_MANA_BURN: {
+			return TextColor::Blue;
+		}
+	}
+}
 
 static constexpr TextColor GetResistanceTextColor(DWORD stat) {
 	switch (stat) {
@@ -656,28 +681,29 @@ void Maphack::OnAutomapDraw() {
 						}
 					}
 					
-					std::unordered_map<unsigned int, bool> enhancements;
+					// Determine enchantments
+					std::wstring enchantText;
+					if (Toggles["Monster Enchantments"].state
+							&& unit->pMonsterData->fBoss) {
+						for (BYTE enchantment : unit->pMonsterData->anEnchants) {
+							if (!std::ranges::binary_search(kEnchantments, enchantment)) {
+								continue;
+							}
 
-					//Determine Enchantments
-					std::string enchantText;
-					std::string szEnchantments[] = {"\377c3m", "\377c1e", "\377c9e", "\377c3e"};
-						
-					for (int n = 0; n < 9; n++) {
-						if (Toggles["Monster Enchantments"].state && unit->pMonsterData->fBoss) {
-							if (unit->pMonsterData->anEnchants[n] == ENCH_MANA_BURN)
-								enchantText += szEnchantments[0];
-							if (unit->pMonsterData->anEnchants[n] == ENCH_FIRE_ENCHANTED)
-								enchantText += szEnchantments[1];
-							if (unit->pMonsterData->anEnchants[n] == ENCH_LIGHTNING_ENCHANTED)
-								enchantText += szEnchantments[2];
-							if (unit->pMonsterData->anEnchants[n] == ENCH_COLD_ENCHANTED)
-								enchantText += szEnchantments[3];
+							TextColor textColor = GetEnchantmentTextColor(enchantment);
+							enchantText += GetColorCode(textColor);
+							enchantText += (enchantment == ENCH_MANA_BURN) ? L"m" : L"e";
 						}
-						enhancements[unit->pMonsterData->anEnchants[n]] = true;
 					}
 
-					for (auto& enhancement : enhancementColors) {
-						if (enhancements.find(enhancement.first) != enhancements.end() && enhancement.second > 0 && !unit->pMonsterData->fBoss) {
+					std::unordered_set<BYTE> enhancements(
+							std::cbegin(unit->pMonsterData->anEnchants),
+							std::cend(unit->pMonsterData->anEnchants));
+
+					for (const auto& enhancement : enhancementColors) {
+						if (enhancements.contains(enhancement.first)
+								&& enhancement.second > 0
+								&& !unit->pMonsterData->fBoss) {
 							color = enhancement.second;
 							break;
 						}
@@ -690,9 +716,10 @@ void Maphack::OnAutomapDraw() {
 					}
 
 					// auras has highest predence
-					if (enhancements[ENCH_AURACHANT]) {
-						for (auto& enhancement : auraColors) {
-							if (D2COMMON_GetUnitState(unit, enhancement.first) != 0 && enhancement.second > 0) {
+					if (enhancements.contains(ENCH_AURACHANT)) {
+						for (const auto& enhancement : auraColors) {
+							if (D2COMMON_GetUnitState(unit, enhancement.first) != 0
+									&& enhancement.second > 0) {
 								color = enhancement.second;
 								break;
 							}
@@ -701,14 +728,15 @@ void Maphack::OnAutomapDraw() {
 
 					xPos = unit->pPath->xPos;
 					yPos = unit->pPath->yPos;
-					automapBuffer.push([immunityText = std::move(immunityText), enchantText, color, xPos, yPos, lineColor, MyPos]()->void{
+					automapBuffer.push([immunityText = std::move(immunityText), enchantText = std::move(enchantText), color, xPos, yPos, lineColor, MyPos]()->void{
 						POINT automapLoc;
 						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
 						if (!immunityText.empty()) {
 							Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText.c_str());
 						}
-						if (enchantText.length() > 0)
-							Drawing::Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText);
+						if (!enchantText.empty()) {
+							Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText.c_str());
+						}
 						Drawing::Crosshook::Draw(automapLoc.x, automapLoc.y, color);
 						if (lineColor != -1) {
 							Drawing::Linehook::Draw(MyPos.x, MyPos.y, automapLoc.x, automapLoc.y, lineColor);
