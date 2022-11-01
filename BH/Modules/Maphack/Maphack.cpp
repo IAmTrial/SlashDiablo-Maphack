@@ -8,6 +8,7 @@
 #include <windows.h>
 
 #include <list>
+#include <format>
 #include <map>
 #include <string>
 #include <utility>
@@ -51,6 +52,69 @@ using ::bh::modules::item::HandleUnknownItemCode;
 using ::bh::modules::item::Action;
 using ::bh::modules::item::UnitItemInfo;
 
+static constexpr std::array kEnchantments = std::to_array<BYTE>({
+		ENCH_FIRE_ENCHANTED,
+		ENCH_LIGHTNING_ENCHANTED,
+		ENCH_COLD_ENCHANTED,
+		ENCH_MANA_BURN,
+});
+static_assert(std::ranges::is_sorted(kEnchantments));
+
+static constexpr std::array kResistanceStats = std::to_array<DWORD>({
+		STAT_DMGREDUCTIONPCT,
+		STAT_MAGICDMGREDUCTIONPCT,
+		STAT_FIRERESIST,
+		STAT_LIGHTNINGRESIST,
+		STAT_COLDRESIST,
+		STAT_POISONRESIST,
+});
+static_assert(std::ranges::is_sorted(kResistanceStats));
+
+static constexpr TextColor GetEnchantmentTextColor(BYTE enchantment) {
+	switch (enchantment) {
+		case ENCH_FIRE_ENCHANTED: {
+			return TextColor::Red;
+		}
+		case ENCH_LIGHTNING_ENCHANTED: {
+			return TextColor::Yellow;
+		}
+		case ENCH_COLD_ENCHANTED: {
+			return TextColor::Blue;
+		}
+		case ENCH_MANA_BURN: {
+			return TextColor::Blue;
+		}
+	}
+}
+
+static constexpr TextColor GetResistanceTextColor(DWORD stat) {
+	switch (stat) {
+		case STAT_DMGREDUCTIONPCT: {
+			return TextColor::White;
+		}
+
+		case STAT_MAGICDMGREDUCTIONPCT: {
+			return TextColor::Orange;
+		}
+
+		case STAT_FIRERESIST: {
+			return TextColor::Red;
+		}
+
+		case STAT_LIGHTNINGRESIST: {
+			return TextColor::Yellow;
+		}
+
+		case STAT_COLDRESIST: {
+			return TextColor::Blue;
+		}
+
+		case STAT_POISONRESIST: {
+			return TextColor::Green;
+		}
+	}
+}
+
 }  // namespace
 
 #pragma optimize( "", off)
@@ -61,8 +125,10 @@ using ::Drawing::Center;
 using ::Drawing::Checkhook;
 using ::Drawing::Colorhook;
 using ::Drawing::Combohook;
+using ::Drawing::Crosshook;
 using ::Drawing::Hook;
 using ::Drawing::Keyhook;
+using ::Drawing::Linehook;
 using ::Drawing::Texthook;
 using ::Drawing::UITab;
 
@@ -215,7 +281,6 @@ void Maphack::ReadConfig() {
 		}
 	}
 
-	
 	BH::config->ReadAssoc("Monster Line", MonsterLines);
 	for (auto it = MonsterLines.cbegin(); it != MonsterLines.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
@@ -347,7 +412,7 @@ void Maphack::OnLoad() {
 
 	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Monster Resistances"].state, "  Resistances");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Monster Resistances"].toggle, L"");
-	
+
 	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Missiles"].state, "Show Missiles");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Show Missiles"].toggle, L"");
 
@@ -447,7 +512,7 @@ void Maphack::OnLoop() {
 	UnitAny* unit = D2CLIENT_GetPlayerUnit();
 	if (!unit || !Toggles["Auto Reveal"].state)
 		return;
-	
+
 	// Reveal the automap based on configuration.
 	switch((MaphackReveal)revealType) {
 		case MaphackRevealGame:
@@ -545,7 +610,7 @@ void Maphack::OnDraw() {
 
 void Maphack::OnAutomapDraw() {
 	UnitAny* player = D2CLIENT_GetPlayerUnit();
-	
+
 	if (!player || !player->pAct || player->pPath->pRoom1->pRoom2->pLevel->dwLevelNo == 0)
 		return;
 
@@ -555,12 +620,12 @@ void Maphack::OnAutomapDraw() {
 	}
 
 	if (!IsInitialized()){
-		Drawing::Texthook::Draw(10, 70, Drawing::None, 12, Gold, "Loading MPQ Data...");
+		Texthook::Draw(10, 70, Drawing::None, 12, Gold, L"Loading MPQ Data...");
 	}
-	
+
 	automapDraw.draw([=](AsyncDrawBuffer &automapBuffer) -> void {
 		POINT MyPos;
-		Drawing::Hook::ScreenToAutomap(&MyPos,
+		Hook::ScreenToAutomap(&MyPos,
 			D2CLIENT_GetUnitX(D2CLIENT_GetPlayerUnit()),
 			D2CLIENT_GetUnitY(D2CLIENT_GetPlayerUnit()));
 		for (Room1* room1 = player->pAct->pRoom1; room1; room1 = room1->pRoomNext) {
@@ -600,50 +665,46 @@ void Maphack::OnAutomapDraw() {
 						lineColor = automapMonsterLines[unit->dwTxtFileNo];
 					}
 
-					//Determine immunities
-					std::string szImmunities[] = { "\377c0p", "\377c8i", "\377c1i", "\377c9i", "\377c3i", "\377c2i" };
-					std::string szResistances[] = { "\377c7r", "\377c8r", "\377c1r", "\377c9r", "\377c3r", "\377c2r" };
-					DWORD dwImmunities[] = {
-						STAT_DMGREDUCTIONPCT,
-						STAT_MAGICDMGREDUCTIONPCT,
-						STAT_FIRERESIST,
-						STAT_LIGHTNINGRESIST,
-						STAT_COLDRESIST,
-						STAT_POISONRESIST
-					};
-					std::string immunityText;
-					for (int n = 0; n < 6; n++) {
-						int nImm = D2COMMON_GetUnitStat(unit, dwImmunities[n], 0);
-						if (nImm >= 100) {
-							immunityText += szImmunities[n];
-						}
-						else if (nImm >= monsterResistanceThreshold) {
-							immunityText += szResistances[n];
+					// Determine resistances/immunities
+					std::wstring immunityText;
+					for (DWORD resistanceStat : kResistanceStats) {
+						int resistanceValue =
+								D2COMMON_GetUnitStat(unit, resistanceStat, 0);
+
+						// "r"esistance ; elemental "i"mmunity; "p"hysical immunity
+						TextColor textColor = GetResistanceTextColor(resistanceStat);
+						immunityText += GetColorCode(textColor);
+						if (resistanceValue >= 100) {
+							immunityText +=
+									(resistanceStat == STAT_DMGREDUCTIONPCT) ? L"p" : L"i";
+						} else if (resistanceValue > monsterResistanceThreshold) {
+							immunityText += L"r";
 						}
 					}
-					
-					std::unordered_map<unsigned int, bool> enhancements;
 
-					//Determine Enchantments
-					std::string enchantText;
-					std::string szEnchantments[] = {"\377c3m", "\377c1e", "\377c9e", "\377c3e"};
-						
-					for (int n = 0; n < 9; n++) {
-						if (Toggles["Monster Enchantments"].state && unit->pMonsterData->fBoss) {
-							if (unit->pMonsterData->anEnchants[n] == ENCH_MANA_BURN)
-								enchantText += szEnchantments[0];
-							if (unit->pMonsterData->anEnchants[n] == ENCH_FIRE_ENCHANTED)
-								enchantText += szEnchantments[1];
-							if (unit->pMonsterData->anEnchants[n] == ENCH_LIGHTNING_ENCHANTED)
-								enchantText += szEnchantments[2];
-							if (unit->pMonsterData->anEnchants[n] == ENCH_COLD_ENCHANTED)
-								enchantText += szEnchantments[3];
+					// Determine enchantments
+					std::wstring enchantText;
+					if (Toggles["Monster Enchantments"].state
+							&& unit->pMonsterData->fBoss) {
+						for (BYTE enchantment : unit->pMonsterData->anEnchants) {
+							if (!std::ranges::binary_search(kEnchantments, enchantment)) {
+								continue;
+							}
+
+							TextColor textColor = GetEnchantmentTextColor(enchantment);
+							enchantText += GetColorCode(textColor);
+							enchantText += (enchantment == ENCH_MANA_BURN) ? L"m" : L"e";
 						}
-						enhancements[unit->pMonsterData->anEnchants[n]] = true;
 					}
 
-					for (auto& enhancement : enhancementColors) {
-						if (enhancements.find(enhancement.first) != enhancements.end() && enhancement.second > 0 && !unit->pMonsterData->fBoss) {
+					std::unordered_set<BYTE> enhancements(
+							std::cbegin(unit->pMonsterData->anEnchants),
+							std::cend(unit->pMonsterData->anEnchants));
+
+					for (const auto& enhancement : enhancementColors) {
+						if (enhancements.contains(enhancement.first)
+								&& enhancement.second > 0
+								&& !unit->pMonsterData->fBoss) {
 							color = enhancement.second;
 							break;
 						}
@@ -656,9 +717,10 @@ void Maphack::OnAutomapDraw() {
 					}
 
 					// auras has highest predence
-					if (enhancements[ENCH_AURACHANT]) {
-						for (auto& enhancement : auraColors) {
-							if (D2COMMON_GetUnitState(unit, enhancement.first) != 0 && enhancement.second > 0) {
+					if (enhancements.contains(ENCH_AURACHANT)) {
+						for (const auto& enhancement : auraColors) {
+							if (D2COMMON_GetUnitState(unit, enhancement.first) != 0
+									&& enhancement.second > 0) {
 								color = enhancement.second;
 								break;
 							}
@@ -667,18 +729,29 @@ void Maphack::OnAutomapDraw() {
 
 					xPos = unit->pPath->xPos;
 					yPos = unit->pPath->yPos;
-					automapBuffer.push([immunityText, enchantText, color, xPos, yPos, lineColor, MyPos]()->void{
-						POINT automapLoc;
-						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
-						if (immunityText.length() > 0)
-							Drawing::Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText);
-						if (enchantText.length() > 0)
-							Drawing::Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText);
-						Drawing::Crosshook::Draw(automapLoc.x, automapLoc.y, color);
-						if (lineColor != -1) {
-							Drawing::Linehook::Draw(MyPos.x, MyPos.y, automapLoc.x, automapLoc.y, lineColor);
-						}
-					});
+					automapBuffer.push(
+							[
+									immunityText = std::move(immunityText),
+									enchantText = std::move(enchantText),
+									color,
+									xPos,
+									yPos,
+									lineColor,
+									MyPos
+							] () -> void {
+								POINT automapLoc;
+								Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
+								if (!immunityText.empty()) {
+									Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText.c_str());
+								}
+								if (!enchantText.empty()) {
+									Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText.c_str());
+								}
+								Crosshook::Draw(automapLoc.x, automapLoc.y, color);
+								if (lineColor != -1) {
+									Linehook::Draw(MyPos.x, MyPos.y, automapLoc.x, automapLoc.y, lineColor);
+								}
+							});
 				}
 				else if (unit->dwType == UNIT_MISSILE && Toggles["Show Missiles"].state) {
 					int color = 255;
@@ -701,7 +774,7 @@ void Maphack::OnAutomapDraw() {
 					}
 
 					xPos = unit->pPath->xPos;
-					yPos = unit->pPath->yPos;					
+					yPos = unit->pPath->yPos;
 					automapBuffer.push([color, unit, xPos, yPos]()->void{
 						POINT automapLoc;
 						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
@@ -759,7 +832,7 @@ void Maphack::OnAutomapDraw() {
 						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
 						Drawing::Boxhook::Draw(automapLoc.x - 1, automapLoc.y - 1, 2, 2, 255, Drawing::BTHighlight);
 					});
-				}				
+				}
 			}
 		}
 		if (lkLinesColor > 0 && player->pPath->pRoom1->pRoom2->pLevel->dwLevelNo == MAP_A3_LOWER_KURAST) {
@@ -782,18 +855,34 @@ void Maphack::OnAutomapDraw() {
 		if (!Toggles["Display Level Names"].state)
 			return;
 		for (std::list<LevelList*>::iterator it = automapLevels.begin(); it != automapLevels.end(); it++) {
-			if (player->pAct->dwAct == (*it)->act) {
-				std::string tombStar = ((*it)->levelId == player->pAct->pMisc->dwStaffTombLevel) ? "\377c2*" : "\377c4";
-				POINT unitLoc;
-				Hook::ScreenToAutomap(&unitLoc, (*it)->x, (*it)->y);
-				char* name = UnicodeToAnsi(D2CLIENT_GetLevelName((*it)->levelId));
-				std::string nameStr = name;
-				delete[] name;
-
-				automapBuffer.push([nameStr, tombStar, unitLoc]()->void{
-					Texthook::Draw(unitLoc.x, unitLoc.y - 15, Center, 6, Gold, "%s%s", nameStr.c_str(), tombStar.c_str());
-				});
+			if (player->pAct->dwAct != (*it)->act) {
+				continue;
 			}
+
+			DWORD trueTombLevelId = player->pAct->pMisc->dwStaffTombLevel;
+
+			const std::wstring tombStar = ((*it)->levelId == trueTombLevelId)
+					? GetColorCode(TextColor::Green) + L"*"
+					: GetColorCode(TextColor::Gold);
+			POINT unitLoc;
+			Hook::ScreenToAutomap(&unitLoc, (*it)->x, (*it)->y);
+			const wchar_t* levelName = D2CLIENT_GetLevelName((*it)->levelId);
+
+			automapBuffer.push([levelName, tombStar = std::move(tombStar), unitLoc]()->void{
+				std::wstring levelText =
+						std::format(
+								L"{}{}{}",
+								GetColorCode(TextColor::Gold),
+								levelName,
+								tombStar);
+				Texthook::Draw(
+						unitLoc.x,
+						unitLoc.y - 15,
+						Center,
+						6,
+						Gold,
+						levelText.c_str());
+			});
 		}
 	});
 }
@@ -806,9 +895,9 @@ void Maphack::OnGameJoin() {
 
 void Squelch(DWORD Id, BYTE button) {
 	LPBYTE aPacket = new BYTE[7];	//create packet
-	*(BYTE*)&aPacket[0] = 0x5d;	
-	*(BYTE*)&aPacket[1] = button;	
-	*(BYTE*)&aPacket[2] = 1;	
+	*(BYTE*)&aPacket[0] = 0x5d;
+	*(BYTE*)&aPacket[1] = button;
+	*(BYTE*)&aPacket[2] = 1;
 	*(DWORD*)&aPacket[3] = Id;
 	D2NET_SendPacket(7, 0, aPacket);
 
@@ -829,7 +918,7 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
 
         switch(dest)
         {
-                case 0: 
+                case 0:
                 case 2:
                         icode = *(INT64 *)(packet+15)>>0x04;
                         break;
@@ -842,8 +931,8 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
                                         icode = *(INT64 *)(packet+17) >> 0x1C;
                                 else
                                         icode = *(INT64 *)(packet+15) >> 0x04;
-                        } 
-                        else  
+                        }
+                        else
                                 icode = *(INT64 *)(packet+17) >> 0x05;
                         break;
                 default:
@@ -879,7 +968,7 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
 			//		*block = true;
 			//	}
 			//}
-			break;			   
+			break;
 		}
 	case 0x94: {
 			BYTE Count = packet[1];
@@ -1000,7 +1089,7 @@ void Maphack::RevealRoom(Room2* room) {
 	for (PresetUnit* preset = room->pPreset; preset; preset = preset->pPresetNext)
 	{
 		int cellNo = -1;
-		
+
 		// Special NPC Check
 		if (preset->dwType == UNIT_MONSTER)
 		{
@@ -1017,14 +1106,14 @@ void Maphack::RevealRoom(Room2* room) {
 				cellNo = 318;
 
 			// Countess Chest Check
-			if (preset->dwTxtFileNo == 371) 
+			if (preset->dwTxtFileNo == 371)
 				cellNo = 301;
 			// Act 2 Orifice Check
-			else if (preset->dwTxtFileNo == 152) 
+			else if (preset->dwTxtFileNo == 152)
 				cellNo = 300;
 			// Frozen Anya Check
-			else if (preset->dwTxtFileNo == 460) 
-				cellNo = 1468; 
+			else if (preset->dwTxtFileNo == 460)
+				cellNo = 1468;
 			// Canyon / Arcane Waypoint Check
 			if ((preset->dwTxtFileNo == 402) && (room->pLevel->dwLevelNo == 46))
 				cellNo = 0;
@@ -1089,7 +1178,7 @@ Level* Maphack::GetLevel(Act* pAct, int level)
 		return NULL;
 
 	//Loop all the levels in this act
-	
+
 	for(Level* pLevel = pAct->pMisc->pLevelFirst; pLevel; pLevel = pLevel->pNextLevel)
 	{
 		//Check if we have reached a bad level.
@@ -1116,28 +1205,40 @@ int HoverObjectPatch(UnitAny* pUnit, DWORD tY, DWORD unk1, DWORD unk2, DWORD tX,
 {
 	if (!pUnit || pUnit->dwType != UNIT_MONSTER || pUnit->pMonsterData->pMonStatsTxt->bAlign != MONSTAT_ALIGN_ENEMY)
 		return 0;
-	DWORD dwImmunities[] = {
-		STAT_DMGREDUCTIONPCT,
-		STAT_MAGICDMGREDUCTIONPCT,
-		STAT_FIRERESIST,
-		STAT_LIGHTNINGRESIST,
-		STAT_COLDRESIST,
-		STAT_POISONRESIST
-	};
-	int dwResistances[] = {
-		0,0,0,0,0,0
-	};
-	for (int n = 0; n < 6; n++) {
-		dwResistances[n] = D2COMMON_GetUnitStat(pUnit, dwImmunities[n], 0);
-	}
 	double maxhp = (double)(D2COMMON_GetUnitStat(pUnit, STAT_MAXHP, 0) >> 8);
 	double hp = (double)(D2COMMON_GetUnitStat(pUnit, STAT_HP, 0) >> 8);
 	POINT p = Texthook::GetTextSize(wTxt, 1);
 	int center = tX + (p.x / 2);
 	int y = tY - p.y;
-	Texthook::Draw(center, y - 12, Center, 6, White, L"\377c7%d \377c8%d \377c1%d \377c9%d \377c3%d \377c2%d", dwResistances[0], dwResistances[1], dwResistances[2], dwResistances[3], dwResistances[4], dwResistances[5]);
-	Texthook::Draw(center, y, Center, 6, White, L"\377c%d%s", HoverMonsterColor(pUnit), wTxt);
-	Texthook::Draw(center, y + 8, Center, 6, White, L"%.0f%%", (hp / maxhp) * 100.0);
+
+	// "yc0999 " is a valid text with the longest string.
+	std::wstring resistanceText;
+	resistanceText.reserve((3 + 3 + 1) * kResistanceStats.size());
+	for (DWORD resistanceStat : kResistanceStats) {
+		TextColor textColor = GetResistanceTextColor(resistanceStat);
+		resistanceText += GetColorCode(textColor);
+		int resistanceValue = D2COMMON_GetUnitStat(pUnit, resistanceStat, 0);
+		resistanceText += std::to_wstring(resistanceValue);
+		resistanceText += L' ';
+	}
+	resistanceText.pop_back();
+	Texthook::Draw(
+			center,
+			y - 12,
+			Center,
+			6,
+			White,
+			resistanceText.c_str());
+
+	TextColor hoverMonsterTextColor =
+			static_cast<TextColor>(HoverMonsterColor(pUnit));
+	std::wstring monsterNameText = GetColorCode(hoverMonsterTextColor) + wTxt;
+	Texthook::Draw(center, y, Center, 6, White, monsterNameText.c_str());
+	// TODO (Mir Drualga): Replace %% with % when Texthook removes its printf
+	std::wstring monsterLifePercentText =
+			std::format(L"{:.0f}%%", (hp / maxhp) * 100.0);
+	Texthook::Draw(
+			center, y + 8, Center, 6, White, monsterLifePercentText.c_str());
 	return 1;
 }
 
@@ -1193,7 +1294,7 @@ VOID __stdcall Shake_Interception(LPDWORD lpX, LPDWORD lpY)
 }
 
 //basically call HoverObjectPatch, if that function returns 0 execute
-//the normal display code used basically for any hovered 
+//the normal display code used basically for any hovered
 //object text (stash, merc, akara, etc...). if it returned 1
 //that means we did our custom display text and shouldn't
 //execute the draw method
