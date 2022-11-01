@@ -279,7 +279,6 @@ void Maphack::ReadConfig() {
 		}
 	}
 
-	
 	BH::config->ReadAssoc("Monster Line", MonsterLines);
 	for (auto it = MonsterLines.cbegin(); it != MonsterLines.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
@@ -411,7 +410,7 @@ void Maphack::OnLoad() {
 
 	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Monster Resistances"].state, "  Resistances");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Monster Resistances"].toggle, L"");
-	
+
 	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Missiles"].state, "Show Missiles");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Show Missiles"].toggle, L"");
 
@@ -511,7 +510,7 @@ void Maphack::OnLoop() {
 	UnitAny* unit = D2CLIENT_GetPlayerUnit();
 	if (!unit || !Toggles["Auto Reveal"].state)
 		return;
-	
+
 	// Reveal the automap based on configuration.
 	switch((MaphackReveal)revealType) {
 		case MaphackRevealGame:
@@ -609,7 +608,7 @@ void Maphack::OnDraw() {
 
 void Maphack::OnAutomapDraw() {
 	UnitAny* player = D2CLIENT_GetPlayerUnit();
-	
+
 	if (!player || !player->pAct || player->pPath->pRoom1->pRoom2->pLevel->dwLevelNo == 0)
 		return;
 
@@ -621,7 +620,7 @@ void Maphack::OnAutomapDraw() {
 	if (!IsInitialized()){
 		Texthook::Draw(10, 70, Drawing::None, 12, Gold, L"Loading MPQ Data...");
 	}
-	
+
 	automapDraw.draw([=](AsyncDrawBuffer &automapBuffer) -> void {
 		POINT MyPos;
 		Drawing::Hook::ScreenToAutomap(&MyPos,
@@ -680,7 +679,7 @@ void Maphack::OnAutomapDraw() {
 							immunityText += L"r";
 						}
 					}
-					
+
 					// Determine enchantments
 					std::wstring enchantText;
 					if (Toggles["Monster Enchantments"].state
@@ -764,7 +763,7 @@ void Maphack::OnAutomapDraw() {
 					}
 
 					xPos = unit->pPath->xPos;
-					yPos = unit->pPath->yPos;					
+					yPos = unit->pPath->yPos;
 					automapBuffer.push([color, unit, xPos, yPos]()->void{
 						POINT automapLoc;
 						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
@@ -822,7 +821,7 @@ void Maphack::OnAutomapDraw() {
 						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
 						Drawing::Boxhook::Draw(automapLoc.x - 1, automapLoc.y - 1, 2, 2, 255, Drawing::BTHighlight);
 					});
-				}				
+				}
 			}
 		}
 		if (lkLinesColor > 0 && player->pPath->pRoom1->pRoom2->pLevel->dwLevelNo == MAP_A3_LOWER_KURAST) {
@@ -885,9 +884,9 @@ void Maphack::OnGameJoin() {
 
 void Squelch(DWORD Id, BYTE button) {
 	LPBYTE aPacket = new BYTE[7];	//create packet
-	*(BYTE*)&aPacket[0] = 0x5d;	
-	*(BYTE*)&aPacket[1] = button;	
-	*(BYTE*)&aPacket[2] = 1;	
+	*(BYTE*)&aPacket[0] = 0x5d;
+	*(BYTE*)&aPacket[1] = button;
+	*(BYTE*)&aPacket[2] = 1;
 	*(DWORD*)&aPacket[3] = Id;
 	D2NET_SendPacket(7, 0, aPacket);
 
@@ -908,7 +907,7 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
 
         switch(dest)
         {
-                case 0: 
+                case 0:
                 case 2:
                         icode = *(INT64 *)(packet+15)>>0x04;
                         break;
@@ -921,8 +920,8 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
                                         icode = *(INT64 *)(packet+17) >> 0x1C;
                                 else
                                         icode = *(INT64 *)(packet+15) >> 0x04;
-                        } 
-                        else  
+                        }
+                        else
                                 icode = *(INT64 *)(packet+17) >> 0x05;
                         break;
                 default:
@@ -958,7 +957,7 @@ void Maphack::OnGamePacketRecv(BYTE *packet, bool *block) {
 			//		*block = true;
 			//	}
 			//}
-			break;			   
+			break;
 		}
 	case 0x94: {
 			BYTE Count = packet[1];
@@ -1079,7 +1078,7 @@ void Maphack::RevealRoom(Room2* room) {
 	for (PresetUnit* preset = room->pPreset; preset; preset = preset->pPresetNext)
 	{
 		int cellNo = -1;
-		
+
 		// Special NPC Check
 		if (preset->dwType == UNIT_MONSTER)
 		{
@@ -1096,14 +1095,14 @@ void Maphack::RevealRoom(Room2* room) {
 				cellNo = 318;
 
 			// Countess Chest Check
-			if (preset->dwTxtFileNo == 371) 
+			if (preset->dwTxtFileNo == 371)
 				cellNo = 301;
 			// Act 2 Orifice Check
-			else if (preset->dwTxtFileNo == 152) 
+			else if (preset->dwTxtFileNo == 152)
 				cellNo = 300;
 			// Frozen Anya Check
-			else if (preset->dwTxtFileNo == 460) 
-				cellNo = 1468; 
+			else if (preset->dwTxtFileNo == 460)
+				cellNo = 1468;
 			// Canyon / Arcane Waypoint Check
 			if ((preset->dwTxtFileNo == 402) && (room->pLevel->dwLevelNo == 46))
 				cellNo = 0;
@@ -1168,7 +1167,7 @@ Level* Maphack::GetLevel(Act* pAct, int level)
 		return NULL;
 
 	//Loop all the levels in this act
-	
+
 	for(Level* pLevel = pAct->pMisc->pLevelFirst; pLevel; pLevel = pLevel->pNextLevel)
 	{
 		//Check if we have reached a bad level.
@@ -1284,7 +1283,7 @@ VOID __stdcall Shake_Interception(LPDWORD lpX, LPDWORD lpY)
 }
 
 //basically call HoverObjectPatch, if that function returns 0 execute
-//the normal display code used basically for any hovered 
+//the normal display code used basically for any hovered
 //object text (stash, merc, akara, etc...). if it returned 1
 //that means we did our custom display text and shouldn't
 //execute the draw method
