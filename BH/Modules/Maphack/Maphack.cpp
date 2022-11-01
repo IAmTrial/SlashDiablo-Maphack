@@ -845,18 +845,34 @@ void Maphack::OnAutomapDraw() {
 		if (!Toggles["Display Level Names"].state)
 			return;
 		for (std::list<LevelList*>::iterator it = automapLevels.begin(); it != automapLevels.end(); it++) {
-			if (player->pAct->dwAct == (*it)->act) {
-				std::string tombStar = ((*it)->levelId == player->pAct->pMisc->dwStaffTombLevel) ? "\377c2*" : "\377c4";
-				POINT unitLoc;
-				Hook::ScreenToAutomap(&unitLoc, (*it)->x, (*it)->y);
-				char* name = UnicodeToAnsi(D2CLIENT_GetLevelName((*it)->levelId));
-				std::string nameStr = name;
-				delete[] name;
-
-				automapBuffer.push([nameStr, tombStar, unitLoc]()->void{
-					Texthook::Draw(unitLoc.x, unitLoc.y - 15, Center, 6, Gold, "%s%s", nameStr.c_str(), tombStar.c_str());
-				});
+			if (player->pAct->dwAct != (*it)->act) {
+				continue;
 			}
+
+			DWORD trueTombLevelId = player->pAct->pMisc->dwStaffTombLevel;
+
+			const std::wstring tombStar = ((*it)->levelId == trueTombLevelId)
+					? GetColorCode(TextColor::Green) + L"*"
+					: GetColorCode(TextColor::Gold);
+			POINT unitLoc;
+			Hook::ScreenToAutomap(&unitLoc, (*it)->x, (*it)->y);
+			const wchar_t* levelName = D2CLIENT_GetLevelName((*it)->levelId);
+
+			automapBuffer.push([levelName, tombStar = std::move(tombStar), unitLoc]()->void{
+				std::wstring levelText =
+						std::format(
+								L"{}{}{}",
+								GetColorCode(TextColor::Gold),
+								levelName,
+								tombStar);
+				Texthook::Draw(
+						unitLoc.x,
+						unitLoc.y - 15,
+						Center,
+						6,
+						Gold,
+						levelText.c_str());
+			});
 		}
 	});
 }
