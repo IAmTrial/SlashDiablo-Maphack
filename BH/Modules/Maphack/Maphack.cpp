@@ -7,6 +7,7 @@
 #include <wchar.h>
 #include <windows.h>
 
+#include <format>
 #include <list>
 #include <map>
 #include <string>
@@ -50,6 +51,44 @@ using ::bh::modules::item::HandleUnknownItemCode;
 
 using ::bh::modules::item::Action;
 using ::bh::modules::item::UnitItemInfo;
+
+static constexpr std::array kResistanceStats = std::to_array<DWORD>({
+		STAT_DMGREDUCTIONPCT,
+		STAT_MAGICDMGREDUCTIONPCT,
+		STAT_FIRERESIST,
+		STAT_LIGHTNINGRESIST,
+		STAT_COLDRESIST,
+		STAT_POISONRESIST,
+});
+static_assert(std::ranges::is_sorted(kResistanceStats));
+
+static constexpr TextColor GetResistanceTextColor(DWORD stat) {
+	switch (stat) {
+		case STAT_DMGREDUCTIONPCT: {
+			return TextColor::White;
+		}
+
+		case STAT_MAGICDMGREDUCTIONPCT: {
+			return TextColor::Orange;
+		}
+
+		case STAT_FIRERESIST: {
+			return TextColor::Red;
+		}
+
+		case STAT_LIGHTNINGRESIST: {
+			return TextColor::Yellow;
+		}
+
+		case STAT_COLDRESIST: {
+			return TextColor::Blue;
+		}
+
+		case STAT_POISONRESIST: {
+			return TextColor::Green;
+		}
+	}
+}
 
 }  // namespace
 
@@ -1116,28 +1155,40 @@ int HoverObjectPatch(UnitAny* pUnit, DWORD tY, DWORD unk1, DWORD unk2, DWORD tX,
 {
 	if (!pUnit || pUnit->dwType != UNIT_MONSTER || pUnit->pMonsterData->pMonStatsTxt->bAlign != MONSTAT_ALIGN_ENEMY)
 		return 0;
-	DWORD dwImmunities[] = {
-		STAT_DMGREDUCTIONPCT,
-		STAT_MAGICDMGREDUCTIONPCT,
-		STAT_FIRERESIST,
-		STAT_LIGHTNINGRESIST,
-		STAT_COLDRESIST,
-		STAT_POISONRESIST
-	};
-	int dwResistances[] = {
-		0,0,0,0,0,0
-	};
-	for (int n = 0; n < 6; n++) {
-		dwResistances[n] = D2COMMON_GetUnitStat(pUnit, dwImmunities[n], 0);
-	}
 	double maxhp = (double)(D2COMMON_GetUnitStat(pUnit, STAT_MAXHP, 0) >> 8);
 	double hp = (double)(D2COMMON_GetUnitStat(pUnit, STAT_HP, 0) >> 8);
 	POINT p = Texthook::GetTextSize(wTxt, 1);
 	int center = tX + (p.x / 2);
 	int y = tY - p.y;
-	Texthook::Draw(center, y - 12, Center, 6, White, L"\377c7%d \377c8%d \377c1%d \377c9%d \377c3%d \377c2%d", dwResistances[0], dwResistances[1], dwResistances[2], dwResistances[3], dwResistances[4], dwResistances[5]);
-	Texthook::Draw(center, y, Center, 6, White, L"\377c%d%s", HoverMonsterColor(pUnit), wTxt);
-	Texthook::Draw(center, y + 8, Center, 6, White, L"%.0f%%", (hp / maxhp) * 100.0);
+
+	// "yc0999 " is a valid text with the longest string.
+	std::wstring resistanceText;
+	resistanceText.reserve((3 + 3 + 1) * kResistanceStats.size());
+	for (DWORD resistanceStat : kResistanceStats) {
+		TextColor textColor = GetResistanceTextColor(resistanceStat);
+		resistanceText += GetColorCode(textColor);
+		int resistanceValue = D2COMMON_GetUnitStat(pUnit, resistanceStat, 0);
+		resistanceText += std::to_wstring(resistanceValue);
+		resistanceText += L' ';
+	}
+	resistanceText.pop_back();
+	Texthook::Draw(
+			center,
+			y - 12,
+			Center,
+			6,
+			White,
+			resistanceText.c_str());
+
+	TextColor hoverMonsterTextColor =
+			static_cast<TextColor>(HoverMonsterColor(pUnit));
+	std::wstring monsterNameText = GetColorCode(hoverMonsterTextColor) + wTxt;
+	Texthook::Draw(center, y, Center, 6, White, monsterNameText.c_str());
+	// TODO (Mir Drualga): Replace %% with % when Texthook removes its printf
+	std::wstring monsterLifePercentText =
+			std::format(L"{:.0f}%%", (hp / maxhp) * 100.0);
+	Texthook::Draw(
+			center, y + 8, Center, 6, White, monsterLifePercentText.c_str());
 	return 1;
 }
 
