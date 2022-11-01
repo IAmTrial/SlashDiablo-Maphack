@@ -639,25 +639,20 @@ void Maphack::OnAutomapDraw() {
 						lineColor = automapMonsterLines[unit->dwTxtFileNo];
 					}
 
-					//Determine immunities
-					std::string szImmunities[] = { "\377c0p", "\377c8i", "\377c1i", "\377c9i", "\377c3i", "\377c2i" };
-					std::string szResistances[] = { "\377c7r", "\377c8r", "\377c1r", "\377c9r", "\377c3r", "\377c2r" };
-					DWORD dwImmunities[] = {
-						STAT_DMGREDUCTIONPCT,
-						STAT_MAGICDMGREDUCTIONPCT,
-						STAT_FIRERESIST,
-						STAT_LIGHTNINGRESIST,
-						STAT_COLDRESIST,
-						STAT_POISONRESIST
-					};
-					std::string immunityText;
-					for (int n = 0; n < 6; n++) {
-						int nImm = D2COMMON_GetUnitStat(unit, dwImmunities[n], 0);
-						if (nImm >= 100) {
-							immunityText += szImmunities[n];
-						}
-						else if (nImm >= monsterResistanceThreshold) {
-							immunityText += szResistances[n];
+					// Determine resistances/immunities
+					std::wstring immunityText;
+					for (DWORD resistanceStat : kResistanceStats) {
+						int resistanceValue =
+								D2COMMON_GetUnitStat(unit, resistanceStat, 0);
+
+						// "r"esistance ; elemental "i"mmunity; "p"hysical immunity
+						TextColor textColor = GetResistanceTextColor(resistanceStat);
+						immunityText += GetColorCode(textColor);
+						if (resistanceValue >= 100) {
+							immunityText +=
+									(resistanceStat == STAT_DMGREDUCTIONPCT) ? L"p" : L"i";
+						} else if (resistanceValue > monsterResistanceThreshold) {
+							immunityText += L"r";
 						}
 					}
 					
@@ -706,11 +701,12 @@ void Maphack::OnAutomapDraw() {
 
 					xPos = unit->pPath->xPos;
 					yPos = unit->pPath->yPos;
-					automapBuffer.push([immunityText, enchantText, color, xPos, yPos, lineColor, MyPos]()->void{
+					automapBuffer.push([immunityText = std::move(immunityText), enchantText, color, xPos, yPos, lineColor, MyPos]()->void{
 						POINT automapLoc;
 						Drawing::Hook::ScreenToAutomap(&automapLoc, xPos, yPos);
-						if (immunityText.length() > 0)
-							Drawing::Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText);
+						if (!immunityText.empty()) {
+							Texthook::Draw(automapLoc.x, automapLoc.y - 8, Drawing::Center, 6, White, immunityText.c_str());
+						}
 						if (enchantText.length() > 0)
 							Drawing::Texthook::Draw(automapLoc.x, automapLoc.y - 14, Drawing::Center, 6, White, enchantText);
 						Drawing::Crosshook::Draw(automapLoc.x, automapLoc.y, color);
