@@ -401,49 +401,49 @@ void Maphack::OnLoad() {
 	unsigned int Y = 0;
 	int keyhook_x = 150;
 	int col2_x = 250;
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Auto Reveal"].state, "Auto Reveal");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Auto Reveal"].state, L"Auto Reveal");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Auto Reveal"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Monsters"].state, "Show Monsters");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Monsters"].state, L"Show Monsters");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Show Monsters"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Monster Enchantments"].state, "  Enchantments");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Monster Enchantments"].state, L"  Enchantments");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Monster Enchantments"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Monster Resistances"].state, "  Resistances");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Monster Resistances"].state, L"  Resistances");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Monster Resistances"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Missiles"].state, "Show Missiles");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Missiles"].state, L"Show Missiles");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Show Missiles"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Chests"].state, "Show Chests");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Chests"].state, L"Show Chests");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Show Chests"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Force Light Radius"].state, "Light Radius");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Force Light Radius"].state, L"Light Radius");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Force Light Radius"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Remove Weather"].state, "Remove Weather");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Remove Weather"].state, L"Remove Weather");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Remove Weather"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Infravision"].state, "Infravision");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Infravision"].state, L"Infravision");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Infravision"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Remove Shake"].state, "Remove Shake");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Remove Shake"].state, L"Remove Shake");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Remove Shake"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Display Level Names"].state, "Level Names");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Display Level Names"].state, L"Level Names");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Display Level Names"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Apply CPU Patch"].state, "CPU Patch");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Apply CPU Patch"].state, L"CPU Patch");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Apply CPU Patch"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Apply FPS Patch"].state, "FPS Patch (SP Only)");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Apply FPS Patch"].state, L"FPS Patch (SP Only)");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Apply FPS Patch"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Automap On Join"].state, "Show Automap On Join");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Show Automap On Join"].state, L"Show Automap On Join");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Show Automap On Join"].toggle, L"");
 
-	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Skip NPC Quest Messages"].state, "Skip NPC Quest Messages");
+	new Checkhook(settingsTab, 4, (Y += 15), &Toggles["Skip NPC Quest Messages"].state, L"Skip NPC Quest Messages");
 	new Keyhook(settingsTab, keyhook_x, (Y + 2), &Toggles["Skip NPC Quest Messages"].toggle, L"");
 
 	new Texthook(settingsTab, col2_x + 5, 3, "Missile Colors");

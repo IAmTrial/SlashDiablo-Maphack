@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wchar.h>
+
 #include <string>
 
 #include "../../../Constants.h"
@@ -11,10 +13,22 @@ class Checkhook : public Hook {
 	private:
 		bool* state;//Holds if the checkbox is checked.
 		TextColor color, hoverColor;//Holds text color/hover color.
-		std::string text;//The text beside the checkhook.
+		std::wstring text_;//The text beside the checkhook.
 	public:
-		Checkhook(HookVisibility visibility, unsigned int x, unsigned int y, bool* checked, std::string formatString, ...);
-		Checkhook(HookGroup* group, unsigned int x, unsigned int y, bool* checked, std::string formatString, ...);
+		Checkhook(
+				HookVisibility visibility,
+				unsigned int x,
+				unsigned int y,
+				bool* checked,
+				const wchar_t* formatString,
+				...);
+		Checkhook(
+				HookGroup* group,
+				unsigned int x,
+				unsigned int y,
+				bool* checked,
+				const wchar_t* formatString,
+				...);
 
 		//Returns if the check is checked.
 		bool IsChecked();
@@ -33,12 +47,6 @@ class Checkhook : public Hook {
 
 		//Sets the hover color
 		void SetHoverColor(TextColor newColor);
-
-		//Gets the text
-		std::string GetText();
-
-		//Sets the text
-		void SetText(std::string formatString, ...);
 
 		//Returns the total width of the check hook
 		unsigned int GetXSize();

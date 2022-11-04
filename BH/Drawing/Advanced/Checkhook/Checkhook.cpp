@@ -19,35 +19,47 @@ namespace Drawing {
 /* Basic Hook Initializer
  *		Used for drawing a checkbox on screen.
  */
-Checkhook::Checkhook(HookVisibility visibility, unsigned int x, unsigned int y, bool* checked, std::string formatString, ...) :
-Hook(visibility, x, y) {
+Checkhook::Checkhook(
+		HookVisibility visibility,
+		unsigned int x,
+		unsigned int y,
+		bool* checked,
+		const wchar_t* formatString,
+		...)
+				: Hook(visibility, x, y) {
 	//Correctly format the string from the given arguments.
 	SetTextColor(White);
 	state = checked;
 	SetHoverColor(Disabled);
-	char buffer[4096];
+	wchar_t buffer[4096];
 	va_list arg;
 	va_start(arg, formatString);
-	vsprintf_s(buffer, 4096, formatString.c_str(), arg);
+	vswprintf_s(buffer, 4096, formatString, arg);
 	va_end(arg);
-	text = buffer;
+	text_ = buffer;
 }
 
 /* Group Hook Initializer
  *		Used in conjuction with other basic hooks to create an advanced hook.
  */
-Checkhook::Checkhook(HookGroup* group, unsigned int x, unsigned int y, bool* checked, std::string formatString, ...) :
-Hook(group, x, y) {
+Checkhook::Checkhook(
+		HookGroup* group,
+		unsigned int x,
+		unsigned int y,
+		bool* checked,
+		const wchar_t* formatString,
+		...)
+				: Hook(group, x, y) {
 	//Correctly format the string from the given arguments.
 	SetTextColor(Gold);
 	state = checked;
 	SetHoverColor(Tan);
-	char buffer[4096];
+	wchar_t buffer[4096];
 	va_list arg;
 	va_start(arg, formatString);
-	vsprintf_s(buffer, 4096, formatString.c_str(), arg);
+	vswprintf_s(buffer, 4096, formatString, arg);
 	va_end(arg);
-	text = buffer;
+	text_ = buffer;
 }
 
 /* GetColor()
@@ -82,35 +94,14 @@ void Checkhook::SetHoverColor(TextColor newHoverColor) {
 	Unlock();
 }
 
-/* GetCheck()
- *	Returns what text will be drawn.
- */
-std::string Checkhook::GetText() {
-	return text;
-}
-
-/* SetCheck(string formaString, ...)
- *	Sets a new formatted string as the text
- */
-void Checkhook::SetText(std::string formatString, ...) {
-	char buffer[4096];
-	va_list arg;
-	va_start(arg, formatString);
-	vsprintf_s(buffer, 4096, formatString.c_str(), arg);
-	va_end(arg);
-	text = buffer;
-}
-
 /* GetXSize()
  *	Returns how long the text is.
  */
 unsigned int Checkhook::GetXSize() {
 	DWORD width, fileNo;
-	wchar_t* wString = AnsiToUnicode(text.c_str());
 	DWORD oldFont = D2WIN_SetTextSize(0);
-	D2WIN_GetTextWidthFileNo(wString, &width, &fileNo);
+	D2WIN_GetTextWidthFileNo(text_.c_str(), &width, &fileNo);
 	D2WIN_SetTextSize(oldFont);
-	delete[] wString;
 	return width + 20; 
 }
 
@@ -156,10 +147,11 @@ void Checkhook::OnDraw() {
 		checkColor = hoverColor;
 	}
 
-	if (IsChecked())
-		Texthook::Draw(GetX() + 3, GetY() + 2, false, 0, (TextColor)checkColor, "X");
+	if (IsChecked()) {
+		Texthook::Draw(GetX() + 3, GetY() + 2, false, 0, (TextColor)checkColor, L"X");
+	}
 
-	Texthook::Draw(GetX() + 18, GetY() + 2, false, 0, (TextColor)drawColor, text);
+	Texthook::Draw(GetX() + 18, GetY() + 2, false, 0, (TextColor)drawColor, text_.c_str());
 	Unlock();
 }
 

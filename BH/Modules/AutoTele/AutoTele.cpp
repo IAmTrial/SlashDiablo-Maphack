@@ -52,27 +52,27 @@ void AutoTele::OnLoad() {
 	new Texthook(settingsTab, col+20, Y, "Toggles");
 
 	new Checkhook(settingsTab, col, (Y += 15),
-			&Toggles["Draw Destination"].state, "Draw Paths");
+			&Toggles["Draw Destination"].state, L"Draw Paths");
 
 	new Checkhook(settingsTab, col, (Y += 15),
-			&Toggles["Quest Drop Warning"].state, "Quest Drop Warning");
+			&Toggles["Quest Drop Warning"].state, L"Quest Drop Warning");
 
 	new Texthook(settingsTab, col+20, (Y += 22), "Game creation");
 	new Checkhook(settingsTab, col, (Y += 15),
-			&(*bnetBools)["Autofill Last Game"], "Autofill Last Game");
+			&(*bnetBools)["Autofill Last Game"], L"Autofill Last Game");
 	new Checkhook(settingsTab, col, (Y += 15),
-			&(*bnetBools)["Autofill Next Game"], "Autofill Next Game");
+			&(*bnetBools)["Autofill Next Game"], L"Autofill Next Game");
 	new Checkhook(settingsTab, col, (Y += 15),
-			&(*bnetBools)["Autofill Last Password"], "Autofill Last Password");
+			&(*bnetBools)["Autofill Last Password"], L"Autofill Last Password");
 	new Checkhook(settingsTab, col, (Y += 15),
-			&(*bnetBools)["Autofill Description"], "Autofill Description");
+			&(*bnetBools)["Autofill Description"], L"Autofill Description");
 	new Checkhook(settingsTab, col, (Y += 15),
-			&(*gamefilterBools)["Show Difficulty"], "Show Difficulty");
+			&(*gamefilterBools)["Show Difficulty"], L"Show Difficulty");
 	new Checkhook(settingsTab, col, (Y += 15),
-			&(*gamefilterBools)["Show Gameserver"], "Show Gameserver");
+			&(*gamefilterBools)["Show Gameserver"], L"Show Gameserver");
 
 	//this doesn't change the path.  I can't figure out how to make it work either.
-	//new Checkhook(settingsTab, 40, 42, &Toggles["CP to cave"].state, "CP to cave");
+	//new Checkhook(settingsTab, 40, 42, &Toggles["CP to cave"].state, L"CP to cave");
 
 	new Texthook(settingsTab, 250, 12, "Map Colors");
 
