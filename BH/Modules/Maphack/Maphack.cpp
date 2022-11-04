@@ -448,17 +448,17 @@ void Maphack::OnLoad() {
 
 	new Texthook(settingsTab, col2_x + 5, 3, "Missile Colors");
 
-	new Colorhook(settingsTab, col2_x, 17, &missileColors["Player"], "Player");
-	new Colorhook(settingsTab, col2_x, 32, &missileColors["Neutral"], "Neutral");
-	new Colorhook(settingsTab, col2_x, 47, &missileColors["Party"], "Party");
-	new Colorhook(settingsTab, col2_x, 62, &missileColors["Hostile"], "Hostile");
+	new Colorhook(settingsTab, col2_x, 17, &missileColors["Player"], L"Player");
+	new Colorhook(settingsTab, col2_x, 32, &missileColors["Neutral"], L"Neutral");
+	new Colorhook(settingsTab, col2_x, 47, &missileColors["Party"], L"Party");
+	new Colorhook(settingsTab, col2_x, 62, &missileColors["Hostile"], L"Hostile");
 
 	new Texthook(settingsTab, col2_x + 5, 77, "Monster Colors");
 
-	new Colorhook(settingsTab, col2_x, 92, &monsterColors["Normal"], "Normal");
-	new Colorhook(settingsTab, col2_x, 107, &monsterColors["Minion"], "Minion");
-	new Colorhook(settingsTab, col2_x, 122, &monsterColors["Champion"], "Champion");
-	new Colorhook(settingsTab, col2_x, 137, &monsterColors["Boss"], "Boss");
+	new Colorhook(settingsTab, col2_x, 92, &monsterColors["Normal"], L"Normal");
+	new Colorhook(settingsTab, col2_x, 107, &monsterColors["Minion"], L"Minion");
+	new Colorhook(settingsTab, col2_x, 122, &monsterColors["Champion"], L"Champion");
+	new Colorhook(settingsTab, col2_x, 137, &monsterColors["Boss"], L"Boss");
 
 	new Texthook(settingsTab, 6, (Y += 15), "Reveal Type:");
 
