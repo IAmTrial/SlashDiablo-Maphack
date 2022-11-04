@@ -76,17 +76,17 @@ void AutoTele::OnLoad() {
 
 	new Texthook(settingsTab, 250, 12, "Map Colors");
 
-	new Colorhook(settingsTab, 250, 27, &Colors[0], "Path");
+	new Colorhook(settingsTab, 250, 27, &Colors[0], L"Path");
 
-	new Colorhook(settingsTab, 250, 42, &Colors[1], "Next");
+	new Colorhook(settingsTab, 250, 42, &Colors[1], L"Next");
 
-	new Colorhook(settingsTab, 250, 57, &Colors[2], "Other");
+	new Colorhook(settingsTab, 250, 57, &Colors[2], L"Other");
 
-	new Colorhook(settingsTab, 250, 72, &Colors[3], "WP");
+	new Colorhook(settingsTab, 250, 72, &Colors[3], L"WP");
 
-	new Colorhook(settingsTab, 250, 87, &Colors[4], "Prev");
+	new Colorhook(settingsTab, 250, 87, &Colors[4], L"Prev");
 
-	new Colorhook(settingsTab, 250, 102, &Colors[5], "Other Extra");
+	new Colorhook(settingsTab, 250, 102, &Colors[5], L"Other Extra");
 }
 
 void AutoTele::LoadConfig() {
