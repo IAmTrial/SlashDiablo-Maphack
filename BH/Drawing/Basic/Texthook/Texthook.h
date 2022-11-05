@@ -66,8 +66,17 @@ class Texthook : public Hook {
 		static POINT GetTextSize(const wchar_t* text, unsigned int font);
 
 		//Static draw text function
+		// TODO (Mir Drualga): Remove this function once UTF-8 is confirmed
+		[[deprecated("Text for drawing to the game is wide string")]]
 		static bool Draw(unsigned int x, unsigned int y, int align, unsigned int font, TextColor color, std::string text, ...);
-		static bool Draw(unsigned int x, unsigned int y, int align, unsigned int font, TextColor color, const wchar_t* text, ...);
+
+		static bool Draw(
+				unsigned int x,
+				unsigned int y,
+				int align,
+				unsigned int font,
+				TextColor color,
+				const wchar_t* text);
 };
 
 }  // namespace Drawing
