@@ -25,15 +25,23 @@ class UI : public HookGroup {
 		bool active, minimized, dragged, visible;//If UI is active or minimized or dragged
 		unsigned int dragX, dragY;//Position where we grabbed it.
 		unsigned int startX, startY;//Position where we grabbed it.
-		std::string name;//Name of the UI
+		std::wstring name_;//Name of the UI
 		UITab* currentTab;//Current tab open at the time.
 		CRITICAL_SECTION crit;//Critical section
 
 		void EnsureInBounds();
+		void SetName(std::wstring newName) {
+			Lock();
+			name_ = std::move(newName);
+			Unlock();
+		};
 	public:
 		std::list<UITab*> Tabs;
 
+		// TODO (Mir Drualga): Remove this function once UTF-8 is confirmed
+		[[deprecated("Text for drawing to the game is wide string")]]
 		UI(std::string name, unsigned int xSize, unsigned int ySize);
+		UI(std::wstring name, unsigned int xSize, unsigned int ySize);
 		~UI();
 
 		void Lock() { EnterCriticalSection(&crit); };
@@ -49,7 +57,6 @@ class UI : public HookGroup {
 		bool IsMinimized() { return minimized; };
 		bool IsDragged() { return dragged; };
 		bool IsVisible() { return visible; };
-		std::string GetName() { return name; };
 		unsigned int GetZOrder() { return zOrder; };
 
 		void SetX(unsigned int newX);
@@ -61,7 +68,6 @@ class UI : public HookGroup {
 		void SetActive(bool newState) { Lock(); active = newState; Unlock(); };
 		void SetMinimized(bool newState);
 		void SetVisible(bool newState);
-		void SetName(std::string newName) { Lock(); name = newName;  Unlock(); };
 		void SetDragged(bool state, bool write_file); // only write config to file if write_file is true
 		void SetDragged(bool state); // never writes the config file
 		void SetZOrder(unsigned int newZ) { Lock(); zOrder = newZ; Unlock(); };
