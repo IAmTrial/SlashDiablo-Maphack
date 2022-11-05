@@ -201,14 +201,11 @@ void __declspec(naked) RemovePass_Interception() {
 
 void Bnet::RemovePassPatch() {
 	Control* box = *p_D2MULTI_PassBox;
-
-	if (Bnet::lastPass.size() == 0 || box == nullptr) {
+	if (Bnet::lastPass.empty() || box == nullptr) {
 		return;
 	}
 
-	wchar_t *wszLastPass = AnsiToUnicode("");
-	D2WIN_SetControlText(box, wszLastPass);
-	delete[] wszLastPass;
+	D2WIN_SetControlText(box, L"");
 }
 
 void __declspec(naked) FailToJoin_Interception()
