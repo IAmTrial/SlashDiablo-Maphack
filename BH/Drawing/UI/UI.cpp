@@ -18,29 +18,34 @@ namespace Drawing {
 namespace {
 
 using ::common::str_util::ToBool;
+using ::common::str_util::wide::FromUtf8;
 
 }  // namespace
 
 std::list<UI*> UI::UIs;
 std::list<UI*> UI::Minimized;
 
-UI::UI(std::string name, unsigned int xSize, unsigned int ySize) {
+// TODO (Mir Drualga): Remove this function once UTF-8 is confirmed
+UI::UI(std::string name, unsigned int xSize, unsigned int ySize)
+		: UI(FromUtf8(name), xSize, ySize) {}
+
+UI::UI(std::wstring name, unsigned int xSize, unsigned int ySize)
+		: name_(std::move(name)) {
 	InitializeCriticalSection(&crit);
 	SetXSize(xSize);
 	SetYSize(ySize);
-	SetName(name);
-	std::string path = BH::path + "UI.ini";
-	int x = GetPrivateProfileInt(name.c_str(), "X", 0, path.c_str());
+	std::wstring path = FromUtf8(BH::path) + L"UI.ini";
+	int x = GetPrivateProfileIntW(name_.c_str(), L"X", 0, path.c_str());
 	SetX(x);
-	int y = GetPrivateProfileInt(name.c_str(), "Y", 0, path.c_str());
+	int y = GetPrivateProfileIntW(name_.c_str(), L"Y", 0, path.c_str());
 	SetY(y);
-	int minX = GetPrivateProfileInt(name.c_str(), "minimizedX", MINIMIZED_X_POS, path.c_str());
+	int minX = GetPrivateProfileIntW(name_.c_str(), L"minimizedX", MINIMIZED_X_POS, path.c_str());
 	SetMinimizedX(minX);
-	int minY = GetPrivateProfileInt(name.c_str(), "minimizedY", MINIMIZED_Y_POS, path.c_str());
+	int minY = GetPrivateProfileIntW(name_.c_str(), L"minimizedY", MINIMIZED_Y_POS, path.c_str());
 	SetMinimizedY(minY);
-	char activeStr[20];
-	GetPrivateProfileString(name.c_str(), "Minimized", "true", activeStr, 20, path.c_str());
-	if (ToBool(activeStr).value_or(false) || strcmp(activeStr, "1") == 0) {
+	wchar_t activeStr[20];
+	GetPrivateProfileStringW(name_.c_str(), L"Minimized", L"true", activeStr, 20, path.c_str());
+	if (ToBool(activeStr).value_or(false) || wcscmp(activeStr, L"1") == 0) {
 		SetMinimized(true);
 		Minimized.push_back(this);
 	} else {
@@ -52,13 +57,14 @@ UI::UI(std::string name, unsigned int xSize, unsigned int ySize) {
 }
 UI::~UI() {
 	Lock();
-	WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), std::string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), std::string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "Minimized", IsMinimized() ? "true" : "false", std::string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), std::string(BH::path + "UI.ini").c_str());
-	WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), std::string(BH::path + "UI.ini").c_str());
+	std::wstring path = FromUtf8(BH::path) + L"UI.ini";
+	WritePrivateProfileStringW(name_.c_str(), L"X", std::to_wstring(GetX()).c_str(), path.c_str());
+	WritePrivateProfileStringW(name_.c_str(), L"Y", std::to_wstring(GetY()).c_str(), path.c_str());
+	WritePrivateProfileStringW(name_.c_str(), L"Minimized", IsMinimized() ? L"true" : L"false", path.c_str());
+	WritePrivateProfileStringW(name_.c_str(), L"minimizedX", std::to_wstring(GetMinimizedX()).c_str(), path.c_str());
+	WritePrivateProfileStringW(name_.c_str(), L"minimizedY", std::to_wstring(GetMinimizedY()).c_str(), path.c_str());
 
-	while(Tabs.size() > 0) {
+	while (!Tabs.empty()) {
 		delete (*Tabs.begin());
 	}
 		
@@ -133,7 +139,7 @@ void UI::OnDraw() {
 			if ((*it) == this)
 				break;
 
-		int xSize = Texthook::GetTextSize(GetName(), 0).x + 8;
+		int xSize = Texthook::GetTextSize(name_.c_str(), 0).x + 8;
 
 		if (IsDragged()) {
 			int newX = (*p_D2CLIENT_MouseX) - dragX;
@@ -159,7 +165,7 @@ void UI::OnDraw() {
 		int yPos = GetMinimizedY() - (n * (TITLE_BAR_HEIGHT + 4));
 		int inPos = InPos((*p_D2CLIENT_MouseX), (*p_D2CLIENT_MouseY), GetMinimizedX(), yPos, xSize, TITLE_BAR_HEIGHT);
 		Framehook::Draw(GetMinimizedX(), yPos, xSize, TITLE_BAR_HEIGHT, 0, BTOneHalf);
-		Texthook::Draw(GetMinimizedX() + 4, yPos + 3, false, 0, (inPos?Silver:White), GetName());
+		Texthook::Draw(GetMinimizedX() + 4, yPos + 3, false, 0, (inPos?Silver:White), name_.c_str());
 	} else {
 		if (IsDragged()) {
 			int newX = (*p_D2CLIENT_MouseX) - dragX;
@@ -184,7 +190,7 @@ void UI::OnDraw() {
 		}
 		Framehook::Draw(GetX(), GetY(), GetXSize(), GetYSize(), 0, (IsActive()?BTNormal:BTOneHalf));
 		Framehook::Draw(GetX(), GetY(), GetXSize(), TITLE_BAR_HEIGHT, 0, BTNormal);
-		Texthook::Draw(GetX() + 4, GetY () + 3, false, 0, InTitle((*p_D2CLIENT_MouseX), (*p_D2CLIENT_MouseY))?Silver:White, GetName());
+		Texthook::Draw(GetX() + 4, GetY () + 3, false, 0, InTitle((*p_D2CLIENT_MouseX), (*p_D2CLIENT_MouseY))?Silver:White, name_.c_str());
 		for (std::list<UITab*>::iterator it = Tabs.begin(); it != Tabs.end(); it++)
 			(*it)->OnDraw();
 	}
@@ -225,10 +231,11 @@ void UI::SetDragged(bool state, bool write_file) {
 	Lock(); 
 	dragged = state; 
 	if (!state && write_file) {
-		WritePrivateProfileString(name.c_str(), "X", to_string<unsigned int>(GetX()).c_str(), std::string(BH::path + "UI.ini").c_str());
-		WritePrivateProfileString(name.c_str(), "Y", to_string<unsigned int>(GetY()).c_str(), std::string(BH::path + "UI.ini").c_str());
-		WritePrivateProfileString(name.c_str(), "minimizedX", to_string<unsigned int>(GetMinimizedX()).c_str(), std::string(BH::path + "UI.ini").c_str());
-		WritePrivateProfileString(name.c_str(), "minimizedY", to_string<unsigned int>(GetMinimizedY()).c_str(), std::string(BH::path + "UI.ini").c_str());
+		std::wstring path = FromUtf8(BH::path) + L"UI.ini";
+		WritePrivateProfileStringW(name_.c_str(), L"X", std::to_wstring(GetX()).c_str(), path.c_str());
+		WritePrivateProfileStringW(name_.c_str(), L"Y", std::to_wstring(GetY()).c_str(), path.c_str());
+		WritePrivateProfileStringW(name_.c_str(), L"minimizedX", std::to_wstring(GetMinimizedX()).c_str(), path.c_str());
+		WritePrivateProfileStringW(name_.c_str(), L"minimizedY", std::to_wstring(GetMinimizedY()).c_str(), path.c_str());
 	}
 	Unlock(); 
 }
@@ -251,7 +258,8 @@ void UI::SetMinimized(bool newState) {
 	} else
 		Minimized.remove(this); 
 	minimized = newState; 
-	WritePrivateProfileString(name.c_str(), "Minimized", newState ? "true" : "false", std::string(BH::path + "UI.ini").c_str());
+	std::wstring path = FromUtf8(BH::path) + L"UI.ini";
+	WritePrivateProfileStringW(name_.c_str(), L"Minimized", newState ? L"true" : L"false", path.c_str());
 	Unlock(); 
 };
 
@@ -262,7 +270,7 @@ bool UI::OnLeftClick(bool up, unsigned int mouseX, unsigned int mouseY) {
 			if ((*it) == this)
 				break;
 		int yPos = GetMinimizedY() - (n * (TITLE_BAR_HEIGHT + 4));
-		int xSize = Texthook::GetTextSize(GetName(), 0).x + 8;
+		int xSize = Texthook::GetTextSize(name_.c_str(), 0).x + 8;
 		int inPos = InPos((*p_D2CLIENT_MouseX), (*p_D2CLIENT_MouseY), GetMinimizedX(), yPos, xSize, TITLE_BAR_HEIGHT);
 		if (inPos /*&& GetAsyncKeyState(VK_CONTROL)*/) 
 		{
