@@ -240,28 +240,28 @@ bool Texthook::Draw(unsigned int x, unsigned int y, int align, unsigned int font
 	return true;
 }
 
-bool Texthook::Draw(unsigned int x, unsigned int y, int align, unsigned int font, TextColor color, const wchar_t* text, ...) {
-	//Convert all %s's into proper values.
-	wchar_t* buffer = new wchar_t[4096];
-	va_list arg;
-	va_start(arg, text);
-	vswprintf_s(buffer, 4096, text, arg);
-	va_end(arg);
-
+bool Texthook::Draw(
+			unsigned int x,
+			unsigned int y,
+			int align,
+			unsigned int font,
+			TextColor color,
+			const wchar_t* text) {
 	unsigned int properX = x;
 	if (align == Center)
-		x = x - (GetTextSize(buffer, font).x / 2);
+		x -= GetTextSize(text, font).x / 2;
 
 	if (align == Right)
-		x = x - GetTextSize(buffer, font).x;
+		x -= GetTextSize(text, font).x;
 
 	//Draw the text!
-	unsigned int height[] = { 10,11,18,24,10,13,7,13,10,12,8,8,7,12 };
+	static constexpr unsigned int height[] = {
+			10,11,18,24,10,13,7,13,10,12,8,8,7,12
+	};
 	DWORD size = D2WIN_SetTextSize(font);
-	D2WIN_DrawText(buffer, x, y + height[font], color, 0);
+	D2WIN_DrawText(text, x, y + height[font], color, 0);
 	D2WIN_SetTextSize(size);
 
-	delete[] buffer;
 	return true;
 }
 
