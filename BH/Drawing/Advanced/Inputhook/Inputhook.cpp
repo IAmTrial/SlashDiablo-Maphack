@@ -5,6 +5,7 @@
 #include <wchar.h>
 #include <windows.h>
 
+#include <array>
 #include <string>
 
 #include "../../Basic/Framehook/Framehook.h"
@@ -15,8 +16,14 @@
 
 namespace Drawing {
 
-Inputhook::Inputhook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int xSize, std::string formatString, ...) :
- Hook(visibility, x, y) {
+Inputhook::Inputhook(
+		HookVisibility visibility,
+		unsigned int x,
+		unsigned int y,
+		unsigned int xSize,
+		std::wstring text)
+				: Hook(visibility, x, y),
+					text_(std::move(text)) {
 	SetXSize(xSize);
 	SetFont(0);
 	SetActive(false);
@@ -24,17 +31,17 @@ Inputhook::Inputhook(HookVisibility visibility, unsigned int x, unsigned int y, 
 	ResetCursorTick();
 	ResetSelection();
 	textPos = 0;
-	char buffer[4096];
-	va_list arg;
-	va_start(arg, formatString);
-	vsprintf_s(buffer, 4096, formatString.c_str(), arg);
-	va_end(arg);
-	text = buffer;
 	SetCursorPosition(text.length());
 }
 
-Inputhook::Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned int xSize, std::string formatString, ...) :
- Hook(group, x, y) {
+Inputhook::Inputhook(
+		HookGroup* group,
+		unsigned int x,
+		unsigned int y,
+		unsigned int xSize,
+		std::wstring text)
+				: Hook(group, x, y),
+					text_(std::move(text)) {
 	SetXSize(xSize);
 	SetFont(0);
 	SetActive(false);
@@ -42,23 +49,8 @@ Inputhook::Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned 
 	ResetCursorTick();
 	ResetSelection();
 	textPos = 0;
-	char buffer[4096];
-	va_list arg;
-	va_start(arg, formatString);
-	vsprintf_s(buffer, 4096, formatString.c_str(), arg);
-	va_end(arg);
-	text = buffer;
-	SetCursorPosition(text.length());
- }
-
- void Inputhook::SetText(std::string newText, ...) {
-	char buffer[4096];
-	va_list arg;
-	va_start(arg, newText);
-	vsprintf_s(buffer, 4096, newText.c_str(), arg);
-	va_end(arg);
-	text = buffer;
- }
+	SetCursorPosition(text_.length());
+}
 
  void Inputhook::SetFont(unsigned int newFont) {
 	if (newFont >=  0 && newFont < 16) {
@@ -85,7 +77,7 @@ Inputhook::Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned 
  }
 
  void Inputhook::SetCursorPosition(unsigned int newPosition) {
-	 if (newPosition >= 0 && newPosition <= text.length()) {
+	 if (newPosition >= 0 && newPosition <= text_.length()) {
 		Lock();
 		cursorPos = newPosition;
 		Unlock();
@@ -93,7 +85,7 @@ Inputhook::Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned 
  }
 
  void Inputhook::SetSelectionPosition(unsigned int pos) {
-	 if (pos < text.length()) {
+	 if (pos < text_.length()) {
 		 Lock();
 		 selectPos = pos;
 		 Unlock();
@@ -101,7 +93,7 @@ Inputhook::Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned 
  }
 
  void Inputhook::SetSelectionLength(unsigned int length) {
-	 if (length <= text.length()) {
+	 if (length <= text_.length()) {
 		 Lock();
 		 selectLength = length;
 		 Unlock();
@@ -134,31 +126,25 @@ unsigned int Inputhook::GetCharacterLimit() {
 	 unsigned int height[] = {10,11,18,24,10,13,7,13,10,12,8,8,7,12};
 	 
 	 //Current text width
-	 POINT textSize = Texthook::GetTextSize(GetText().substr(textPos, GetCursorPosition() - textPos), GetFont());
+	 POINT textSize = Texthook::GetTextSize(text_.substr(textPos, GetCursorPosition() - textPos).c_str(), GetFont());
 
 	 //Draw the outline box!
 	 RECT pRect  = {GetX(), GetY(), GetX() + GetXSize(), GetY() + height[GetFont()] + 4};
 	 D2GFX_DrawRectangle(GetX(), GetY(), GetX() + GetXSize(), GetY() + height[GetFont()] + 4, 0, BTFull);
 	 Framehook::DrawRectStub(&pRect);
-	 std::string drawnText = text;
 
 	 //Draw the text in!
-	 int len = drawnText.length() - textPos;
-	 if (len > (int)GetCharacterLimit())
-		len = GetCharacterLimit();
-	drawnText = drawnText.substr(textPos, len);
+	 unsigned int len = text_.length() - textPos;
+	 len = std::min(len, GetCharacterLimit());
+	 std::wstring drawnText = text_.substr(textPos, len);
 
-	 
 	 if (IsSelected()) {
-		 drawnText.insert(GetSelectionPosition() + GetSelectionLength(), "\xFF" "c0");
-		 drawnText.insert(GetSelectionPosition(), "\xFF" "c9");
+		 drawnText.insert(GetSelectionPosition() + GetSelectionLength(), GetColorCode(TextColor::White));
+		 drawnText.insert(GetSelectionPosition(), GetColorCode(TextColor::Yellow));
 	 }
 
-	
 	 DWORD oldFont = D2WIN_SetTextSize(GetFont());
-	 wchar_t* wText = AnsiToUnicode(drawnText.c_str());
-	 D2WIN_DrawText(wText, GetX() + 3, GetY() + 3 + height[GetFont()], 0, 0);
-	 delete[] wText;
+	 D2WIN_DrawText(drawnText.c_str(), GetX() + 3, GetY() + 3 + height[GetFont()], 0, 0);
 	 D2WIN_SetTextSize(oldFont);
 
 	 //Draw the cursor!
@@ -182,7 +168,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 				Backspace();
 		break;
 		case VK_DELETE:
-			if (!up && text.length() != GetCursorPosition()) {
+			if (!up && text_.length() != GetCursorPosition()) {
 				Erase(GetCursorPosition(), 1);
 			}
 		break;
@@ -209,7 +195,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 			}
 		break;
 		case VK_RIGHT:
-			if (!up && GetCursorPosition() != text.length()) {
+			if (!up && GetCursorPosition() != text_.length()) {
 				if (shiftState) {
 					if (IsSelected()) {
 						if (GetCursorPosition() == (GetSelectionPosition() + GetSelectionLength())) {
@@ -234,23 +220,23 @@ unsigned int Inputhook::GetCharacterLimit() {
 				//Select All
 				if (key == 0x41) {
 					SetSelectionPosition(0);
-					SetSelectionLength(text.length());
+					SetSelectionLength(text_.length());
 				}
 				OpenClipboard(NULL);
 				//Paste
 				if (key == 0x56) {
-					HANDLE pHandle = GetClipboardData(CF_TEXT);
+					HANDLE pHandle = GetClipboardData(CF_UNICODETEXT);
 					if (!pHandle)
 						return true;
-					InputText((char*)GlobalLock(pHandle));
+					InputText((wchar_t*)GlobalLock(pHandle));
 				}
 				//Copy & Cut
 				if (key == 0x43 || key == 0x58) {
-					if (!IsSelected() || text.length() == 0)
+					if (!IsSelected() || text_.length() == 0)
 						return true;
 					
 					Lock();
-					std::string mText = text.substr(GetSelectionPosition(), GetSelectionLength());
+					std::wstring mText = text_.substr(GetSelectionPosition(), GetSelectionLength());
 			
 					HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, (mText.size() + 1) * sizeof(CHAR)); 
 					char* szStr = (char*)GlobalLock(hGlobal);
@@ -271,15 +257,16 @@ unsigned int Inputhook::GetCharacterLimit() {
 			}
 
 			BYTE layout[256];
-			WORD out[2];
-			CHAR szChar[10];
+			std::array<wchar_t, 16> buffer(L"");
 			GetKeyboardState(layout);
-			if (ToAscii(key, (lParam & 0xFF0000), layout, out, 0) == 0)
+			int translatedKeysCount = ToUnicode(key, lParam & 0xFF0000, layout, buffer.data(), buffer.size(), 1);
+			if (translatedKeysCount == 0) {
 				return false;
-			sprintf_s(szChar, sizeof(szChar), "%c", out[0]);
+			}
+			buffer.back() = '\0';
 
-			InputText(szChar);
-		break;
+			InputText(buffer.data());
+			break;
 	 }
 	 return true;
  }
@@ -304,7 +291,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 		return false;
  }
 
- void Inputhook::InputText(std::string newText) {
+ void Inputhook::InputText(std::wstring_view newText) {
 	 Lock();
 
 	 //If we have text selected, replace the text with the new text
@@ -313,7 +300,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 		 ResetSelection();
 	 //Otherwise just add the text at the cursor position.
 	 } else {
-		 text.insert(GetCursorPosition(), newText);
+		 text_.insert(GetCursorPosition(), newText);
 		 IncreaseCursorPosition(newText.length());
 	 }
 
@@ -328,7 +315,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 		 Erase(GetSelectionPosition(), GetSelectionLength());
 		 ResetSelection();
 	 } else {
-		 text.erase(GetCursorPosition() - 1, 1);
+		 text_.erase(GetCursorPosition() - 1, 1);
 		 DecreaseCursorPosition(1);
 		 if (textPos > 0)
 			textPos -= 1;
@@ -336,20 +323,20 @@ unsigned int Inputhook::GetCharacterLimit() {
 	 Unlock();
  }
 
-void Inputhook::Replace(unsigned int pos, unsigned int len, std::string str) {
-	if ((unsigned int)pos + len > text.length())
+void Inputhook::Replace(unsigned int pos, unsigned int len, std::wstring_view str) {
+	if ((unsigned int)pos + len > text_.length())
 		return;
 	Lock();
-	text.replace(pos, len, str);
+	text_.replace(pos, len, str);
 	SetCursorPosition(pos + str.length());
 	Unlock();
 }
 
 void Inputhook::Erase(unsigned int pos, unsigned int len) {
-	if ((unsigned int)pos + len > text.length())
+	if ((unsigned int)pos + len > text_.length())
 		return;
 	Lock();
-	text.erase(pos,len);
+	text_.erase(pos,len);
 	SetCursorPosition(pos);
 	Unlock();
 }

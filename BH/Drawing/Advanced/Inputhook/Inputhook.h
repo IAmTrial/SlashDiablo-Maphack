@@ -10,22 +10,30 @@ namespace Drawing {
 
 class Inputhook : public Hook {
 	private:
-		std::string text; //Text that is actually in the input box
+		std::wstring text_; //Text that is actually in the input box
 		bool active, showCursor; //Booleans set if the hook is active / currently showing cursor.
 		unsigned int xSize; //Length of the input box
 		unsigned int cursorPos, cursorTick; //Cursor Position / Timer to control cursor blink
 		unsigned int textPos;//Used to determine which part of the current text I should show
 		unsigned int selectPos, selectLength; // Selection position and length
 		unsigned int font; //What type of font to use in the input hook.
+
 	public:
-		Inputhook(HookVisibility visibility, unsigned int x, unsigned int y, unsigned int xSize, std::string formatString, ...);
-		Inputhook(HookGroup* group, unsigned int x, unsigned int y, unsigned int xSize, std::string formatString, ...);
+		Inputhook(
+				HookVisibility visibility,
+				unsigned int x,
+				unsigned int y,
+				unsigned int xSize,
+				std::wstring text);
+
+		Inputhook(
+				HookGroup* group,
+				unsigned int x,
+				unsigned int y,
+				unsigned int xSize,
+				std::wstring text);
 
 		//Getters and Setters
-
-		//Text in the input box
-		std::string GetText() { return text; };
-		void SetText(std::string newText, ...);
 
 		//If the inputhook box is active(Can be typed in)
 		bool IsActive() { return active; };
@@ -75,9 +83,9 @@ class Inputhook : public Hook {
 
 		void OnDraw();
 
-		void InputText(std::string newText);
+		void InputText(std::wstring_view newText);
 		void Backspace();
-		void Replace(unsigned int pos, unsigned int len, std::string str);
+		void Replace(unsigned int pos, unsigned int len, std::wstring_view str);
 		void Erase(unsigned int pos, unsigned int len);
 };
 
