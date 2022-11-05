@@ -27,6 +27,7 @@
 namespace {
 
 using ::common::str_util::Trim;
+using ::common::str_util::wide::ToUtf8;
 
 }  // namespace
 
@@ -235,7 +236,7 @@ void StashExport::fillStats(JSONArray* statsArray, JSONObject *itemDef, UnitAny 
 
 void StashExport::GetItemInfo(UnitAny* pItem, JSONObject* pBuffer){
 	ItemText *txt = D2COMMON_GetItemText(pItem->dwTxtFileNo);
-	std::string type = UnicodeToAnsi(D2LANG_GetLocaleText(txt->nLocaleTxtNo));
+	std::string type = ToUtf8(D2LANG_GetLocaleText(txt->nLocaleTxtNo));
 	pBuffer->set("type", type);
 	pBuffer->set("quality", std::string(QUALITY_NAMES[pItem->pItemData->dwQuality]));
 	pBuffer->set("iLevel", (int)pItem->pItemData->dwItemLevel);
@@ -316,7 +317,7 @@ void StashExport::GetItemInfo(UnitAny* pItem, JSONObject* pBuffer){
 		
 		if (checkFlag(pItem, ITEM_RUNEWORD)){
 			pBuffer->set("isRuneword", true);
-			std::string rwName = UnicodeToAnsi(D2LANG_GetLocaleText(pItem->pItemData->wPrefix[0]));
+			std::string rwName = ToUtf8(D2LANG_GetLocaleText(pItem->pItemData->wPrefix[0]));
 			pBuffer->set("runeword", rwName);
 
 			JSONObject *rwDef = Tables::Runewords.findEntry("Rune Name", rwName);
