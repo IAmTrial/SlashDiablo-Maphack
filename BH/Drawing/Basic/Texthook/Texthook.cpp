@@ -199,7 +199,7 @@ POINT Texthook::GetTextSize(std::string text, unsigned int font) {
 	return point;
 }
 
-POINT Texthook::GetTextSize(wchar_t* text, unsigned int font) {
+POINT Texthook::GetTextSize(const wchar_t* text, unsigned int font) {
 	unsigned int height[] = { 10,11,18,24,10,13,7,13,10,12,8,8,7,12 };
 	DWORD width, fileNo;
 	DWORD oldFont = D2WIN_SetTextSize(font);
