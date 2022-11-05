@@ -18,10 +18,10 @@ class Bnet : public Module {
 		bool* nextInstead;
 		bool* keepDesc;
 		static unsigned int failToJoin;
-		static std::string lastName;
-		static std::string lastPass;
-		static std::string lastDesc;
-		static std::regex reg;
+		static std::wstring lastName;
+		static std::wstring lastPass;
+		static std::wstring lastDesc;
+		static std::wregex reg;
 
 	public:
 
