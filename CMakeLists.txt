@@ -40,6 +40,14 @@ endif (MINGW)
 # Define DLL target
 add_library(${PROJECT_NAME} SHARED)
 
+set(SHA CACHE STRING "Git commit SHA hash.")
+if (${SHA})
+    string(SUBSTRING ${SHA} 0 7 ${SHORT_SHA})
+    message(NOTICE "Git SHA: ${SHA}")
+    message(NOTICE "Git Short SHA: ${SHORT_SHA}")
+    add_compile_definitions(SHA=${SHORT_SHA})
+endif (${SHA})
+
 add_subdirectory(BH)
 add_subdirectory(src)
 
