@@ -1,9 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) SlashDiablo Community
- *
- * BH
- * Copyright 2011 (C) McGod
+ * Copyright (C) 2012-2022  SlashDiablo Community
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -22,9 +19,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined(BH_COMMON_STRING_UTIL_H_)
+/**
+ * BH
+ * Copyright (C) 2011  McGod
+ *
+ * All rights reserved.
+ */
+
+#if !defined(BH_COMMON_STRING_UTIL_HPP_)
 #error This file is not to be directly included by external users.
-#endif  // !defined(BH_COMMON_STRING_UTIL_H_)
+#endif  // !defined(BH_COMMON_STRING_UTIL_HPP_)
 
 #ifndef BH_COMMON_STRING_UTIL_TEMPLATE_INC_
 #define BH_COMMON_STRING_UTIL_TEMPLATE_INC_

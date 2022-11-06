@@ -23,7 +23,6 @@
 #include <utility>
 
 #include "../../BH.h"
-#include "../../Common/StringUtil.h"
 #include "../../Config.h"
 #include "../../Constants.h"
 #include "../../D2Helpers.h"
@@ -33,6 +32,7 @@
 #include "../../Drawing/Basic/Texthook/Texthook.h"
 #include "../../MPQReader.h"
 #include "../Module.h"
+#include "bh/common/string_util.hpp"
 
 namespace {
 

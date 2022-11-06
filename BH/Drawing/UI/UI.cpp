@@ -7,11 +7,11 @@
 
 #include "../../BH.h"
 #include "../../Common.h"
-#include "../../Common/StringUtil.h"
 #include "../../D2Ptrs.h"
 #include "../Basic/Texthook/Texthook.h"
 #include "../Basic/Framehook/Framehook.h"
 #include "../Hook.h"
+#include "bh/common/string_util.hpp"
 #include "UITab.h"
 
 namespace Drawing {

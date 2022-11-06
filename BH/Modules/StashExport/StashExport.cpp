@@ -11,7 +11,6 @@
 
 #include "../../BH.h"
 #include "../../Common.h"
-#include "../../Common/StringUtil.h"
 #include "../../Config.h"
 #include "../../D2Ptrs.h"
 #include "../../D2Structs.h"
@@ -23,6 +22,7 @@
 #include "../../Mustache.h"
 #include "../../TableReader.h"
 #include "../Module.h"
+#include "bh/common/string_util.hpp"
 
 namespace {
 

@@ -16,12 +16,12 @@
 
 #include "../../BH.h"
 #include "../../Common.h"
-#include "../../Common/StringUtil.h"
 #include "../../Constants.h"
 #include "../../D2Ptrs.h"
 #include "../../D2Structs.h"
 #include "../../MPQInit.h"
 #include "../../RuleLookupCache.h"
+#include "bh/common/string_util.hpp"
 #include "Item.h"
 #include "ItemDisplay/ColorConstants.h"
 #include "ItemDisplay/Condition.h"

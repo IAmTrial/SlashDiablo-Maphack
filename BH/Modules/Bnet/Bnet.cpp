@@ -11,11 +11,11 @@
 
 #include "../../BH.h"
 #include "../../Common.h"
-#include "../../Common/StringUtil.h"
 #include "../../D2Ptrs.h"
 #include "../../D2Structs.h"
 #include "../../Patch.h"
 #include "../Module.h"
+#include "bh/common/string_util.hpp"
 
 namespace {
 

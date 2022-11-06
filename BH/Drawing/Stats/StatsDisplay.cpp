@@ -13,9 +13,9 @@
 #include <utility>
 #include <vector>
 
+#include "bh/common/string_util.hpp"
 #include "../../BH.h"
 #include "../../Common.h"
-#include "../../Common/StringUtil.h"
 #include "../../Config.h"
 #include "../../Constants.h"
 #include "../../D2Ptrs.h"

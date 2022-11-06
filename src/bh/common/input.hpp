@@ -1,9 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) SlashDiablo Community
- *
- * BH
- * Copyright 2011 (C) McGod
+ * Copyright (C) 2012-2022  SlashDiablo Community
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -22,8 +19,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_COMMON_INPUT_H_
-#define BH_COMMON_INPUT_H_
+/**
+ * BH
+ * Copyright (C) 2011  McGod
+ *
+ * All rights reserved.
+ */
+
+#ifndef BH_COMMON_INPUT_HPP_
+#define BH_COMMON_INPUT_HPP_
 
 #include <windows.h>
 
@@ -86,4 +90,4 @@ struct VirtualKey {
 
 }  // namespace common::input
 
-#endif  // BH_COMMON_INPUT_H_
+#endif  // BH_COMMON_INPUT_HPP_

@@ -9,8 +9,8 @@
 
 #include "../../../D2Ptrs.h"
 #include "../../../Common.h"
-#include "../../../Common/Input.h"
-#include "../../../Common/StringUtil.h"
+#include "bh/common/input.hpp"
+#include "bh/common/string_util.hpp"
 #include "../../../Constants.h"
 #include "../../Hook.h"
 
