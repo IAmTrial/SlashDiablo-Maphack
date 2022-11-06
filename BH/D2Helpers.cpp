@@ -7,13 +7,34 @@
 
 #include <algorithm>
 #include <string>
+#include <string_view>
+#include <unordered_set>
 
 #include "Common.h"
 #include "CommonStructs.h"
 #include "Constants.h"
 #include "D2Ptrs.h"
+#include "D2Strings.h"
 #include "D2Structs.h"
 #include "D2Stubs.h"
+
+namespace {
+
+static const std::unordered_set<std::wstring_view>& GetInvalidMonsterNames() {
+	static auto invalid_monster_names =
+			new std::unordered_set<std::wstring_view> {
+					D2LANG_GetLocaleText(D2STR_MAGGOT2),
+					D2LANG_GetLocaleText(D2STR_DUMMY),
+					D2LANG_GetLocaleText(D2STR_DUMMY_2),
+					D2LANG_GetLocaleText(D2STR_NOT_USED),
+					D2LANG_GetLocaleText(D2STR_UNUSED),
+					D2LANG_GetLocaleText(D2STR_NOT_USED_2),
+			};
+
+	return *invalid_monster_names;
+}
+
+}  // namespace
 
 int quality_to_color[] = {
 	White, // none
@@ -120,16 +141,8 @@ bool IsValidMonster(UnitAny *pUnit)
 	if (D2COMMON_GetUnitStat(pUnit, 172, 0) == 2) 
 		return false;
 
-	wchar_t* name = D2CLIENT_GetUnitName(pUnit);
-	char* tmp = UnicodeToAnsi(name);
-
-	if ((strcmp(tmp,"an evil force") == 0) || (strcmp(tmp, "dummy") == 0) || (strcmp(tmp, "Maggot") == 0)) {
-		delete[] tmp;
-		return false;
-	}
-	delete[] tmp;
-
-	return true;
+	const wchar_t* name = D2CLIENT_GetUnitName(pUnit);
+	return !GetInvalidMonsterNames().contains(name);
 }
 
 
