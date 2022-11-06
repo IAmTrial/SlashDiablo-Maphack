@@ -30,7 +30,8 @@ Colorhook::Colorhook(
 		unsigned int* color,
 		std::wstring text)
 				: Hook(visibility, x, y),
-					text_(std::move(text)) {}
+					text_(std::move(text)),
+					currentColor(color) {}
 
 /* Group Hook Initializer
  *		Used in conjuction with other basic hooks to create an advanced hook.
@@ -42,7 +43,8 @@ Colorhook::Colorhook(
 		unsigned int* color,
 		std::wstring text)
 				: Hook(group, x, y),
-					text_(std::move(text)) {}
+					text_(std::move(text)),
+					currentColor(color) {}
 
 void Colorhook::SetColor(unsigned int newColor) {
 	if (newColor < 0 || newColor > 255)
