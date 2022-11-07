@@ -47,7 +47,7 @@ if (NOT ${SHA} STREQUAL "")
     string(SUBSTRING "${SHA}" 0 7 SHORT_SHA)
     message(NOTICE "Git SHA: $CACHE{SHA}")
     message(NOTICE "Git Short SHA: ${SHORT_SHA}")
-    add_compile_definitions(SHA=${SHORT_SHA})
+    add_compile_definitions(SHA="${SHORT_SHA}")
 endif (NOT ${SHA} STREQUAL "")
 
 add_subdirectory(BH)
