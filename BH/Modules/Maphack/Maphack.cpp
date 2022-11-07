@@ -41,7 +41,7 @@
 #include "../Item/ItemDisplay/UnitItemInfo.h"
 #include "../Module.h"
 #include "../ScreenInfo/ScreenInfo.h"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/integer.hpp"
 
 namespace {
 
@@ -132,7 +132,7 @@ using ::Drawing::Linehook;
 using ::Drawing::Texthook;
 using ::Drawing::UITab;
 
-using ::common::str_util::ToInteger;
+using ::bh::common::string_util::ToInteger;
 
 }  // namespace
 

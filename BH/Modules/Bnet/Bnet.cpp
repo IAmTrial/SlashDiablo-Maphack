@@ -15,12 +15,13 @@
 #include "../../D2Structs.h"
 #include "../../Patch.h"
 #include "../Module.h"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/integer.hpp"
+#include "bh/common/string_util/wide.hpp"
 
 namespace {
 
-using ::common::str_util::ToInteger;
-using ::common::str_util::wide::FromUtf8;
+using ::bh::common::string_util::ToInteger;
+using ::bh::common::string_util::wide::FromUtf8;
 
 }  // namespace
 

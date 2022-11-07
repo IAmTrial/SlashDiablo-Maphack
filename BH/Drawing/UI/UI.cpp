@@ -11,14 +11,15 @@
 #include "../Basic/Texthook/Texthook.h"
 #include "../Basic/Framehook/Framehook.h"
 #include "../Hook.h"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/bool.hpp"
+#include "bh/common/string_util/wide.hpp"
 #include "UITab.h"
 
 namespace Drawing {
 namespace {
 
-using ::common::str_util::ToBool;
-using ::common::str_util::wide::FromUtf8;
+using ::bh::common::string_util::ToBool;
+using ::bh::common::string_util::wide::FromUtf8;
 
 }  // namespace
 

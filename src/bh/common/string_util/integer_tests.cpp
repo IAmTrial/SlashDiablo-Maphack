@@ -26,20 +26,11 @@
  * All rights reserved.
  */
 
-#if !defined(BH_COMMON_STRING_UTIL_HPP_)
-#error This file is not to be directly included by external users.
-#endif  // !defined(BH_COMMON_STRING_UTIL_HPP_)
-
-#if !defined(BH_COMMON_STRING_UTIL_TEMPLATE_INC_)
-#error Constexpr functions must be defined before including the static tests.
-#endif  // !defined(BH_COMMON_STRING_UTIL_TEMPLATE_INC_)
-
-#ifndef BH_COMMON_STRING_UTIL_STATIC_TEST_INC_
-#define BH_COMMON_STRING_UTIL_STATIC_TEST_INC_
+#include "bh/common/string_util/integer.hpp"
 
 #include <limits>
 
-namespace common::str_util {
+namespace bh::common::string_util {
 
 static_assert(!ToIntegerFromDigit<int>('0', 0));
 static_assert(!ToIntegerFromDigit<int>(L'0', 0));
@@ -165,6 +156,4 @@ static_assert(!IsOctal<unsigned char>("0x07"));
 static_assert(!IsOctal<unsigned char>("1"));
 static_assert(!IsOctal<unsigned char>("7"));
 
-}  // namespace common::str_util
-
-#endif  // BH_COMMON_STRING_UTIL_STATIC_TEST_INC_
+}  // namespace bh::common::string_util

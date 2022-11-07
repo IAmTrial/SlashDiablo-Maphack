@@ -14,7 +14,8 @@
 #include "../../../Common.h"
 #include "../../../Constants.h"
 #include "../Item.h"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/bool.hpp"
+#include "bh/common/string_util/trim.hpp"
 #include "GemRune.h"
 #include "ItemHelper.h"
 #include "ItemInfo.h"
@@ -23,8 +24,8 @@
 namespace bh::modules::item {
 namespace {
 
-using ::common::str_util::ToBool;
-using ::common::str_util::Trim;
+using ::bh::common::string_util::ToBool;
+using ::bh::common::string_util::Trim;
 
 #define PLAYER_CLASSIC 0
 #define PLAYER_XP 1

@@ -19,8 +19,12 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/input.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/input.hpp"
-)
+        "${CMAKE_CURRENT_SOURCE_DIR}/ascii.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/bool.hpp"
 
-add_subdirectory(string_util)
+        "${CMAKE_CURRENT_SOURCE_DIR}/integer.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/integer_tests.cpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/trim.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/wide.hpp"
+)

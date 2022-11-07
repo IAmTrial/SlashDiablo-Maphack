@@ -21,7 +21,6 @@
 #include "../../D2Structs.h"
 #include "../../MPQInit.h"
 #include "../../RuleLookupCache.h"
-#include "bh/common/string_util.hpp"
 #include "Item.h"
 #include "ItemDisplay/ColorConstants.h"
 #include "ItemDisplay/Condition.h"

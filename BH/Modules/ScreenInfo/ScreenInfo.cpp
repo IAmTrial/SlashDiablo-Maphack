@@ -32,7 +32,7 @@
 #include "../../Drawing/Basic/Texthook/Texthook.h"
 #include "../../MPQReader.h"
 #include "../Module.h"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/bool.hpp"
 
 namespace {
 
@@ -42,7 +42,7 @@ using ::Drawing::Perm;
 using ::Drawing::Right;
 using ::Drawing::Texthook;
 
-using ::common::str_util::ToBool;
+using ::bh::common::string_util::ToBool;
 
 }  // namespace
 

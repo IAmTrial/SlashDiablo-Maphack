@@ -34,7 +34,7 @@
 #include <optional>
 #include <string_view>
 
-namespace common::input {
+namespace bh::common::input {
 
 /**
  * A Virtual-Key with associated hexadecimal value and symbol constant
@@ -88,6 +88,6 @@ struct VirtualKey {
       std::string_view symbol_name);
 };
 
-}  // namespace common::input
+}  // namespace bh::common::input
 
 #endif  // BH_COMMON_INPUT_HPP_
