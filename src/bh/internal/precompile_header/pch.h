@@ -1,6 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) SlashDiablo Community
+ * Copyright (C) 2012-2022  SlashDiablo Community
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -18,3 +18,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
+#ifndef BH_INTERNAL_PCH_H_
+#define BH_INTERNAL_PCH_H_
+
+#include <windows.h>
+#include <shlwapi.h>
+
+#endif  /* BH_INTERNAL_PCH_H_ */

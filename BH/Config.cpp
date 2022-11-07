@@ -16,10 +16,10 @@
 #include <utility>
 #include <vector>
 
+#include "bh/common/input.hpp"
+#include "bh/common/string_util.hpp"
 #include "BH.h"
 #include "Common.h"
-#include "Common/Input.h"
-#include "Common/StringUtil.h"
 
 namespace {
 

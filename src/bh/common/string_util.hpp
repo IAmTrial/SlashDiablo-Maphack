@@ -1,9 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) SlashDiablo Community
- *
- * BH
- * Copyright 2011 (C) McGod
+ * Copyright (C) 2012-2022  SlashDiablo Community
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -22,8 +19,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_COMMON_STRING_UTIL_H_
-#define BH_COMMON_STRING_UTIL_H_
+/**
+ * BH
+ * Copyright (C) 2011  McGod
+ *
+ * All rights reserved.
+ */
+
+#ifndef BH_COMMON_STRING_UTIL_HPP_
+#define BH_COMMON_STRING_UTIL_HPP_
 
 #include <memory>
 #include <optional>
@@ -386,7 +390,7 @@ constexpr std::optional<IntT> ToIntegerFromDigit(CharT ch, int base);
 
 }  // namespace common::str_util
 
-#include "StringUtilTemplate.inc"
-#include "StringUtilStaticTests.inc"
+#include "string_util_template.inc"
+#include "string_util_static_tests.inc"
 
-#endif  // BH_COMMON_STRING_UTIL_H_
+#endif  // BH_COMMON_STRING_UTIL_HPP_

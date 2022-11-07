@@ -1,6 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) SlashDiablo Community
+ * Copyright (C) 2012-2022  SlashDiablo Community
  *
  * This file is part of SlashDiablo Maphack.
  *

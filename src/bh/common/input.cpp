@@ -1,9 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) SlashDiablo Community
- *
- * BH
- * Copyright 2011 (C) McGod
+ * Copyright (C) 2012-2022  SlashDiablo Community
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -22,7 +19,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "Input.h"
+/**
+ * BH
+ * Copyright (C) 2011  McGod
+ *
+ * All rights reserved.
+ */
+
+#include "bh/common/input.hpp"
 
 #include <ctype.h>
 #include <stddef.h>

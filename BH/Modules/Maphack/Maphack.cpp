@@ -16,7 +16,6 @@
 
 #include "../../AsyncDrawBuffer.h"
 #include "../../BH.h"
-#include "../../Common/StringUtil.h"
 #include "../../Config.h"
 #include "../../Constants.h"
 #include "../../D2DataTables.h"
@@ -42,6 +41,7 @@
 #include "../Item/ItemDisplay/UnitItemInfo.h"
 #include "../Module.h"
 #include "../ScreenInfo/ScreenInfo.h"
+#include "bh/common/string_util.hpp"
 
 namespace {
 
