@@ -83,6 +83,55 @@ inline constexpr std::basic_string<CharT> ToLower(
   return ToLower(std::basic_string_view<CharT>(str));
 }
 
+/**
+ * Returns the uppercase character for a specified character. If the
+ * character is not a lowercase character for 7-bit ASCII, then the
+ * function returns the unmodified character.
+ */
+template <typename CharT>
+inline constexpr CharT ToUpperChar(CharT ch) {
+  if (ch < CharT('a') || ch > CharT('z')) {
+    return ch;
+  }
+
+  constexpr auto kLowerToUpperDiff = CharT('a') - CharT('A');
+  return ch - kLowerToUpperDiff;
+}
+
+/**
+ * Returns a copy of the specified characters with all lowercase 7-bit
+ * ASCII characters converted to uppercase.
+ */
+template <typename CharT>
+inline constexpr std::basic_string<CharT> ToUpper(
+    std::basic_string_view<CharT> str) {
+  std::basic_string<CharT> upper_str(str.cbegin(), str.cend());
+  for (CharT& ch : upper_str) {
+    ch = ToUpperChar(ch);
+  }
+
+  return upper_str;
+}
+
+/**
+ * Returns a copy of the specified characters with all lowercase 7-bit
+ * ASCII characters converted to uppercase.
+ */
+template <typename CharT>
+inline constexpr std::basic_string<CharT> ToUpper(const CharT* str) {
+  return ToUpper(std::basic_string_view<CharT>(str));
+}
+
+/**
+ * Returns a copy of the specified characters with all lowercase 7-bit
+ * ASCII characters converted to uppercase.
+ */
+template <typename CharT>
+inline constexpr std::basic_string<CharT> ToUpper(
+    const std::basic_string<CharT>& str) {
+  return ToUpper(std::basic_string_view<CharT>(str));
+}
+
 }  // namespace bh::common::string_util::ascii
 
 #endif  // BH_COMMON_STRING_UTIL_ASCII_HPP_
