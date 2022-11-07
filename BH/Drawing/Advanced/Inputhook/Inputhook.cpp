@@ -257,7 +257,7 @@ unsigned int Inputhook::GetCharacterLimit() {
 			}
 
 			BYTE layout[256];
-			std::array<wchar_t, 16> buffer(L"");
+			std::array<wchar_t, 16> buffer = { 0 };
 			GetKeyboardState(layout);
 			int translatedKeysCount = ToUnicode(key, lParam & 0xFF0000, layout, buffer.data(), buffer.size(), 1);
 			if (translatedKeysCount == 0) {
