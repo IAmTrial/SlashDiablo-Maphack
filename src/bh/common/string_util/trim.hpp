@@ -29,32 +29,39 @@
 #ifndef BH_COMMON_STRING_UTIL_TRIM_HPP_
 #define BH_COMMON_STRING_UTIL_TRIM_HPP_
 
+#include <array>
 #include <string>
 #include <string_view>
 
 namespace bh::common::string_util {
+namespace internal {
+
+template <typename CharT>
+inline constexpr std::array kWhitespaceChars = std::to_array<CharT>({
+    CharT(' '),
+    CharT('\f'),
+    CharT('\n'),
+    CharT('\r'),
+    CharT('\t'),
+    CharT('\v'),
+    CharT('\0')
+});
+
+}  // namespace internal
 
 template <typename CharT>
 inline constexpr std::basic_string<CharT> Trim(
     std::basic_string_view<CharT> str) {
   using size_type = typename std::basic_string_view<CharT>::size_type;
 
-  static constexpr CharT kWhitespaceChars[] = {
-      CharT(' '),
-      CharT('\f'),
-      CharT('\n'),
-      CharT('\r'),
-      CharT('\t'),
-      CharT('\v'),
-      CharT('\0')
-  };
-
-  size_type trim_front_index = str.find_first_not_of(kWhitespaceChars);
+  size_type trim_front_index =
+      str.find_first_not_of(internal::kWhitespaceChars<CharT>.data());
   if (trim_front_index == std::basic_string_view<CharT>::npos) {
     return std::basic_string<CharT>();
   }
 
-  size_type trim_back_index = str.find_last_not_of(kWhitespaceChars);
+  size_type trim_back_index =
+      str.find_last_not_of(internal::kWhitespaceChars<CharT>.data());
 
   return std::basic_string<CharT>(
       str.substr(trim_front_index, (trim_back_index + 1) - trim_front_index));

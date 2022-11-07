@@ -26,5 +26,7 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/integer_tests.cpp"
 
         "${CMAKE_CURRENT_SOURCE_DIR}/trim.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/trim_tests.cpp"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/wide.hpp"
 )
