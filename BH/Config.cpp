@@ -17,17 +17,19 @@
 #include <vector>
 
 #include "bh/common/input.hpp"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/bool.hpp"
+#include "bh/common/string_util/integer.hpp"
+#include "bh/common/string_util/trim.hpp"
 #include "BH.h"
 #include "Common.h"
 
 namespace {
 
-using ::common::input::VirtualKey;
-using ::common::str_util::IsHex;
-using ::common::str_util::ToBool;
-using ::common::str_util::ToInteger;
-using ::common::str_util::Trim;
+using ::bh::common::input::VirtualKey;
+using ::bh::common::string_util::IsHex;
+using ::bh::common::string_util::ToBool;
+using ::bh::common::string_util::ToInteger;
+using ::bh::common::string_util::Trim;
 
 }  // namespace
 

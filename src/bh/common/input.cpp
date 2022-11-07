@@ -40,7 +40,7 @@
 #include <string_view>
 #include <unordered_map>
 
-namespace common::input {
+namespace bh::common::input {
 namespace {
 
 /**
@@ -434,4 +434,4 @@ std::optional<VirtualKey> VirtualKey::GetFromSymbolName(
   return find_result->second;
 }
 
-}  // namespace common::input
+}  // namespace bh::common::input

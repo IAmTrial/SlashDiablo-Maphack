@@ -13,7 +13,8 @@
 #include <utility>
 #include <vector>
 
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/trim.hpp"
+#include "bh/common/string_util/wide.hpp"
 #include "../../BH.h"
 #include "../../Common.h"
 #include "../../Config.h"
@@ -29,8 +30,8 @@
 
 namespace {
 
-using ::common::str_util::Trim;
-using ::common::str_util::wide::FromUtf8;
+using ::bh::common::string_util::Trim;
+using ::bh::common::string_util::wide::FromUtf8;
 
 enum class QuestBugState {
 	kIncomplete = 0,

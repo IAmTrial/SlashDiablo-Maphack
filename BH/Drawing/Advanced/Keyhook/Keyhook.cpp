@@ -10,14 +10,14 @@
 #include "../../../D2Ptrs.h"
 #include "../../../Common.h"
 #include "bh/common/input.hpp"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/wide.hpp"
 #include "../../../Constants.h"
 #include "../../Hook.h"
 
 namespace {
 
-using ::common::input::VirtualKey;
-using ::common::str_util::wide::FromUtf8;
+using ::bh::common::input::VirtualKey;
+using ::bh::common::string_util::wide::FromUtf8;
 
 }  // namespace
 

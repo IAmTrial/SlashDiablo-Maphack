@@ -22,12 +22,13 @@
 #include "../../Mustache.h"
 #include "../../TableReader.h"
 #include "../Module.h"
-#include "bh/common/string_util.hpp"
+#include "bh/common/string_util/trim.hpp"
+#include "bh/common/string_util/wide.hpp"
 
 namespace {
 
-using ::common::str_util::Trim;
-using ::common::str_util::wide::ToUtf8;
+using ::bh::common::string_util::Trim;
+using ::bh::common::string_util::wide::ToUtf8;
 
 }  // namespace
 
