@@ -20,6 +20,7 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/ascii.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ascii_tests.cpp"
 
         "${CMAKE_CURRENT_SOURCE_DIR}/bool.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bool_tests.cpp"
