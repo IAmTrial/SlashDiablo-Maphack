@@ -54,10 +54,9 @@ add_subdirectory(BH)
 add_subdirectory(src)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
-target_compile_options(${PROJECT_NAME} PRIVATE /permissive)
+target_compile_options(${PROJECT_NAME} PRIVATE /permissive /Zc:preprocessor)
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/cpp-lru-cache/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} shlwapi)
-
