@@ -20,4 +20,7 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/level.hpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/log_record.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/log_record.hpp"
 )
