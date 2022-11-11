@@ -140,11 +140,12 @@ void Logger::VLog(
           utf8_src_file_path,
           src_line,
           std::vformat(format, args));
-  LogRecord log_record(level, std::move(message));
 
   // These braces limit the lock's scope.
   {
     std::lock_guard lock(*log_records_mutex_);
+
+    LogRecord log_record(level, std::move(message));
     log_records_.insert(std::move(log_record));
   }
 
