@@ -23,4 +23,7 @@ target_sources(${PROJECT_NAME}
 
         "${CMAKE_CURRENT_SOURCE_DIR}/log_record.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/log_record.hpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger.hpp"
 )
