@@ -30,6 +30,7 @@
 #include <memory>
 #include <string_view>
 #include <unordered_set>
+#include <utility>
 
 #include "bh/common/logging/logger.hpp"
 
@@ -79,7 +80,7 @@ static std::shared_ptr<std::ofstream>& GetLogFile() {
       []() {
         BackupOldLogFiles();
 
-        auto file = std::make_shared<std::ofstream>(kLogFilename);
+        auto file = std::make_shared<std::ofstream>(kLogFilename.data());
         return new std::shared_ptr(std::move(file));
       }();
   return *log_file;
