@@ -32,6 +32,7 @@
 #include <memory>
 #include <mutex>
 #include <ostream>
+#include <set>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -213,7 +214,7 @@ class Logger {
 
   Level level_;
   std::wstring src_path_;
-  std::vector<LogRecord> log_records_;
+  std::multiset<LogRecord> log_records_;
 
   // Mutex does not have a move contructor, so this is a bypass to
   // allow move semantics.

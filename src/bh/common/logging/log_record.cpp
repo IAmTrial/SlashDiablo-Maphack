@@ -22,6 +22,7 @@
 #include "bh/common/logging/log_record.hpp"
 
 #include <chrono>
+#include <compare>
 #include <format>
 #include <ostream>
 #include <sstream>

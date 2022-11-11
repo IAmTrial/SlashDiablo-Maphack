@@ -23,6 +23,7 @@
 #define BH_COMMON_LOGGING_LOG_RECORD_HPP_
 
 #include <chrono>
+#include <compare>
 #include <ostream>
 #include <string>
 #include <thread>
@@ -50,6 +51,28 @@ class LogRecord {
 
   friend std::ostream& operator<<(
       std::ostream& stream, const LogRecord& log_record);
+
+  friend constexpr std::strong_ordering operator<=>(
+      const LogRecord& first, const LogRecord& second) {
+    auto cmp_create_time = first.create_time_ <=> second.create_time_;
+    if (cmp_create_time != std::strong_ordering::equal) {
+      return cmp_create_time;
+    }
+
+    // Two records from the same thread are very unlikely to have the
+    // same timestamp.
+    auto cmp_thread_id = first.thread_id_ <=> second.thread_id_;
+    if (cmp_thread_id != std::strong_ordering::equal) {
+      return cmp_thread_id;
+    }
+
+    auto cmp_level = first.level_ <=> second.level_;
+    if (cmp_level != std::strong_ordering::equal) {
+      return cmp_level;
+    }
+
+    return first.message_ <=> second.message_;
+  }
 
  private:
   /** Logging level of this record. */

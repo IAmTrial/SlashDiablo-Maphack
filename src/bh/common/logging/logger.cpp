@@ -142,7 +142,7 @@ void Logger::VLog(
           src_line,
           std::vformat(format, args));
   LogRecord log_record(level, std::move(message));
-  log_records_.push_back(std::move(log_record));
+  log_records_.insert(std::move(log_record));
 
   GetLoggerThreadSyncObject().cond_var.notify_all();
   StartOnceLoggerThread();
