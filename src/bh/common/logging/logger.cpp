@@ -134,7 +134,6 @@ void Logger::VLog(
   // Create formatted log record. Message should appear as:
   // SRC_FILE:SRC_LINE - USER_STR
 
-  std::lock_guard lock(*log_records_mutex_);
   std::string message =
       std::format(
           "{0}:{1} - {2}",
@@ -142,7 +141,12 @@ void Logger::VLog(
           src_line,
           std::vformat(format, args));
   LogRecord log_record(level, std::move(message));
-  log_records_.insert(std::move(log_record));
+
+  // These braces limit the lock's scope.
+  {
+    std::lock_guard lock(*log_records_mutex_);
+    log_records_.insert(std::move(log_record));
+  }
 
   GetLoggerThreadSyncObject().cond_var.notify_all();
   StartOnceLoggerThread();
