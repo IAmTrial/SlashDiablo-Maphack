@@ -17,6 +17,13 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("common")
-add_subdirectory("global")
-add_subdirectory("internal")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/level.hpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/log_record.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/log_record.hpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger.hpp"
+)

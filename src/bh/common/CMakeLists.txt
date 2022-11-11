@@ -23,4 +23,5 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/input.hpp"
 )
 
-add_subdirectory(string_util)
+add_subdirectory("logging")
+add_subdirectory("string_util")
