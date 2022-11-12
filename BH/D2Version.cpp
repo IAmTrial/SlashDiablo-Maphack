@@ -7,88 +7,40 @@
 
 #include <string>
 
-#pragma comment(lib,"Version.lib")
+#include "bh/common/string_util/wide.hpp"
+#include "bh/d2/game/exe/version.hpp"
 
-VersionID D2Version::versionID = INVALID;
+namespace {
 
-void D2Version::Init() {
-	std::string version = GetGameVersionString();
+namespace game = ::bh::d2::game;
+using FromVersion = game::exe::Version;
 
-	if (version == "1.0.13.60") {
-		versionID = VERSION_113c;
-	} else if (version == "1.0.13.64") {
-		versionID = VERSION_113d;
-	} else {
-		versionID = INVALID;
-		MessageBox(NULL, "Game version not detected or is unsupported!", "Failed to Detect Game Version", MB_OK);
-		exit(0);
+using ::bh::common::string_util::wide::ToUtf8;
+
+static VersionID ToOldVersionEnum(FromVersion fromVersion) {
+	switch (fromVersion) {
+		case FromVersion::k1_13c: {
+			return VersionID::VERSION_113c;
+		}
+
+		case FromVersion::k1_13d: {
+			return VersionID::VERSION_113d;
+		}
 	}
+
+	return VersionID::INVALID;
 }
+
+}  // namespace
 
 VersionID D2Version::GetGameVersionID() {
-	if (versionID == INVALID) {
-		Init();
-	}
-	return versionID;
-}
-
-// Taken from StackOverflow user crashmstr
-std::string D2Version::GetGameVersionString() {
-	LPCSTR szVersionFile = "Game.exe";
-	DWORD  verHandle = 0;
-	UINT   size = 0;
-	LPBYTE lpBuffer = NULL;
-	DWORD  verSize = GetFileVersionInfoSize(szVersionFile, &verHandle);
-
-	std::string returnValue;
-
-	if (verSize != NULL)
-	{
-		LPSTR verData = new char[verSize];
-
-		if (GetFileVersionInfo(szVersionFile, verHandle, verSize, verData))
-		{
-			if (VerQueryValue(verData, "\\", (VOID FAR* FAR*)&lpBuffer, &size))
-			{
-				if (size)
-				{
-					VS_FIXEDFILEINFO *verInfo = (VS_FIXEDFILEINFO *)lpBuffer;
-					if (verInfo->dwSignature == 0xfeef04bd)
-					{
-						char szBuffer[MAX_PATH];
-						// Doesn't matter if you are on 32 bit or 64 bit,
-						// DWORD is always 32 bits, so first two revision numbers
-						// come from dwFileVersionMS, last two come from dwFileVersionLS
-						std::sprintf(szBuffer, "%d.%d.%d.%d",
-							(verInfo->dwFileVersionMS >> 16) & 0xffff,
-							(verInfo->dwFileVersionMS >> 0) & 0xffff,
-							(verInfo->dwFileVersionLS >> 16) & 0xffff,
-							(verInfo->dwFileVersionLS >> 0) & 0xffff
-							);
-
-						returnValue = std::string(szBuffer);
-					}
-				}
-			}
-		}
-		delete[] verData;
-	}
-	return returnValue;
+	return ToOldVersionEnum(game::exe::version::GetRunning());
 }
 
 std::string D2Version::GetHumanReadableVersion() {
-	std::string returnValue;
-
-	switch (GetGameVersionID()) {
-		case VERSION_113c :
-			returnValue = "1.13c";
-			break;
-		case VERSION_113d :
-			returnValue = "1.13d";
-			break;
-		default:
-			returnValue = "unknown";
-	}
-	
-	return returnValue;
+	static std::string utf8DisplayName =
+			ToUtf8(
+					game::exe::version::GetDisplayName(
+							game::exe::version::GetRunning()));
+	return utf8DisplayName;
 }
