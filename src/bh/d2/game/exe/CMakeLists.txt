@@ -21,4 +21,7 @@ target_sources(${PROJECT_NAME}
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/path.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/path.hpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/version.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/version.hpp"
 )
