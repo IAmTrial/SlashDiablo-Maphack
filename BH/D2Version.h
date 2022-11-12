@@ -12,10 +12,10 @@ enum VersionID {
 };
 
 namespace D2Version {
-    extern VersionID versionID;
+    [[deprecated("Use bh::d2::game::exe::version::GetRunning")]]
     VersionID GetGameVersionID();
-    void Init();
-    std::string GetGameVersionString();
+
+    [[deprecated("Use bh::d2::game::exe::version::GetDisplayName")]]
     std::string GetHumanReadableVersion();
 };
 
