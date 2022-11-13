@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bh/d2/game/exe/version.hpp"
+#include "bh/d2/exe/version.hpp"
 
 #include <assert.h>
 #include <stddef.h>
@@ -34,17 +34,16 @@
 #include <utility>
 
 #include "bh/common/logging/logger.hpp"
-#include "bh/d2/game/exe/path.hpp"
+#include "bh/d2/exe/path.hpp"
 #include "bh/global/file_logger.hpp"
 
-namespace bh::d2::game::exe::version {
+namespace bh::d2::exe::version {
 namespace {
 
 using ::bh::common::logging::Logger;
-using ::bh::d2::game::exe::Version;
 using ::bh::global::GetFileLogger;
 
-namespace game = ::bh::d2::game;
+namespace exe = ::bh::d2::exe;
 
 using DisplayVersionNameTableEntry = std::pair<Version, std::wstring_view>;
 
@@ -54,7 +53,7 @@ static Logger& GetLogger() {
 }
 
 static void* InitFileVersionInfo() {
-  const wchar_t* game_path = game::exe::GetAbsolutePath().data();
+  const wchar_t* game_path = exe::GetAbsolutePath().data();
 
   DWORD unused;
   DWORD file_version_info_size = GetFileVersionInfoSizeW(game_path, &unused);
@@ -195,4 +194,4 @@ std::wstring_view GetDisplayName(Version version) {
   return L"";
 }
 
-}  // namespace bh::d2::game::exe::version
+}  // namespace bh::d2::exe::version

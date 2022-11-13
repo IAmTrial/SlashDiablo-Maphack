@@ -24,7 +24,7 @@
 
 #include <string_view>
 
-namespace bh::d2 {
+namespace bh::d2::dll {
 
 enum class Dll {
   kUnspecified = 0,
@@ -82,6 +82,6 @@ inline constexpr auto kDlls = std::to_array<Dll>({
 });
 static_assert(std::ranges::is_sorted(kDlls));
 
-}  // namespace bh::d2
+}  // namespace bh::d2::dll
 
 #endif  // BH_D2_DLL_HPP_

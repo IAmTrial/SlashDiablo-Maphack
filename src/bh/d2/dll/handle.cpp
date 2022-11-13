@@ -37,7 +37,6 @@ namespace bh::d2::dll {
 namespace {
 
 using ::bh::common::logging::Logger;
-using ::bh::d2::Dll;
 using ::bh::global::GetFileLogger;
 
 static Logger& GetLogger() {

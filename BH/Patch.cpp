@@ -18,7 +18,7 @@ using ::bh::common::logging::Logger;
 using ::bh::d2::dll::GetHandle;
 using ::bh::global::GetFileLogger;
 
-using NewDll = ::bh::d2::Dll;
+using NewDll = ::bh::d2::dll::Dll;
 
 static Logger& GetLogger() {
 	static Logger& logger = GetFileLogger(__FILEW__);

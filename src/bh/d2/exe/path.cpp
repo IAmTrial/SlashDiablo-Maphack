@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bh/d2/game/exe/path.hpp"
+#include "bh/d2/exe/path.hpp"
 
 #include <windows.h>
 
@@ -29,7 +29,7 @@
 #include "bh/common/logging/logger.hpp"
 #include "bh/global/file_logger.hpp"
 
-namespace bh::d2::game::exe {
+namespace bh::d2::exe {
 namespace {
 
 using ::bh::common::logging::Logger;
@@ -64,4 +64,4 @@ std::wstring_view GetAbsolutePath() {
   return path_view;
 }
 
-}  // namespace bh::d2::game::exe
+}  // namespace bh::d2::exe
