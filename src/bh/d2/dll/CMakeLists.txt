@@ -19,6 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/address.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/address.hpp"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/handle.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/handle.hpp"
 
