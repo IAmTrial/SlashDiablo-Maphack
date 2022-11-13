@@ -41,7 +41,6 @@ namespace bh::d2::game::exe::version {
 namespace {
 
 using ::bh::common::logging::Logger;
-using ::bh::d2::game::exe::Version;
 using ::bh::global::GetFileLogger;
 
 namespace game = ::bh::d2::game;

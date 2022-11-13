@@ -13,17 +13,17 @@
 namespace {
 
 namespace game = ::bh::d2::game;
-using FromVersion = game::exe::Version;
+using NewVersion = ::bh::d2::game::exe::version::Version;
 
 using ::bh::common::string_util::wide::ToUtf8;
 
-static VersionID ToOldVersionEnum(FromVersion fromVersion) {
-	switch (fromVersion) {
-		case FromVersion::k1_13c: {
+static VersionID ToOldVersionEnum(NewVersion newVersion) {
+	switch (newVersion) {
+		case NewVersion::k1_13c: {
 			return VersionID::VERSION_113c;
 		}
 
-		case FromVersion::k1_13d: {
+		case NewVersion::k1_13d: {
 			return VersionID::VERSION_113d;
 		}
 	}

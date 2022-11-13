@@ -22,9 +22,9 @@
 #ifndef BH_D2_GAME_EXE_VERSION_HPP_
 #define BH_D2_GAME_EXE_VERSION_HPP_
 
-#include <string>
+#include <string_view>
 
-namespace bh::d2::game::exe {
+namespace bh::d2::game::exe::version {
 
 enum class Version {
   kUnspecified = 0,
@@ -34,20 +34,17 @@ enum class Version {
   k1_14d,
 };
 
-namespace version {
-
 /**
  * Get the currently running version of Diablo II.
  */
-::bh::d2::game::exe::Version GetRunning();
+Version GetRunning();
 
 /**
  * Returns a null-terminated string that holds the display name for
  * the specified verison.
  */
-std::wstring_view GetDisplayName(::bh::d2::game::exe::Version version);
+std::wstring_view GetDisplayName(Version version);
 
-}  // namespace version
-}  // namespace bh::d2::game::exe
+}  // namespace bh::d2::game::exe::version
 
 #endif  // BH_D2_GAME_EXE_VERSION_HPP_
