@@ -10,13 +10,11 @@
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/dll/dll.hpp"
 #include "bh/d2/dll/handle.hpp"
-#include "bh/d2/dll/path.hpp"
 #include "bh/global/file_logger.hpp"
 
 namespace {
 
 using ::bh::common::logging::Logger;
-using ::bh::d2::dll::GetAbsolutePath;
 using ::bh::d2::dll::GetHandle;
 using ::bh::global::GetFileLogger;
 
