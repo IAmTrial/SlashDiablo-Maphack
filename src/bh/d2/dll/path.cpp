@@ -38,8 +38,6 @@ namespace bh::d2::dll {
 namespace {
 
 using ::bh::common::logging::Logger;
-using ::bh::d2::Dll;
-using ::bh::d2::kDlls;
 using ::bh::global::GetFileLogger;
 
 using PathType = std::array<wchar_t, MAX_PATH>;

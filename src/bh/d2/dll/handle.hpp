@@ -28,7 +28,7 @@
 
 namespace bh::d2::dll {
 
-HMODULE GetHandle(::bh::d2::Dll dll);
+HMODULE GetHandle(Dll dll);
 
 }  // namespace bh::d2::dll
 

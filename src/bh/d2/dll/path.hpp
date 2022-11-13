@@ -28,7 +28,7 @@
 
 namespace bh::d2::dll {
 
-std::wstring_view GetAbsolutePath(::bh::d2::Dll dll);
+std::wstring_view GetAbsolutePath(Dll dll);
 
 }  // namespace bh::d2::dll
 

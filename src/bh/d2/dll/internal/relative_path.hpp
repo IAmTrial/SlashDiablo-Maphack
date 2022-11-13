@@ -28,7 +28,7 @@
 
 namespace bh::d2::dll::internal {
 
-std::wstring_view GetRelativePath(bh::d2::Dll dll);
+std::wstring_view GetRelativePath(::bh::d2::dll::Dll dll);
 
 }  // namespace bh::d2::dll::internal
 
