@@ -17,5 +17,10 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("dll")
-add_subdirectory("game")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/handle.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/handle.hpp"
+)
+
+add_subdirectory("internal")
