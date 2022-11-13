@@ -10,3 +10,6 @@ Source files in the BH directory may include the files in this directory, but no
 All files in this directory **MUST** follow the Google C++ Style Guide, with the following exception(s):
 - Source files for C++ **SHOULD** have the file extension `.cpp`.
 - Header files that only provide a C++ interface **MUST** have the file extension `.hpp`.
+
+## Conventions
+Nothing from `<filesystem>` is allowed to be used. All paths must choose between `std::array<wchar_t, MAX_PATH>`, `std::wstring`, and `std::wstring_view` for path representation.
