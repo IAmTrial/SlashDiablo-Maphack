@@ -25,140 +25,6 @@ static Logger& GetLogger() {
 	return logger;
 }
 
-static NewDll ToNewDllEnum(Dll oldDll) {
-	switch (oldDll) {
-		case Dll::BNCLIENT: {
-			return NewDll::kBnClient;
-		}
-
-		case Dll::D2CLIENT: {
-			return NewDll::kD2Client;
-		}
-
-		case Dll::D2CMP: {
-			return NewDll::kD2Cmp;
-		}
-
-		case Dll::D2COMMON: {
-			return NewDll::kD2Common;
-		}
-
-		case Dll::D2GAME: {
-			return NewDll::kD2Game;
-		}
-
-		case Dll::D2GFX: {
-			return NewDll::kD2Gfx;
-		}
-
-		case Dll::D2LANG: {
-			return NewDll::kD2Lang;
-		}
-
-		case Dll::D2LAUNCH: {
-			return NewDll::kD2Launch;
-		}
-
-		case Dll::D2MCPCLIENT: {
-			return NewDll::kD2McpClient;
-		}
-
-		case Dll::D2MULTI: {
-			return NewDll::kD2Multi;
-		}
-
-		case Dll::D2NET: {
-			return NewDll::kD2Net;
-		}
-
-		case Dll::D2WIN: {
-			return NewDll::kD2Win;
-		}
-
-		case Dll::FOG: {
-			return NewDll::kFog;
-		}
-
-		case Dll::STORM: {
-			return NewDll::kStorm;
-		}
-	}
-
-	// This should never happen.
-	GetLogger().Fatal(
-			__LINE__,
-			"Unhandled Dll with value {:d}.",
-			static_cast<int>(oldDll));
-	return static_cast<NewDll>(-1);
-}
-
-static Dll ToOldDllEnum(NewDll newDll) {
-	switch (newDll) {
-		case NewDll::kBnClient: {
-			return Dll::BNCLIENT;
-		}
-
-		case NewDll::kD2Client: {
-			return Dll::D2CLIENT;
-		}
-
-		case NewDll::kD2Cmp: {
-			return Dll::D2CMP;
-		}
-
-		case NewDll::kD2Common: {
-			return Dll::D2COMMON;
-		}
-
-		case NewDll::kD2Game: {
-			return Dll::D2GAME;
-		}
-
-		case NewDll::kD2Gfx: {
-			return Dll::D2GFX;
-		}
-
-		case NewDll::kD2Lang: {
-			return Dll::D2LANG;
-		}
-
-		case NewDll::kD2Launch: {
-			return Dll::D2LAUNCH;
-		}
-
-		case NewDll::kD2McpClient: {
-			return Dll::D2MCPCLIENT;
-		}
-
-		case NewDll::kD2Multi: {
-			return Dll::D2MULTI;
-		}
-
-		case NewDll::kD2Net: {
-			return Dll::D2NET;
-		}
-
-		case NewDll::kD2Win: {
-			return Dll::D2WIN;
-		}
-
-		case NewDll::kFog: {
-			return Dll::FOG;
-		}
-
-		case NewDll::kStorm: {
-			return Dll::STORM;
-		}
-	}
-
-	// This should never happen.
-	GetLogger().Fatal(
-			__LINE__,
-			"Unhandled Dll with value {:d}.",
-			static_cast<int>(newDll));
-	return static_cast<Dll>(-1);
-}
-
 }  // namespace
 
 std::vector<Patch*> Patch::Patches;
@@ -273,4 +139,138 @@ bool Patch::Remove() {
 	injected = false;
 
 	return true;
+}
+
+NewDll ToNewDllEnum(Dll oldDll) {
+	switch (oldDll) {
+		case Dll::BNCLIENT: {
+			return NewDll::kBnClient;
+		}
+
+		case Dll::D2CLIENT: {
+			return NewDll::kD2Client;
+		}
+
+		case Dll::D2CMP: {
+			return NewDll::kD2Cmp;
+		}
+
+		case Dll::D2COMMON: {
+			return NewDll::kD2Common;
+		}
+
+		case Dll::D2GAME: {
+			return NewDll::kD2Game;
+		}
+
+		case Dll::D2GFX: {
+			return NewDll::kD2Gfx;
+		}
+
+		case Dll::D2LANG: {
+			return NewDll::kD2Lang;
+		}
+
+		case Dll::D2LAUNCH: {
+			return NewDll::kD2Launch;
+		}
+
+		case Dll::D2MCPCLIENT: {
+			return NewDll::kD2McpClient;
+		}
+
+		case Dll::D2MULTI: {
+			return NewDll::kD2Multi;
+		}
+
+		case Dll::D2NET: {
+			return NewDll::kD2Net;
+		}
+
+		case Dll::D2WIN: {
+			return NewDll::kD2Win;
+		}
+
+		case Dll::FOG: {
+			return NewDll::kFog;
+		}
+
+		case Dll::STORM: {
+			return NewDll::kStorm;
+		}
+	}
+
+	// This should never happen.
+	GetLogger().Fatal(
+			__LINE__,
+			"Unhandled Dll with value {:d}.",
+			static_cast<int>(oldDll));
+	return static_cast<NewDll>(-1);
+}
+
+Dll ToOldDllEnum(NewDll newDll) {
+	switch (newDll) {
+		case NewDll::kBnClient: {
+			return Dll::BNCLIENT;
+		}
+
+		case NewDll::kD2Client: {
+			return Dll::D2CLIENT;
+		}
+
+		case NewDll::kD2Cmp: {
+			return Dll::D2CMP;
+		}
+
+		case NewDll::kD2Common: {
+			return Dll::D2COMMON;
+		}
+
+		case NewDll::kD2Game: {
+			return Dll::D2GAME;
+		}
+
+		case NewDll::kD2Gfx: {
+			return Dll::D2GFX;
+		}
+
+		case NewDll::kD2Lang: {
+			return Dll::D2LANG;
+		}
+
+		case NewDll::kD2Launch: {
+			return Dll::D2LAUNCH;
+		}
+
+		case NewDll::kD2McpClient: {
+			return Dll::D2MCPCLIENT;
+		}
+
+		case NewDll::kD2Multi: {
+			return Dll::D2MULTI;
+		}
+
+		case NewDll::kD2Net: {
+			return Dll::D2NET;
+		}
+
+		case NewDll::kD2Win: {
+			return Dll::D2WIN;
+		}
+
+		case NewDll::kFog: {
+			return Dll::FOG;
+		}
+
+		case NewDll::kStorm: {
+			return Dll::STORM;
+		}
+	}
+
+	// This should never happen.
+	GetLogger().Fatal(
+			__LINE__,
+			"Unhandled Dll with value {:d}.",
+			static_cast<int>(newDll));
+	return static_cast<Dll>(-1);
 }

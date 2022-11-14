@@ -43,7 +43,50 @@
 *
 */
 
-// This must appear at the top of the file, before any other includes.
+#include "D2Version.h"
+#include "Patch.h"
+
+#define FUNCPTR(dll, name, callingret, args, ...) \
+	static Offsets f##dll##_##name##_offsets = { __VA_ARGS__ }; \
+	__declspec(naked) callingret dll##_##name args \
+	{ \
+		static DWORD f##dll##_##name = NULL; \
+		if(f##dll##_##name == NULL) \
+		{ \
+		__asm { pushad } \
+		f##dll##_##name = Patch::GetDllOffset(dll, *(&f##dll##_##name##_offsets._113c + D2Version::GetGameVersionID())); \
+		__asm { popad } \
+		} \
+		__asm jmp [f##dll##_##name] \
+	}
+
+#define ASMPTR(dll, name, ...) \
+	DWORD* Asm_##dll##_##name(VOID) \
+	{ \
+		static DWORD fAsm_##dll##_##name = NULL; \
+		if(fAsm_##dll##_##name == NULL) \
+		{ \
+		static Offsets fAsm_##name##_offsets = { __VA_ARGS__ }; \
+		static int address = *(&fAsm_##name##_offsets._113c + D2Version::GetGameVersionID()); \
+		fAsm_##dll##_##name = Patch::GetDllOffset(dll, address); \
+		} \
+		return &fAsm_##dll##_##name; \
+	}
+
+#define VARPTR(dll, name, type, ...) \
+	type** Var_##dll##_##name(VOID) \
+	{ \
+		static DWORD fVar_##dll##_##name = NULL; \
+		if(fVar_##dll##_##name == NULL) \
+		{ \
+		static Offsets fVar_##name##_offsets = { __VA_ARGS__ }; \
+		static int address = *(&fVar_##name##_offsets._113c + D2Version::GetGameVersionID()); \
+		fVar_##dll##_##name = Patch::GetDllOffset(dll, address); \
+		} \
+		return (type**)&fVar_##dll##_##name; \
+	}
+
+// This must appear before including D2Ptrs.h.
 #define _DEFINE_PTRS
 #include "D2Ptrs.h"
 #undef _DEFINE_PTRS
