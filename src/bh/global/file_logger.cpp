@@ -75,14 +75,15 @@ static void BackupOldLogFiles() {
       MOVEFILE_REPLACE_EXISTING);
 }
 
-static std::shared_ptr<std::ofstream>& GetLogFile() {
-  static auto* log_file =
-      []() {
-        BackupOldLogFiles();
+static std::shared_ptr<std::ofstream>* InitLogFile() {
+  BackupOldLogFiles();
 
-        auto file = std::make_shared<std::ofstream>(kLogFilename.data());
-        return new std::shared_ptr(std::move(file));
-      }();
+  auto file = std::make_shared<std::ofstream>(kLogFilename.data());
+  return new std::shared_ptr(std::move(file));
+}
+
+static std::shared_ptr<std::ofstream>& GetLogFile() {
+  static auto* log_file = InitLogFile();
   return *log_file;
 }
 
@@ -92,16 +93,18 @@ Logger& GetFileLogger(std::wstring_view src_path) {
   static auto* known_path_views =
       new std::unordered_set<std::wstring_view>();
 
+  // Last error needs to be saved in the case that GetLastError is
+  // called immediately after this function.
+  DWORD old_last_error = GetLastError();
   Logger& logger = Logger::GetLogger(src_path);
-  if (known_path_views->contains(src_path)) {
-    return logger;
+  if (!known_path_views->contains(src_path)) {
+    static auto* known_paths = new std::unordered_set<std::wstring>();
+    
+    logger.AddStream(GetLogFile());
+    auto [it, _] = known_paths->insert(std::wstring(src_path));
+    known_path_views->insert(*it);
   }
-
-  logger.AddStream(GetLogFile());
-
-  static auto* known_paths = new std::unordered_set<std::wstring>();
-  auto [it, _] = known_paths->insert(std::wstring(src_path));
-  known_path_views->insert(*it);
+  SetLastError(old_last_error);
 
   return logger;
 }
