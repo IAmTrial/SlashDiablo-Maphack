@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "bh/d2/exe/version.hpp"
+
 enum VersionID {
     INVALID = -1,
     VERSION_113c = 0,
@@ -17,6 +19,9 @@ namespace D2Version {
 
     [[deprecated("Use bh::d2::exe::version::GetDisplayName")]]
     std::string GetHumanReadableVersion();
+
+    ::bh::d2::exe::version::Version ToNewVersionEnum(VersionID oldVersion);
+    VersionID ToOldVersionEnum(::bh::d2::exe::version::Version newVersion);
 };
 
 #endif

@@ -5,9 +5,13 @@
 #include <string>
 #include <vector>
 
-class Patch;
+#include "bh/d2/dll/dll.hpp"
 
 enum Dll { D2CLIENT=0,D2COMMON,D2GFX,D2LANG,D2WIN,D2NET,D2GAME,D2LAUNCH,FOG,BNCLIENT, STORM, D2CMP, D2MULTI, D2MCPCLIENT};
+
+::bh::d2::dll::Dll ToNewDllEnum(Dll oldDll);
+Dll ToOldDllEnum(::bh::d2::dll::Dll newDll);
+
 enum PatchType { Jump=0xE9, Call=0xE8, NOP=0x90, Push=0x6A };
 
 struct Offsets {

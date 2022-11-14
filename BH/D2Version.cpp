@@ -17,20 +17,6 @@ using NewVersion = exe::version::Version;
 
 using ::bh::common::string_util::wide::ToUtf8;
 
-static VersionID ToOldVersionEnum(NewVersion newVersion) {
-	switch (newVersion) {
-		case NewVersion::k1_13c: {
-			return VersionID::VERSION_113c;
-		}
-
-		case NewVersion::k1_13d: {
-			return VersionID::VERSION_113d;
-		}
-	}
-
-	return VersionID::INVALID;
-}
-
 }  // namespace
 
 VersionID D2Version::GetGameVersionID() {
@@ -43,4 +29,32 @@ std::string D2Version::GetHumanReadableVersion() {
 					exe::version::GetDisplayName(
 							exe::version::GetRunning()));
 	return utf8DisplayName;
+}
+
+NewVersion D2Version::ToNewVersionEnum(VersionID oldVersion) {
+	switch (oldVersion) {
+		case VersionID::VERSION_113c: {
+			return NewVersion::k1_13c;
+		}
+
+		case VersionID::VERSION_113d: {
+			return NewVersion::k1_13d;
+		}
+	}
+
+	return NewVersion::kUnspecified;
+}
+
+VersionID D2Version::ToOldVersionEnum(NewVersion newVersion) {
+	switch (newVersion) {
+		case NewVersion::k1_13c: {
+			return VersionID::VERSION_113c;
+		}
+
+		case NewVersion::k1_13d: {
+			return VersionID::VERSION_113d;
+		}
+	}
+
+	return VersionID::INVALID;
 }
