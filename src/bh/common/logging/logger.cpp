@@ -29,12 +29,16 @@
 #include <array>
 #include <condition_variable>
 #include <format>
+#include <functional>
+#include <iterator>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <ostream>
 #include <string>
 #include <string_view>
 #include <thread>
+#include <tuple>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -200,18 +204,108 @@ void Logger::StartOnceLoggerThread() {
             auto& sync_obj = GetLoggerThreadSyncObject();
 
             while (true) {
-              for (auto& [_, logger] : loggers) {
-                std::lock_guard lock(*logger.log_records_mutex_);
+              // Lock all the loggers' log records. This needs to
+              // happen before all operations, to ensure guarantee
+              // log record ordering consistencies.
+              using LoggerLockEntryType =
+                  std::pair<Logger*, std::unique_lock<std::mutex>>;
 
-                for (auto& stream_ptr : logger.streams_) {
-                  std::ostream& stream = *stream_ptr;
-                  for (const LogRecord& log_record : logger.log_records_) {
-                    stream << log_record << '\n';
-                  }
-                  stream.flush();
+              std::vector<LoggerLockEntryType> loggers_locks;
+              loggers_locks.reserve(loggers.size());
+
+              std::ranges::transform(
+                  loggers,
+                  std::back_inserter(loggers_locks),
+                  [] (auto& entry) {
+                    Logger& logger = entry.second;
+                    std::unique_lock lock(*logger.log_records_mutex_);
+                    return LoggerLockEntryType(&logger, std::move(lock));
+                  });
+
+              // Separate loggers with at least one log record and at
+              // least one stream. Others are considered empty.
+              std::vector<LoggerLockEntryType> empty_loggers;
+              empty_loggers.reserve(loggers.size());
+              std::vector<LoggerLockEntryType> pending_loggers;
+              pending_loggers.reserve(loggers.size());
+
+              std::ranges::partition_copy(
+                  std::make_move_iterator(loggers_locks.begin()),
+                  std::make_move_iterator(loggers_locks.end()),
+                  std::back_inserter(empty_loggers),
+                  std::back_inserter(pending_loggers),
+                  [] (const LoggerLockEntryType& entry) {
+                    return entry.first->log_records_.empty()
+                        || entry.first->streams_.empty();
+                  });
+
+              // Unlock all empty loggers.
+              empty_loggers.clear();
+
+              // Move the log records into local variables, for all
+              // pending loggers. This allows unlocking the log
+              // records for writing by other threads, reducing thread
+              // waiting.
+              using StreamsAndLogRecordsEntryType =
+                  std::pair<StreamsType*, std::multiset<LogRecord>>;
+
+              std::vector<StreamsAndLogRecordsEntryType>
+                  streams_and_log_records;
+              streams_and_log_records.reserve(pending_loggers.size());
+
+              std::ranges::transform(
+                  pending_loggers,
+                  std::back_inserter(streams_and_log_records),
+                  [] (const LoggerLockEntryType& logger_lock) {
+                    Logger& logger = *logger_lock.first;
+
+                    std::multiset<LogRecord> log_records;
+                    log_records.swap(logger.log_records_);
+
+                    return StreamsAndLogRecordsEntryType(
+                        &logger.streams_, std::move(log_records));
+                  });
+              pending_loggers.clear();
+
+              // Map all streams to log records, while sorting log
+              // records. Clears and unlocks the log records when that
+              // log record is processed.
+              struct StreamCompare {
+                bool operator()(
+                    const std::ostream* first,
+                    const std::ostream* second) const {
+                  return reinterpret_cast<uintptr_t>(first)
+                      < reinterpret_cast<uintptr_t>(second);
                 }
-                logger.log_records_.clear();
+              };
+
+              std::map<std::ostream*, std::set<LogRecord>, StreamCompare>
+                  stream_records;
+              for (auto& [streams, log_records] : streams_and_log_records) {
+                // Add every unique log record to the associate stream.
+                std::ranges::transform(
+                    *streams,
+                    std::inserter(stream_records, stream_records.end()),
+                    [&log_records] (auto& stream_ptr) {
+                      return std::pair(
+                          stream_ptr.get(),
+                          std::set<LogRecord>(
+                              log_records.begin(),
+                              log_records.end()));
+                    });
               }
+
+              // Write all log records to all mapped streams.
+              for (auto& [stream_ptr, log_records] : stream_records) {
+                std::ostream& stream = *stream_ptr;
+                for (auto& log_record : log_records) {
+                  stream << log_record << '\n';
+                }
+                stream.flush();
+              }
+
+              // Wait for a new notification, which should occur once
+              // a new log record is added.
               std::unique_lock lock(sync_obj.mutex);
               sync_obj.cond_var.wait(lock);
             }
