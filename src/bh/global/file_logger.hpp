@@ -22,8 +22,6 @@
 #ifndef BH_GLOBAL_FILE_LOGGER_HPP_
 #define BH_GLOBAL_FILE_LOGGER_HPP_
 
-#include <fstream>
-#include <memory>
 #include <string_view>
 
 #include "bh/common/logging/logger.hpp"
