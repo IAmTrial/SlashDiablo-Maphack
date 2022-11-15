@@ -239,13 +239,16 @@ void Logger::StartOnceLoggerThread() {
                         || entry.first->streams_.empty();
                   });
 
-              // Unlock all empty loggers.
-              empty_loggers.clear();
+              // Clear out streamless log records and unlock all empty
+              // loggers.
+              for (auto& [logger, lock] : empty_loggers) {
+                logger->log_records_.clear();
+                lock.unlock();
+              }
 
               // Move the log records into local variables, for all
-              // pending loggers. This allows unlocking the log
-              // records for writing by other threads, reducing thread
-              // waiting.
+              // pending loggers. This allows unlocking the loggers
+              // for use by other threads, reducing thread waiting.
               using StreamsAndLogRecordsEntryType =
                   std::pair<StreamsType*, std::multiset<LogRecord>>;
 
