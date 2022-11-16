@@ -8,6 +8,7 @@
 #include <regex>
 #include <string>
 
+#include "bh/d2/d2lang/function/get_locale_text.hpp"
 #include "../../../BH.h"
 #include "../../../Common.h"
 #include "../../../Constants.h"
@@ -23,6 +24,11 @@
 #include "UnitItemInfo.h"
 
 namespace bh::modules::item {
+namespace {
+
+namespace d2lang = ::bh::d2::d2lang;
+
+}  // namespace
 
 // All colors here must also be defined in MAP_COLOR_REPLACEMENTS
 #define COLOR_REPLACEMENTS	\
@@ -163,7 +169,7 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, std::string &name, const std::
     sprintf_s(gemtype, "%s", GetGemTypeString(GetGemType(uInfo->attrs)));
   }
 
-  std::string baseName = UnicodeToAnsi(D2LANG_GetLocaleText(txt->nLocaleTxtNo));
+  std::string baseName = UnicodeToAnsi(d2lang::GetLocaleText(txt->nLocaleTxtNo));
 
   ActionReplace replacements[] = {
     {"NAME", origName},

@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "bh/d2/d2lang/function/get_locale_text.hpp"
 #include "../../BH.h"
 #include "../../Common.h"
 #include "../../Config.h"
@@ -33,6 +34,8 @@ using ::bh::common::string_util::wide::ToUtf8;
 }  // namespace
 
 namespace {
+
+namespace d2lang = ::bh::d2::d2lang;
 
 using ::Drawing::Checkhook;
 using ::Drawing::Combohook;
@@ -237,7 +240,7 @@ void StashExport::fillStats(JSONArray* statsArray, JSONObject *itemDef, UnitAny 
 
 void StashExport::GetItemInfo(UnitAny* pItem, JSONObject* pBuffer){
 	ItemText *txt = D2COMMON_GetItemText(pItem->dwTxtFileNo);
-	std::string type = ToUtf8(D2LANG_GetLocaleText(txt->nLocaleTxtNo));
+	std::string type = ToUtf8(d2lang::GetLocaleText(txt->nLocaleTxtNo));
 	pBuffer->set("type", type);
 	pBuffer->set("quality", std::string(QUALITY_NAMES[pItem->pItemData->dwQuality]));
 	pBuffer->set("iLevel", (int)pItem->pItemData->dwItemLevel);
@@ -318,7 +321,7 @@ void StashExport::GetItemInfo(UnitAny* pItem, JSONObject* pBuffer){
 		
 		if (checkFlag(pItem, ITEM_RUNEWORD)){
 			pBuffer->set("isRuneword", true);
-			std::string rwName = ToUtf8(D2LANG_GetLocaleText(pItem->pItemData->wPrefix[0]));
+			std::string rwName = ToUtf8(d2lang::GetLocaleText(pItem->pItemData->wPrefix[0]));
 			pBuffer->set("runeword", rwName);
 
 			JSONObject *rwDef = Tables::Runewords.findEntry("Rune Name", rwName);

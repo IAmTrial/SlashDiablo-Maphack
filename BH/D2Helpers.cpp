@@ -10,6 +10,7 @@
 #include <string_view>
 #include <unordered_set>
 
+#include "bh/d2/d2lang/function/get_locale_text.hpp"
 #include "Common.h"
 #include "CommonStructs.h"
 #include "Constants.h"
@@ -20,15 +21,17 @@
 
 namespace {
 
+namespace d2lang = ::bh::d2::d2lang;
+
 static const std::unordered_set<std::wstring_view>& GetInvalidMonsterNames() {
-	static auto invalid_monster_names =
+	static auto* invalid_monster_names =
 			new std::unordered_set<std::wstring_view> {
-					D2LANG_GetLocaleText(D2STR_MAGGOT2),
-					D2LANG_GetLocaleText(D2STR_DUMMY),
-					D2LANG_GetLocaleText(D2STR_DUMMY_2),
-					D2LANG_GetLocaleText(D2STR_NOT_USED),
-					D2LANG_GetLocaleText(D2STR_UNUSED),
-					D2LANG_GetLocaleText(D2STR_NOT_USED_2),
+					d2lang::GetLocaleText(D2STR_MAGGOT2),
+					d2lang::GetLocaleText(D2STR_DUMMY),
+					d2lang::GetLocaleText(D2STR_DUMMY_2),
+					d2lang::GetLocaleText(D2STR_NOT_USED),
+					d2lang::GetLocaleText(D2STR_UNUSED),
+					d2lang::GetLocaleText(D2STR_NOT_USED_2),
 			};
 
 	return *invalid_monster_names;
