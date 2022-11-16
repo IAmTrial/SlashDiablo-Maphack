@@ -15,6 +15,7 @@
 
 #include "bh/common/string_util/trim.hpp"
 #include "bh/common/string_util/wide.hpp"
+#include "bh/d2/d2lang/function/get_locale_text.hpp"
 #include "../../BH.h"
 #include "../../Common.h"
 #include "../../Config.h"
@@ -33,6 +34,8 @@ namespace {
 using ::bh::common::string_util::Trim;
 using ::bh::common::string_util::wide::FromUtf8;
 
+namespace d2lang = ::bh::d2::d2lang;
+
 enum class QuestBugState {
 	kIncomplete = 0,
 	kNotBugged = 1,
@@ -50,14 +53,14 @@ static const wchar_t* ToString(QuestBugState questBugState) {
 
 		case QuestBugState::kNotBugged: {
 			static const std::wstring kBugText =
-					GetColorCode(TextColor::Red) + D2LANG_GetLocaleText(D2STR_NO);
+					GetColorCode(TextColor::Red) + d2lang::GetLocaleText(D2STR_NO);
 
 			return kBugText.c_str();
 		}
 
 		case QuestBugState::kBugged: {
 			static const std::wstring kBugText =
-					GetColorCode(TextColor::Green) + D2LANG_GetLocaleText(D2STR_YES);
+					GetColorCode(TextColor::Green) + d2lang::GetLocaleText(D2STR_YES);
 			
 			return kBugText.c_str();
 		}
@@ -271,7 +274,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}{}:{} {}",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_NAME_3),
+					d2lang::GetLocaleText(D2STR_NAME_3),
 					GetColorCode(TextColor::White),
 					unitName);
 	Texthook::Draw(column1, y, None, 6, Gold, nameText.c_str());
@@ -281,7 +284,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}{}:{} {}",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_STRCHRLVL),
+					d2lang::GetLocaleText(D2STR_STRCHRLVL),
 					GetColorCode(TextColor::White),
 					(int)D2COMMON_GetUnitStat(unit, STAT_LEVEL, 0));
 	Texthook::Draw(
@@ -324,7 +327,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}{}{}{}{}/{}{}  {}{}{}/{}{}  {}{}{}/{}{}  {}{}{}/{}{}",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_STRSKILL90),
+					d2lang::GetLocaleText(D2STR_STRSKILL90),
 
 					// Fire resistance
 					GetColorCode(TextColor::Red),
@@ -361,7 +364,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}{}{}{}%%",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_STRSKILL14),
+					d2lang::GetLocaleText(D2STR_STRSKILL14),
 					GetColorCode(TextColor::DarkGreen),
 					(100 - penalty - pLengthReduce));
 	Texthook::Draw(column1, (y += 16), None, 6, Gold, poisonLengthText.c_str());
@@ -622,7 +625,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}{}:{} {}",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_MODSTR5Q),
+					d2lang::GetLocaleText(D2STR_MODSTR5Q),
 					GetColorCode(TextColor::White),
 					(int)D2COMMON_GetUnitStat(unit, STAT_DEADLYSTRIKE, 0));
 	Texthook::Draw(column1, (y += 16), None, 6, Gold, deadlyStrikeText.c_str());
@@ -631,7 +634,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}{}:{} {}",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_SKILLAN9),
+					d2lang::GetLocaleText(D2STR_SKILLAN9),
 					GetColorCode(TextColor::White),
 					(int)D2COMMON_GetUnitStat(unit, STAT_CRITICALSTRIKE, 0));
 	Texthook::Draw(column2, y, None, 6, Gold, criticalStrikeText.c_str());
@@ -673,7 +676,7 @@ void StatsDisplay::OnDraw() {
 			std::format(
 					L"{}+{}{} {}",
 					GetColorCode(TextColor::Gold),
-					D2LANG_GetLocaleText(D2STR_ITEMSTATS1G),
+					d2lang::GetLocaleText(D2STR_ITEMSTATS1G),
 					GetColorCode(TextColor::White),
 					addedPhys);
 	Texthook::Draw(
@@ -776,7 +779,7 @@ void StatsDisplay::OnDraw() {
 					L"{}Cow King Alive:{}{}",
 					GetColorCode(TextColor::Gold),
 					GetColorCode(isCowKingDead ? TextColor::Red : TextColor::Green),
-					D2LANG_GetLocaleText(isCowKingDead ? D2STR_NO : D2STR_YES));
+					d2lang::GetLocaleText(isCowKingDead ? D2STR_NO : D2STR_YES));
 	Texthook::Draw(column2, y, None, 6, Gold, cowKingText.c_str());
 
 	QuestBugState andyBugState = GetAndarielBuggedState(quests);

@@ -61,9 +61,17 @@
 #include <sstream>
 #include <vector>
 
+#include "bh/d2/d2lang/function/get_locale_text.hpp"
 #include "BH.h"
 #include "Constants.h"
 #include "D2Ptrs.h"
+#include "D2Strings.h"
+
+namespace {
+
+namespace d2lang = ::bh::d2::d2lang;
+
+}  // namespace
 
 void Tokenize(const std::string& str,
                       std::vector<std::string>& tokens,
@@ -105,7 +113,7 @@ char* UnicodeToAnsi(const wchar_t* str)
 
 std::wstring GetColorCode(int ColNo)
 {
-	wchar_t* pCol = D2LANG_GetLocaleText(3994);
+	const wchar_t* pCol = d2lang::GetLocaleText(D2STR_COLORCODE);
 	std::wostringstream Result;
 	Result << pCol << (wchar_t) (ColNo + '0');
 	return Result.str();

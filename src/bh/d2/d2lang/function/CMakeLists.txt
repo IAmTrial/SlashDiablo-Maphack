@@ -17,6 +17,10 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("d2lang")
-add_subdirectory("dll")
-add_subdirectory("exe")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_locale_text.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_locale_text.hpp"
+)
+
+add_subdirectory("v1_00")
