@@ -31,6 +31,7 @@
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/dll/dll.hpp"
 #include "bh/d2/dll/internal/relative_path.hpp"
+#include "bh/d2/dll/name.hpp"
 #include "bh/global/file_logger.hpp"
 
 namespace bh::d2::dll {
@@ -100,6 +101,16 @@ HMODULE GetHandle(Dll dll) {
   // Load the module to the table, if it isn't there.
   HMODULE& handle = search_result.front().second;
   if (handle == nullptr) {
+    // Storm uses a DllMain that is hostile to LoadLibrary.
+    // To bypass this, Fog is loaded first, so Fog will implicitly
+    // load Storm without LoadLibrary.
+    if (dll == Dll::kStorm) {
+      GetHandle(Dll::kFog);
+    }
+    GetLogger().Info(
+        __LINE__,
+        "Loading dynamic link library {}.",
+        GetName(dll));
     handle = InitModule(dll);
   }
 
