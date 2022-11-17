@@ -25,6 +25,9 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/handle.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/handle.hpp"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/name.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/name.hpp"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/path.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/path.hpp"
 )
