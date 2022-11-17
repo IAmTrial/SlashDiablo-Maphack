@@ -31,6 +31,7 @@
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/dll/dll.hpp"
 #include "bh/d2/dll/internal/relative_path.hpp"
+#include "bh/d2/dll/name.hpp"
 #include "bh/global/file_logger.hpp"
 
 namespace bh::d2::dll {
@@ -63,6 +64,14 @@ static std::array<std::pair<Dll, HMODULE>, kDlls.size()> InitHandlesTable() {
 
 static HMODULE InitModule(Dll dll) {
   std::wstring_view relative_path = internal::GetRelativePath(dll);
+  if (dll == Dll::kStorm
+      && GetModuleHandleW(relative_path.data()) == nullptr) {
+    GetLogger().Fatal(
+        __LINE__,
+        "Attemping to load Storm.dll via LoadLibrary.",
+        GetLastError());
+  }
+
   HMODULE handle = LoadLibraryW(relative_path.data());
   if (handle == nullptr) {
     GetLogger().Fatal(
@@ -100,6 +109,16 @@ HMODULE GetHandle(Dll dll) {
   // Load the module to the table, if it isn't there.
   HMODULE& handle = search_result.front().second;
   if (handle == nullptr) {
+    // Storm uses a DllMain that is hostile to LoadLibrary.
+    // To bypass this, Fog is loaded first, so Fog will implicitly
+    // load Storm without LoadLibrary.
+    if (dll == Dll::kStorm) {
+      GetHandle(Dll::kFog);
+    }
+    GetLogger().Info(
+        __LINE__,
+        "Loading dynamic link library {}.",
+        GetName(dll));
     handle = InitModule(dll);
   }
 
