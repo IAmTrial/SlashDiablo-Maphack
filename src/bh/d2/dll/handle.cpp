@@ -64,6 +64,14 @@ static std::array<std::pair<Dll, HMODULE>, kDlls.size()> InitHandlesTable() {
 
 static HMODULE InitModule(Dll dll) {
   std::wstring_view relative_path = internal::GetRelativePath(dll);
+  if (dll == Dll::kStorm
+      && GetModuleHandleW(relative_path.data()) == nullptr) {
+    GetLogger().Fatal(
+        __LINE__,
+        "Attemping to load Storm.dll via LoadLibrary.",
+        GetLastError());
+  }
+
   HMODULE handle = LoadLibraryW(relative_path.data());
   if (handle == nullptr) {
     GetLogger().Fatal(
