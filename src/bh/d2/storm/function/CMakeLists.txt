@@ -19,6 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_close_archive.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_close_archive.hpp"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/file_close_file.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/file_close_file.hpp"
 
