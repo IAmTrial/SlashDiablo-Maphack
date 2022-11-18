@@ -1,0 +1,89 @@
+/**
+ * SlashDiablo Maphack
+ * Copyright (C) 2012-2022  SlashDiablo Community
+ *
+ * This file is part of SlashDiablo Maphack.
+ *
+ * SlashDiablo Maphack is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Affero General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * BH
+ * Copyright (C) 2011  McGod
+ *
+ * All rights reserved.
+ */
+
+#include "bh/d2/storm/function/v1_00/file_open_archive.hpp"
+
+#include <assert.h>
+#include <stdint.h>
+#include <windows.h>
+
+#include <variant>
+
+#include "bh/d2/dll/address.hpp"
+#include "bh/d2/dll/dll.hpp"
+#include "bh/d2/exe/version.hpp"
+
+namespace bh::d2::storm::v1_00 {
+namespace {
+
+using ::bh::d2::dll::Dll;
+using ::bh::d2::dll::GetAddress;
+using ::bh::d2::dll::Offset;
+using ::bh::d2::dll::Ordinal;
+using ::bh::d2::exe::version::GetRunning;
+using ::bh::d2::exe::version::Version;
+
+static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
+  switch (version) {
+    case Version::k1_13c: {
+      return Ordinal(266);
+    }
+
+    case Version::k1_13d: {
+      return Ordinal(266);
+    }
+
+    case Version::k1_14d: {
+      return Offset(0x1BA60);
+    }
+  }
+
+  // This should never happen.
+  assert(false);
+  return Offset(0);
+}
+
+}  // namespace
+
+uint32_t SFileOpenArchive(
+    const char* path, uint32_t priority, uint32_t flags, HANDLE* mpq) {
+  using FuncType =
+      uint32_t (__stdcall)(const char*, uint32_t, uint32_t, HANDLE*);
+
+  static FuncType* func =
+      std::visit(
+          [] (auto value) {
+            void* address = GetAddress(Dll::kStorm, value);
+            return reinterpret_cast<FuncType*>(address);
+          },
+          GetOffsetOrOrdinal(GetRunning()));
+
+  return func(path, priority, flags, mpq);
+}
+
+}  // namespace bh::d2::storm::v1_00

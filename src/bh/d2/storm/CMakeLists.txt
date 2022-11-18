@@ -17,7 +17,4 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("d2lang")
-add_subdirectory("dll")
-add_subdirectory("exe")
-add_subdirectory("storm")
+add_subdirectory("function")
