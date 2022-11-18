@@ -16,12 +16,3 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
-
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.hpp"
-)
