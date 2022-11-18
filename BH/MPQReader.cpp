@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "bh/d2/storm/function/file_close_archive.hpp"
 #include "bh/d2/storm/function/file_close_file.hpp"
 #include "bh/d2/storm/function/file_open_archive.hpp"
 #include "Constants.h"
@@ -35,7 +36,7 @@ MPQArchive::MPQArchive(const char *filename) : name(filename), error(ERROR_SUCCE
 }
 MPQArchive::~MPQArchive() {
 	if (hMpq != NULL) {
-		STORM_SFileCloseArchive(hMpq);
+		storm::SFileCloseArchive(hMpq);
 	}
 }
 HANDLE MPQArchive::GetHandle() {
