@@ -11,8 +11,15 @@
 #include <string>
 #include <vector>
 
+#include "bh/d2/storm/function/file_open_archive.hpp"
 #include "Constants.h"
 #include "D2Ptrs.h"
+
+namespace {
+
+namespace storm = ::bh::d2::storm;
+
+}  // namespace
 
 std::map<std::string, MPQData*> MpqDataMap;
 std::string MpqVersion;
@@ -21,7 +28,7 @@ std::string MpqVersion;
 #define STREAM_FLAG_READ_ONLY 0x00000100  // Stream is read only
 
 MPQArchive::MPQArchive(const char *filename) : name(filename), error(ERROR_SUCCESS) {
-	if (!STORM_SFileOpenArchive(filename, 0, STREAM_FLAG_READ_ONLY, &hMpq)) {
+	if (!storm::SFileOpenArchive(filename, 0, STREAM_FLAG_READ_ONLY, &hMpq)) {
 		error = GetLastError();
 	}
 }
