@@ -31,17 +31,27 @@
 #include <assert.h>
 #include <windows.h>
 
-#include "bh/d2/storm/function/v1_00/file_open_archive.hpp"
+#include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/d2/storm/function/v1_00/file_open_archive.hpp"
+#include "bh/global/file_logger.hpp"
 
 namespace bh::d2::storm {
 
+using ::bh::common::logging::Logger;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
+using ::bh::global::GetFileLogger;
+
+static Logger& GetLogger() {
+  static Logger& logger = GetFileLogger(__FILEW__);
+  return logger;
+}
 
 BOOL SFileOpenArchive(
     const char* path, DWORD priority, DWORD flags, HANDLE* mpq) {
-  switch (GetRunning()) {
+  Version version = GetRunning();
+  switch (version) {
     case Version::k1_13c:
     case Version::k1_13d:
     case Version::k1_14d: {
@@ -50,7 +60,10 @@ BOOL SFileOpenArchive(
   }
 
   // This should never happen.
-  assert(false);
+  GetLogger().Fatal(
+      __LINE__,
+      "Unhandled Version with value {:d}",
+      static_cast<int>(version));
   return FALSE;
 }
 
