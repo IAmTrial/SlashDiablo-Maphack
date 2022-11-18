@@ -51,10 +51,10 @@ using ::bh::d2::dll::Offset;
 using ::bh::d2::dll::Ordinal;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
-using ::bh::d2::global::GetFileLogger;
+using ::bh::global::GetFileLogger;
 
 static Logger& GetLogger() {
-  static Logger& logger = GetFileLogger(logger);
+  static Logger& logger = GetFileLogger(__FILEW__);
   return logger;
 }
 
