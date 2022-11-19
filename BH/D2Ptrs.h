@@ -492,7 +492,6 @@ FUNCPTR(D2MCPCLIENT, ParseGameListPacket, VOID __fastcall, (BYTE* pPacket), 0x6E
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 FUNCPTR(STORM, SFileOpenFileEx, bool __stdcall, (HANDLE hMpq, const char* szFileName, DWORD dwSearchScope, HANDLE* phFile), -268, -268)
-FUNCPTR(STORM, SFileGetFileSize, bool __stdcall, (HANDLE hFile, DWORD* pdwFileSizeHigh), -265, -265)
 FUNCPTR(STORM, SFileReadFile, bool __stdcall, (HANDLE hFile, VOID* lpBuffer, DWORD dwToRead, DWORD* pdwRead, LPOVERLAPPED lpOverlapped), -269, -269)
 
 #undef FUNCPTR
