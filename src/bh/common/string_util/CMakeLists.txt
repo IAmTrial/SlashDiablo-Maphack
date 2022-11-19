@@ -1,5 +1,5 @@
 # SlashDiablo Maphack
-# Copyright (C) 2012-2022  SlashDiablo Community
+# Copyright (C) 2012-2022  SlashDiablo Team
 #
 # This file is part of SlashDiablo Maphack.
 #
