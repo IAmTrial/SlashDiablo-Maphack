@@ -14,6 +14,7 @@
 #include "bh/d2/storm/function/file_close_archive.hpp"
 #include "bh/d2/storm/function/file_close_file.hpp"
 #include "bh/d2/storm/function/file_open_archive.hpp"
+#include "bh/d2/storm/function/file_open_file_ex.hpp"
 #include "Constants.h"
 #include "D2Ptrs.h"
 
@@ -45,7 +46,7 @@ HANDLE MPQArchive::GetHandle() {
 
 
 MPQFile::MPQFile(MPQArchive *archive, const char *filename) : name(filename), error(ERROR_SUCCESS) {
-	if (!STORM_SFileOpenFileEx(archive->GetHandle(), filename, 0, &hMpqFile)) {
+	if (!storm::SFileOpenFileEx(archive->GetHandle(), filename, 0, &hMpqFile)) {
 		error = GetLastError();
 	}
 }
