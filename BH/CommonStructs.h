@@ -2,7 +2,7 @@
 *
 * CommonStructs.h
 * BH: Copyright 2011 (C) McGod
-* SlashDiablo Maphack: Copyright (C) SlashDiablo Community
+* SlashDiablo Maphack: Copyright (C) SlashDiablo Team
 *
 *  This file is part of SlashDiablo Maphack.
 *
