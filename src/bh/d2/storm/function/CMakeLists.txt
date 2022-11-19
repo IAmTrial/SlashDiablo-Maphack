@@ -25,6 +25,9 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/file_close_file.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/file_close_file.hpp"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_get_file_size.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_get_file_size.hpp"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.hpp"
 )
