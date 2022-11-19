@@ -11,8 +11,19 @@
 #include <string>
 #include <vector>
 
+#include "bh/d2/storm/function/file_close_archive.hpp"
+#include "bh/d2/storm/function/file_close_file.hpp"
+#include "bh/d2/storm/function/file_open_archive.hpp"
+#include "bh/d2/storm/function/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/file_read_file.hpp"
 #include "Constants.h"
 #include "D2Ptrs.h"
+
+namespace {
+
+namespace storm = ::bh::d2::storm;
+
+}  // namespace
 
 std::map<std::string, MPQData*> MpqDataMap;
 std::string MpqVersion;
@@ -21,13 +32,13 @@ std::string MpqVersion;
 #define STREAM_FLAG_READ_ONLY 0x00000100  // Stream is read only
 
 MPQArchive::MPQArchive(const char *filename) : name(filename), error(ERROR_SUCCESS) {
-	if (!STORM_SFileOpenArchive(filename, 0, STREAM_FLAG_READ_ONLY, &hMpq)) {
+	if (!storm::SFileOpenArchive(filename, 0, STREAM_FLAG_READ_ONLY, &hMpq)) {
 		error = GetLastError();
 	}
 }
 MPQArchive::~MPQArchive() {
 	if (hMpq != NULL) {
-		STORM_SFileCloseArchive(hMpq);
+		storm::SFileCloseArchive(hMpq);
 	}
 }
 HANDLE MPQArchive::GetHandle() {
@@ -36,13 +47,13 @@ HANDLE MPQArchive::GetHandle() {
 
 
 MPQFile::MPQFile(MPQArchive *archive, const char *filename) : name(filename), error(ERROR_SUCCESS) {
-	if (!STORM_SFileOpenFileEx(archive->GetHandle(), filename, 0, &hMpqFile)) {
+	if (!storm::SFileOpenFileEx(archive->GetHandle(), filename, 0, &hMpqFile)) {
 		error = GetLastError();
 	}
 }
 MPQFile::~MPQFile() {
 	if (hMpqFile != NULL) {
-		STORM_SFileCloseFile(hMpqFile);
+		storm::SFileCloseFile(hMpqFile);
 	}
 }
 HANDLE MPQFile::GetHandle() {
@@ -55,7 +66,7 @@ MPQData::MPQData(MPQFile *file) : error(ERROR_SUCCESS) {
 	std::string buffer;
 	char szBuffer[0x10000];
 	while (dwBytes > 0) {
-		STORM_SFileReadFile(file->GetHandle(), szBuffer, sizeof(szBuffer), &dwBytes, NULL);
+		storm::SFileReadFile(file->GetHandle(), szBuffer, sizeof(szBuffer), &dwBytes, NULL);
 		if (dwBytes > 0) {
 			buffer.append(szBuffer, dwBytes);
 		}

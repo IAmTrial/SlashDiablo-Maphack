@@ -16,8 +16,3 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
-
-add_subdirectory("d2lang")
-add_subdirectory("dll")
-add_subdirectory("exe")
-add_subdirectory("storm")
