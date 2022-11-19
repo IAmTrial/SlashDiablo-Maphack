@@ -30,4 +30,7 @@ target_sources(${PROJECT_NAME}
 
         "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.hpp"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_file_ex.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_file_ex.hpp"
 )
