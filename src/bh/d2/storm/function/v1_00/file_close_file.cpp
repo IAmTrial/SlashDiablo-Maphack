@@ -60,10 +60,7 @@ static Logger& GetLogger() {
 
 static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   switch (version) {
-    case Version::k1_13c: {
-      return Ordinal(253);
-    }
-
+    case Version::k1_13c:
     case Version::k1_13d: {
       return Ordinal(253);
     }
