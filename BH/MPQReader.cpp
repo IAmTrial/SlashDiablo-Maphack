@@ -15,6 +15,7 @@
 #include "bh/d2/storm/function/file_close_file.hpp"
 #include "bh/d2/storm/function/file_open_archive.hpp"
 #include "bh/d2/storm/function/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/file_read_file.hpp"
 #include "Constants.h"
 #include "D2Ptrs.h"
 
@@ -65,7 +66,7 @@ MPQData::MPQData(MPQFile *file) : error(ERROR_SUCCESS) {
 	std::string buffer;
 	char szBuffer[0x10000];
 	while (dwBytes > 0) {
-		STORM_SFileReadFile(file->GetHandle(), szBuffer, sizeof(szBuffer), &dwBytes, NULL);
+		storm::SFileReadFile(file->GetHandle(), szBuffer, sizeof(szBuffer), &dwBytes, NULL);
 		if (dwBytes > 0) {
 			buffer.append(szBuffer, dwBytes);
 		}

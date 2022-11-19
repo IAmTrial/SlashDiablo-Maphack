@@ -487,12 +487,6 @@ VARPTR(D2WIN, FocusedControl, Control*, 0x214B0, 0x8DB44) // unused, but we ough
 
 FUNCPTR(D2MCPCLIENT, ParseGameListPacket, VOID __fastcall, (BYTE* pPacket), 0x6E30, 0x6640)
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-// Storm Functions
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-FUNCPTR(STORM, SFileReadFile, bool __stdcall, (HANDLE hFile, VOID* lpBuffer, DWORD dwToRead, DWORD* pdwRead, LPOVERLAPPED lpOverlapped), -269, -269)
-
 #undef FUNCPTR
 #undef ASMPTR
 #undef VARPTR
