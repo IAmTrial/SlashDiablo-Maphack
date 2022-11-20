@@ -9,6 +9,7 @@
 #include <vector>
 #include <utility>
 
+#include "bh/d2/struct/mpq_handle.hpp"
 #include "../../Common.h"
 #include "../../Config.h"
 #include "../../D2Structs.h"
@@ -90,7 +91,7 @@ class ScreenInfo : public Module {
 		void FormattedXPPerSec(char* buffer, double xpPerSec);
 		std::string FormatTime(time_t t, const char* format);
 		CellFile* cf;
-		void* mpqH;
+		::bh::d2::MpqHandle* mpqH;
 		BOOL manageBuffs;
 		BOOL manageConv;
 		int resTracker;

@@ -469,9 +469,6 @@ FUNCPTR(D2WIN, SetEditBoxCallback, VOID __fastcall, (Control* pControl, BOOL(__s
 FUNCPTR(D2WIN, SetEditBoxProc, void __fastcall, (Control* box, BOOL(__stdcall *FunCallBack)(Control*, DWORD, DWORD)), 0x13970, 0xF1D0)//Updated 1.13c
 FUNCPTR(D2WIN, SelectEditBoxText, void __fastcall, (Control* box), 0x7708, 0xEF80) //Updated 1.13c
 
-//FUNCPTR(D2WIN, InitMPQ, MpqHandle __fastcall, (const char *dll, const char *mpqfile, const char *mpqname, int v4, void* v5, int priority), 0x7E60, 0x7E50)
-ASMPTR(D2WIN, LoadMpq_I, 0x7E60, 0x7E50)
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // D2Win Globals
 ////////////////////////////////////////////////////////////////////////////////////////////////

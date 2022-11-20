@@ -22,6 +22,9 @@
 #include <vector>
 #include <utility>
 
+#include "bh/common/string_util/bool.hpp"
+#include "bh/d2/d2win/function/load_mpq.hpp"
+#include "bh/d2/struct/mpq_handle.hpp"
 #include "../../BH.h"
 #include "../../Config.h"
 #include "../../Constants.h"
@@ -32,7 +35,6 @@
 #include "../../Drawing/Basic/Texthook/Texthook.h"
 #include "../../MPQReader.h"
 #include "../Module.h"
-#include "bh/common/string_util/bool.hpp"
 
 namespace {
 
@@ -43,6 +45,8 @@ using ::Drawing::Right;
 using ::Drawing::Texthook;
 
 using ::bh::common::string_util::ToBool;
+
+namespace d2win = ::bh::d2::d2win;
 
 }  // namespace
 
@@ -344,7 +348,8 @@ void ScreenInfo::OnDraw() {
 		return;
 	}
 	if (mpqH == NULL) {
-		mpqH = D2WIN_LoadMpq(5000, "BH.dll", "buffs.mpq", "buffs", 0, 0);
+		mpqH =
+				d2win::LoadMpq("BH.dll", "buffs.mpq", "buffs", false, nullptr, 5000);
 	}
 	if (!cellLoaded) {
 		cf = D2WIN_LoadCellFile("data\\global\\ui\\spells\\buffs24", 0);
