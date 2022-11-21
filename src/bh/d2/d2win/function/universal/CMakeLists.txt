@@ -22,9 +22,3 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/load_mpq.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/load_mpq.hpp"
 )
-
-add_subdirectory("universal")
-add_subdirectory("v1_11")
-add_subdirectory("v1_13c")
-add_subdirectory("v1_13d")
-add_subdirectory("v1_14d")

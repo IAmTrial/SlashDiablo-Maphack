@@ -26,23 +26,21 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_D2WIN_FUNCTION_V1_11_LOAD_MPQ_HPP_
-#define BH_D2_D2WIN_FUNCTION_V1_11_LOAD_MPQ_HPP_
+#ifndef BH_D2_D2WIN_FUNCTION_UNIVERSAL_LOAD_MPQ_HPP_
+#define BH_D2_D2WIN_FUNCTION_UNIVERSAL_LOAD_MPQ_HPP_
 
-#include <stdint.h>
+#include "bh/d2/struct/universal/mpq_handle.hpp"
 
-#include "bh/d2/struct/v1_11/mpq_handle.hpp"
+namespace bh::d2::d2win::universal {
 
-namespace bh::d2::d2win::v1_11 {
-
-::bh::d2::v1_11::MpqHandle* LoadMpq(
+::bh::d2::universal::MpqHandle* LoadMpq(
     const char* dll_filename,
     const char* mpq_path,
     const char* mpq_name,
-    int32_t is_set_err_on_drive_query_fail,
+    bool is_set_err_on_drive_query_fail,
     void* (*on_fail_callback)(void),
-    int32_t priority);
+    int priority);
 
-}  // namespace bh::d2::d2win::v1_11
+}  // namespace bh::d2::d2win::universal
 
-#endif  // BH_D2_D2WIN_FUNCTION_V1_11_LOAD_MPQ_HPP_
+#endif  // BH_D2_D2WIN_FUNCTION_UNIVERSAL_LOAD_MPQ_HPP_

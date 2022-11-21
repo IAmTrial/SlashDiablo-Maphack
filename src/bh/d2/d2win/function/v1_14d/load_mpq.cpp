@@ -26,9 +26,8 @@
  * All rights reserved.
  */
 
-#include "bh/d2/d2win/function/v1_11/load_mpq.hpp"
+#include "bh/d2/d2win/function/v1_14d/load_mpq.hpp"
 
-#include <assert.h>
 #include <stdint.h>
 
 #include <variant>
@@ -37,10 +36,10 @@
 #include "bh/d2/dll/address.hpp"
 #include "bh/d2/dll/dll.hpp"
 #include "bh/d2/exe/version.hpp"
-#include "bh/d2/struct/v1_11/mpq_handle.hpp"
+#include "bh/d2/struct/v1_14d/mpq_handle.hpp"
 #include "bh/global/file_logger.hpp"
 
-namespace bh::d2::d2win::v1_11 {
+namespace bh::d2::d2win::v1_14d {
 namespace {
 
 using ::bh::common::logging::Logger;
@@ -50,14 +49,12 @@ using ::bh::d2::dll::Offset;
 using ::bh::d2::dll::Ordinal;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
-using ::bh::d2::v1_11::MpqHandle;
+using ::bh::d2::v1_14d::MpqHandle;
 using ::bh::global::GetFileLogger;
 
 using FuncType =
-    MpqHandle* __cdecl(
-        const char* dll_filename,
+    MpqHandle* __fastcall(
         const char* mpq_path,
-        const char* mpq_name,
         int32_t is_set_err_on_drive_query_fail,
         void* (*on_fail_callback)(void),
         int32_t priority);
@@ -69,12 +66,8 @@ static Logger& GetLogger() {
 
 static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   switch (version) {
-    case Version::k1_13c: {
-      return Offset(0x7E60);
-    }
-
-    case Version::k1_13d: {
-      return Offset(0x7E50);
+    case Version::k1_14d: {
+      return Offset(0x117332);
     }
   }
 
@@ -86,43 +79,10 @@ static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   return Offset(0);
 }
 
-static __declspec(naked) MpqHandle* __cdecl CallShim(
-    FuncType* func,
-    const char* dll_filename,
-    const char* mpq_path,
-    const char* mpq_name,
-    int32_t is_set_err_on_drive_query_fail,
-    void* (*on_fail_callback)(void),
-    int32_t priority) {
-  __asm {
-    push ebp
-    mov ebp, esp
-
-    push ecx
-    push edx
-
-    mov eax, dword ptr [ebp + 32]
-    push dword ptr [ebp + 28]
-    push dword ptr [ebp + 24]
-    push dword ptr [ebp + 20]
-    push dword ptr [ebp + 16]
-    push dword ptr [ebp + 12]
-    call dword ptr [ebp + 8]
-
-    pop edx
-    pop ecx
-
-    leave
-    ret
-  }
-}
-
 }  // namespace
 
 MpqHandle* LoadMpq(
-    const char* dll_filename,
     const char* mpq_path,
-    const char* mpq_name,
     int32_t is_set_err_on_drive_query_fail,
     void* (*on_fail_callback)(void),
     int32_t priority) {
@@ -134,14 +94,8 @@ MpqHandle* LoadMpq(
           },
           GetOffsetOrOrdinal(GetRunning()));
 
-  return CallShim(
-      func,
-      dll_filename,
-      mpq_path,
-      mpq_name,
-      is_set_err_on_drive_query_fail,
-      on_fail_callback,
-      priority);
+  return func(
+      mpq_path, is_set_err_on_drive_query_fail, on_fail_callback, priority);
 }
 
-}  // namespace bh::d2::d2win::v1_11
+}  // namespace bh::d2::d2win::v1_14d
