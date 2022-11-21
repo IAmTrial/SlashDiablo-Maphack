@@ -61,7 +61,7 @@
 #include <sstream>
 #include <vector>
 
-#include "bh/d2/d2lang/function/get_locale_text.hpp"
+#include "bh/d2/d2lang/function/universal/get_locale_text.hpp"
 #include "BH.h"
 #include "Constants.h"
 #include "D2Ptrs.h"
@@ -113,7 +113,7 @@ char* UnicodeToAnsi(const wchar_t* str)
 
 std::wstring GetColorCode(int ColNo)
 {
-	const wchar_t* pCol = d2lang::GetLocaleText(D2STR_COLORCODE);
+	const wchar_t* pCol = d2lang::universal::GetLocaleText(D2STR_COLORCODE);
 	std::wostringstream Result;
 	Result << pCol << (wchar_t) (ColNo + '0');
 	return Result.str();

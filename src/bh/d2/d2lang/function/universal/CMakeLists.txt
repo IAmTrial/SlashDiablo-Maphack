@@ -17,8 +17,8 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("universal")
-add_subdirectory("v1_00")
-add_subdirectory("v1_13c")
-add_subdirectory("v1_13d")
-add_subdirectory("v1_14d")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_locale_text.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_locale_text.hpp"
+)

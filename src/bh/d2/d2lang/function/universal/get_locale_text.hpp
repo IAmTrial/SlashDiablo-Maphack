@@ -26,16 +26,15 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_D2LANG_FUNCTION_GET_LOCALE_TEXT_HPP_
-#define BH_D2_D2LANG_FUNCTION_GET_LOCALE_TEXT_HPP_
+#ifndef BH_D2_D2LANG_FUNCTION_UNIVERSAL_GET_LOCALE_TEXT_HPP_
+#define BH_D2_D2LANG_FUNCTION_UNIVERSAL_GET_LOCALE_TEXT_HPP_
 
-#include <stdint.h>
 #include <wchar.h>
 
-namespace bh::d2::d2lang {
+namespace bh::d2::d2lang::universal {
 
 const wchar_t* GetLocaleText(unsigned short id);
 
-}  // namespace bh::d2::d2lang
+}  // namespace bh::d2::d2lang::universal
 
-#endif  // BH_D2_D2LANG_FUNCTION_GET_LOCALE_TEXT_HPP_
+#endif  // BH_D2_D2LANG_FUNCTION_UNIVERSAL_GET_LOCALE_TEXT_HPP_

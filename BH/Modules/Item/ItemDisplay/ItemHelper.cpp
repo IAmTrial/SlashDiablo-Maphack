@@ -8,7 +8,7 @@
 #include <regex>
 #include <string>
 
-#include "bh/d2/d2lang/function/get_locale_text.hpp"
+#include "bh/d2/d2lang/function/universal/get_locale_text.hpp"
 #include "../../../BH.h"
 #include "../../../Common.h"
 #include "../../../Constants.h"
@@ -169,7 +169,8 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, std::string &name, const std::
     sprintf_s(gemtype, "%s", GetGemTypeString(GetGemType(uInfo->attrs)));
   }
 
-  std::string baseName = UnicodeToAnsi(d2lang::GetLocaleText(txt->nLocaleTxtNo));
+  std::string baseName =
+      UnicodeToAnsi(d2lang::universal::GetLocaleText(txt->nLocaleTxtNo));
 
   ActionReplace replacements[] = {
     {"NAME", origName},

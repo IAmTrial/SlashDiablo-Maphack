@@ -26,32 +26,58 @@
  * All rights reserved.
  */
 
-#include "bh/d2/d2lang/function/get_locale_text.hpp"
+#include "bh/d2/d2lang/function/universal/get_locale_text.hpp"
 
-#include <assert.h>
-#include <stdint.h>
 #include <wchar.h>
 
-#include "bh/d2/d2lang/function/v1_00/get_locale_text.hpp"
+#include "bh/common/logging/logger.hpp"
+#include "bh/d2/d2lang/function/v1_13c/get_locale_text.hpp"
+#include "bh/d2/d2lang/function/v1_13d/get_locale_text.hpp"
+#include "bh/d2/d2lang/function/v1_14d/get_locale_text.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/global/file_logger.hpp"
 
-namespace bh::d2::d2lang {
+namespace bh::d2::d2lang::universal {
+namespace {
 
+using ::bh::common::logging::Logger;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
+using ::bh::global::GetFileLogger;
+
+namespace v1_13c = ::bh::d2::d2lang::v1_13c;
+namespace v1_13d = ::bh::d2::d2lang::v1_13d;
+namespace v1_14d = ::bh::d2::d2lang::v1_14d;
+
+static Logger& GetLogger() {
+  static Logger& logger = GetFileLogger(__FILEW__);
+  return logger;
+}
+
+}  // namespace
 
 const wchar_t* GetLocaleText(unsigned short id) {
+  Version version = GetRunning();
   switch (GetRunning()) {
-    case Version::k1_13c:
-    case Version::k1_13d:
+    case Version::k1_13c: {
+      return v1_13c::GetLocaleText(id);
+    }
+
+    case Version::k1_13d: {
+      return v1_13d::GetLocaleText(id);
+    }
+
     case Version::k1_14d: {
-      return v1_00::GetLocaleText(id);
+      return v1_14d::GetLocaleText(id);
     }
   }
 
   // This should never happen.
-  assert(false);
+  GetLogger().Fatal(
+      __LINE__,
+      "Unhandled Version with value {:d}",
+      static_cast<int>(version));
   return nullptr;
 }
 
-}  // namespace bh::d2::d2lang
+}  // namespace bh::d2::d2lang::universal
