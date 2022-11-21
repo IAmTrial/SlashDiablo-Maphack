@@ -17,12 +17,6 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/load_mpq.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/load_mpq.hpp"
-)
-
 add_subdirectory("universal")
 add_subdirectory("v1_11")
 add_subdirectory("v1_13c")

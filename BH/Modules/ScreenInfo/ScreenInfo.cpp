@@ -23,8 +23,8 @@
 #include <utility>
 
 #include "bh/common/string_util/bool.hpp"
-#include "bh/d2/d2win/function/load_mpq.hpp"
-#include "bh/d2/struct/mpq_handle.hpp"
+#include "bh/d2/d2win/function/universal/load_mpq.hpp"
+#include "bh/d2/struct/universal/mpq_handle.hpp"
 #include "../../BH.h"
 #include "../../Config.h"
 #include "../../Constants.h"
@@ -349,7 +349,8 @@ void ScreenInfo::OnDraw() {
 	}
 	if (mpqH == NULL) {
 		mpqH =
-				d2win::LoadMpq("BH.dll", "buffs.mpq", "buffs", false, nullptr, 5000);
+				d2win::universal::LoadMpq(
+						"BH.dll", "buffs.mpq", "buffs", false, nullptr, 5000);
 	}
 	if (!cellLoaded) {
 		cf = D2WIN_LoadCellFile("data\\global\\ui\\spells\\buffs24", 0);
