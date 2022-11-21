@@ -26,20 +26,16 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_STORM_FUNCTION_FILE_READ_FILE_HPP_
-#define BH_D2_STORM_FUNCTION_FILE_READ_FILE_HPP_
+#ifndef BH_D2_STORM_FUNCTION_V1_14D_FILE_OPEN_FILE_EX_HPP_
+#define BH_D2_STORM_FUNCTION_V1_14D_FILE_OPEN_FILE_EX_HPP_
 
-#include <windows.h>
+#include "bh/d2/storm/function/v1_00/file_open_file_ex.hpp"
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::v1_14d {
 
-BOOL SFileReadFile(
-    HANDLE file,
-    void* buffer,
-    DWORD buffer_size,
-    DWORD* read_count,
-    OVERLAPPED* overlapped);
+inline constexpr auto SFileOpenFileEx =
+    ::bh::d2::storm::v1_00::SFileOpenFileEx;
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::v1_14d
 
-#endif  // BH_D2_STORM_FUNCTION_FILE_READ_FILE_HPP_
+#endif  // BH_D2_STORM_FUNCTION_V1_14D_FILE_OPEN_FILE_EX_HPP_

@@ -26,42 +26,49 @@
  * All rights reserved.
  */
 
-#include "bh/d2/storm/function/file_read_file.hpp"
+#include "bh/d2/storm/function/universal/file_close_archive.hpp"
 
 #include <assert.h>
 #include <windows.h>
 
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
-#include "bh/d2/storm/function/v1_00/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_13c/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_13d/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_14d/file_close_archive.hpp"
 #include "bh/global/file_logger.hpp"
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::universal {
+namespace {
 
 using ::bh::common::logging::Logger;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
 using ::bh::global::GetFileLogger;
 
+namespace d2 = ::bh::d2;
+namespace storm = ::bh::d2::storm;
+
 static Logger& GetLogger() {
   static Logger& logger = GetFileLogger(__FILEW__);
   return logger;
 }
 
-BOOL SFileReadFile(
-    HANDLE file,
-    void* buffer,
-    DWORD buffer_size,
-    DWORD* read_count,
-    OVERLAPPED* overlapped) {
+}  // namespace
+
+BOOL SFileCloseArchive(HANDLE mpq) {
   Version version = GetRunning();
   switch (version) {
-    case Version::k1_13c:
-    case Version::k1_13d:
+    case Version::k1_13c: {
+      return storm::v1_13c::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_13d: {
+      return storm::v1_13d::SFileCloseArchive(mpq);
+    }
+
     case Version::k1_14d: {
-      uint32_t* read_count_v1_00 = reinterpret_cast<uint32_t*>(read_count);
-      return v1_00::SFileReadFile(
-          file, buffer, buffer_size, read_count_v1_00, overlapped);
+      return storm::v1_14d::SFileCloseArchive(mpq);
     }
   }
 
@@ -73,4 +80,4 @@ BOOL SFileReadFile(
   return FALSE;
 }
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::universal

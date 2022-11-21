@@ -1,3 +1,4 @@
+
 /**
  * SlashDiablo Maphack
  * Copyright (C) 2012-2022  SlashDiablo Team
@@ -26,44 +27,16 @@
  * All rights reserved.
  */
 
-#include "bh/d2/storm/function/file_close_archive.hpp"
+#ifndef BH_D2_STORM_FUNCTION_V1_14D_FILE_CLOSE_ARCHIVE_HPP_
+#define BH_D2_STORM_FUNCTION_V1_14D_FILE_CLOSE_ARCHIVE_HPP_
 
-#include <assert.h>
-#include <windows.h>
-
-#include "bh/common/logging/logger.hpp"
-#include "bh/d2/exe/version.hpp"
 #include "bh/d2/storm/function/v1_00/file_close_archive.hpp"
-#include "bh/global/file_logger.hpp"
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::v1_14d {
 
-using ::bh::common::logging::Logger;
-using ::bh::d2::exe::version::GetRunning;
-using ::bh::d2::exe::version::Version;
-using ::bh::global::GetFileLogger;
+inline constexpr auto SFileCloseArchive =
+    ::bh::d2::storm::v1_00::SFileCloseArchive;
 
-static Logger& GetLogger() {
-  static Logger& logger = GetFileLogger(__FILEW__);
-  return logger;
-}
+}  // namespace bh::d2::storm::v1_14d
 
-BOOL SFileCloseArchive(HANDLE mpq) {
-  Version version = GetRunning();
-  switch (version) {
-    case Version::k1_13c:
-    case Version::k1_13d:
-    case Version::k1_14d: {
-      return v1_00::SFileCloseArchive(mpq);
-    }
-  }
-
-  // This should never happen.
-  GetLogger().Fatal(
-      __LINE__,
-      "Unhandled Version with value {:d}",
-      static_cast<int>(version));
-  return FALSE;
-}
-
-}  // namespace bh::d2::storm
+#endif  // BH_D2_STORM_FUNCTION_V1_14D_FILE_CLOSE_ARCHIVE_HPP_

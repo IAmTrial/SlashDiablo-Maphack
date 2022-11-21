@@ -27,15 +27,15 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_STORM_FUNCTION_FILE_CLOSE_FILE_HPP_
-#define BH_D2_STORM_FUNCTION_FILE_CLOSE_FILE_HPP_
+#ifndef BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_CLOSE_FILE_HPP_
+#define BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_CLOSE_FILE_HPP_
 
 #include <windows.h>
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::universal {
 
 BOOL SFileCloseFile(HANDLE file);
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::universal
 
-#endif  // BH_D2_STORM_FUNCTION_FILE_CLOSE_FILE_HPP_
+#endif  // BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_CLOSE_FILE_HPP_

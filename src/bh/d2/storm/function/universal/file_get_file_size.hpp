@@ -1,3 +1,4 @@
+
 /**
  * SlashDiablo Maphack
  * Copyright (C) 2012-2022  SlashDiablo Team
@@ -26,15 +27,15 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_STORM_FUNCTION_FILE_CLOSE_ARCHIVE_HPP_
-#define BH_D2_STORM_FUNCTION_FILE_CLOSE_ARCHIVE_HPP_
+#ifndef BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_GET_FILE_SIZE_HPP_
+#define BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_GET_FILE_SIZE_HPP_
 
 #include <windows.h>
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::universal {
 
-BOOL SFileCloseArchive(HANDLE mpq);
+BOOL SFileGetFileSize(HANDLE file, DWORD* file_size_high);
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::universal
 
-#endif  // BH_D2_STORM_FUNCTION_FILE_CLOSE_ARCHIVE_HPP_
+#endif  // BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_GET_FILE_SIZE_HPP_

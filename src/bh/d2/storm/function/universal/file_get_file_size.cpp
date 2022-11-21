@@ -26,35 +26,55 @@
  * All rights reserved.
  */
 
-#include "bh/d2/storm/function/file_open_archive.hpp"
+#include "bh/d2/storm/function/universal/file_get_file_size.hpp"
 
 #include <assert.h>
 #include <windows.h>
 
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
-#include "bh/d2/storm/function/v1_00/file_close_file.hpp"
+#include "bh/d2/storm/function/v1_13c/file_get_file_size.hpp"
+#include "bh/d2/storm/function/v1_13d/file_get_file_size.hpp"
+#include "bh/d2/storm/function/v1_14d/file_get_file_size.hpp"
 #include "bh/global/file_logger.hpp"
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::universal {
+namespace {
 
 using ::bh::common::logging::Logger;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
 using ::bh::global::GetFileLogger;
 
+namespace d2 = ::bh::d2;
+namespace storm = ::bh::d2::storm;
+
 static Logger& GetLogger() {
   static Logger& logger = GetFileLogger(__FILEW__);
   return logger;
 }
 
-BOOL SFileCloseFile(HANDLE file) {
+}  // namespace
+
+BOOL SFileGetFileSize(HANDLE file, DWORD* file_size_high) {
   Version version = GetRunning();
   switch (version) {
-    case Version::k1_13c:
-    case Version::k1_13d:
+    case Version::k1_13c: {
+      uint32_t* file_size_high_v1_13c =
+          reinterpret_cast<uint32_t*>(file_size_high);
+      return storm::v1_13c::SFileGetFileSize(file, file_size_high_v1_13c);
+    }
+
+    case Version::k1_13d: {
+      uint32_t* file_size_high_v1_13d =
+          reinterpret_cast<uint32_t*>(file_size_high);
+      return storm::v1_13d::SFileGetFileSize(file, file_size_high_v1_13d);
+    }
+
     case Version::k1_14d: {
-      return v1_00::SFileCloseFile(file);
+      uint32_t* file_size_high_v1_14d =
+          reinterpret_cast<uint32_t*>(file_size_high);
+      return storm::v1_14d::SFileGetFileSize(file, file_size_high_v1_14d);
     }
   }
 
@@ -66,4 +86,4 @@ BOOL SFileCloseFile(HANDLE file) {
   return FALSE;
 }
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::universal

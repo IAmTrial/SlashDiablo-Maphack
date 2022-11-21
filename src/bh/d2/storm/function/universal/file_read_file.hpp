@@ -26,16 +26,20 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_STORM_FUNCTION_FILE_OPEN_ARCHIVE_HPP_
-#define BH_D2_STORM_FUNCTION_FILE_OPEN_ARCHIVE_HPP_
+#ifndef BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_READ_FILE_HPP_
+#define BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_READ_FILE_HPP_
 
 #include <windows.h>
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::universal {
 
-BOOL SFileOpenArchive(
-    const char* path, DWORD priority, DWORD flags, HANDLE* mpq);
+BOOL SFileReadFile(
+    HANDLE file,
+    void* buffer,
+    DWORD buffer_size,
+    DWORD* read_count,
+    OVERLAPPED* overlapped);
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::universal
 
-#endif  // BH_D2_STORM_FUNCTION_FILE_OPEN_ARCHIVE_HPP_
+#endif  // BH_D2_STORM_FUNCTION_UNIVERSAL_FILE_READ_FILE_HPP_

@@ -1,4 +1,3 @@
-
 /**
  * SlashDiablo Maphack
  * Copyright (C) 2012-2022  SlashDiablo Team
@@ -27,15 +26,16 @@
  * All rights reserved.
  */
 
-#ifndef BH_D2_STORM_FUNCTION_FILE_GET_FILE_SIZE_HPP_
-#define BH_D2_STORM_FUNCTION_FILE_GET_FILE_SIZE_HPP_
+#ifndef BH_D2_STORM_FUNCTION_V1_13C_FILE_OPEN_FILE_EX_HPP_
+#define BH_D2_STORM_FUNCTION_V1_13C_FILE_OPEN_FILE_EX_HPP_
 
-#include <windows.h>
+#include "bh/d2/storm/function/v1_00/file_open_file_ex.hpp"
 
-namespace bh::d2::storm {
+namespace bh::d2::storm::v1_13c {
 
-BOOL SFileGetFileSize(HANDLE file, DWORD* file_size_high);
+inline constexpr auto SFileOpenFileEx =
+    ::bh::d2::storm::v1_00::SFileOpenFileEx;
 
-}  // namespace bh::d2::storm
+}  // namespace bh::d2::storm::v1_13c
 
-#endif  // BH_D2_STORM_FUNCTION_FILE_GET_FILE_SIZE_HPP_
+#endif  // BH_D2_STORM_FUNCTION_V1_13C_FILE_OPEN_FILE_EX_HPP_
