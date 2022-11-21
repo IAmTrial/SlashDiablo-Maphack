@@ -114,8 +114,20 @@ static Version GetFixedFileVersion(
 
   static constexpr std::array kFixedFileVersionTable =
       std::to_array<FixedFileVersionTableEntry>({
+          { { 1, 0, 7, 0 }, Version::k1_07 },
+          { { 1, 0, 8, 28 }, Version::k1_08 },
+          { { 1, 0, 9, 19 }, Version::k1_09 },
+          { { 1, 0, 9, 20 }, Version::k1_09b },
+          { { 1, 0, 9, 22 }, Version::k1_09d },
+          { { 1, 0, 10, 39 }, Version::k1_10 },
+          { { 1, 0, 11, 45 }, Version::k1_11 },
+          { { 1, 0, 11, 46 }, Version::k1_11b },
+          { { 1, 0, 12, 49 }, Version::k1_12 },
           { { 1, 0, 13, 60 }, Version::k1_13c },
           { { 1, 0, 13, 64 }, Version::k1_13d },
+          { { 1, 14, 0, 64 }, Version::k1_14 },
+          { { 1, 14, 1, 68 }, Version::k1_14b },
+          { { 1, 14, 2, 70 }, Version::k1_14c },
           { { 1, 14, 3, 71 }, Version::k1_14d },
       });
   static_assert(std::ranges::is_sorted(kFixedFileVersionTable));
@@ -170,6 +182,51 @@ Version GetRunning() {
 
 std::wstring_view GetDisplayName(Version version) {
   switch (version) {
+    case Version::k1_07: {
+      static constexpr std::wstring_view kDisplayName = L"1.07";
+      return kDisplayName;
+    }
+
+    case Version::k1_08: {
+      static constexpr std::wstring_view kDisplayName = L"1.08";
+      return kDisplayName;
+    }
+
+    case Version::k1_09: {
+      static constexpr std::wstring_view kDisplayName = L"1.09";
+      return kDisplayName;
+    }
+
+    case Version::k1_09b: {
+      static constexpr std::wstring_view kDisplayName = L"1.09b";
+      return kDisplayName;
+    }
+
+    case Version::k1_09d: {
+      static constexpr std::wstring_view kDisplayName = L"1.09d";
+      return kDisplayName;
+    }
+
+    case Version::k1_10: {
+      static constexpr std::wstring_view kDisplayName = L"1.10";
+      return kDisplayName;
+    }
+
+    case Version::k1_11: {
+      static constexpr std::wstring_view kDisplayName = L"1.11";
+      return kDisplayName;
+    }
+
+    case Version::k1_11b: {
+      static constexpr std::wstring_view kDisplayName = L"1.11b";
+      return kDisplayName;
+    }
+
+    case Version::k1_12: {
+      static constexpr std::wstring_view kDisplayName = L"1.12";
+      return kDisplayName;
+    }
+
     case Version::k1_13c: {
       static constexpr std::wstring_view kDisplayName = L"1.13c";
       return kDisplayName;
@@ -177,6 +234,21 @@ std::wstring_view GetDisplayName(Version version) {
 
     case Version::k1_13d: {
       static constexpr std::wstring_view kDisplayName = L"1.13d";
+      return kDisplayName;
+    }
+
+    case Version::k1_14: {
+      static constexpr std::wstring_view kDisplayName = L"1.14";
+      return kDisplayName;
+    }
+
+    case Version::k1_14b: {
+      static constexpr std::wstring_view kDisplayName = L"1.14b";
+      return kDisplayName;
+    }
+
+    case Version::k1_14c: {
+      static constexpr std::wstring_view kDisplayName = L"1.14c";
       return kDisplayName;
     }
 
