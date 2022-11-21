@@ -34,19 +34,28 @@
 
 #include <variant>
 
+#include "bh/common/logging/logger.hpp"
 #include "bh/d2/dll/address.hpp"
 #include "bh/d2/dll/dll.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/global/file_logger.hpp"
 
 namespace bh::d2::d2lang::v1_00 {
 namespace {
 
+using ::bh::common::logging::Logger;
 using ::bh::d2::dll::Dll;
 using ::bh::d2::dll::GetAddress;
 using ::bh::d2::dll::Offset;
 using ::bh::d2::dll::Ordinal;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
+using ::bh::global::GetFileLogger;
+
+static Logger& GetLogger() {
+  static Logger& logger = GetFileLogger(__FILEW__);
+  return logger;
+}
 
 static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   switch (version) {
@@ -64,7 +73,10 @@ static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   }
 
   // This should never happen.
-  assert(false);
+  GetLogger().Fatal(
+      __LINE__,
+      "Unhandled Version with value {:d}",
+      static_cast<int>(version));
   return Offset(0);
 }
 

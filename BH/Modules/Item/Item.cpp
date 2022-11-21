@@ -56,7 +56,7 @@
 
 #include <lrucache.hpp>
 
-#include "bh/d2/d2lang/function/get_locale_text.hpp"
+#include "bh/d2/d2lang/function/universal/get_locale_text.hpp"
 #include "../../BH.h"
 #include "../../Common.h"
 #include "../../CommonStructs.h"
@@ -80,8 +80,6 @@
 
 namespace {
 
-namespace d2lang = ::bh::d2::d2lang;
-
 using ::bh::modules::item::do_not_block_cache;
 using ::bh::modules::item::ignore_cache;
 using ::bh::modules::item::item_desc_cache;
@@ -92,6 +90,8 @@ using ::bh::modules::item::GetAffixLevel;
 using ::bh::modules::item::GetItemName;
 using ::bh::modules::item::HandleUnknownItemCode;
 using ::bh::modules::item::UnitItemInfo;
+
+namespace d2lang = ::bh::d2::d2lang;
 
 }  // namespace
 
@@ -864,11 +864,11 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		stat_min = pDmgStats->nMinFireDmg;
 		stat_max = pDmgStats->nMaxFireDmg;
 		if (stat_min >= stat_max) {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODFIREDAMAGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODFIREDAMAGE);
 			ranged = false;
 		}
 		else {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODFIREDAMAGERANGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODFIREDAMAGERANGE);
 		}
 	}
 	else if (nStat == STAT_MINIMUMCOLDDAMAGE) {
@@ -877,11 +877,11 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		stat_min = pDmgStats->nMinColdDmg;
 		stat_max = pDmgStats->nMaxColdDmg;
 		if (stat_min >= stat_max) {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODCOLDDAMAGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODCOLDDAMAGE);
 			ranged = false;
 		}
 		else {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODCOLDDAMAGERANGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODCOLDDAMAGERANGE);
 		}
 	}
 	else if (nStat == STAT_MINIMUMLIGHTNINGDAMAGE) {
@@ -890,11 +890,12 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		stat_min = pDmgStats->nMinLightDmg;
 		stat_max = pDmgStats->nMaxLightDmg;
 		if (stat_min >= stat_max) {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODLIGHTNINGDAMAGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODLIGHTNINGDAMAGE);
 			ranged = false;
 		}
 		else {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODLIGHTNINGDAMAGERANGE);
+			szProp =
+					d2lang::universal::GetLocaleText(D2STR_STRMODLIGHTNINGDAMAGERANGE);
 		}
 	}
 	else if (nStat == STAT_MINIMUMMAGICALDAMAGE) {
@@ -903,11 +904,11 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		stat_min = pDmgStats->nMinMagicDmg;
 		stat_max = pDmgStats->nMaxMagicDmg;
 		if (stat_min >= stat_max) {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODMAGICDAMAGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODMAGICDAMAGE);
 			ranged = false;
 		}
 		else {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODMAGICDAMAGERANGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODMAGICDAMAGERANGE);
 		}
 	}
 	else if (nStat == STAT_MINIMUMPOISONDAMAGE) {
@@ -922,11 +923,11 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		pDmgStats->nMaxPsnDmg = stat_max = ((pDmgStats->nMaxPsnDmg * pDmgStats->nPsnLen) + 128) / 256;
 
 		if (stat_min >= stat_max) {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODPOISONDAMAGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODPOISONDAMAGE);
 			swprintf_s(newDesc, 128, szProp, stat_max, pDmgStats->nPsnLen / 25); // Per frame
 		}
 		else {
-			szProp = d2lang::GetLocaleText(D2STR_STRMODPOISONDAMAGERANGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODPOISONDAMAGERANGE);
 			swprintf_s(newDesc, 128, szProp, stat_min, stat_max, pDmgStats->nPsnLen / 25);
 		}
 		wcscat_s(wOut, 1024, newDesc);
@@ -951,7 +952,7 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		}
 		else {
 			pDmgStats->dword14 = TRUE;
-			szProp = d2lang::GetLocaleText(D2STR_STRMODMINDAMAGERANGE);
+			szProp = d2lang::universal::GetLocaleText(D2STR_STRMODMINDAMAGERANGE);
 
 		}
 	}
@@ -959,7 +960,8 @@ BOOL __stdcall Item::OnDamagePropertyBuild(UnitAny* pItem, DamageStats* pDmgStat
 		if (!pDmgStats->nDmgPercentRange)
 			return FALSE;
 		stat_min = pDmgStats->nMinDmgPercent;
-		stat_max = (int) (d2lang::GetLocaleText(10023)); // "Enhanced damage"
+		// "Enhanced damage"
+		stat_max = (int) (d2lang::universal::GetLocaleText(10023));
 		szProp = L"+%d%% %s\n";
 	}
 

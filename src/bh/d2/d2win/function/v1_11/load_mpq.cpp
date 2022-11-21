@@ -33,25 +33,39 @@
 
 #include <variant>
 
+#include "bh/common/logging/logger.hpp"
 #include "bh/d2/dll/address.hpp"
 #include "bh/d2/dll/dll.hpp"
 #include "bh/d2/exe/version.hpp"
-#include "bh/d2/struct/v1_00/mpq_handle.hpp"
+#include "bh/d2/struct/v1_11/mpq_handle.hpp"
+#include "bh/global/file_logger.hpp"
 
 namespace bh::d2::d2win::v1_11 {
 namespace {
 
+using ::bh::common::logging::Logger;
 using ::bh::d2::dll::Dll;
 using ::bh::d2::dll::GetAddress;
 using ::bh::d2::dll::Offset;
 using ::bh::d2::dll::Ordinal;
 using ::bh::d2::exe::version::GetRunning;
 using ::bh::d2::exe::version::Version;
-using ::bh::d2::v1_00::MpqHandle;
+using ::bh::d2::v1_11::MpqHandle;
+using ::bh::global::GetFileLogger;
 
 using FuncType =
     MpqHandle* __cdecl(
-        const char*, const char*, const char*, int32_t, void*, int32_t);
+        const char* dll_filename,
+        const char* mpq_path,
+        const char* mpq_name,
+        int32_t is_set_err_on_drive_query_fail,
+        void* (*on_fail_callback)(void),
+        int32_t priority);
+
+static Logger& GetLogger() {
+  static Logger& logger = GetFileLogger(__FILEW__);
+  return logger;
+}
 
 static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   switch (version) {
@@ -65,7 +79,10 @@ static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   }
 
   // This should never happen.
-  assert(false);
+  GetLogger().Fatal(
+      __LINE__,
+      "Unhandled Version with value {:d}",
+      static_cast<int>(version));
   return Offset(0);
 }
 
@@ -75,7 +92,7 @@ static __declspec(naked) MpqHandle* __cdecl CallShim(
     const char* mpq_path,
     const char* mpq_name,
     int32_t is_set_err_on_drive_query_fail,
-    void* (*on_fail_callback),
+    void* (*on_fail_callback)(void),
     int32_t priority) {
   __asm {
     push ebp
@@ -107,7 +124,7 @@ MpqHandle* LoadMpq(
     const char* mpq_path,
     const char* mpq_name,
     int32_t is_set_err_on_drive_query_fail,
-    void* (*on_fail_callback),
+    void* (*on_fail_callback)(void),
     int32_t priority) {
   static FuncType* func =
       std::visit(
@@ -127,4 +144,4 @@ MpqHandle* LoadMpq(
       priority);
 }
 
-}  // namespace bh::d2::d2lang::v1_11
+}  // namespace bh::d2::d2win::v1_11

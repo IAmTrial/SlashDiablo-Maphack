@@ -17,25 +17,8 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_close_archive.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_close_archive.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_close_file.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_close_file.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_get_file_size.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_get_file_size.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_archive.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_file_ex.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_open_file_ex.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_read_file.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_read_file.hpp"
-)
-
+add_subdirectory("universal")
 add_subdirectory("v1_00")
+add_subdirectory("v1_13c")
+add_subdirectory("v1_13d")
+add_subdirectory("v1_14d")

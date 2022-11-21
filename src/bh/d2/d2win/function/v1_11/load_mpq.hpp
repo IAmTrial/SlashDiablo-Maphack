@@ -31,16 +31,16 @@
 
 #include <stdint.h>
 
-#include "bh/d2/struct/v1_00/mpq_handle.hpp"
+#include "bh/d2/struct/v1_11/mpq_handle.hpp"
 
 namespace bh::d2::d2win::v1_11 {
 
-::bh::d2::v1_00::MpqHandle* LoadMpq(
+::bh::d2::v1_11::MpqHandle* LoadMpq(
     const char* dll_filename,
     const char* mpq_path,
     const char* mpq_name,
     int32_t is_set_err_on_drive_query_fail,
-    void* (*on_fail_callback),
+    void* (*on_fail_callback)(void),
     int32_t priority);
 
 }  // namespace bh::d2::d2win::v1_11
