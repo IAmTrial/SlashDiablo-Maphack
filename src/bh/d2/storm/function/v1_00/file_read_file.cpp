@@ -59,6 +59,16 @@ static Logger& GetLogger() {
 
 static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   switch (version) {
+    case Version::k1_00:
+    case Version::k1_07:
+    case Version::k1_08:
+    case Version::k1_09:
+    case Version::k1_09b:
+    case Version::k1_09d:
+    case Version::k1_10:
+    case Version::k1_11:
+    case Version::k1_11b:
+    case Version::k1_12:
     case Version::k1_13c:
     case Version::k1_13d: {
       return Ordinal(269);
@@ -82,7 +92,12 @@ uint32_t SFileReadFile(
     uint32_t* read_count,
     OVERLAPPED* overlapped) {
   using FuncType =
-      uint32_t (__stdcall)(HANDLE, void*, uint32_t, uint32_t*, OVERLAPPED*);
+      uint32_t (__stdcall)(
+          HANDLE file,
+          void* buffer,
+          uint32_t buffer_size,
+          uint32_t* read_count,
+          OVERLAPPED* overlapped);
 
   static FuncType* func =
       std::visit(

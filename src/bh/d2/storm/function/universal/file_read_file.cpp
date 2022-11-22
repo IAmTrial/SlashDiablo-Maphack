@@ -33,8 +33,21 @@
 
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/d2/storm/function/v1_00/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_07/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_08/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_09/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_09b/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_09d/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_10/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_11/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_11b/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_12/file_read_file.hpp"
 #include "bh/d2/storm/function/v1_13c/file_read_file.hpp"
 #include "bh/d2/storm/function/v1_13d/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_14/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_14b/file_read_file.hpp"
+#include "bh/d2/storm/function/v1_14c/file_read_file.hpp"
 #include "bh/d2/storm/function/v1_14d/file_read_file.hpp"
 #include "bh/global/file_logger.hpp"
 
@@ -64,22 +77,148 @@ BOOL SFileReadFile(
     OVERLAPPED* overlapped) {
   Version version = GetRunning();
   switch (version) {
+    case Version::k1_00: {
+      return storm::v1_00::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_07: {
+      return storm::v1_07::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_08: {
+      return storm::v1_08::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_09: {
+      return storm::v1_09::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_09b: {
+      return storm::v1_09b::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_09d: {
+      return storm::v1_09d::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_10: {
+      return storm::v1_10::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_11: {
+      return storm::v1_11::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_11b: {
+      return storm::v1_11b::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_12: {
+      return storm::v1_12::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
     case Version::k1_13c: {
-      uint32_t* read_count_v1_13c = reinterpret_cast<uint32_t*>(read_count);
       return storm::v1_13c::SFileReadFile(
-          file, buffer, buffer_size, read_count_v1_13c, overlapped);
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
     }
 
     case Version::k1_13d: {
-      uint32_t* read_count_v1_13d = reinterpret_cast<uint32_t*>(read_count);
       return storm::v1_13d::SFileReadFile(
-          file, buffer, buffer_size, read_count_v1_13d, overlapped);
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_14: {
+      return storm::v1_14::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_14b: {
+      return storm::v1_14b::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
+    }
+
+    case Version::k1_14c: {
+      return storm::v1_14c::SFileReadFile(
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
     }
 
     case Version::k1_14d: {
-      uint32_t* read_count_v1_14d = reinterpret_cast<uint32_t*>(read_count);
       return storm::v1_14d::SFileReadFile(
-          file, buffer, buffer_size, read_count_v1_14d, overlapped);
+          file,
+          buffer,
+          buffer_size,
+          reinterpret_cast<uint32_t*>(read_count),
+          overlapped);
     }
   }
 

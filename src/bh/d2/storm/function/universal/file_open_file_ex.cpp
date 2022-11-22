@@ -33,8 +33,21 @@
 
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/d2/storm/function/v1_00/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_07/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_08/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_09/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_09b/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_09d/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_10/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_11/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_11b/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_12/file_open_file_ex.hpp"
 #include "bh/d2/storm/function/v1_13c/file_open_file_ex.hpp"
 #include "bh/d2/storm/function/v1_13d/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_14/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_14b/file_open_file_ex.hpp"
+#include "bh/d2/storm/function/v1_14c/file_open_file_ex.hpp"
 #include "bh/d2/storm/function/v1_14d/file_open_file_ex.hpp"
 #include "bh/global/file_logger.hpp"
 
@@ -60,12 +73,64 @@ BOOL SFileOpenFileEx(
     HANDLE mpq, const char* path, DWORD search_scope, HANDLE* file) {
   Version version = GetRunning();
   switch (version) {
+    case Version::k1_00: {
+      return storm::v1_00::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_07: {
+      return storm::v1_07::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_08: {
+      return storm::v1_08::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_09: {
+      return storm::v1_09::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_09b: {
+      return storm::v1_09b::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_09d: {
+      return storm::v1_09d::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_10: {
+      return storm::v1_10::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_11: {
+      return storm::v1_11::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_11b: {
+      return storm::v1_11b::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_12: {
+      return storm::v1_12::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
     case Version::k1_13c: {
       return storm::v1_13c::SFileOpenFileEx(mpq, path, search_scope, file);
     }
 
     case Version::k1_13d: {
       return storm::v1_13d::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_14: {
+      return storm::v1_14::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_14b: {
+      return storm::v1_14b::SFileOpenFileEx(mpq, path, search_scope, file);
+    }
+
+    case Version::k1_14c: {
+      return storm::v1_14c::SFileOpenFileEx(mpq, path, search_scope, file);
     }
 
     case Version::k1_14d: {
