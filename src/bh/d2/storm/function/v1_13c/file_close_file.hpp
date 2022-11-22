@@ -1,4 +1,3 @@
-
 /**
  * SlashDiablo Maphack
  * Copyright (C) 2012-2022  SlashDiablo Team
