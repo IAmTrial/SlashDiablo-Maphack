@@ -99,7 +99,8 @@ static std::array<wchar_t, MAX_PATH>& GetNativeAbsolutePath(Dll dll) {
         __LINE__,
         "Unhandled Dll with value {:d}.",
         static_cast<int>(dll));
-    return PathType();
+    static PathType kDummyValue;
+    return kDummyValue;
   }
 
   // Init the path, if is hasn't yet.
