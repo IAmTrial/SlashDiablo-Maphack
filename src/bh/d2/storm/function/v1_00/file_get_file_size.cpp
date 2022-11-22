@@ -60,6 +60,16 @@ static Logger& GetLogger() {
 
 static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
   switch (version) {
+    case Version::k1_00:
+    case Version::k1_07:
+    case Version::k1_08:
+    case Version::k1_09:
+    case Version::k1_09b:
+    case Version::k1_09d:
+    case Version::k1_10:
+    case Version::k1_11:
+    case Version::k1_11b:
+    case Version::k1_12:
     case Version::k1_13c:
     case Version::k1_13d: {
       return Ordinal(265);
@@ -77,7 +87,8 @@ static std::variant<Offset, Ordinal> GetOffsetOrOrdinal(Version version) {
 }  // namespace
 
 uint32_t SFileGetFileSize(HANDLE file, uint32_t* file_size_high) {
-  using FuncType = uint32_t (__stdcall)(HANDLE, uint32_t*);
+  using FuncType =
+      uint32_t (__stdcall)(HANDLE file, uint32_t* file_size_high);
 
   static FuncType* func =
       std::visit(

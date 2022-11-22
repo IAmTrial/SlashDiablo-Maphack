@@ -33,8 +33,21 @@
 
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/d2/storm/function/v1_00/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_07/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_08/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_09/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_09b/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_09d/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_10/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_11/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_11b/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_12/file_open_archive.hpp"
 #include "bh/d2/storm/function/v1_13c/file_open_archive.hpp"
 #include "bh/d2/storm/function/v1_13d/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_14/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_14b/file_open_archive.hpp"
+#include "bh/d2/storm/function/v1_14c/file_open_archive.hpp"
 #include "bh/d2/storm/function/v1_14d/file_open_archive.hpp"
 #include "bh/global/file_logger.hpp"
 
@@ -60,12 +73,64 @@ BOOL SFileOpenArchive(
     const char* path, DWORD priority, DWORD flags, HANDLE* mpq) {
   Version version = GetRunning();
   switch (version) {
+    case Version::k1_00: {
+      return storm::v1_00::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_07: {
+      return storm::v1_07::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_08: {
+      return storm::v1_08::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_09: {
+      return storm::v1_09::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_09b: {
+      return storm::v1_09b::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_09d: {
+      return storm::v1_09d::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_10: {
+      return storm::v1_10::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_11: {
+      return storm::v1_11::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_11b: {
+      return storm::v1_11b::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_12: {
+      return storm::v1_12::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
     case Version::k1_13c: {
       return storm::v1_13c::SFileOpenArchive(path, priority, flags, mpq);
     }
 
     case Version::k1_13d: {
       return storm::v1_13d::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_14: {
+      return storm::v1_14::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_14b: {
+      return storm::v1_14b::SFileOpenArchive(path, priority, flags, mpq);
+    }
+
+    case Version::k1_14c: {
+      return storm::v1_14c::SFileOpenArchive(path, priority, flags, mpq);
     }
 
     case Version::k1_14d: {

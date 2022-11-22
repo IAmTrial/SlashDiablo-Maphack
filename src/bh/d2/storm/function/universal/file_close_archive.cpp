@@ -33,8 +33,21 @@
 
 #include "bh/common/logging/logger.hpp"
 #include "bh/d2/exe/version.hpp"
+#include "bh/d2/storm/function/v1_00/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_07/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_08/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_09/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_09b/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_09d/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_10/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_11/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_11b/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_12/file_close_archive.hpp"
 #include "bh/d2/storm/function/v1_13c/file_close_archive.hpp"
 #include "bh/d2/storm/function/v1_13d/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_14/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_14b/file_close_archive.hpp"
+#include "bh/d2/storm/function/v1_14c/file_close_archive.hpp"
 #include "bh/d2/storm/function/v1_14d/file_close_archive.hpp"
 #include "bh/global/file_logger.hpp"
 
@@ -59,12 +72,64 @@ static Logger& GetLogger() {
 BOOL SFileCloseArchive(HANDLE mpq) {
   Version version = GetRunning();
   switch (version) {
+    case Version::k1_00: {
+      return storm::v1_00::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_07: {
+      return storm::v1_07::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_08: {
+      return storm::v1_08::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_09: {
+      return storm::v1_09::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_09b: {
+      return storm::v1_09b::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_09d: {
+      return storm::v1_09d::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_10: {
+      return storm::v1_10::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_11: {
+      return storm::v1_11::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_11b: {
+      return storm::v1_11b::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_12: {
+      return storm::v1_12::SFileCloseArchive(mpq);
+    }
+
     case Version::k1_13c: {
       return storm::v1_13c::SFileCloseArchive(mpq);
     }
 
     case Version::k1_13d: {
       return storm::v1_13d::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_14: {
+      return storm::v1_14::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_14b: {
+      return storm::v1_14b::SFileCloseArchive(mpq);
+    }
+
+    case Version::k1_14c: {
+      return storm::v1_14c::SFileCloseArchive(mpq);
     }
 
     case Version::k1_14d: {
