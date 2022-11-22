@@ -17,20 +17,7 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("universal")
-add_subdirectory("v1_00")
-add_subdirectory("v1_07")
-add_subdirectory("v1_08")
-add_subdirectory("v1_09")
-add_subdirectory("v1_09b")
-add_subdirectory("v1_09d")
-add_subdirectory("v1_10")
-add_subdirectory("v1_11")
-add_subdirectory("v1_11b")
-add_subdirectory("v1_12")
-add_subdirectory("v1_13c")
-add_subdirectory("v1_13d")
-add_subdirectory("v1_14")
-add_subdirectory("v1_14b")
-add_subdirectory("v1_14c")
-add_subdirectory("v1_14d")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/mpq_handle.hpp"
+)
