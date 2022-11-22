@@ -74,98 +74,82 @@ BOOL SFileGetFileSize(HANDLE file, DWORD* file_size_high) {
   switch (version) {
     case Version::k1_00: {
       return storm::v1_00::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_07: {
       return storm::v1_07::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_08: {
       return storm::v1_08::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_09: {
       return storm::v1_09::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_09b: {
       return storm::v1_09b::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_09d: {
       return storm::v1_09d::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_10: {
       return storm::v1_10::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_11: {
       return storm::v1_11::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_11b: {
       return storm::v1_11b::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_12: {
       return storm::v1_12::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_13c: {
       return storm::v1_13c::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_13d: {
       return storm::v1_13d::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_14: {
       return storm::v1_14::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_14b: {
       return storm::v1_14b::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_14c: {
       return storm::v1_14c::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
 
     case Version::k1_14d: {
       return storm::v1_14d::SFileGetFileSize(
-          file,
-          reinterpret_cast<uint32_t*>(file_size_high));
+          file, reinterpret_cast<uint32_t*>(file_size_high));
     }
   }
 
