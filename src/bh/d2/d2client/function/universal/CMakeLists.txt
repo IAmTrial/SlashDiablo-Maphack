@@ -17,10 +17,8 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("d2client")
-add_subdirectory("d2lang")
-add_subdirectory("d2win")
-add_subdirectory("dll")
-add_subdirectory("exe")
-add_subdirectory("storm")
-add_subdirectory("struct")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_item_display_name.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_item_display_name.hpp"
+)
