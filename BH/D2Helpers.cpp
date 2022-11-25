@@ -10,7 +10,9 @@
 #include <string_view>
 #include <unordered_set>
 
+#include "bh/d2/d2client/function/universal/get_item_display_name.hpp"
 #include "bh/d2/d2lang/function/universal/get_locale_text.hpp"
+#include "bh/d2/struct/universal/unit.hpp"
 #include "Common.h"
 #include "CommonStructs.h"
 #include "Constants.h"
@@ -21,6 +23,7 @@
 
 namespace {
 
+namespace d2client = ::bh::d2::d2client;
 namespace d2lang = ::bh::d2::d2lang;
 
 static const std::unordered_set<std::wstring_view>& GetInvalidMonsterNames() {
@@ -334,8 +337,12 @@ std::string GetItemCode(int dwTxtFileNo) {
 }
 
 std::string GetItemName(UnitAny* item) {
-	wchar_t buffer[256] = L"";
-	D2CLIENT_GetItemName(item, buffer, 256);
+	constexpr size_t kBufferCapacity = 256;
+	wchar_t buffer[kBufferCapacity] = L"";
+	d2client::universal::GetItemDisplayName(
+			reinterpret_cast<const ::bh::d2::universal::Unit*>(item),
+			buffer,
+			kBufferCapacity);
 	return UnicodeToAnsi(buffer);
 }
 

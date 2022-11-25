@@ -20,4 +20,5 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/mpq_handle.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/unit.hpp"
 )
