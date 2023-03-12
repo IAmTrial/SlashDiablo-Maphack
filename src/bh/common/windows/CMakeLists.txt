@@ -19,10 +19,6 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/input.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/input.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/handle_closer.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/handle_closer.cpp"
 )
-
-add_subdirectory("logging")
-add_subdirectory("string_util")
-add_subdirectory("windows")
