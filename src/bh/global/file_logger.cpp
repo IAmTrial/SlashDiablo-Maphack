@@ -25,6 +25,7 @@
 #include <wchar.h>
 #include <windows.h>
 #include <shlwapi.h>
+#include <tlhelp32.h>
 
 #include <fstream>
 #include <memory>
@@ -33,22 +34,53 @@
 #include <utility>
 
 #include "bh/common/logging/logger.hpp"
+#include "bh/common/string_util/ascii.hpp"
+#include "bh/common/windows/handle_closer.hpp"
 
 namespace bh::global {
 namespace {
 
 using ::bh::common::logging::Logger;
+using ::bh::common::string_util::ascii::ToLower;
+using ::bh::common::windows::HandleCloser;
 
 static constexpr size_t kBackupLogCount = 3;
+static constexpr size_t kLoggedInstancesCount = 16;
 
-static constexpr std::wstring_view kLogFilename = L"BH.log";
+/**
+ * Backs up a set of log files. Existing old log files will be shifted
+ * by one level. Will not back up logs beyond the backup log limit.
+ * 
+ * The 0th set is considered the current logs, with format
+ * "BH.i%02u.log". Existing backup logs use format
+ * "BH.old%02u.i%02u.log".
+ */
+static void BackupLogFileSet(size_t i_backup) {
+  // The last set of old logs should not be backed up.
+  if (i_backup >= kBackupLogCount) {
+    return;
+  }
 
-static void BackupOldLogFiles() {
-  // Shift existing log into backups.
-  for (size_t i = kBackupLogCount; i > 1; --i) {
+  // Set up the prefix to the old log filename string. This saves having to
+  // constantly write the filename prefix.
+  std::array<wchar_t, MAX_PATH> old_filename;
+
+  // This is safe, because the string length will never exceed MAX_PATH.
+  size_t old_log_filename_prefix_length = _snwprintf(
+      old_filename.data(),
+      MAX_PATH,
+      (i_backup > 0) ? L"BH.old%02u.i" : L"BH.i",
+      i_backup);
+
+  for (size_t i_instance = 0;
+      i_instance < kLoggedInstancesCount;
+      ++i_instance) {
     // This is safe, because the string length will never exceed MAX_PATH.
-    std::array<wchar_t, MAX_PATH> old_filename;
-    _snwprintf(old_filename.data(), MAX_PATH, L"BH.old.%02u.log", i - 1);
+    _snwprintf(
+        &old_filename[old_log_filename_prefix_length],
+        MAX_PATH - old_log_filename_prefix_length,
+        L"%02u.log",
+        i_instance + 1);
 
     if (!PathFileExistsW(old_filename.data())) {
       continue;
@@ -56,29 +88,128 @@ static void BackupOldLogFiles() {
 
     // This is safe, because the string length will never exceed MAX_PATH.
     std::array<wchar_t, MAX_PATH> new_filename;
-    _snwprintf(new_filename.data(), MAX_PATH, L"BH.old.%02u.log", i);
+    _snwprintf(
+        new_filename.data(),
+        MAX_PATH,
+        L"BH.old%02u.i%02u.log",
+        i_backup + 1,
+        i_instance + 1);
 
     MoveFileExW(
         old_filename.data(),
         new_filename.data(),
         MOVEFILE_REPLACE_EXISTING);
   }
+}
 
-  // Shift the main log into the first backup, if it exists.
-  if (!PathFileExistsW(kLogFilename.data())) {
+static void BackupOldLogFiles() {
+  // Shift existing backups by one level and back up the existing
+  // logs. This must be done in order of oldest to newest, or else
+  // the oldest logs will be overwriten before backing them up.
+  for (size_t i = kBackupLogCount; i-- > 0; ) {
+    BackupLogFileSet(i);
+  }
+}
+
+static bool IsGameProcessExist() {
+  // Snapshot the processes.
+  HANDLE snapshot_handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if (snapshot_handle == INVALID_HANDLE_VALUE) {
+    return false;
+  }
+  HandleCloser snapshot_handle_closer(snapshot_handle);
+
+  // Iterate through all processes to find Game.exe.
+  PROCESSENTRY32W process_entry;
+  process_entry.dwSize = sizeof(process_entry);
+
+  BOOL process_entry_iterate_succeeded;
+  for (process_entry_iterate_succeeded =
+          Process32FirstW(snapshot_handle, &process_entry);
+      process_entry_iterate_succeeded;
+      process_entry_iterate_succeeded =
+          Process32NextW(snapshot_handle, &process_entry)) {
+    // Skip if the process ID is the same as this process.
+    if (process_entry.th32ProcessID == GetCurrentProcessId()) {
+      continue;
+    }
+
+    // Case insensitive compare for "Game.exe".
+    std::wstring lower_filename = ToLower(process_entry.szExeFile);
+    if (lower_filename.ends_with(L"game.exe")) {
+      return true;
+    }
+  }
+
+  DWORD last_error = GetLastError();
+  if (last_error != ERROR_NO_MORE_FILES ) {
+    // This is an error, but there isn't anything that can be done
+    // to handle this error.
+    return false;
+  }
+
+  return false;
+}
+
+static void DeleteOldestBackupLogFiles() {
+  // This is safe, because the string length will never exceed MAX_PATH.
+  for (size_t i = 0; i < kLoggedInstancesCount; ++i) {
+    std::array<wchar_t, MAX_PATH> filename;
+    _snwprintf(
+        filename.data(),
+        MAX_PATH,
+        L"BH.old%02u.i%02u.log",
+        kBackupLogCount,
+        i);
+    DeleteFileW(filename.data());
+  }
+}
+
+static void SetUpFileSystem() {
+  // If game processes are running, then assume that the filesystem is
+  // already set up.
+  if (IsGameProcessExist()) {
     return;
   }
 
-  MoveFileExW(
-      kLogFilename.data(),
-      L"BH.old.01.log",
-      MOVEFILE_REPLACE_EXISTING);
+  DeleteOldestBackupLogFiles();
+  BackupOldLogFiles();
+}
+
+static std::wstring_view GetLogFilename() {
+  static std::array<wchar_t, MAX_PATH> log_filename =
+      []() {
+        // Find the first filename that is not occupied by an existing
+        // instance.
+        static constexpr std::wstring_view kFilenamePrefix = L"BH.i";
+        std::array<wchar_t, MAX_PATH> filename;
+        kFilenamePrefix.copy(filename.data(), kFilenamePrefix.length());
+
+        for (size_t i = 0; i++ < kLoggedInstancesCount; ) {
+          // This is safe, because the string length will never exceed MAX_PATH.
+          _snwprintf(
+              &filename[kFilenamePrefix.length()],
+              MAX_PATH - kFilenamePrefix.length(),
+              L"%02u.log",
+              i);
+          if (PathFileExistsW(filename.data())) {
+            continue;
+          }
+
+          return filename;
+        }
+
+        filename[0] = '\0';
+        return filename;
+      }();
+  
+  return std::wstring_view(log_filename.cbegin(), log_filename.cend());
 }
 
 static std::shared_ptr<std::ofstream>* InitLogFile() {
-  BackupOldLogFiles();
+  SetUpFileSystem();
 
-  auto file = std::make_shared<std::ofstream>(kLogFilename.data());
+  auto file = std::make_shared<std::ofstream>(GetLogFilename().data());
   return new std::shared_ptr(std::move(file));
 }
 
