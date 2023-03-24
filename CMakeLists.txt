@@ -59,4 +59,4 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/cpp-lru-cache/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} shlwapi version)
+target_link_libraries(${PROJECT_NAME} shlwapi version BH.Common)
