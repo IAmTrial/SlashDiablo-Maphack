@@ -38,16 +38,22 @@
  * forward slash characters '/'. Returns a pointer to the first
  * slash character of a comment, or NULL if a comment cannot be found.
  */
-static const char* FindComment(const char* line) {
-  char* first_slash;
+static char* FindComment(
+    const char* line, size_t line_length, size_t* i_comment) {
+  const char* first_slash;
 
-  for (first_slash = strchr(line, '/');
-      first_slash != NULL;
-      first_slash = strchr(first_slash, '/')) {
+  first_slash = &line[-1];
+  do {
+    size_t line_remaining_length;
+
+    line_remaining_length = line_length - (&first_slash[1] - line);
+    first_slash = memchr(&first_slash[1], '/', line_remaining_length);
+    
     if (first_slash[1] == '/') {
-      return first_slash;
+      *i_comment = line - first_slash;
+      return (char*)first_slash;
     }
-  }
+  } while (first_slash != NULL);
 
   return NULL;
 }
@@ -58,9 +64,12 @@ static const char* FindComment(const char* line) {
 
 struct Colonini_Entry* ParseLine(
     struct Colonini_Entry* entry, const char* line) {
+  size_t line_length;
   const char* comment;
+  size_t i_comment;
 
-  comment = FindComment(line);
+  line_length = strlen(line);
+  comment = FindComment(line, line_length, &i_comment);
 
   return entry;
 }
