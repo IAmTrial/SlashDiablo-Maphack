@@ -17,10 +17,9 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.20)
 
-# Name of the project, also is the name of the file
-project(BH.Config.Colonini)
+project(Test.BH.Config.Colini.Internal)
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)
@@ -36,19 +35,20 @@ if (MINGW)
     set(CMAKE_STATIC_LIBRARY_PREFIX "")
 endif (MINGW)
 
-# Define DLL target
-add_library(${PROJECT_NAME} STATIC)
+# Copy test data files
+file(
+    COPY
+        "data/empty.cfg"
+        "data/one_line.cfg"
+        "data/one_line_newline.cfg"
+        "data/two_line.cfg"
+        "data/two_line_newline.cfg"
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug/data)
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/colini.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/type.h"
-)
-
-add_subdirectory(internal)
-add_subdirectory(type)
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
-target_include_directories(${PROJECT_NAME}
+# Define test targets
+add_executable(${PROJECT_NAME}.FileReaderTest "file_reader_test.c")
+target_compile_definitions(${PROJECT_NAME}.FileReaderTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.FileReaderTest 
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.FileReaderTest PRIVATE shlwapi BH.Config.Colonini)

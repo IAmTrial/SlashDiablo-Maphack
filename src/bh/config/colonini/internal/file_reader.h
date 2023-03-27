@@ -30,6 +30,7 @@
 #define BH_CONFIG_COLONINI_INTERNAL_FILE_READER_H_
 
 #include <stddef.h>
+#include <wchar.h>
 #include <windows.h>
 
 #include "bh/config/colonini/type.h"
@@ -43,24 +44,34 @@ enum FileReader_Status {
 
   FileReader_Status_kGood,
   FileReader_Status_kEof,
-  FileReader_Status_kReadFail
+  FileReader_Status_kReadFail,
+  FileReader_Status_kOpenFail
 };
+
+const char* FileReader_Status_ToDisplayName(enum FileReader_Status status);
 
 struct FileReader {
   enum FileReader_Status status;
   wchar_t path[MAX_PATH];
   HANDLE file;
+
+  char* buffer;
+  size_t buffer_capacity;
+  size_t buffer_length;
 };
 
 struct FileReader* FileReader_OpenFile(
-    struct FileReader* file_reader, const wchar_t* path);
+    struct FileReader* reader, const wchar_t* path);
 
-void FileReader_CloseFile(struct FileReader* file_reader);
+void FileReader_CloseFile(struct FileReader* reader);
 
-int FileReader_IsEof(struct FileReader* file_reader);
+int FileReader_IsEof(struct FileReader* reader);
 
-char* FileReader_ReadEntry(
-    HANDLE file, char* buffer, size_t buffer_capacity, size_t* buffer_length);
+char* FileReader_ReadLine(
+    struct FileReader* reader,
+    char* line,
+    size_t line_capacity,
+    size_t* line_length);
 
 #ifdef __cplusplus
 }  /* extern "C" */

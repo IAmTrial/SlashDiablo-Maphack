@@ -8,7 +8,7 @@ Colonini is a config format that was used in BH.
 It was named as such because there wasn't a name that for this config file type, other than "BH Config Format" or "Colon-Delimited Config Format". The file format is basically INI with a colon key-value delimiter, and some extensions for mapped values.
 
 ## Syntax
-The syntax is quite simple. Key-value pairings come in the form of `key: value`. Each entry can only occupy one line, unless the backslash appears as the last character in the line.
+The syntax is quite simple. Key-value pairings come in the form of `key: value`. Each entry can only occupy one line.
 
 ```
 // This is a comment.
@@ -51,9 +51,6 @@ House[Kitchen][Stove][0]: Grilled asparagus
 House[Kitchen][Freezer][0]: Ice
 House[Kitchen][Freezer][1]: Frozen broccoli
 House[Bedroom][Bed][0]: Blanket
-
-// Each entry is contained in a single line... \
-    unless a backslash at the end indicates otherwise.
 
 // Keys can also have extra spaces at the start and end that will be ignored
     Hello   :   World!        // Will be interpretted as "Hello: World!"
