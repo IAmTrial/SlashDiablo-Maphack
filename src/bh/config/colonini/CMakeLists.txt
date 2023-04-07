@@ -41,7 +41,7 @@ add_library(${PROJECT_NAME} STATIC)
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/colini.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/colonini.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/type.h"
 )
 

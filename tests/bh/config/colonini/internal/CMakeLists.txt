@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Test.BH.Config.Colini.Internal)
+project(Test.BH.Config.Colonini.Internal)
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)

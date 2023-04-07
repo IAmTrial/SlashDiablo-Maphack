@@ -34,7 +34,7 @@
  * dependency.
  */
 #if 0
-#include "bh/config/colini/type/entry.h"
+#include "bh/config/colonini/type/entry.h"
 #endif
 
 #ifdef __cplusplus

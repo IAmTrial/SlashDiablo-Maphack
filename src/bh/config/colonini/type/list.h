@@ -36,7 +36,7 @@
  * dependency.
  */
 #if 0
-#include "bh/config/colini/type/value.h"
+#include "bh/config/colonini/type/value.h"
 #endif
 
 #ifdef __cplusplus
