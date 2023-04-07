@@ -48,6 +48,7 @@ target_sources(${PROJECT_NAME}
 add_subdirectory(internal)
 add_subdirectory(type)
 
+target_link_libraries(${PROJECT_NAME} BH.Common)
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}
     PRIVATE
