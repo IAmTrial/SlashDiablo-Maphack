@@ -53,6 +53,11 @@ endif (NOT ${SHA} STREQUAL "")
 add_subdirectory(BH)
 add_subdirectory(src)
 
+option(ENABLE_BH_TESTS "Enable tests" OFF)
+if (ENABLE_BH_TESTS)
+    add_subdirectory("tests")
+endif (ENABLE_BH_TESTS)
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 target_compile_options(${PROJECT_NAME} PRIVATE /permissive /Zc:preprocessor)
 target_include_directories(${PROJECT_NAME}

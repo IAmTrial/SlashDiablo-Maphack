@@ -17,22 +17,28 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-target_sources(${PROJECT_NAME}
+cmake_minimum_required(VERSION 3.20)
+
+project(Tests.BH.Common.StringUtil)
+
+# Define requirements for C
+set(CMAKE_C_STANDARD 90)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+unset(CMAKE_CXX_STANDARD)
+unset(CMAKE_CXX_STANDARD_REQUIRED)
+
+# Remove MinGW compiled binary "lib" prefix
+if (MINGW)
+    set(CMAKE_IMPORT_LIBRARY_PREFIX "")
+    set(CMAKE_SHARED_LIBRARY_PREFIX "")
+    set(CMAKE_STATIC_LIBRARY_PREFIX "")
+endif (MINGW)
+
+# Define test targets
+add_executable(${PROJECT_NAME}.MemstringTest "memstring_test.c")
+target_compile_definitions(${PROJECT_NAME}.MemstringTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.MemstringTest 
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/ascii.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ascii_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/bool.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/bool_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/integer.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/integer_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/memstring.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/memstring.h"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/trim.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/trim_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/wide.hpp"
-)
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.MemstringTest PRIVATE BH.Common)
