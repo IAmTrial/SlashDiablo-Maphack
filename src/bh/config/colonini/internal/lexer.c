@@ -19,13 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * BH
- * Copyright (C) 2011  McGod
- *
- * All rights reserved.
- */
-
 #include "bh/config/colonini/internal/lexer.h"
 
 #include <assert.h>
