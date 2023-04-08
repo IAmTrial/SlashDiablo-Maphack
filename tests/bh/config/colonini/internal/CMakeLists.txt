@@ -52,3 +52,10 @@ target_include_directories(${PROJECT_NAME}.FileReaderTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.FileReaderTest PRIVATE shlwapi BH.Config.Colonini)
+
+add_executable(${PROJECT_NAME}.LexerTest "lexer_test.c")
+target_compile_definitions(${PROJECT_NAME}.LexerTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.LexerTest 
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.LexerTest PRIVATE BH.Config.Colonini)

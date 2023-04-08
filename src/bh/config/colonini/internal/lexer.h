@@ -31,8 +31,6 @@
 
 #include <stddef.h>
 
-#include "bh/config/colonini/internal/line.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
@@ -50,6 +48,10 @@ struct LexerLine {
   size_t line_number;
   struct LexerString* strs;
   size_t strs_count;
+
+  struct LexerString* first_token;
+  struct LexerString* last_token;
+  size_t tokens_count;
 };
 
 /**
@@ -62,6 +64,9 @@ struct LexerLine* LexerLine_LexLine(
     const char* raw_line,
     size_t raw_line_length);
 
+/**
+ * Deinitializes a LexerLine, freeing up resources that were allocated.
+*/
 void LexerLine_Deinit(struct LexerLine* line);
 
 #ifdef __cplusplus

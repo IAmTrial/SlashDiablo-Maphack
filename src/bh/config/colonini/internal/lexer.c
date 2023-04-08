@@ -28,6 +28,7 @@
 
 #include "bh/config/colonini/internal/lexer.h"
 
+#include <assert.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -43,75 +44,114 @@ enum {
   kNonTokensLength = (sizeof(kNonTokens) / sizeof(kNonTokens[0])) - 1
 };
 
-static struct LexerString* LexToken(
-    struct LexerString* lexer_str,
-    const char* raw_line,
-    size_t raw_line_length) {
-  lexer_str->str_length =
-      MemSpn(raw_line, raw_line_length, kNonTokens, kNonTokensLength);
-  lexer_str->str =
-      malloc((lexer_str->str_length + 1) * sizeof(lexer_str->str[0]));
-  if (lexer_str->str == NULL) {
-    goto error;
-  }
-  memcpy(lexer_str->str, raw_line, lexer_str->str_length);
-  lexer_str->str[lexer_str->str_length] = '\0';
+enum CaptureRuleCategory {
+  CaptureRuleCategory_kUnspecified,
 
-  return lexer_str;
+  CaptureRuleCategory_kIdentifier,
+  CaptureRuleCategory_kOperator,
+  CaptureRuleCategory_kWhitespace
+};
 
-error:
-  return NULL;
+struct CaptureRule {
+  enum CaptureRuleCategory category;
+  size_t (*capture_func)(
+      const char* data,
+      size_t data_size,
+      const char* capture,
+      size_t capture_size);
+  const char* capture_str;
+  size_t capture_str_length;
+};
+
+static int CaptureRule_CompareCategory(
+    const struct CaptureRule* first, const struct CaptureRule* second) {
+  return first->category - second->category;
 }
 
-static struct LexerString* LexOperator(
-    struct LexerString* lexer_str,
-    const char* raw_line,
-    size_t raw_line_length) {
-  lexer_str->str_length = 1;
-  lexer_str->str =
-      malloc((lexer_str->str_length + 1) * sizeof(lexer_str->str[0]));
-  if (lexer_str->str == NULL) {
-    goto error;
-  }
-  memcpy(lexer_str->str, raw_line, lexer_str->str_length);
-  lexer_str->str[lexer_str->str_length] = '\0';
-
-  return lexer_str;
-
-error:
-  return NULL;
+static int CaptureRule_CompareCategoryAsVoid(
+    const void* first, const void* second) {
+  return CaptureRule_CompareCategory(first, second);
 }
 
-static struct LexerString* LexWhitespace(
-    struct LexerString* lexer_str,
-    const char* raw_line,
-    size_t raw_line_length) {
-  lexer_str->str_length =
-      MemCSpn(raw_line, raw_line_length, kWhitespaces, kWhitespacesLength);
-  lexer_str->str =
-      malloc((lexer_str->str_length + 1) * sizeof(lexer_str->str[0]));
-  if (lexer_str->str == NULL) {
-    goto error;
+static size_t CaptureOperator(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size) {
+  /* The size can be expanded if operators of length 2 or more are needed. */
+  return 1;
+}
+
+/**
+ * Capture table:
+ * - Identifier: Captures contiguous characters not considered
+ *   whitespace or operator.
+ * - Operator: Captures characters, whose length is dependent on the
+ *   operator. For example, ] folowed by [ are considered separate
+ *   tokens.
+ * - Whitespace: Captures contiguous whitespace characters. Required
+ *   for writing to the config with the same spacing as the input.
+ */
+static const struct CaptureRule kCaptureRulesSortedTable[] = {
+  { CaptureRuleCategory_kIdentifier, &MemSpn, kNonTokens, kNonTokensLength },
+  { CaptureRuleCategory_kOperator, &CaptureOperator, kOperators, kOperatorsLength },
+  { CaptureRuleCategory_kWhitespace, &MemCSpn, kWhitespaces, kWhitespacesLength },
+};
+
+enum {
+  kCaptureRulesSortedTableCount =
+      sizeof(kCaptureRulesSortedTable) / sizeof(kCaptureRulesSortedTable[0])
+};
+
+static const struct CaptureRule* SearchCaptureRuleTable(
+    enum CaptureRuleCategory category) {
+  struct CaptureRule search_key;
+  const struct CaptureRule* search_result;
+
+  search_key.category = category;
+  search_result =
+      bsearch(
+          &search_key,
+          kCaptureRulesSortedTable,
+          kCaptureRulesSortedTableCount,
+          sizeof(kCaptureRulesSortedTable[0]),
+          CaptureRule_CompareCategoryAsVoid);
+  return search_result;
+}
+
+static enum CaptureRuleCategory GetCaptureRuleCategory(char ch) {
+  switch (ch) {
+    case '\t':
+    case '\n':
+    case '\v':
+    case '\f':
+    case '\r':
+    case ' ': {
+      return CaptureRuleCategory_kWhitespace;
+    }
+
+    case '[':
+    case ']':
+    case ':': {
+      return CaptureRuleCategory_kOperator;
+    }
+
+    default: {
+      return CaptureRuleCategory_kIdentifier;
+    }
   }
-  memcpy(lexer_str->str, raw_line, lexer_str->str_length);
-  lexer_str->str[lexer_str->str_length] = '\0';
+}
 
-  return lexer_str;
-
-error:
-  return NULL;
+static void LexerString_Deinit(struct LexerString* lexer_str) {
+  lexer_str->next_token = NULL;
+  lexer_str->previous_token = NULL;
+  lexer_str->str_length = 0;
+  free(lexer_str->str);
+  lexer_str->str = NULL;
 }
 
 /**
  * External
- */
-
-/*
- * Allocation strategy should be as follows, to remove need to use
- * realloc to expand dynamic memory size:
- * - Allocate space for the worst-case line, where each token is
- *   immediately followed by whitespace. Number of elements is length
- *   of line.
  */
 
 struct LexerLine* LexerLine_LexLine(
@@ -119,87 +159,130 @@ struct LexerLine* LexerLine_LexLine(
     size_t line_number,
     const char* raw_line,
     size_t raw_line_length) {
-  void* realloc_result;
-  size_t i;
-  struct LexerString* last_token;
+  size_t i_raw_line;
+  size_t i_strs;
+  size_t capture_length;
+  size_t reserved_strs_count;
 
   line->line_number = line_number;
-  line->strs = malloc(raw_line_length * sizeof(line->strs[0]));
+
+  if (raw_line_length == 0) {
+    line->strs = NULL;
+    line->strs_count = 0;
+    line->tokens_count = 0;
+    line->first_token = NULL;
+    line->last_token = NULL;
+
+    return line;
+  }
+
+  /* Determine the number of LexerString to reserve. */
+  for (i_raw_line = 0, reserved_strs_count = 0;
+      i_raw_line < raw_line_length;
+      i_raw_line += capture_length, ++reserved_strs_count) {
+    enum CaptureRuleCategory category;
+    const struct CaptureRule* rule;
+    size_t remaining_line_length;
+
+    /* Read the current character to determine which capture rule to apply. */
+    category = GetCaptureRuleCategory(raw_line[i_raw_line]);
+    assert(category != CaptureRuleCategory_kUnspecified);
+
+    rule = SearchCaptureRuleTable(category);
+    if (rule == NULL) {
+      goto error;
+    }
+
+    remaining_line_length = raw_line_length - i_raw_line;
+    capture_length =
+        rule->capture_func(
+            &raw_line[i_raw_line],
+            remaining_line_length,
+            rule->capture_str,
+            rule->capture_str_length);
+    assert(capture_length > 0);
+  }
+
+  line->strs = malloc(reserved_strs_count * sizeof(line->strs[0]));
   if (line->strs == NULL) {
     goto error;
   }
-  line->strs_count = 0;
 
-  last_token = NULL;
-  for (i = 0;
-      i < raw_line_length;
-      i += line->strs[line->strs_count].str_length, ++line->strs_count) {
-    struct LexerString* lex_result;
+  /* Lex the line into individual LexerString. */
+  line->strs_count = 0;
+  line->tokens_count = 0;
+  line->last_token = NULL;
+  for (i_raw_line = 0;
+      i_raw_line < raw_line_length;
+      i_raw_line += line->strs[line->strs_count].str_length,
+          ++line->strs_count) {
+    struct LexerString* current_str;
+    enum CaptureRuleCategory category;
+    const struct CaptureRule* rule;
     size_t remaining_line_length;
 
-    remaining_line_length = raw_line_length - i;
-    switch (raw_line[i]) {
-      case '\t':
-      case '\n':
-      case '\v':
-      case '\f':
-      case '\r':
-      case ' ': {
-        lex_result =
-            LexWhitespace(
-                &line->strs[line->strs_count],
-                &raw_line[i],
-                remaining_line_length);
-        break;
-      }
+    current_str = &line->strs[line->strs_count];
+    current_str->previous_token = line->last_token;
 
-      case '[':
-      case ']':
-      case ':': {
-        lex_result =
-            LexOperator(
-                &line->strs[line->strs_count],
-                &raw_line[i],
-                remaining_line_length);
-        break;
-      }
-
-      default: {
-        lex_result =
-            LexToken(
-                &line->strs[line->strs_count],
-                &raw_line[i],
-                remaining_line_length);
-        if (lex_result != NULL) {
-          line->strs[line->strs_count].previous_token = last_token;
-          if (last_token != NULL) {
-            last_token->next_token = &line->strs[line->strs_count];
-          }
-
-          last_token = &line->strs[line->strs_count];
-        }
-
-        // TODO: Implement linking to the next token
-        break;
-      }
+    category = GetCaptureRuleCategory(raw_line[i_raw_line]);
+    rule = SearchCaptureRuleTable(category);
+    if (rule == NULL) {
+      goto error_deinit_line;
     }
 
-    if (lex_result == NULL) {
-      goto free_line_strs;
+    remaining_line_length = raw_line_length - i_raw_line;
+    current_str->str_length =
+        rule->capture_func(
+            &raw_line[i_raw_line],
+            remaining_line_length,
+            rule->capture_str,
+            rule->capture_str_length);
+    current_str->str =
+        malloc((current_str->str_length + 1) * sizeof(line->strs[0].str[0]));
+    if (current_str->str == NULL) {
+      goto error_deinit_line;
+    }
+    memcpy(current_str->str, &raw_line[i_raw_line], current_str->str_length);
+    current_str->str[current_str->str_length] = '\0';
+
+    if (category == CaptureRuleCategory_kIdentifier
+        || category == CaptureRuleCategory_kOperator) {
+      /* Set the next token for all previous strings. */
+      for (i_strs =
+              (line->last_token == NULL)
+                  ? 0
+                  : line->last_token - line->strs;
+          i_strs < line->strs_count;
+          ++i_strs) {
+        line->strs[i_strs].next_token = current_str;
+      }
+
+      line->last_token = current_str;
+      ++line->tokens_count;
     }
   }
 
-  /* Reduce the size, now that lexing is completed. */
-  realloc_result =
-      realloc(line->strs, line->strs_count * sizeof(line->strs[0]));
-  if (realloc_result == NULL) {
-    goto free_line_strs;
+  /* Set the ending LexerString to have no token. */
+  for (i_strs = (line->last_token == NULL) ? 0 : line->last_token - line->strs;
+      i_strs < line->strs_count;
+      ++i_strs) {
+    line->strs[i_strs].next_token = NULL;
   }
-  line->strs = realloc_result;
+
+  /* Set the first token. */
+  if (line->last_token == NULL) {
+    line->first_token = NULL;
+  } else if (line->strs[0].next_token == NULL) {
+    line->first_token = line->last_token;
+  } else if (line->strs[0].next_token->previous_token == NULL) {
+    line->first_token = line->strs[0].next_token;
+  } else {
+    line->first_token = line->strs[0].next_token->previous_token;
+  }
 
   return line;
 
-free_line_strs:
+error_deinit_line:
   LexerLine_Deinit(line);
 
 error:
@@ -210,11 +293,12 @@ void LexerLine_Deinit(struct LexerLine* line) {
   size_t i;
 
   for (i = line->strs_count; i-- > 0; ) {
-    line->strs[i].str_length = 0;
-    free(line->strs[i].str);
-    line->strs[i].str = NULL;
+    LexerString_Deinit(&line->strs[i]);
   }
   line->strs_count = 0;
   free(line->strs);
   line->strs = NULL;
+  line->first_token = NULL;
+  line->last_token = NULL;
+  line->tokens_count = 0;
 }
