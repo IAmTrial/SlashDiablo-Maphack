@@ -31,7 +31,7 @@
 static const char kKeyValueLine[] = "key : value";
 static const char kSpacedKeyValueLine[] = "\t     key\v : \tvalue     ";
 static const char kNoSpaceKeyValueLine[] = "key:value";
-static const char kMappedKeyValueLine[] = "key[innerKey]: value";
+static const char kMappedKeyValueLine[] = "key[innerKey]: value, true";
 static const char kOnlySpacesLine[] = "\t \t\v";
 enum {
   kKeyValueLineLength = (sizeof(kKeyValueLine) / sizeof(kKeyValueLine[0])) - 1,
@@ -121,7 +121,7 @@ static void LexLine_MappedKeyValue_LexedStrings(void) {
 
   LexerLine_LexLine(&line, 1, kMappedKeyValueLine, kMappedKeyValueLineLength);
 
-  assert(line.strs_count == 7);
+  assert(line.strs_count == 10);
   assert(strcmp(line.strs[0].str, "key") == 0);
   assert(line.strs[0].str_length == 3);
   assert(strcmp(line.strs[1].str, "[") == 0);
@@ -136,6 +136,12 @@ static void LexLine_MappedKeyValue_LexedStrings(void) {
   assert(line.strs[5].str_length == 1);
   assert(strcmp(line.strs[6].str, "value") == 0);
   assert(line.strs[6].str_length == 5);
+  assert(strcmp(line.strs[7].str, ",") == 0);
+  assert(line.strs[7].str_length == 1);
+  assert(strcmp(line.strs[8].str, " ") == 0);
+  assert(line.strs[8].str_length == 1);
+  assert(strcmp(line.strs[9].str, "true") == 0);
+  assert(line.strs[9].str_length == 4);
 
   LexerLine_Deinit(&line);
 }
@@ -145,9 +151,9 @@ static void LexLine_MappedKeyValue_LexedTokens(void) {
 
   LexerLine_LexLine(&line, 1, kMappedKeyValueLine, kMappedKeyValueLineLength);
 
-  assert(line.tokens_count == 6);
+  assert(line.tokens_count == 8);
   assert(line.first_token == &line.strs[0]);
-  assert(line.last_token == &line.strs[6]);
+  assert(line.last_token == &line.strs[9]);
   assert(line.strs[0].previous_token == NULL);
   assert(line.strs[0].next_token == &line.strs[1]);
   assert(line.strs[1].previous_token == &line.strs[0]);
@@ -161,7 +167,13 @@ static void LexLine_MappedKeyValue_LexedTokens(void) {
   assert(line.strs[5].previous_token == &line.strs[4]);
   assert(line.strs[5].next_token == &line.strs[6]);
   assert(line.strs[6].previous_token == &line.strs[4]);
-  assert(line.strs[6].next_token == NULL);
+  assert(line.strs[6].next_token == &line.strs[7]);
+  assert(line.strs[7].previous_token == &line.strs[6]);
+  assert(line.strs[7].next_token == &line.strs[9]);
+  assert(line.strs[8].previous_token == &line.strs[7]);
+  assert(line.strs[8].next_token == &line.strs[9]);
+  assert(line.strs[9].previous_token == &line.strs[7]);
+  assert(line.strs[9].next_token == NULL);
 
   LexerLine_Deinit(&line);
 }

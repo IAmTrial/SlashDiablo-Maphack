@@ -27,9 +27,9 @@
 
 #include "bh/common/string_util/memstring.h"
 
-static const char kOperators[] = ":[]";
+static const char kOperators[] = ":[],";
 static const char kWhitespaces[] = "\t\n\v\f\r ";
-static const char kNonTokens[] = ":[]\t\n\v\f\r ";
+static const char kNonTokens[] = ":[],\t\n\v\f\r ";
 
 enum {
   kOperatorsLength = (sizeof(kOperators) / sizeof(kOperators[0])) - 1,
@@ -125,7 +125,8 @@ static enum CaptureRuleCategory GetCaptureRuleCategory(char ch) {
 
     case '[':
     case ']':
-    case ':': {
+    case ':':
+    case ',': {
       return CaptureRuleCategory_kOperator;
     }
 
