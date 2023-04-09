@@ -33,6 +33,7 @@ static const char kSpacedKeyValueLine[] = "\t     key\v : \tvalue     ";
 static const char kNoSpaceKeyValueLine[] = "key:value";
 static const char kMappedKeyValueLine[] = "key[innerKey]: value, true";
 static const char kOnlySpacesLine[] = "\t \t\v";
+static const char kCommentLine[] = "// key : value";
 enum {
   kKeyValueLineLength = (sizeof(kKeyValueLine) / sizeof(kKeyValueLine[0])) - 1,
   kSpacedKeyValueLineLength =
@@ -42,7 +43,8 @@ enum {
   kMappedKeyValueLineLength =
       (sizeof(kMappedKeyValueLine) / sizeof(kMappedKeyValueLine[0])) - 1,
   kOnlySpacesLineLength =
-      (sizeof(kOnlySpacesLine) / sizeof(kOnlySpacesLine[0])) - 1
+      (sizeof(kOnlySpacesLine) / sizeof(kOnlySpacesLine[0])) - 1,
+  kCommentLineLength = (sizeof(kCommentLine) / sizeof(kCommentLine[0])) - 1
 };
 
 static void BeforeAllSetUp(void) {
@@ -351,6 +353,43 @@ static void LexLine_Empty_NoStrings(void) {
   LexerLine_Deinit(&line);
 }
 
+static void LexLine_CommentLine_ReturnsSuccess(void) {
+  struct LexerLine line;
+  struct LexerLine* result;
+
+  result = LexerLine_LexLine(&line, 1, kCommentLine, kCommentLineLength);
+
+  assert(result == &line);
+
+  LexerLine_Deinit(&line);
+}
+
+static void LexLine_CommentLine_OneString(void) {
+  struct LexerLine line;
+
+  LexerLine_LexLine(&line, 1, kCommentLine, kCommentLineLength);
+
+  assert(line.strs_count == 1);
+  assert(strcmp(line.strs[0].str, kCommentLine) == 0);
+  assert(line.strs[0].str_length == kCommentLineLength);
+
+  LexerLine_Deinit(&line);
+}
+
+static void LexLine_CommentLine_NoTokens(void) {
+  struct LexerLine line;
+
+  LexerLine_LexLine(&line, 1, kCommentLine, kCommentLineLength);
+
+  assert(line.tokens_count == 0);
+  assert(line.first_token == NULL);
+  assert(line.last_token == NULL);
+  assert(line.strs[0].previous_token == NULL);
+  assert(line.strs[0].next_token == NULL);
+
+  LexerLine_Deinit(&line);
+}
+
 static void LexLine_SetLineNumber_ReturnsSuccessWithLineNumber(void) {
   struct LexerLine line;
 
@@ -391,6 +430,10 @@ int main(int argc, char** argv) {
 
     &LexLine_Empty_ReturnsSuccess,
     &LexLine_Empty_NoStrings,
+
+    &LexLine_CommentLine_ReturnsSuccess,
+    &LexLine_CommentLine_OneString,
+    &LexLine_CommentLine_NoTokens,
 
     &LexLine_SetLineNumber_ReturnsSuccessWithLineNumber
   };

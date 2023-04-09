@@ -30,11 +30,15 @@
 static const char kOperators[] = ":[],";
 static const char kWhitespaces[] = "\t\n\v\f\r ";
 static const char kNonTokens[] = ":[],\t\n\v\f\r ";
+static const char kSingleLineCommentStart[] = "//";
 
 enum {
   kOperatorsLength = (sizeof(kOperators) / sizeof(kOperators[0])) - 1,
   kWhitespacesLength = (sizeof(kWhitespaces) / sizeof(kWhitespaces[0])) - 1,
-  kNonTokensLength = (sizeof(kNonTokens) / sizeof(kNonTokens[0])) - 1
+  kNonTokensLength = (sizeof(kNonTokens) / sizeof(kNonTokens[0])) - 1,
+  kSingleLineCommentStartLength =
+      (sizeof(kSingleLineCommentStart) / sizeof(kSingleLineCommentStart[0]))
+          - 1
 };
 
 enum CaptureRuleCategory {
@@ -42,7 +46,8 @@ enum CaptureRuleCategory {
 
   CaptureRuleCategory_kIdentifier,
   CaptureRuleCategory_kOperator,
-  CaptureRuleCategory_kWhitespace
+  CaptureRuleCategory_kWhitespace,
+  CaptureRuleCategory_kSingleLineComment
 };
 
 struct CaptureRule {
@@ -84,11 +89,13 @@ static size_t CaptureOperator(
  *   tokens.
  * - Whitespace: Captures contiguous whitespace characters. Required
  *   for writing to the config with the same spacing as the input.
+ * - Single line comment: Captures all remaining characters.
  */
 static const struct CaptureRule kCaptureRulesSortedTable[] = {
   { CaptureRuleCategory_kIdentifier, &MemSpn, kNonTokens, kNonTokensLength },
   { CaptureRuleCategory_kOperator, &CaptureOperator, kOperators, kOperatorsLength },
   { CaptureRuleCategory_kWhitespace, &MemCSpn, kWhitespaces, kWhitespacesLength },
+  { CaptureRuleCategory_kSingleLineComment, &MemSpn, "", 0 }
 };
 
 enum {
@@ -112,8 +119,9 @@ static const struct CaptureRule* SearchCaptureRuleTable(
   return search_result;
 }
 
-static enum CaptureRuleCategory GetCaptureRuleCategory(char ch) {
-  switch (ch) {
+static enum CaptureRuleCategory GetCaptureRuleCategory(
+    const char* str, size_t length) {
+  switch (str[0]) {
     case '\t':
     case '\n':
     case '\v':
@@ -128,6 +136,13 @@ static enum CaptureRuleCategory GetCaptureRuleCategory(char ch) {
     case ':':
     case ',': {
       return CaptureRuleCategory_kOperator;
+    }
+
+    case '/': {
+      if (length > 1 && str[1] == '/') {
+        return CaptureRuleCategory_kSingleLineComment;
+      }
+      return CaptureRuleCategory_kIdentifier;
     }
 
     default: {
@@ -179,7 +194,9 @@ struct LexerLine* LexerLine_LexLine(
     size_t remaining_line_length;
 
     /* Read the current character to determine which capture rule to apply. */
-    category = GetCaptureRuleCategory(raw_line[i_raw_line]);
+    remaining_line_length = raw_line_length - i_raw_line;
+    category =
+        GetCaptureRuleCategory(&raw_line[i_raw_line], remaining_line_length);
     assert(category != CaptureRuleCategory_kUnspecified);
 
     rule = SearchCaptureRuleTable(category);
@@ -187,7 +204,6 @@ struct LexerLine* LexerLine_LexLine(
       goto error;
     }
 
-    remaining_line_length = raw_line_length - i_raw_line;
     capture_length =
         rule->capture_func(
             &raw_line[i_raw_line],
@@ -218,13 +234,14 @@ struct LexerLine* LexerLine_LexLine(
     current_str = &line->strs[line->strs_count];
     current_str->previous_token = line->last_token;
 
-    category = GetCaptureRuleCategory(raw_line[i_raw_line]);
+    remaining_line_length = raw_line_length - i_raw_line;
+    category =
+        GetCaptureRuleCategory(&raw_line[i_raw_line], remaining_line_length);
     rule = SearchCaptureRuleTable(category);
     if (rule == NULL) {
       goto error_deinit_line;
     }
 
-    remaining_line_length = raw_line_length - i_raw_line;
     current_str->str_length =
         rule->capture_func(
             &raw_line[i_raw_line],
