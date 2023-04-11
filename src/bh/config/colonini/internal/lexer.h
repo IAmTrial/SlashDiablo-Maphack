@@ -31,6 +31,7 @@ extern "C" {
 struct LexerString {
   char* str;
   size_t str_length;
+  size_t line_index;
 
   /* Convenience members, members are still relatively contiguous. */
   struct LexerString* previous_token;

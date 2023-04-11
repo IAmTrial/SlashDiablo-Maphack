@@ -242,6 +242,7 @@ struct LexerLine* LexerLine_LexLine(
       goto error_deinit_line;
     }
 
+    current_str->line_index = i_raw_line;
     current_str->str_length =
         rule->capture_func(
             &raw_line[i_raw_line],

@@ -71,14 +71,19 @@ static void LexLine_KeyValue_LexedStrings(void) {
   assert(line.strs_count == 5);
   assert(strcmp(line.strs[0].str, "key") == 0);
   assert(line.strs[0].str_length == 3);
+  assert(line.strs[0].line_index == 0);
   assert(strcmp(line.strs[1].str, " ") == 0);
   assert(line.strs[1].str_length == 1);
+  assert(line.strs[1].line_index == 3);
   assert(strcmp(line.strs[2].str, ":") == 0);
   assert(line.strs[2].str_length == 1);
+  assert(line.strs[2].line_index == 4);
   assert(strcmp(line.strs[3].str, " ") == 0);
   assert(line.strs[3].str_length == 1);
+  assert(line.strs[3].line_index == 5);
   assert(strcmp(line.strs[4].str, "value") == 0);
   assert(line.strs[4].str_length == 5);
+  assert(line.strs[4].line_index == 6);
 
   LexerLine_Deinit(&line);
 }
@@ -126,24 +131,34 @@ static void LexLine_MappedKeyValue_LexedStrings(void) {
   assert(line.strs_count == 10);
   assert(strcmp(line.strs[0].str, "key") == 0);
   assert(line.strs[0].str_length == 3);
+  assert(line.strs[0].line_index == 0);
   assert(strcmp(line.strs[1].str, "[") == 0);
   assert(line.strs[1].str_length == 1);
+  assert(line.strs[1].line_index == 3);
   assert(strcmp(line.strs[2].str, "innerKey") == 0);
   assert(line.strs[2].str_length == 8);
+  assert(line.strs[2].line_index == 4);
   assert(strcmp(line.strs[3].str, "]") == 0);
   assert(line.strs[3].str_length == 1);
+  assert(line.strs[3].line_index == 12);
   assert(strcmp(line.strs[4].str, ":") == 0);
   assert(line.strs[4].str_length == 1);
+  assert(line.strs[4].line_index == 13);
   assert(strcmp(line.strs[5].str, " ") == 0);
   assert(line.strs[5].str_length == 1);
+  assert(line.strs[5].line_index == 14);
   assert(strcmp(line.strs[6].str, "value") == 0);
   assert(line.strs[6].str_length == 5);
+  assert(line.strs[6].line_index == 15);
   assert(strcmp(line.strs[7].str, ",") == 0);
   assert(line.strs[7].str_length == 1);
+  assert(line.strs[7].line_index == 20);
   assert(strcmp(line.strs[8].str, " ") == 0);
   assert(line.strs[8].str_length == 1);
+  assert(line.strs[8].line_index == 21);
   assert(strcmp(line.strs[9].str, "true") == 0);
   assert(line.strs[9].str_length == 4);
+  assert(line.strs[9].line_index == 22);
 
   LexerLine_Deinit(&line);
 }
@@ -200,18 +215,25 @@ static void LexLine_SpacedKeyValue_LexedStrings(void) {
   assert(line.strs_count == 7);
   assert(strcmp(line.strs[0].str, "\t     ") == 0);
   assert(line.strs[0].str_length == 6);
+  assert(line.strs[0].line_index == 0);
   assert(strcmp(line.strs[1].str, "key") == 0);
   assert(line.strs[1].str_length == 3);
+  assert(line.strs[1].line_index == 6);
   assert(strcmp(line.strs[2].str, "\v ") == 0);
   assert(line.strs[2].str_length == 2);
+  assert(line.strs[2].line_index == 9);
   assert(strcmp(line.strs[3].str, ":") == 0);
   assert(line.strs[3].str_length == 1);
+  assert(line.strs[3].line_index == 11);
   assert(strcmp(line.strs[4].str, " \t") == 0);
   assert(line.strs[4].str_length == 2);
+  assert(line.strs[4].line_index == 12);
   assert(strcmp(line.strs[5].str, "value") == 0);
   assert(line.strs[5].str_length == 5);
+  assert(line.strs[5].line_index == 14);
   assert(strcmp(line.strs[6].str, "     ") == 0);
   assert(line.strs[6].str_length == 5);
+  assert(line.strs[6].line_index == 19);
 
   LexerLine_Deinit(&line);
 }
@@ -265,10 +287,13 @@ static void LexLine_NoSpaceKeyValue_LexedStrings(void) {
   assert(line.strs_count == 3);
   assert(strcmp(line.strs[0].str, "key") == 0);
   assert(line.strs[0].str_length == 3);
+  assert(line.strs[0].line_index == 0);
   assert(strcmp(line.strs[1].str, ":") == 0);
   assert(line.strs[1].str_length == 1);
+  assert(line.strs[1].line_index == 3);
   assert(strcmp(line.strs[2].str, "value") == 0);
   assert(line.strs[2].str_length == 5);
+  assert(line.strs[2].line_index == 4);
 
   LexerLine_Deinit(&line);
 }
@@ -311,6 +336,7 @@ static void LexLine_OnlySpaces_OneString(void) {
   assert(line.strs_count == 1);
   assert(strcmp(line.strs[0].str, "\t \t\v") == 0);
   assert(line.strs[0].str_length == 4);
+  assert(line.strs[0].line_index == 0);
 
   LexerLine_Deinit(&line);
 }
@@ -372,6 +398,7 @@ static void LexLine_CommentLine_OneString(void) {
   assert(line.strs_count == 1);
   assert(strcmp(line.strs[0].str, kCommentLine) == 0);
   assert(line.strs[0].str_length == kCommentLineLength);
+  assert(line.strs[0].line_index == 0);
 
   LexerLine_Deinit(&line);
 }
