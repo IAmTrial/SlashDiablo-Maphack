@@ -68,6 +68,7 @@ struct KeyExpr {
 enum ValueExprType {
   ValueExprType_kUnspecified,
 
+  ValueExprType_kEmpty,
   ValueExprType_kConst,
   ValueExprType_kToggle,
 };

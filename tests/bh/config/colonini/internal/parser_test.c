@@ -54,6 +54,9 @@ static struct LexerLine kLeftNotToggleValue;
 /* key: false, VK_RSHIFT to me */
 static struct LexerString kRightNotToggleValue_Strs[11];
 static struct LexerLine kRightNotToggleValue;
+/* key: */
+static struct LexerString kEmptyValue_Strs[2];
+static struct LexerLine kEmptyValue;
 /* \vkey\t:    value with\tstuff      */
 static struct LexerString kSpacedKeyValue_Strs[11];
 static struct LexerLine kSpacedKeyValue;
@@ -179,6 +182,14 @@ static void BeforeAllSetUp(void) {
       " ", 0,
       "me", 1);
   kRightNotToggleValue.line_number = ++line_number;
+
+  LexerLineSetUp(
+      &kEmptyValue,
+      kEmptyValue_Strs,
+      sizeof(kEmptyValue_Strs) / sizeof(kEmptyValue_Strs[0]),
+      "key", 1,
+      ":", 1);
+  kEmptyValue.line_number = ++line_number;
 
   LexerLineSetUp(
       &kSpacedKeyValue,
@@ -841,6 +852,64 @@ static void ParseLine_RightNotToggleValue_SetSources(void) {
   ParserLine_Deinit(&parser_line);
 }
 
+static void ParseLine_EmptyValue_Success(void) {
+  struct ParserLine* parse_line_result;
+
+  struct ParserLine parser_line;
+  size_t error_column;
+
+  parse_line_result =
+      ParserLine_ParseLine(&parser_line, &kEmptyValue, &error_column);
+
+  assert(parse_line_result == &parser_line);
+
+  ParserLine_Deinit(&parser_line);
+}
+
+static void ParseLine_EmptyValue_ParsedStrings(void) {
+  struct ParserLine* parse_line_result;
+
+  struct ParserLine parser_line;
+  size_t error_column;
+
+  struct KeyExpr* key_expr;
+  struct ValueExpr* value_expr;
+  struct ConstExpr* value_constexpr;
+
+  parse_line_result =
+      ParserLine_ParseLine(&parser_line, &kEmptyValue, &error_column);
+
+  key_expr = &parser_line.variant.assign_statement.key_expr;
+  assert(key_expr->constexpr.type == ConstExprType_kString);
+  assert(key_expr->constexpr.length == 3);
+  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
+  assert(key_expr->subscripts_count == 0);
+  value_expr = &parser_line.variant.assign_statement.value_expr;
+  assert(value_expr->type == ValueExprType_kEmpty);
+
+  ParserLine_Deinit(&parser_line);
+}
+
+static void ParseLine_EmptyValue_SetSources(void) {
+  struct ParserLine* parse_line_result;
+
+  struct ParserLine parser_line;
+  size_t error_column;
+
+  struct KeyExpr* key_expr;
+  struct ValueExpr* value_expr;
+  struct ConstExpr* value_constexpr;
+
+  parse_line_result =
+      ParserLine_ParseLine(&parser_line, &kEmptyValue, &error_column);
+
+  key_expr = &parser_line.variant.assign_statement.key_expr;
+  assert(key_expr->constexpr.begin_src == &kEmptyValue.strs[0]);
+  assert(key_expr->constexpr.end_src == &kEmptyValue.strs[1]);
+
+  ParserLine_Deinit(&parser_line);
+}
+
 static void ParseLine_SpacedKeyValue_Success(void) {
   struct ParserLine* parse_line_result;
 
@@ -1328,6 +1397,10 @@ int main(int argc, char** argv) {
     &ParseLine_RightNotToggleValue_Success,
     &ParseLine_RightNotToggleValue_ParsedStrings,
     &ParseLine_RightNotToggleValue_SetSources,
+
+    &ParseLine_EmptyValue_Success,
+    &ParseLine_EmptyValue_ParsedStrings,
+    &ParseLine_EmptyValue_SetSources,
 
     &ParseLine_SpacedKeyValue_Success,
     &ParseLine_SpacedKeyValue_ParsedStrings,

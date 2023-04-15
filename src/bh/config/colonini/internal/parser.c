@@ -108,6 +108,10 @@ static void KeyExpr_Deinit(struct KeyExpr* expr) {
 
 static void ValueExpr_Deinit(struct ValueExpr* expr) {
   switch (expr->type) {
+    case ValueExprType_kEmpty: {
+      break;
+    }
+
     case ValueExprType_kConst: {
       ConstExpr_Deinit(&expr->variant.as_constexpr);
       break;
@@ -568,9 +572,10 @@ static struct ValueExpr* ParseValue(
   enum ConstExprType first_token_type;
   enum ConstExprType third_token_type;
 
+  /* If there is no value, assume it is of Empty type */
   if (begin_lexer_str == NULL) {
-    *error_column = 0;
-    return NULL;
+    value_expr->type = ValueExprType_kEmpty;
+    return value_expr;
   }
 
   first_token_type =
