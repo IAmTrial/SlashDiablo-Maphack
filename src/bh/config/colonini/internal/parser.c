@@ -29,63 +29,8 @@
 
 #include "bh/common/string_util/memstring.h"
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/parser_type/const_expr.h"
 #include "bh/config/colonini/type.h"
-
-static const char kDecimalDigits[] = "0123456789";
-static const char kFalse[] = "false";
-static const char kHexadecimalDigits[] = "0123456789ABCDEFabcdef";
-static const char kTrue[] = "true";
-enum {
-  kDecimalDigitsLength =
-      (sizeof(kDecimalDigits) / sizeof(kDecimalDigits[0])) - 1,
-  kFalseLength = (sizeof(kFalse) / sizeof(kFalse[0])) - 1,
-  kHexadecimalDigitsLength =
-      (sizeof(kHexadecimalDigits) / sizeof(kHexadecimalDigits[0])) - 1,
-  kTrueLength = (sizeof(kTrue) / sizeof(kTrue[0])) - 1
-};
-
-static const char* ConstExprType_GetDisplayName(enum ConstExprType type) {
-  switch (type) {
-    case ConstExprType_kInvalid: {
-      static const char kDisplayName[] = "Invalid";
-      return kDisplayName;
-    }
-
-    case ConstExprType_kString: {
-      static const char kDisplayName[] = "String";
-      return kDisplayName;
-    }
-
-    case ConstExprType_kSignedInt: {
-      static const char kDisplayName[] = "SignedInt";
-      return kDisplayName;
-    }
-
-    case ConstExprType_kUnsignedInt: {
-      static const char kDisplayName[] = "UnsignedInt";
-      return kDisplayName;
-    }
-
-    case ConstExprType_kBoolean: {
-      static const char kDisplayName[] = "Boolean";
-      return kDisplayName;
-    }
-
-    default: {
-      assert(0 && "This should never happen.");
-      return NULL;
-    }
-  }
-}
-
-static void ConstExpr_Deinit(struct ConstExpr* expr) {
-  free(expr->expr);
-  expr->expr = NULL;
-  expr->length = 0;
-  expr->end_src = NULL;
-  expr->begin_src = NULL;
-  expr->type = ConstExprType_kUnspecified;
-}
 
 static void ToggleExpr_Deinit(struct ToggleExpr* expr) {
   ConstExpr_Deinit(&expr->enabled_expr);
@@ -135,109 +80,40 @@ static void AssignStatement_Deinit(struct AssignStatement* assign_statement) {
   KeyExpr_Deinit(&assign_statement->key_expr);
 }
 
-static enum ConstExprType GetConstExprType(const char* str, size_t length) {
-  size_t i_invalid;
-  enum ConstExprType type_candidate;
-
-  if (length <= 0) {
-    return 0;
-  }
-
-  /* Test true and false (boolean type). */
-  if (length == kTrueLength || length == kFalseLength) {
-    char temp[kFalseLength];
-    size_t i;
-
-    for (i = 0; i < length; ++i) {
-      temp[i] = tolower(str[i]);
-    }
-
-    if (memcmp(temp, kFalse, kFalseLength) == 0
-        || memcmp(temp, kTrue, kTrueLength) == 0) {
-      return ConstExprType_kBoolean;
-    }
-  }
-
-  /* Test decimal and hexadecimal (sint and uint types). */
-  if (length >= 3 && str[0] == '0' && tolower(str[1]) == 'x') {
-    type_candidate = ConstExprType_kUnsignedInt;
-    i_invalid =
-        MemCSpn(
-            &str[2], length - 2, kHexadecimalDigits, kHexadecimalDigitsLength);
-    /* Add 2 because if this is valid, then i_invalid would be length - 2. */
-    i_invalid += 2;
-  } else {
-    type_candidate = ConstExprType_kSignedInt;
-    i_invalid = MemCSpn(str, length, kDecimalDigits, kDecimalDigitsLength);
-  }
-
-  if (i_invalid == length) {
-    return type_candidate;
-  }
-
-  return ConstExprType_kString;
-}
-
 static struct ConstExpr* ParsePrimaryKey(
     struct ConstExpr* key_expr,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
     size_t* error_column) {
-  size_t i;
+  struct ConstExpr* init_result;
 
-  size_t key_strs_count;
-  size_t current_key_length;
+  const struct LexerString* current_src;
+  const struct LexerString* end_src;
 
-  if (begin_lexer_str == NULL) {
+  /* Find the last string before the [ or : operator. */
+  for (current_src = begin_src; ; current_src = current_src->next_token) {
+    if (current_src == NULL) {
+      *error_column = 0;
+      return NULL;
+    }
+    assert(current_src->str_length > 0);
+
+    if (current_src->str_length == 1
+        && (current_src->str[0] == '[' || current_src->str[0] == ':')) {
+      end_src = &current_src->previous_token[1];
+      break;
+    }
+  }
+
+  if (begin_src == end_src) {
     *error_column = 0;
     return NULL;
   }
 
-  key_expr->begin_src = begin_lexer_str;
-
-  /* Determine count of items everything up to the [ or : operator. */
-  for (key_expr->end_src = key_expr->begin_src;
-      ;
-      key_expr->end_src = key_expr->end_src->next_token) {
-    if (key_expr->end_src == NULL) {
-      *error_column = 0;
-      goto error;
-    }
-    assert(key_expr->end_src->str_length > 0);
-
-    if (key_expr->end_src->str_length == 1
-        && (key_expr->end_src->str[0] == '['
-            || key_expr->end_src->str[0] == ':')) {
-      key_expr->end_src = &key_expr->end_src->previous_token[1];
-      break;
-    }
-  }
-  /* Elements are contiguous, so this will give the index distance. */
-  key_strs_count = key_expr->end_src - key_expr->begin_src;
-
-  /* Determine the key string length. */
-  key_expr->length = 0;
-  for (i = 0; i < key_strs_count; ++i) {
-    key_expr->length += key_expr->begin_src[i].str_length;
-  }
-
-  key_expr->expr = malloc((key_expr->length + 1) * sizeof(key_expr->expr[0]));
-  if (key_expr->expr == NULL) {
+  init_result = ConstExpr_Init(key_expr, begin_src, end_src);
+  if (init_result == NULL) {
     *error_column = 0;
     goto error;
   }
-
-  /* Copy lexer key into parser's key. */
-  current_key_length = 0;
-  for (i = 0; i < key_strs_count; ++i) {
-    memcpy(
-        &key_expr->expr[current_key_length],
-        key_expr->begin_src[i].str,
-        key_expr->begin_src[i].str_length);
-    current_key_length += key_expr->begin_src[i].str_length;
-  }
-  key_expr->expr[key_expr->length] = '\0';
-
-  key_expr->type = GetConstExprType(key_expr->expr, key_expr->length);
 
   return key_expr;
 
@@ -247,84 +123,63 @@ error:
 
 static struct Subscript* ParseSubKey(
     struct Subscript* subscript,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
     size_t* error_column) {
-  size_t i;
+  struct ConstExpr* init_result;
+
+  const struct LexerString* current_src;
+  const struct LexerString* end_src;
 
   size_t nest_level;
-  size_t key_strs_count;
-  size_t current_key_length;
-  struct ConstExpr* key_expr;
 
-  if (begin_lexer_str == NULL) {
+  if (begin_src == NULL) {
     *error_column = 0;
     return NULL;
   }
 
-  if (begin_lexer_str->str_length != 1
-      || begin_lexer_str->str[0] != '[') {
-    *error_column = begin_lexer_str->line_index;
+  if (begin_src->str_length != 1 || begin_src->str[0] != '[') {
+    *error_column = begin_src->line_index;
     return NULL;
   }
 
-  key_expr = &subscript->expr;
-  key_expr->begin_src = begin_lexer_str->next_token;
-
-  /* Determine count of items everything up to the matching ] operator. */
-  nest_level = 1;
-  for (key_expr->end_src = key_expr->begin_src;
-      ;
-      key_expr->end_src = key_expr->end_src->next_token) {
-    if (key_expr->end_src == NULL) {
+  /* Find the last string before the matching ] operator. */
+  nest_level = 0;
+  for (current_src = begin_src; ; current_src = current_src->next_token) {
+    if (current_src == NULL) {
       *error_column = 0;
       return NULL;
     }
-    assert(key_expr->end_src->str_length > 0);
+    assert(current_src->str_length > 0);
 
-    if (key_expr->end_src->str_length == 1) {
-      if (key_expr->end_src->str[0] == '[') {
+    if (current_src->str_length == 1) {
+      if (current_src->str[0] == '[') {
         ++nest_level;
-      } else if (key_expr->end_src->str[0] == ']') {
+      } else if (current_src->str[0] == ']') {
         if (nest_level == 0) {
-          *error_column = key_expr->end_src->line_index;
+          *error_column = current_src->line_index;
           return NULL;
         }
 
         --nest_level;
         if (nest_level == 0) {
-          key_expr->end_src = &key_expr->end_src->previous_token[1];
+          end_src = &current_src->previous_token[1];
           break;
         }
       }
     }
   }
-  /* Elements are contiguous, so this will give the index distance. */
-  key_strs_count = key_expr->end_src - key_expr->begin_src;
 
-  /* Determine the key string length. */
-  key_expr->length = 0;
-  for (i = 0; i < key_strs_count; ++i) {
-    key_expr->length += key_expr->begin_src[i].str_length;
+  if (begin_src == end_src) {
+    *error_column = 0;
+    return NULL;
   }
 
-  key_expr->expr = malloc((key_expr->length + 1) * sizeof(key_expr->expr[0]));
-  if (key_expr->expr == NULL) {
+  init_result =
+      ConstExpr_Init(&subscript->expr, begin_src->next_token, end_src);
+  if (init_result == NULL) {
     *error_column = 0;
     goto error;
   }
-
-  /* Copy lexer key into parser's key. */
-  current_key_length = 0;
-  for (i = 0; i < key_strs_count; ++i) {
-    memcpy(
-        &key_expr->expr[current_key_length],
-        key_expr->begin_src[i].str,
-        key_expr->begin_src[i].str_length);
-    current_key_length += key_expr->begin_src[i].str_length;
-  }
-  key_expr->expr[key_expr->length] = '\0';
-
-  key_expr->type = GetConstExprType(key_expr->expr, key_expr->length);
 
   return subscript;
 
@@ -449,52 +304,28 @@ static struct KeyExpr* ParseKeys(
 
 static struct ConstExpr* ParseValueAsConstExpr(
     struct ConstExpr* const_expr,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
     size_t* error_column) {
-  size_t key_strs_count;
-  size_t i;
-  size_t current_value_length;
+  struct ConstExpr* init_result;
 
-  if (begin_lexer_str == NULL) {
+  const struct LexerString* current_src;
+  const struct LexerString* end_src;
+
+  if (begin_src == NULL) {
     *error_column = 0;
     return NULL;
   }
 
-  const_expr->begin_src = begin_lexer_str;
+  for (current_src = begin_src;
+      current_src->next_token != NULL;
+      current_src = current_src->next_token) {}
+  end_src = &current_src[1];
 
-  for (const_expr->end_src = const_expr->begin_src;
-      const_expr->end_src->next_token != NULL;
-      const_expr->end_src = const_expr->end_src->next_token) {}
-  const_expr->end_src = &const_expr->end_src[1];
-
-  /* Elements are contiguous, so this will give the index distance. */
-  key_strs_count = const_expr->end_src - const_expr->begin_src;
-
-  /* Determine the value length. */
-  const_expr->length = 0;
-  for (i = 0; i < key_strs_count; ++i) {
-    const_expr->length += const_expr->begin_src[i].str_length;
-  }
-
-  const_expr->expr =
-      malloc((const_expr->length + 1) * sizeof(const_expr->expr[0]));
-  if (const_expr->expr == NULL) {
+  init_result = ConstExpr_Init(const_expr, begin_src, end_src);
+  if (init_result == NULL) {
     *error_column = 0;
     goto error;
   }
-
-  /* Copy lexer value into parser's value. */
-  current_value_length = 0;
-  for (i = 0; i < key_strs_count; ++i) {
-    memcpy(
-        &const_expr->expr[current_value_length],
-        const_expr->begin_src[i].str,
-        const_expr->begin_src[i].str_length);
-    current_value_length += const_expr->begin_src[i].str_length;
-  }
-  const_expr->expr[const_expr->length] = '\0';
-
-  const_expr->type = GetConstExprType(const_expr->expr, const_expr->length);
 
   return const_expr;
 
@@ -504,55 +335,46 @@ error:
 
 static struct ToggleExpr* ParseValueAsToggleExpr(
     struct ToggleExpr* toggle_expr,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
     size_t* error_column) {
+  struct ConstExpr* enabled_init_result;
+  struct ConstExpr* input_init_result;
+
+
   struct ConstExpr* input_expr;
   const struct LexerString* colon_op;
   struct ConstExpr* enabled_expr;
 
-  if (begin_lexer_str == NULL) {
+  if (begin_src == NULL) {
     *error_column = 0;
     return NULL;
   }
 
   /* Copy the first token into the enabled expression. */
-  enabled_expr = &toggle_expr->enabled_expr;
-  enabled_expr->begin_src = begin_lexer_str;
-  enabled_expr->end_src = &enabled_expr->begin_src[1];
-  enabled_expr->length = enabled_expr->begin_src->str_length;
-  enabled_expr->expr =
-      malloc((enabled_expr->length + 1) * sizeof(enabled_expr->expr[0]));
-  if (enabled_expr->expr == NULL) {
+  enabled_init_result =
+      ConstExpr_Init(&toggle_expr->enabled_expr, begin_src, &begin_src[1]);
+  if (enabled_init_result == NULL) {
     *error_column = 0;
     goto error;
   }
-  memcpy(
-      enabled_expr->expr, enabled_expr->begin_src->str, enabled_expr->length);
-  enabled_expr->expr[enabled_expr->length] = '\0';
-  enabled_expr->type =
-      GetConstExprType(enabled_expr->expr, enabled_expr->length);
 
   /* Verify that the second token is the , operator. */
-  colon_op = enabled_expr->end_src->previous_token->next_token;
+  colon_op = toggle_expr->enabled_expr.end_src->previous_token->next_token;
   if (colon_op->str_length != 1 || colon_op->str[0] != ',') {
     *error_column = colon_op->line_index;
     return NULL;
   }
 
   /* Copy the third token into the input expression. */
-  input_expr = &toggle_expr->input_expr;
-  input_expr->begin_src = colon_op->next_token;
-  input_expr->end_src = &input_expr->begin_src[1];
-  input_expr->length = input_expr->begin_src->str_length;
-  input_expr->expr =
-      malloc((input_expr->length + 1) * sizeof(input_expr->expr[0]));
-  if (input_expr->expr == NULL) {
+  input_init_result =
+      ConstExpr_Init(
+          &toggle_expr->input_expr,
+          colon_op->next_token,
+          &colon_op->next_token[1]);
+  if (input_init_result == NULL) {
     *error_column = 0;
     goto error;
   }
-  memcpy(input_expr->expr, input_expr->begin_src->str, input_expr->length);
-  input_expr->expr[input_expr->length] = '\0';
-  input_expr->type = GetConstExprType(input_expr->expr, input_expr->length);
 
   return toggle_expr;
 
@@ -579,7 +401,8 @@ static struct ValueExpr* ParseValue(
   }
 
   first_token_type =
-      GetConstExprType(begin_lexer_str->str, begin_lexer_str->str_length);
+      ConstExprType_MatchString(
+          begin_lexer_str->str, begin_lexer_str->str_length);
   if (first_token_type != ConstExprType_kBoolean) {
     goto parse_value_as_constexpr;
   }
@@ -597,7 +420,8 @@ static struct ValueExpr* ParseValue(
   }
 
   third_token_type =
-      GetConstExprType(third_lexer_str->str, third_lexer_str->str_length);
+      ConstExprType_MatchString(
+          third_lexer_str->str, third_lexer_str->str_length);
   if (third_token_type != ConstExprType_kString) {
     goto parse_value_as_constexpr;
   }

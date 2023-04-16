@@ -25,30 +25,12 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/parser_type/const_expr.h"
 #include "bh/config/colonini/type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
-
-enum ConstExprType {
-  ConstExprType_kUnspecified,
-  ConstExprType_kInvalid,
-
-  ConstExprType_kString,
-  ConstExprType_kSignedInt,
-  ConstExprType_kUnsignedInt,
-  ConstExprType_kBoolean
-};
-
-struct ConstExpr {
-  enum ConstExprType type;
-  char* expr;
-  size_t length;
-
-  const struct LexerString* begin_src;
-  const struct LexerString* end_src;
-};
 
 struct ToggleExpr {
   struct ConstExpr enabled_expr;
