@@ -28,7 +28,9 @@
 #include "bh/config/colonini/internal/parser_type/value_expr_type.h"
 
 int ValueExpr_IsValid(
-    const struct LexerString* begin_src, size_t* error_column) {
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
+    size_t* error_column) {
   const struct LexerString* current_src;
   /*
    * If begin_src is NULL, then the ValueExpr is empty. All invalid
@@ -40,26 +42,24 @@ int ValueExpr_IsValid(
 struct ValueExpr* ValueExpr_Parse(
     struct ValueExpr* expr,
     const struct LexerString* begin_src,
+    const struct LexerString* end_src,
     size_t* error_column) {
   struct ConstExpr* init_result;
 
-  const struct LexerString* current_src;
-  const struct LexerString* end_src;
-
-  /* If there is no value, assume it is of Empty type */
+  /* If there is no value, assume it is Empty type. */
   if (begin_src == NULL) {
     expr->type = ValueExprType_kEmpty;
     return expr;
   }
 
   /* Attempt to parse as ToggleExpr. */
-  if (ToggleExpr_IsValid(begin_src, error_column)) {
+  if (ToggleExpr_IsValid(begin_src, end_src, error_column)) {
     struct ToggleExpr* init_result;
 
     expr->type = ValueExprType_kToggle;
     init_result =
         ToggleExpr_Parse(
-            &expr->variant.as_toggleexpr, begin_src, error_column);
+            &expr->variant.as_toggleexpr, begin_src, end_src, error_column);
     if (init_result == NULL) {
       return NULL;
     }
@@ -69,12 +69,6 @@ struct ValueExpr* ValueExpr_Parse(
 
   /* Parse as ConstExpr. */
   expr->type = ValueExprType_kConst;
-
-  for (current_src = begin_src;
-      current_src->next_token != NULL;
-      current_src = current_src->next_token) {}
-  end_src = &current_src[1];
-
   init_result =
       ConstExpr_Init(&expr->variant.as_constexpr, begin_src, end_src);
   if (init_result == NULL) {

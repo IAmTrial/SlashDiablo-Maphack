@@ -286,6 +286,8 @@ static struct AssignStatement* ParseAssignStatement(
   size_t subscript_count;
   struct LexerString* key_end_src;
   const struct LexerString* colon_op;
+  const struct LexerString* value_begin_src;
+  const struct LexerString* value_end_src;
   struct ValueExpr* value_expr;
 
   if (begin_lexer_str == NULL) {
@@ -324,13 +326,21 @@ static struct AssignStatement* ParseAssignStatement(
     return NULL;
   }
 
-  if (!ValueExpr_IsValid(colon_op->next_token, error_column)) {
+  value_begin_src = colon_op->next_token;
+  for (value_end_src = value_begin_src;
+      value_end_src != NULL && value_end_src->next_token != NULL;
+      value_end_src = value_end_src->next_token) {}
+  if (value_begin_src != NULL) {
+    ++value_end_src;
+  }
+  if (!ValueExpr_IsValid(value_begin_src, value_end_src, error_column)) {
     return NULL;
   }
   parse_value_result =
       ValueExpr_Parse(
           &assign_statement->value_expr,
-          colon_op->next_token,
+          value_begin_src,
+          value_end_src,
           error_column);
   if (parse_value_result == NULL) {
     return NULL;
