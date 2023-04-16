@@ -37,7 +37,7 @@ struct ToggleExpr {
 };
 
 /**
- * Checks whether the sequence of LexerString starting at being_src
+ * Checks whether the sequence of LexerString starting at begin_src
  * makes up a valid ToggleExpr. Returns a non-zero value if valid,
  * or else returns zero and sets error column.
  */
