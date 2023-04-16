@@ -26,16 +26,12 @@
 
 #include "bh/config/colonini/internal/lexer.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
+#include "bh/config/colonini/internal/parser_type/toggle_expr.h"
 #include "bh/config/colonini/type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
-
-struct ToggleExpr {
-  struct ConstExpr enabled_expr;
-  struct ConstExpr input_expr;
-};
 
 struct Subscript {
   struct ConstExpr expr;

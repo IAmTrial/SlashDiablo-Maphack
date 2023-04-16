@@ -32,11 +32,6 @@
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
 #include "bh/config/colonini/type.h"
 
-static void ToggleExpr_Deinit(struct ToggleExpr* expr) {
-  ConstExpr_Deinit(&expr->enabled_expr);
-  ConstExpr_Deinit(&expr->input_expr);
-}
-
 static void Subscript_Deinit(struct Subscript* subscript) {
   ConstExpr_Deinit(&subscript->expr);
 }
@@ -302,8 +297,8 @@ static struct KeyExpr* ParseKeys(
   return key_expr;
 }
 
-static struct ConstExpr* ParseValueAsConstExpr(
-    struct ConstExpr* const_expr,
+static struct ValueExpr* ParseValue(
+    struct ValueExpr* value_expr,
     const struct LexerString* begin_src,
     size_t* error_column) {
   struct ConstExpr* init_result;
@@ -311,141 +306,46 @@ static struct ConstExpr* ParseValueAsConstExpr(
   const struct LexerString* current_src;
   const struct LexerString* end_src;
 
+  /* If there is no value, assume it is of Empty type */
   if (begin_src == NULL) {
-    *error_column = 0;
-    return NULL;
+    value_expr->type = ValueExprType_kEmpty;
+    return value_expr;
   }
+
+  /* Attempt to parse as ToggleExpr. */
+  if (ToggleExpr_IsValid(begin_src, error_column)) {
+    struct ToggleExpr* init_result;
+
+    value_expr->type = ValueExprType_kToggle;
+    init_result =
+        ToggleExpr_Parse(
+            &value_expr->variant.as_toggleexpr, begin_src, error_column);
+    if (init_result == NULL) {
+      return NULL;
+    }
+
+    return value_expr;
+  }
+
+  /* Parse as ConstExpr. */
+  value_expr->type = ValueExprType_kConst;
 
   for (current_src = begin_src;
       current_src->next_token != NULL;
       current_src = current_src->next_token) {}
   end_src = &current_src[1];
 
-  init_result = ConstExpr_Init(const_expr, begin_src, end_src);
+  init_result =
+      ConstExpr_Init(&value_expr->variant.as_constexpr, begin_src, end_src);
   if (init_result == NULL) {
     *error_column = 0;
     goto error;
   }
 
-  return const_expr;
+  return value_expr;
 
 error:
   return NULL;
-}
-
-static struct ToggleExpr* ParseValueAsToggleExpr(
-    struct ToggleExpr* toggle_expr,
-    const struct LexerString* begin_src,
-    size_t* error_column) {
-  struct ConstExpr* enabled_init_result;
-  struct ConstExpr* input_init_result;
-
-
-  struct ConstExpr* input_expr;
-  const struct LexerString* colon_op;
-  struct ConstExpr* enabled_expr;
-
-  if (begin_src == NULL) {
-    *error_column = 0;
-    return NULL;
-  }
-
-  /* Copy the first token into the enabled expression. */
-  enabled_init_result =
-      ConstExpr_Init(&toggle_expr->enabled_expr, begin_src, &begin_src[1]);
-  if (enabled_init_result == NULL) {
-    *error_column = 0;
-    goto error;
-  }
-
-  /* Verify that the second token is the , operator. */
-  colon_op = toggle_expr->enabled_expr.end_src->previous_token->next_token;
-  if (colon_op->str_length != 1 || colon_op->str[0] != ',') {
-    *error_column = colon_op->line_index;
-    return NULL;
-  }
-
-  /* Copy the third token into the input expression. */
-  input_init_result =
-      ConstExpr_Init(
-          &toggle_expr->input_expr,
-          colon_op->next_token,
-          &colon_op->next_token[1]);
-  if (input_init_result == NULL) {
-    *error_column = 0;
-    goto error;
-  }
-
-  return toggle_expr;
-
-error:
-  return NULL;
-}
-
-static struct ValueExpr* ParseValue(
-    struct ValueExpr* value_expr,
-    const struct LexerString* begin_lexer_str,
-    size_t* error_column) {
-  struct ConstExpr* parse_as_constexpr_result;
-  struct ToggleExpr* parse_as_toggleexpr_result;
-
-  const struct LexerString* second_lexer_str;
-  const struct LexerString* third_lexer_str;
-  enum ConstExprType first_token_type;
-  enum ConstExprType third_token_type;
-
-  /* If there is no value, assume it is of Empty type */
-  if (begin_lexer_str == NULL) {
-    value_expr->type = ValueExprType_kEmpty;
-    return value_expr;
-  }
-
-  first_token_type =
-      ConstExprType_MatchString(
-          begin_lexer_str->str, begin_lexer_str->str_length);
-  if (first_token_type != ConstExprType_kBoolean) {
-    goto parse_value_as_constexpr;
-  }
-
-  second_lexer_str = begin_lexer_str->next_token;
-  if (second_lexer_str == NULL
-      || second_lexer_str->str_length != 1
-      || second_lexer_str->str[0] != ',') {
-    goto parse_value_as_constexpr;
-  }
-
-  third_lexer_str = second_lexer_str->next_token;
-  if (third_lexer_str == NULL || third_lexer_str->next_token != NULL) {
-    goto parse_value_as_constexpr;
-  }
-
-  third_token_type =
-      ConstExprType_MatchString(
-          third_lexer_str->str, third_lexer_str->str_length);
-  if (third_token_type != ConstExprType_kString) {
-    goto parse_value_as_constexpr;
-  }
-
-  value_expr->type = ValueExprType_kToggle;
-  parse_as_toggleexpr_result =
-      ParseValueAsToggleExpr(
-          &value_expr->variant.as_toggleexpr, begin_lexer_str, error_column);
-  if (parse_as_toggleexpr_result == NULL) {
-    return NULL;
-  }
-
-  return value_expr;
-
-parse_value_as_constexpr:
-  value_expr->type = ValueExprType_kConst;
-  parse_as_constexpr_result =
-      ParseValueAsConstExpr(
-          &value_expr->variant.as_constexpr, begin_lexer_str, error_column);
-  if (parse_as_constexpr_result == NULL) {
-    return NULL;
-  }
-
-  return value_expr;
 }
 
 static struct AssignStatement* ParseAssignStatement(

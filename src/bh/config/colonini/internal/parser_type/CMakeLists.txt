@@ -24,4 +24,7 @@ target_sources(${PROJECT_NAME}
 
         "${CMAKE_CURRENT_SOURCE_DIR}/const_expr.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/const_expr.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/toggle_expr.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/toggle_expr.h"
 )
