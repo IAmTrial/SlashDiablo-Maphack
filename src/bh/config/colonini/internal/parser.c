@@ -30,6 +30,8 @@
 #include "bh/common/string_util/memstring.h"
 #include "bh/config/colonini/internal/lexer.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
+#include "bh/config/colonini/internal/parser_type/toggle_expr.h"
+#include "bh/config/colonini/internal/parser_type/value_expr.h"
 #include "bh/config/colonini/type.h"
 
 static void Subscript_Deinit(struct Subscript* subscript) {
@@ -44,30 +46,6 @@ static void KeyExpr_Deinit(struct KeyExpr* expr) {
   }
 
   ConstExpr_Deinit(&expr->constexpr);
-}
-
-static void ValueExpr_Deinit(struct ValueExpr* expr) {
-  switch (expr->type) {
-    case ValueExprType_kEmpty: {
-      break;
-    }
-
-    case ValueExprType_kConst: {
-      ConstExpr_Deinit(&expr->variant.as_constexpr);
-      break;
-    }
-
-    case ValueExprType_kToggle: {
-      ToggleExpr_Deinit(&expr->variant.as_toggleexpr);
-      break;
-    }
-
-    default: {
-      assert(0 && "This should never happen.");
-      return;
-    }
-  }
-  expr->type = ValueExprType_kUnspecified;
 }
 
 static void AssignStatement_Deinit(struct AssignStatement* assign_statement) {
@@ -297,57 +275,6 @@ static struct KeyExpr* ParseKeys(
   return key_expr;
 }
 
-static struct ValueExpr* ParseValue(
-    struct ValueExpr* value_expr,
-    const struct LexerString* begin_src,
-    size_t* error_column) {
-  struct ConstExpr* init_result;
-
-  const struct LexerString* current_src;
-  const struct LexerString* end_src;
-
-  /* If there is no value, assume it is of Empty type */
-  if (begin_src == NULL) {
-    value_expr->type = ValueExprType_kEmpty;
-    return value_expr;
-  }
-
-  /* Attempt to parse as ToggleExpr. */
-  if (ToggleExpr_IsValid(begin_src, error_column)) {
-    struct ToggleExpr* init_result;
-
-    value_expr->type = ValueExprType_kToggle;
-    init_result =
-        ToggleExpr_Parse(
-            &value_expr->variant.as_toggleexpr, begin_src, error_column);
-    if (init_result == NULL) {
-      return NULL;
-    }
-
-    return value_expr;
-  }
-
-  /* Parse as ConstExpr. */
-  value_expr->type = ValueExprType_kConst;
-
-  for (current_src = begin_src;
-      current_src->next_token != NULL;
-      current_src = current_src->next_token) {}
-  end_src = &current_src[1];
-
-  init_result =
-      ConstExpr_Init(&value_expr->variant.as_constexpr, begin_src, end_src);
-  if (init_result == NULL) {
-    *error_column = 0;
-    goto error;
-  }
-
-  return value_expr;
-
-error:
-  return NULL;
-}
-
 static struct AssignStatement* ParseAssignStatement(
     struct AssignStatement* assign_statement,
     const struct LexerString* begin_lexer_str,
@@ -397,8 +324,11 @@ static struct AssignStatement* ParseAssignStatement(
     return NULL;
   }
 
+  if (!ValueExpr_IsValid(colon_op->next_token, error_column)) {
+    return NULL;
+  }
   parse_value_result =
-      ParseValue(
+      ValueExpr_Parse(
           &assign_statement->value_expr,
           colon_op->next_token,
           error_column);
