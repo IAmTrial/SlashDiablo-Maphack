@@ -54,7 +54,7 @@ const char* ConstExprType_GetDisplayName(
       static const char kDisplayName[] = "Invalid";
 
       if (length != NULL) {
-        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]);
+        *length = (sizeof(kDisplayName) / sizeof(kDisplayName[0])) - 1;
       }
       return kDisplayName;
     }
@@ -63,7 +63,7 @@ const char* ConstExprType_GetDisplayName(
       static const char kDisplayName[] = "String";
 
       if (length != NULL) {
-        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]);
+        *length = (sizeof(kDisplayName) / sizeof(kDisplayName[0])) - 1;
       }
       return kDisplayName;
     }
@@ -72,7 +72,7 @@ const char* ConstExprType_GetDisplayName(
       static const char kDisplayName[] = "SignedInt";
 
       if (length != NULL) {
-        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]);
+        *length = (sizeof(kDisplayName) / sizeof(kDisplayName[0])) - 1;
       }
       return kDisplayName;
     }
@@ -81,7 +81,7 @@ const char* ConstExprType_GetDisplayName(
       static const char kDisplayName[] = "UnsignedInt";
 
       if (length != NULL) {
-        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]);
+        *length = (sizeof(kDisplayName) / sizeof(kDisplayName[0])) - 1;
       }
       return kDisplayName;
     }
@@ -90,7 +90,7 @@ const char* ConstExprType_GetDisplayName(
       static const char kDisplayName[] = "Boolean";
 
       if (length != NULL) {
-        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]);
+        *length = (sizeof(kDisplayName) / sizeof(kDisplayName[0])) - 1;
       }
       return kDisplayName;
     }
