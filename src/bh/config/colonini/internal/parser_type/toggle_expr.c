@@ -37,7 +37,7 @@ int ToggleExpr_IsValid(
     const struct LexerString* begin_src, size_t* error_column) {
   const struct LexerString* enabled_begin_src;
   enum ConstExprType enabled_type;
-  const struct LexerString* colon_op;
+  const struct LexerString* comma_op;
   const struct LexerString* input_begin_src;
   enum ConstExprType input_type;
 
@@ -57,22 +57,22 @@ int ToggleExpr_IsValid(
   }
 
   /* Validate the , operator. */
-  colon_op = enabled_begin_src->next_token;
-  if (colon_op == NULL) {
+  comma_op = enabled_begin_src->next_token;
+  if (comma_op == NULL) {
     *error_column = enabled_begin_src->line_index;
     return 0;
   }
 
-  if (colon_op->str_length != 1
-      || memcmp(colon_op->str, kComma, sizeof(kComma)) != 0) {
-    *error_column = colon_op->line_index;
+  if (comma_op->str_length != 1
+      || memcmp(comma_op->str, kComma, sizeof(kComma)) != 0) {
+    *error_column = comma_op->line_index;
     return 0;
   }
 
   /* Validate the input expression. */
-  input_begin_src = colon_op->next_token;
+  input_begin_src = comma_op->next_token;
   if (input_begin_src == NULL) {
-    *error_column = colon_op->line_index;
+    *error_column = comma_op->line_index;
     return 0;
   }
 
@@ -100,12 +100,12 @@ struct ToggleExpr* ToggleExpr_Parse(
   struct ConstExpr* input_init_result;
 
   const struct LexerString* enabled_begin_src;
-  const struct LexerString* colon_op;
+  const struct LexerString* comma_op;
   const struct LexerString* input_begin_src;
 
   enabled_begin_src = begin_src;
-  colon_op = enabled_begin_src->next_token;
-  input_begin_src = colon_op->next_token;
+  comma_op = enabled_begin_src->next_token;
+  input_begin_src = comma_op->next_token;
 
   enabled_init_result =
       ConstExpr_Init(
