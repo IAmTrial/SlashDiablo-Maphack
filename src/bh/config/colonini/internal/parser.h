@@ -25,7 +25,10 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/parser_type/assign_statement.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
+#include "bh/config/colonini/internal/parser_type/key_expr.h"
+#include "bh/config/colonini/internal/parser_type/subscript.h"
 #include "bh/config/colonini/internal/parser_type/toggle_expr.h"
 #include "bh/config/colonini/internal/parser_type/value_expr.h"
 #include "bh/config/colonini/type.h"
@@ -33,21 +36,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
-
-struct Subscript {
-  struct ConstExpr expr;
-};
-
-struct KeyExpr {
-  struct ConstExpr constexpr;
-  struct Subscript* subscripts;
-  size_t subscripts_count;
-};
-
-struct AssignStatement {
-  struct KeyExpr key_expr;
-  struct ValueExpr value_expr;
-};
 
 enum ParserLineType {
   ParserLineType_kUnspecified,

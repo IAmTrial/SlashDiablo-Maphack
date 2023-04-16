@@ -19,11 +19,17 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/assign_statement.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/const_expr.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/const_expr.h"
 
         "${CMAKE_CURRENT_SOURCE_DIR}/const_expr_type.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/const_expr_type.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/key_expr.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/subscript.h"
 
         "${CMAKE_CURRENT_SOURCE_DIR}/toggle_expr.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/toggle_expr.h"
