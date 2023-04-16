@@ -29,29 +29,13 @@
 
 #include "bh/common/string_util/memstring.h"
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/parser_type/assign_statement.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
+#include "bh/config/colonini/internal/parser_type/key_expr.h"
+#include "bh/config/colonini/internal/parser_type/subscript.h"
 #include "bh/config/colonini/internal/parser_type/toggle_expr.h"
 #include "bh/config/colonini/internal/parser_type/value_expr.h"
 #include "bh/config/colonini/type.h"
-
-static void Subscript_Deinit(struct Subscript* subscript) {
-  ConstExpr_Deinit(&subscript->expr);
-}
-
-static void KeyExpr_Deinit(struct KeyExpr* expr) {
-  size_t i;
-
-  for (i = expr->subscripts_count; i-- > 0; ) {
-    Subscript_Deinit(&expr->subscripts[i]);
-  }
-
-  ConstExpr_Deinit(&expr->constexpr);
-}
-
-static void AssignStatement_Deinit(struct AssignStatement* assign_statement) {
-  ValueExpr_Deinit(&assign_statement->value_expr);
-  KeyExpr_Deinit(&assign_statement->key_expr);
-}
 
 static struct ConstExpr* ParsePrimaryKey(
     struct ConstExpr* key_expr,

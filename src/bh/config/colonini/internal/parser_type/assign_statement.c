@@ -19,31 +19,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_KEY_EXPR_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_KEY_EXPR_H_
+#include "bh/config/colonini/internal/parser_type/assign_statement.h"
 
-#include <stddef.h>
-
-#include "bh/config/colonini/internal/parser_type/const_expr.h"
-#include "bh/config/colonini/internal/parser_type/subscript.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif  /* __cplusplus */
-
-struct KeyExpr {
-  struct ConstExpr constexpr;
-  struct Subscript* subscripts;
-  size_t subscripts_count;
-};
+#include "bh/config/colonini/internal/parser_type/key_expr.h"
+#include "bh/config/colonini/internal/parser_type/value_expr.h"
 
 /**
- * Deinitializes a KeyExpr, freeing up resources that were allocated.
+ * External
  */
-void KeyExpr_Deinit(struct KeyExpr* expr);
 
-#ifdef __cplusplus
-}  /* extern "C" */
-#endif  /* __cplusplus */
-
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_KEY_EXPR_H_ */
+void AssignStatement_Deinit(struct AssignStatement* assign_statement) {
+  ValueExpr_Deinit(&assign_statement->value_expr);
+  KeyExpr_Deinit(&assign_statement->key_expr);
+}

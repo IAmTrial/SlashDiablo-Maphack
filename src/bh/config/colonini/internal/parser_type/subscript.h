@@ -35,6 +35,11 @@ struct Subscript {
   struct ConstExpr expr;
 };
 
+/**
+ * Deinitializes a Subscript, freeing up resources that were allocated.
+ */
+void Subscript_Deinit(struct Subscript* subscript);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */

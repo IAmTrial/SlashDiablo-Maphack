@@ -34,6 +34,12 @@ struct AssignStatement {
   struct ValueExpr value_expr;
 };
 
+/**
+ * Deinitializes a AssignStatement, freeing up resources that were
+ * allocated.
+ */
+void AssignStatement_Deinit(struct AssignStatement* assign_statement);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
