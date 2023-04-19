@@ -19,15 +19,6 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_reader.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_reader.h"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/lexer.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/lexer.h"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/parser.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/parser.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/lexer_string.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/lexer_string.h"
 )
-
-add_subdirectory("lexer")
-add_subdirectory("parser_type")

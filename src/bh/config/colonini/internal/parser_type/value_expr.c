@@ -23,6 +23,7 @@
 
 #include <assert.h>
 
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
 #include "bh/config/colonini/internal/parser_type/toggle_expr.h"
 #include "bh/config/colonini/internal/parser_type/value_expr_type.h"

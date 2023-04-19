@@ -26,6 +26,7 @@
 #include <stdlib.h>
 
 #include "bh/common/string_util/memstring.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 
 static const char kOperators[] = ":[],";
 static const char kWhitespaces[] = "\t\n\v\f\r ";
@@ -151,14 +152,6 @@ static enum CaptureRuleCategory GetCaptureRuleCategory(
   }
 }
 
-static void LexerString_Deinit(struct LexerString* lexer_str) {
-  lexer_str->next_token = NULL;
-  lexer_str->previous_token = NULL;
-  lexer_str->str_length = 0;
-  free(lexer_str->str);
-  lexer_str->str = NULL;
-}
-
 /**
  * External
  */
@@ -226,7 +219,9 @@ struct LexerLine* LexerLine_LexLine(
       i_raw_line < raw_line_length;
       i_raw_line += line->strs[line->strs_count].str_length,
           ++line->strs_count) {
+    struct LexerString* init_str_component_result;
     struct LexerString* current_str;
+    size_t str_length;
     enum CaptureRuleCategory category;
     const struct CaptureRule* rule;
     size_t remaining_line_length;
@@ -242,20 +237,18 @@ struct LexerLine* LexerLine_LexLine(
       goto error_deinit_line;
     }
 
-    current_str->line_index = i_raw_line;
-    current_str->str_length =
+    str_length =
         rule->capture_func(
             &raw_line[i_raw_line],
             remaining_line_length,
             rule->capture_str,
             rule->capture_str_length);
-    current_str->str =
-        malloc((current_str->str_length + 1) * sizeof(line->strs[0].str[0]));
-    if (current_str->str == NULL) {
+    init_str_component_result =
+        LexerString_InitStrComponent(
+            current_str, &raw_line[i_raw_line], str_length, i_raw_line);
+    if (init_str_component_result == NULL) {
       goto error_deinit_line;
     }
-    memcpy(current_str->str, &raw_line[i_raw_line], current_str->str_length);
-    current_str->str[current_str->str_length] = '\0';
 
     if (category == CaptureRuleCategory_kIdentifier
         || category == CaptureRuleCategory_kOperator) {

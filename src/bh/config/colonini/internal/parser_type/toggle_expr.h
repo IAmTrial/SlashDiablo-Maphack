@@ -22,7 +22,7 @@
 #ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_TOGGLE_EXPR_H_
 #define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_TOGGLE_EXPR_H_
 
-#include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
 
 #include <stddef.h>

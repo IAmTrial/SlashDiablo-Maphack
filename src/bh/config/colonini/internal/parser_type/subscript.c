@@ -25,7 +25,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
 
 static const char kLBracket[] = "[";

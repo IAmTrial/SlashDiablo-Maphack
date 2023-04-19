@@ -29,6 +29,7 @@
 
 #include "bh/common/string_util/memstring.h"
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser_type/assign_statement.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
 #include "bh/config/colonini/internal/parser_type/key_expr.h"

@@ -24,19 +24,11 @@
 
 #include <stddef.h>
 
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
-
-struct LexerString {
-  char* str;
-  size_t str_length;
-  size_t line_index;
-
-  /* Convenience members, members are still relatively contiguous. */
-  struct LexerString* previous_token;
-  struct LexerString* next_token;
-};
 
 struct LexerLine {
   size_t line_number;
