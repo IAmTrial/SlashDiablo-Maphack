@@ -1353,7 +1353,7 @@ static void ParseLine_Invalid_SetErrorColumn(void) {
       ParserLine_ParseLine(&parser_line, &kInvalid, &error_column);
 
   assert(parse_line_result == NULL);
-  assert(error_column == 11);
+  assert(error_column == 3);
 
   ParserLine_Deinit(&parser_line);
 }

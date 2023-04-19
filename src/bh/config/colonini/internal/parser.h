@@ -26,12 +26,6 @@
 
 #include "bh/config/colonini/internal/lexer.h"
 #include "bh/config/colonini/internal/parser_type/assign_statement.h"
-#include "bh/config/colonini/internal/parser_type/const_expr.h"
-#include "bh/config/colonini/internal/parser_type/key_expr.h"
-#include "bh/config/colonini/internal/parser_type/subscript.h"
-#include "bh/config/colonini/internal/parser_type/toggle_expr.h"
-#include "bh/config/colonini/internal/parser_type/value_expr.h"
-#include "bh/config/colonini/type.h"
 
 #ifdef __cplusplus
 extern "C" {

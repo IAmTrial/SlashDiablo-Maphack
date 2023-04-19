@@ -78,143 +78,56 @@ error:
   return NULL;
 }
 
-static struct Subscript* ParseSubKey(
-    struct Subscript* subscript,
-    const struct LexerString* begin_src,
-    size_t* error_column) {
-  struct ConstExpr* init_result;
-
-  const struct LexerString* current_src;
-  const struct LexerString* end_src;
-
-  size_t nest_level;
-
-  if (begin_src == NULL) {
-    *error_column = 0;
-    return NULL;
-  }
-
-  if (begin_src->str_length != 1 || begin_src->str[0] != '[') {
-    *error_column = begin_src->line_index;
-    return NULL;
-  }
-
-  /* Find the last string before the matching ] operator. */
-  nest_level = 0;
-  for (current_src = begin_src; ; current_src = current_src->next_token) {
-    if (current_src == NULL) {
-      *error_column = 0;
-      return NULL;
-    }
-    assert(current_src->str_length > 0);
-
-    if (current_src->str_length == 1) {
-      if (current_src->str[0] == '[') {
-        ++nest_level;
-      } else if (current_src->str[0] == ']') {
-        if (nest_level == 0) {
-          *error_column = current_src->line_index;
-          return NULL;
-        }
-
-        --nest_level;
-        if (nest_level == 0) {
-          end_src = &current_src->previous_token[1];
-          break;
-        }
-      }
-    }
-  }
-
-  if (begin_src == end_src) {
-    *error_column = 0;
-    return NULL;
-  }
-
-  init_result =
-      ConstExpr_Init(&subscript->expr, begin_src->next_token, end_src);
-  if (init_result == NULL) {
-    *error_column = 0;
-    goto error;
-  }
-
-  return subscript;
-
-error:
-  return NULL;
-}
-
 static struct KeyExpr* ParseSubKeys(
     struct KeyExpr* key_expr,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
     size_t* error_column) {
+  size_t subscripts_count;
   const struct LexerString* current;
-  size_t nest_level;
-  size_t i;
+  const struct LexerString* lbracket_src;
+  const struct LexerString* rbracket_src;
 
-  if (begin_lexer_str == NULL) {
-    *error_column = 0;
-    return NULL;
-  }
+  /* Determine the number of subkeys. */
+  for (current = begin_src, subscripts_count = 0;
+      current != end_src;
+      current = &rbracket_src[1], ++subscripts_count) {
+    int peek_result;
 
-  /*
-   * Determine the number of sub keys. Brackets can be nested in
-   * subkeys, so they need to be accounted for.
-   */
-  nest_level = 0;
-  key_expr->subscripts_count = 0;
-  for (current = begin_lexer_str; ; current = current->next_token) {
-    assert(current->str_length > 0);
-    if (current->str_length == 1) {
-      if (current->str[0] == '[') {
-        ++nest_level;
-      } else if (current->str[0] == ']') {
-        if (nest_level == 0) {
-          *error_column = current->line_index;
-          return NULL;
-        }
-
-        --nest_level;
-        if (nest_level == 0) {
-          ++key_expr->subscripts_count;
-        }
-      } else if (current->str[0] == ':') {
-        /* Colon means that the key parsing should end. */
-        if (nest_level != 0) {
-          *error_column = current->line_index;
-          return NULL;
-        }
-        break;
-      }
-    } else if (nest_level == 0) {
-      /*
-       * There should not be any string tokens outside of brackets at
-       * the subkey parsing state.
-       */
-      assert(current->str_length >= 2);
-      *error_column = 0;
-      return NULL;
+    peek_result =
+        Subscript_Peek(
+            current, end_src, &lbracket_src, &rbracket_src, error_column);
+    if (!peek_result) {
+      break;
     }
   }
 
   /* Allocate space for the subkeys. */
   key_expr->subscripts =
-      malloc(key_expr->subscripts_count * sizeof(key_expr->subscripts[0]));
+      malloc(subscripts_count * sizeof(key_expr->subscripts[0]));
   if (key_expr->subscripts == NULL) {
     *error_column = 0;
     goto error;
   }
 
   /* Parse the subkeys. */
-  for (current = begin_lexer_str, i = 0;
-      i < key_expr->subscripts_count;
-      current = key_expr->subscripts[i].expr.end_src->previous_token->next_token->next_token, ++i) {
-    struct Subscript* parse_sub_key_result;
+  for (current = begin_src, key_expr->subscripts_count = 0;
+      current != end_src && key_expr->subscripts_count < subscripts_count;
+      current = &rbracket_src[1], ++key_expr->subscripts_count) {
+    int peek_result;
+    struct Subscript* parse_result;
 
-    parse_sub_key_result =
-        ParseSubKey(
-            &key_expr->subscripts[i], current, error_column);
-    if (parse_sub_key_result == NULL) {
+    peek_result =
+        Subscript_Peek(
+            current, end_src, &lbracket_src, &rbracket_src, error_column);
+    assert(peek_result);
+    parse_result =
+        Subscript_Parse(
+            &key_expr->subscripts[key_expr->subscripts_count],
+            lbracket_src,
+            &rbracket_src[1],
+            error_column);
+    if (parse_result == NULL) {
       return NULL;
     }
   }
@@ -227,19 +140,20 @@ error:
 
 static struct KeyExpr* ParseKeys(
     struct KeyExpr* key_expr,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
     size_t* error_column) {
   struct ConstExpr* parse_primary_key_result;
   struct KeyExpr* parse_sub_keys_result;
   const struct LexerString* subscript_begin;
 
-  if (begin_lexer_str == NULL) {
+  if (begin_src == NULL) {
     *error_column = 0;
     return NULL;
   }
 
   parse_primary_key_result =
-      ParsePrimaryKey(&key_expr->constexpr, begin_lexer_str, error_column);
+      ParsePrimaryKey(&key_expr->constexpr, begin_src, error_column);
   if (parse_primary_key_result == NULL) {
     return NULL;
   }
@@ -251,7 +165,7 @@ static struct KeyExpr* ParseKeys(
   }
 
   parse_sub_keys_result =
-      ParseSubKeys(key_expr, subscript_begin, error_column);
+      ParseSubKeys(key_expr, subscript_begin, end_src, error_column);
   if (parse_sub_keys_result == NULL) {
     return NULL;
   }
@@ -261,7 +175,8 @@ static struct KeyExpr* ParseKeys(
 
 static struct AssignStatement* ParseAssignStatement(
     struct AssignStatement* assign_statement,
-    const struct LexerString* begin_lexer_str,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
     size_t* error_column) {
   struct KeyExpr* parse_keys_result;
   struct ValueExpr* parse_value_result;
@@ -274,7 +189,7 @@ static struct AssignStatement* ParseAssignStatement(
   const struct LexerString* value_end_src;
   struct ValueExpr* value_expr;
 
-  if (begin_lexer_str == NULL) {
+  if (begin_src == NULL) {
     *error_column = 0;
     return NULL;
   }
@@ -284,7 +199,8 @@ static struct AssignStatement* ParseAssignStatement(
   parse_keys_result =
       ParseKeys(
           &assign_statement->key_expr,
-          begin_lexer_str,
+          begin_src,
+          end_src,
           error_column);
   if (parse_keys_result == NULL) {
     return NULL;
@@ -380,6 +296,7 @@ struct ParserLine* ParserLine_ParseLine(
       ParseAssignStatement(
           &parser_line->variant.assign_statement,
           lexer_line->first_token,
+          &lexer_line->last_token[1],
           error_column);
   if (parse_assign_statement_result == NULL) {
     parser_line->type = ParserLineType_kInvalid;
