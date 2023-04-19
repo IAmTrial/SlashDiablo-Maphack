@@ -99,8 +99,17 @@ static struct KeyExpr* ParseSubKeys(
         Subscript_Peek(
             current, end_src, &lbracket_src, &rbracket_src, error_column);
     if (!peek_result) {
+      if (Subscript_IsBegin(current)) {
+        *error_column = current->line_index;
+        return NULL;
+      }
       break;
     }
+  }
+
+  if (subscripts_count == 0) {
+    key_expr->subscripts_count = 0;
+    return key_expr;
   }
 
   /* Allocate space for the subkeys. */

@@ -58,6 +58,12 @@ int Subscript_IsValid(
     size_t* error_column);
 
 /**
+ * Returns whether the LexerString is a valid begin_src; this is
+ * determined by whether the input string is the [ operator.
+ */
+int Subscript_IsBegin(const struct LexerString* src);
+
+/**
  * Parses a Subscript in the range [begin_src, end_src). Returns NULL
  * and sets error column on failure.
  *

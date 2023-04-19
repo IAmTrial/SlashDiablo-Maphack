@@ -151,6 +151,18 @@ int Subscript_IsValid(
   return (&rbracket_src[1] == end_src);
 }
 
+int Subscript_IsBegin(const struct LexerString* src) {
+  const struct LexerString* ceil_src;
+
+  if (src == NULL) {
+    return 0;
+  }
+
+  ceil_src = LexerString_CeilToken(src);
+  return (ceil_src->str_length == 1
+      && memcmp(ceil_src->str, kLBracket, sizeof(kLBracket)) == 0);
+}
+
 struct Subscript* Subscript_Parse(
     struct Subscript* subscript,
     const struct LexerString* begin_src,
