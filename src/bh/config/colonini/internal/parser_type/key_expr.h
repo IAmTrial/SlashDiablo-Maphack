@@ -24,6 +24,7 @@
 
 #include <stddef.h>
 
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser_type/const_expr.h"
 #include "bh/config/colonini/internal/parser_type/subscript.h"
 
@@ -36,6 +37,17 @@ struct KeyExpr {
   struct Subscript* subscripts;
   size_t subscripts_count;
 };
+
+/**
+ * Starting from a token at begin_src, parses a KeyExpr constituted of
+ * tokens and whitespace no further than end_src. Returns a non-zero
+ * value on success, or else returns zero and sets error column.
+ */
+struct KeyExpr* KeyExpr_Parse(
+    struct KeyExpr* expr,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
+    size_t* error_column);
 
 /**
  * Deinitializes a KeyExpr, freeing up resources that were allocated.

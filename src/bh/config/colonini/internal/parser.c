@@ -38,200 +38,59 @@
 #include "bh/config/colonini/internal/parser_type/value_expr.h"
 #include "bh/config/colonini/type.h"
 
-static struct ConstExpr* ParsePrimaryKey(
-    struct ConstExpr* key_expr,
-    const struct LexerString* begin_src,
-    size_t* error_column) {
-  struct ConstExpr* init_result;
-
-  const struct LexerString* current_src;
-  const struct LexerString* end_src;
-
-  /* Find the last string before the [ or : operator. */
-  for (current_src = begin_src; ; current_src = current_src->next_token) {
-    if (current_src == NULL) {
-      *error_column = 0;
-      return NULL;
-    }
-    assert(current_src->str_length > 0);
-
-    if (current_src->str_length == 1
-        && (current_src->str[0] == '[' || current_src->str[0] == ':')) {
-      end_src = &current_src->previous_token[1];
-      break;
-    }
-  }
-
-  if (begin_src == end_src) {
-    *error_column = 0;
-    return NULL;
-  }
-
-  init_result = ConstExpr_Init(key_expr, begin_src, end_src);
-  if (init_result == NULL) {
-    *error_column = 0;
-    goto error;
-  }
-
-  return key_expr;
-
-error:
-  return NULL;
-}
-
-static struct KeyExpr* ParseSubKeys(
-    struct KeyExpr* key_expr,
-    const struct LexerString* begin_src,
-    const struct LexerString* end_src,
-    size_t* error_column) {
-  size_t subscripts_count;
-  const struct LexerString* current;
-  const struct LexerString* lbracket_src;
-  const struct LexerString* rbracket_src;
-
-  /* Determine the number of subkeys. */
-  for (current = begin_src, subscripts_count = 0;
-      current != end_src;
-      current = &rbracket_src[1], ++subscripts_count) {
-    int peek_result;
-
-    peek_result =
-        Subscript_Peek(
-            current, end_src, &lbracket_src, &rbracket_src, error_column);
-    if (!peek_result) {
-      if (Subscript_IsBegin(current)) {
-        *error_column = current->line_index;
-        return NULL;
-      }
-      break;
-    }
-  }
-
-  if (subscripts_count == 0) {
-    key_expr->subscripts_count = 0;
-    return key_expr;
-  }
-
-  /* Allocate space for the subkeys. */
-  key_expr->subscripts =
-      malloc(subscripts_count * sizeof(key_expr->subscripts[0]));
-  if (key_expr->subscripts == NULL) {
-    *error_column = 0;
-    goto error;
-  }
-
-  /* Parse the subkeys. */
-  for (current = begin_src, key_expr->subscripts_count = 0;
-      current != end_src && key_expr->subscripts_count < subscripts_count;
-      current = &rbracket_src[1], ++key_expr->subscripts_count) {
-    int peek_result;
-    struct Subscript* parse_result;
-
-    peek_result =
-        Subscript_Peek(
-            current, end_src, &lbracket_src, &rbracket_src, error_column);
-    assert(peek_result);
-    parse_result =
-        Subscript_Parse(
-            &key_expr->subscripts[key_expr->subscripts_count],
-            lbracket_src,
-            &rbracket_src[1],
-            error_column);
-    if (parse_result == NULL) {
-      return NULL;
-    }
-  }
-
-  return key_expr;
-
-error:
-  return NULL;
-}
-
-static struct KeyExpr* ParseKeys(
-    struct KeyExpr* key_expr,
-    const struct LexerString* begin_src,
-    const struct LexerString* end_src,
-    size_t* error_column) {
-  struct ConstExpr* parse_primary_key_result;
-  struct KeyExpr* parse_sub_keys_result;
-  const struct LexerString* subscript_begin;
-
-  if (begin_src == NULL) {
-    *error_column = 0;
-    return NULL;
-  }
-
-  parse_primary_key_result =
-      ParsePrimaryKey(&key_expr->constexpr, begin_src, error_column);
-  if (parse_primary_key_result == NULL) {
-    return NULL;
-  }
-
-  subscript_begin = key_expr->constexpr.end_src->previous_token->next_token;
-  if (subscript_begin->str_length != 1 || subscript_begin->str[0] != '[') {
-    key_expr->subscripts_count = 0;
-    return key_expr;
-  }
-
-  parse_sub_keys_result =
-      ParseSubKeys(key_expr, subscript_begin, end_src, error_column);
-  if (parse_sub_keys_result == NULL) {
-    return NULL;
-  }
-
-  return key_expr;
-}
-
 static struct AssignStatement* ParseAssignStatement(
     struct AssignStatement* assign_statement,
     const struct LexerString* begin_src,
     const struct LexerString* end_src,
     size_t* error_column) {
-  struct KeyExpr* parse_keys_result;
+  size_t dummy_error_column;
+  int peek_result;
+  struct KeyExpr* parse_key_result;
   struct ValueExpr* parse_value_result;
 
-  struct KeyExpr* key_expr;
-  size_t subscript_count;
-  struct LexerString* key_end_src;
+  const struct LexerString* first_token;
+  struct KeyExpr* key;
+  const struct LexerString* key_end_src;
   const struct LexerString* colon_op;
+
   const struct LexerString* value_begin_src;
   const struct LexerString* value_end_src;
   struct ValueExpr* value_expr;
 
-  if (begin_src == NULL) {
+  if (error_column == NULL) {
+    error_column = &dummy_error_column;
+  }
+
+  if (begin_src == NULL || end_src == NULL) {
     *error_column = 0;
     return NULL;
   }
 
-  key_expr = &assign_statement->key_expr;
-
-  parse_keys_result =
-      ParseKeys(
-          &assign_statement->key_expr,
-          begin_src,
-          end_src,
-          error_column);
-  if (parse_keys_result == NULL) {
+  first_token = LexerString_CeilToken(begin_src);
+  if (first_token == NULL || first_token >= end_src) {
+    *error_column = begin_src->line_index;
     return NULL;
   }
 
-  if (key_expr->subscripts_count <= 0) {
-    colon_op = key_expr->constexpr.end_src->previous_token->next_token;
-  } else {
-    struct Subscript* last_subscript;
-
-    last_subscript = &key_expr->subscripts[key_expr->subscripts_count - 1];
-    colon_op =
-        last_subscript->expr.end_src->previous_token->next_token->next_token;
-  }
-
-  if (colon_op == NULL) {
-    *error_column = 0;
+  key = &assign_statement->key_expr;
+  parse_key_result = KeyExpr_Parse(key, begin_src, end_src, error_column);
+  if (parse_key_result == NULL) {
     return NULL;
   }
 
-  if (colon_op->str_length != 1 || colon_op->str[0] != ':') {
+  key_end_src = key->subscripts[key->subscripts_count].expr.end_src;
+  if (key_end_src == NULL || key_end_src >= end_src) {
+    *error_column = first_token->line_index;
+    return NULL;
+  }
+
+  colon_op = LexerString_CeilToken(key_end_src);
+  if (colon_op == NULL || colon_op >= end_src) {
+    return NULL;
+  }
+
+  if (colon_op->str_length != 1
+      || memcmp(colon_op->str, ":", sizeof(":")) != 0) {
     *error_column = colon_op->line_index;
     return NULL;
   }
