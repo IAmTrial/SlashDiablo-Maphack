@@ -43,7 +43,7 @@ int Subscript_Peek(
     size_t* error_column) {
   size_t dummy_error_column;
   const struct LexerString* current_src;
-  const struct LexerString* lbracket_src_temp;
+  const struct LexerString* temp_lbracket_src;
   size_t nest_level;
 
   if (error_column == NULL) {
@@ -59,44 +59,38 @@ int Subscript_Peek(
   }
 
   /* Valid subscript consist of [ operator, constexpr, and ] operator. */
-  if (begin_src->next_token == NULL
-      || begin_src->next_token->next_token == NULL) {
-    *error_column = 0;
-    return 0;
-  }
-  
-  /* Find the first left bracket. */
-
-  /* Start by finding the first token reachable from begin_src. */
-  if (begin_src->next_token->previous_token != NULL
-      && begin_src->next_token->previous_token == begin_src) {
-    current_src = begin_src;
-  } else {
-    current_src = begin_src->next_token;
-  }
-
-  /* The first token encountered must be the left bracket. */
-  assert(current_src->str_length >= 1);
-  if (current_src->str_length != 1
-      || memcmp(current_src->str, kLBracket, sizeof(kLBracket)) != 0) {
-    *error_column = current_src->line_index;
-    return 0;
-  }
-
-  if (current_src >= end_src) {
+  if (begin_src->next_token == NULL) {
     *error_column = begin_src->line_index;
     return 0;
   }
 
-  lbracket_src_temp = current_src;
+  temp_lbracket_src = LexerString_CeilToken(begin_src);
+  if (temp_lbracket_src->next_token == NULL
+      || temp_lbracket_src->next_token->next_token == NULL) {
+    *error_column = temp_lbracket_src->line_index;
+    return 0;
+  }
+  
+  /* The first token encountered must be the left bracket. */
+  assert(temp_lbracket_src->str_length >= 1);
+  if (temp_lbracket_src->str_length != 1
+      || memcmp(temp_lbracket_src->str, kLBracket, sizeof(kLBracket)) != 0) {
+    *error_column = temp_lbracket_src->line_index;
+    return 0;
+  }
+
+  if (temp_lbracket_src >= end_src) {
+    *error_column = temp_lbracket_src->line_index;
+    return 0;
+  }
 
   /* Find the matching right bracket. */
   nest_level = 1;
-  for (current_src = current_src->next_token;
-      current_src != end_src;
+  for (current_src = temp_lbracket_src->next_token;
+      current_src < end_src;
       current_src = current_src->next_token) {
     if (current_src == NULL) {
-      *error_column = lbracket_src_temp->line_index;
+      *error_column = temp_lbracket_src->line_index;
       return 0;
     }
 
@@ -122,33 +116,15 @@ int Subscript_Peek(
     }
   }
 
-  if (nest_level != 0 || current_src >= end_src) {
-    *error_column = lbracket_src_temp->line_index;
+  if (nest_level != 0 && current_src >= end_src) {
+    *error_column = temp_lbracket_src->line_index;
     return 0;
   }
 
-  *lbracket_src = lbracket_src_temp;
+  *lbracket_src = temp_lbracket_src;
   *rbracket_src = current_src;
 
   return 1;
-}
-
-int Subscript_IsValid(
-    const struct LexerString* begin_src,
-    const struct LexerString* end_src,
-    size_t* error_column) {
-  int peek_result;
-  const struct LexerString* lbracket_src;
-  const struct LexerString* rbracket_src;
-
-  peek_result =
-      Subscript_Peek(
-          begin_src, end_src, &lbracket_src, &rbracket_src, error_column);
-  if (!peek_result) {
-    return 0;
-  }
-
-  return (&rbracket_src[1] == end_src);
 }
 
 int Subscript_IsBegin(const struct LexerString* src) {
@@ -168,20 +144,42 @@ struct Subscript* Subscript_Parse(
     const struct LexerString* begin_src,
     const struct LexerString* end_src,
     size_t* error_column) {
+  size_t dummy_error_column;
+  int peek_result;
   struct ConstExpr* init_result;
 
+  const struct LexerString* lbracket_src;
+  const struct LexerString* rbracket_src;
   const struct LexerString* expr_begin_src;
   const struct LexerString* expr_end_src;
 
-  expr_begin_src = begin_src->next_token;
-  /* end_src[-1] is the right bracket. */
-  expr_end_src = &end_src[-1].previous_token[1];
+  if (error_column == NULL) {
+    error_column = &dummy_error_column;
+  }
+
+  if (begin_src == NULL || end_src == NULL) {
+    *error_column = 0;
+    return NULL;
+  }
+  peek_result =
+      Subscript_Peek(
+          begin_src, end_src, &lbracket_src, &rbracket_src, error_column);
+  if (!peek_result) {
+    *error_column = begin_src->line_index;
+    return NULL;
+  }
+
+  expr_begin_src = lbracket_src->next_token;
+  expr_end_src = &rbracket_src->previous_token[1];
 
   init_result = ConstExpr_Init(&subscript->expr, expr_begin_src, expr_end_src);
   if (init_result == NULL) {
     *error_column = 0;
     goto error;
   }
+
+  subscript->begin_src = lbracket_src;
+  subscript->end_src = &rbracket_src[1];
 
   return subscript;
 

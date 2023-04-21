@@ -167,8 +167,8 @@ static struct KeyExpr* ParseSubkeys(
 
   /* Determine the number of subkeys. */
   for (current = begin_src, subscripts_count = 0;
-      current != end_src;
-      current = &rbracket_src[1], ++subscripts_count) {
+      current != NULL && current < end_src;
+      current = rbracket_src->next_token, ++subscripts_count) {
     int peek_result;
 
     peek_result =
@@ -184,6 +184,7 @@ static struct KeyExpr* ParseSubkeys(
   }
 
   if (subscripts_count == 0) {
+    expr->subscripts = NULL;
     expr->subscripts_count = 0;
     return expr;
   }
@@ -198,20 +199,16 @@ static struct KeyExpr* ParseSubkeys(
 
   /* Parse the subkeys. */
   for (current = begin_src, expr->subscripts_count = 0;
-      current != end_src && expr->subscripts_count < subscripts_count;
-      current = &rbracket_src[1], ++expr->subscripts_count) {
-    int peek_result;
+      expr->subscripts_count < subscripts_count;
+      current = expr->subscripts[expr->subscripts_count].end_src,
+          ++expr->subscripts_count) {
     struct Subscript* parse_result;
 
-    peek_result =
-        Subscript_Peek(
-            current, end_src, &lbracket_src, &rbracket_src, error_column);
-    assert(peek_result);
     parse_result =
         Subscript_Parse(
             &expr->subscripts[expr->subscripts_count],
-            lbracket_src,
-            &rbracket_src[1],
+            current,
+            end_src,
             error_column);
     if (parse_result == NULL) {
       return NULL;
