@@ -25,7 +25,7 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer.h"
-#include "bh/config/colonini/internal/parser_type/assign_statement.h"
+#include "bh/config/colonini/internal/parser/assign_statement.h"
 
 /*
  * Parse rules:
@@ -36,7 +36,6 @@
  * A -> [d]
  * A -> [s]
  * P -> e
- * B -> e
  * V -> R
  * R -> bT
  * T -> , s

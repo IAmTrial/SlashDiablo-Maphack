@@ -19,15 +19,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bh/config/colonini/internal/parser_type/assign_statement.h"
+#include "bh/config/colonini/internal/parser/assign_statement.h"
 
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
 
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
-#include "bh/config/colonini/internal/parser_type/key_expr.h"
-#include "bh/config/colonini/internal/parser_type/value_expr.h"
+#include "bh/config/colonini/internal/parser/key_expr.h"
+#include "bh/config/colonini/internal/parser/value_expr.h"
 
 static const char kColon[] = ":";
 

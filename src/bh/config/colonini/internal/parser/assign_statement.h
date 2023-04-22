@@ -19,44 +19,43 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_VALUE_EXPR_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_VALUE_EXPR_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_ASSIGN_STATEMENT_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_ASSIGN_STATEMENT_H_
+
+#include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
-#include "bh/config/colonini/internal/parser_type/const_expr.h"
-#include "bh/config/colonini/internal/parser_type/toggle_expr.h"
-#include "bh/config/colonini/internal/parser_type/value_expr_type.h"
+#include "bh/config/colonini/internal/parser/key_expr.h"
+#include "bh/config/colonini/internal/parser/value_expr.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct ValueExpr {
-  enum ValueExprType type;
-  union {
-    struct ConstExpr as_constexpr;
-    struct ToggleExpr as_toggleexpr;
-  } variant;
+struct AssignStatement {
+  struct KeyExpr key_expr;
+  struct ValueExpr value_expr;
 };
 
 /**
- * Starting from begin_src, parses a ValueExpr constituted of tokens
- * and whitespace no further than end_src. Returns a non-NULL on
+ * Starting from begin_src, parses an AssignStatement constituted of
+ * tokens and whitespace no further than end_src. Returns a non-NULL on
  * success, or else returns NULL and sets error column.
  */
-struct ValueExpr* ValueExpr_Parse(
-    struct ValueExpr* expr,
+struct AssignStatement* AssignStatement_Parse(
+    struct AssignStatement* statement,
     const struct LexerString* begin_src,
     const struct LexerString* end_src,
     size_t* error_column);
 
 /**
- * Deinitializes a ValueExpr, freeing up resources that were allocated.
+ * Deinitializes a AssignStatement, freeing up resources that were
+ * allocated.
  */
-void ValueExpr_Deinit(struct ValueExpr* expr);
+void AssignStatement_Deinit(struct AssignStatement* assign_statement);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_VALUE_EXPR_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_ASSIGN_STATEMENT_H_ */

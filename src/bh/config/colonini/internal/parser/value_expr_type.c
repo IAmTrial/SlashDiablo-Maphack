@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bh/config/colonini/internal/parser_type/value_expr_type.h"
+#include "bh/config/colonini/internal/parser/value_expr_type.h"
 
 #include <assert.h>
 #include <stddef.h>

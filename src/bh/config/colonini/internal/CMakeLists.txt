@@ -30,4 +30,4 @@ target_sources(${PROJECT_NAME}
 )
 
 add_subdirectory("lexer")
-add_subdirectory("parser_type")
+add_subdirectory("parser")

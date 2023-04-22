@@ -19,14 +19,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bh/config/colonini/internal/parser_type/value_expr.h"
+#include "bh/config/colonini/internal/parser/value_expr.h"
 
 #include <assert.h>
 
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
-#include "bh/config/colonini/internal/parser_type/const_expr.h"
-#include "bh/config/colonini/internal/parser_type/toggle_expr.h"
-#include "bh/config/colonini/internal/parser_type/value_expr_type.h"
+#include "bh/config/colonini/internal/parser/const_expr.h"
+#include "bh/config/colonini/internal/parser/toggle_expr.h"
+#include "bh/config/colonini/internal/parser/value_expr_type.h"
 
 /**
  * External

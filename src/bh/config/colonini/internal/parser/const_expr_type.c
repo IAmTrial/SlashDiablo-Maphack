@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "bh/config/colonini/internal/parser_type/const_expr_type.h"
+#include "bh/config/colonini/internal/parser/const_expr_type.h"
 
 #include <assert.h>
 #include <ctype.h>

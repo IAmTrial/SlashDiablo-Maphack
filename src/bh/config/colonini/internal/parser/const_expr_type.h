@@ -1,3 +1,4 @@
+
 /**
  * SlashDiablo Maphack
  * Copyright (C) 2012-2022  SlashDiablo Team
@@ -19,43 +20,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_CONST_EXPR_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_CONST_EXPR_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_TYPE_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_TYPE_H_
 
 #include <stddef.h>
-
-#include "bh/config/colonini/internal/lexer/lexer_string.h"
-#include "bh/config/colonini/internal/parser_type/const_expr_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct ConstExpr {
-  enum ConstExprType type;
-  char* expr;
-  size_t length;
+enum ConstExprType {
+  ConstExprType_kUnspecified,
+  ConstExprType_kInvalid,
 
-  const struct LexerString* begin_src;
-  const struct LexerString* end_src;
+  ConstExprType_kString,
+  ConstExprType_kSignedInt,
+  ConstExprType_kUnsignedInt,
+  ConstExprType_kBoolean
 };
 
-/**
- * Initializes a ConstExpr using the strings in the range
- * [begin_str, end_str).
- */
-struct ConstExpr* ConstExpr_Init(
-    struct ConstExpr* expr,
-    const struct LexerString* begin_src,
-    const struct LexerString* end_src);
+const char* ConstExprType_GetDisplayName(
+    enum ConstExprType type, size_t* length);
 
-/**
- * Deinitializes a ConstExpr, freeing up resources that were allocated.
- */
-void ConstExpr_Deinit(struct ConstExpr* expr);
+enum ConstExprType ConstExprType_MatchString(
+    const char* str, size_t length);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_CONST_EXPR_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_TYPE_H_ */

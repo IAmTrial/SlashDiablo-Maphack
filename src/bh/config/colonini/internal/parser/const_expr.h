@@ -19,28 +19,43 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_VALUE_EXPR_TYPE_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_VALUE_EXPR_TYPE_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_H_
 
 #include <stddef.h>
+
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
+#include "bh/config/colonini/internal/parser/const_expr_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-enum ValueExprType {
-  ValueExprType_kUnspecified,
+struct ConstExpr {
+  enum ConstExprType type;
+  char* expr;
+  size_t length;
 
-  ValueExprType_kEmpty,
-  ValueExprType_kConst,
-  ValueExprType_kToggle
+  const struct LexerString* begin_src;
+  const struct LexerString* end_src;
 };
 
-const char* ValueExprType_GetDisplayName(
-    enum ValueExprType type, size_t* length);
+/**
+ * Initializes a ConstExpr using the strings in the range
+ * [begin_str, end_str).
+ */
+struct ConstExpr* ConstExpr_Init(
+    struct ConstExpr* expr,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src);
+
+/**
+ * Deinitializes a ConstExpr, freeing up resources that were allocated.
+ */
+void ConstExpr_Deinit(struct ConstExpr* expr);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_VALUE_EXPR_TYPE_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_H_ */

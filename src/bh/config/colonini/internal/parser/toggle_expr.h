@@ -19,11 +19,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_TOGGLE_EXPR_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_TOGGLE_EXPR_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TOGGLE_EXPR_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TOGGLE_EXPR_H_
 
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
-#include "bh/config/colonini/internal/parser_type/const_expr.h"
+#include "bh/config/colonini/internal/parser/const_expr.h"
 
 #include <stddef.h>
 
@@ -68,4 +68,4 @@ void ToggleExpr_Deinit(struct ToggleExpr* expr);
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_TOGGLE_EXPR_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TOGGLE_EXPR_H_ */

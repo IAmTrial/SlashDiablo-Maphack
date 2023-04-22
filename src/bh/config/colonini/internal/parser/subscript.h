@@ -19,13 +19,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_SUBSCRIPT_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_SUBSCRIPT_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_SUBSCRIPT_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_SUBSCRIPT_H_
 
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
-#include "bh/config/colonini/internal/parser_type/const_expr.h"
+#include "bh/config/colonini/internal/parser/const_expr.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,4 +77,4 @@ void Subscript_Deinit(struct Subscript* subscript);
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_SUBSCRIPT_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_SUBSCRIPT_H_ */
