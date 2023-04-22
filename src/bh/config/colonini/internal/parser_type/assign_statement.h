@@ -22,6 +22,9 @@
 #ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_ASSIGN_STATEMENT_H_
 #define BH_CONFIG_COLONINI_INTERNAL_PARSER_TYPE_ASSIGN_STATEMENT_H_
 
+#include <stddef.h>
+
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser_type/key_expr.h"
 #include "bh/config/colonini/internal/parser_type/value_expr.h"
 
@@ -33,6 +36,18 @@ struct AssignStatement {
   struct KeyExpr key_expr;
   struct ValueExpr value_expr;
 };
+
+/**
+ * Starting from a token at begin_src, parses a AssignStatement
+ * constituted of tokens and whitespace no further than end_src.
+ * Returns a non-NULL on success, or else returns NULL and sets
+ * error column.
+ */
+struct AssignStatement* AssignStatement_Parse(
+    struct AssignStatement* statement,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
+    size_t* error_column);
 
 /**
  * Deinitializes a AssignStatement, freeing up resources that were
