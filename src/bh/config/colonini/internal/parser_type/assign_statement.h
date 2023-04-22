@@ -38,10 +38,9 @@ struct AssignStatement {
 };
 
 /**
- * Starting from a token at begin_src, parses a AssignStatement
- * constituted of tokens and whitespace no further than end_src.
- * Returns a non-NULL on success, or else returns NULL and sets
- * error column.
+ * Starting from begin_src, parses an AssignStatement constituted of
+ * tokens and whitespace no further than end_src. Returns a non-NULL on
+ * success, or else returns NULL and sets error column.
  */
 struct AssignStatement* AssignStatement_Parse(
     struct AssignStatement* statement,

@@ -100,9 +100,9 @@ static int IsValidPrimaryKeyToken(const struct LexerString* token) {
 }
 
 /**
- * Starting from begin_src, parses valid tokens for the primary key
- * no further than end_src. Returns a non-zero value on success, or
- * else returns zero and sets error column.
+ * Starting from begin_src, parses the primary key constituted of
+ * tokens and whitespace no further than end_src. Returns a non-NULL on
+ * success, or else returns NULL and sets error column.
  */
 static struct ConstExpr* ParsePrimary(
     struct ConstExpr* expr,
@@ -151,9 +151,9 @@ error:
 }
 
 /**
- * Starting from begin_src, parses valid tokens for the subkeys
- * no further than end_src. Returns a non-zero value on success, or
- * else returns zero and sets error column.
+ * Starting from begin_src, parses the subkeys constituted of tokens
+ * and whitespace no further than end_src. Returns a non-NULL on
+ * success, or else returns NULL and sets error column.
  */
 static struct KeyExpr* ParseSubkeys(
     struct KeyExpr* expr,

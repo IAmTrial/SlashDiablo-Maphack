@@ -26,6 +26,7 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 
 #ifdef __cplusplus
 extern "C" {

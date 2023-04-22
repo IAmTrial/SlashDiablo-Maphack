@@ -39,9 +39,9 @@ struct KeyExpr {
 };
 
 /**
- * Starting from a token at begin_src, parses a KeyExpr constituted of
- * tokens and whitespace no further than end_src. Returns a non-zero
- * value on success, or else returns zero and sets error column.
+ * Starting from begin_src, parses a KeyExpr constituted of tokens and
+ * whitespace no further than end_src. Returns a non-NULL on success,
+ * or else returns NULL and sets error column.
  */
 struct KeyExpr* KeyExpr_Parse(
     struct KeyExpr* expr,

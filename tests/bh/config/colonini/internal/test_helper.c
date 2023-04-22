@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 
 void LexerLineSetUp(
     struct LexerLine* line, struct LexerString* strs, size_t count, ...) {

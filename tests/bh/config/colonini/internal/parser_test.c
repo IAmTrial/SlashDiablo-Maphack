@@ -27,6 +27,7 @@
 #include <windows.h>
 
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 #include "bh/config/colonini/internal/parser.h"
 #include "bh/config/colonini/internal/test_helper.h"
 

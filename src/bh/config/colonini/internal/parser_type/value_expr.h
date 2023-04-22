@@ -40,18 +40,9 @@ struct ValueExpr {
 };
 
 /**
- * Parses a ValueExpr in the range [begin_src, end_src). Returns NULL
- * and sets error column on failure.
- *
- * Does not perform input validation. Call IsValid prior to calling
- * Parse.
- */
-
-
-/**
- * Starting from begin_src, parses valid tokens for the value expresion
- * no further than end_src. Returns a non-zero value on success, or
- * else returns zero and sets error column.
+ * Starting from begin_src, parses a ValueExpr constituted of tokens
+ * and whitespace no further than end_src. Returns a non-NULL on
+ * success, or else returns NULL and sets error column.
  */
 struct ValueExpr* ValueExpr_Parse(
     struct ValueExpr* expr,

@@ -28,6 +28,10 @@
 #include "bh/config/colonini/internal/parser_type/toggle_expr.h"
 #include "bh/config/colonini/internal/parser_type/value_expr_type.h"
 
+/**
+ * External
+ */
+
 struct ValueExpr* ValueExpr_Parse(
     struct ValueExpr* expr,
     const struct LexerString* begin_src,

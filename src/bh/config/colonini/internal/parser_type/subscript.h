@@ -57,9 +57,10 @@ int Subscript_Peek(
 int Subscript_IsBegin(const struct LexerString* src);
 
 /**
- * Starting from begin_src, parses valid tokens for the subscript
- * expression no further than end_src. Returns a non-zero value on
- * success, or else returns zero and sets error column.
+ * Starting from begin_src, parses a Subscript constituted of tokens
+ * and whitespace no further than end_src. Searches for the [ token and
+ * the matching ] token. Returns a non-NULL on success, or else returns
+ * NULL and sets error column.
  */
 struct Subscript* Subscript_Parse(
     struct Subscript* subscript,

@@ -24,6 +24,10 @@
 #include <assert.h>
 #include <stddef.h>
 
+/**
+ * External
+ */
+
 const char* ValueExprType_GetDisplayName(
     enum ValueExprType type, size_t* length) {
   switch (type) {
