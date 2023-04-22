@@ -99,20 +99,11 @@ static struct AssignStatement* ParseAssignStatement(
   }
 
   value_begin_src = colon_op->next_token;
-  for (value_end_src = value_begin_src;
-      value_end_src != NULL && value_end_src->next_token != NULL;
-      value_end_src = value_end_src->next_token) {}
-  if (value_begin_src != NULL) {
-    ++value_end_src;
-  }
-  if (!ValueExpr_IsValid(value_begin_src, value_end_src, error_column)) {
-    return NULL;
-  }
   parse_value_result =
       ValueExpr_Parse(
           &assign_statement->value_expr,
           value_begin_src,
-          value_end_src,
+          end_src,
           error_column);
   if (parse_value_result == NULL) {
     return NULL;

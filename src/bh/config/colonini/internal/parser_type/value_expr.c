@@ -28,24 +28,22 @@
 #include "bh/config/colonini/internal/parser_type/toggle_expr.h"
 #include "bh/config/colonini/internal/parser_type/value_expr_type.h"
 
-int ValueExpr_IsValid(
-    const struct LexerString* begin_src,
-    const struct LexerString* end_src,
-    size_t* error_column) {
-  const struct LexerString* current_src;
-  /*
-   * If begin_src is NULL, then the ValueExpr is empty. All invalid
-   * ToggleExpr is ConstExpr. All begin_str input is effectively valid.
-   */
-  return 1;
-}
-
 struct ValueExpr* ValueExpr_Parse(
     struct ValueExpr* expr,
     const struct LexerString* begin_src,
     const struct LexerString* end_src,
     size_t* error_column) {
+  size_t dummy_error_column;
   struct ConstExpr* init_result;
+
+  if (error_column == NULL) {
+    error_column = &dummy_error_column;
+  }
+
+  if (end_src == NULL) {
+    *error_column = 0;
+    return NULL;
+  }
 
   /* If there is no value, assume it is Empty type. */
   if (begin_src == NULL) {

@@ -43,10 +43,16 @@ int ToggleExpr_IsValid(
   const struct LexerString* input_begin_src;
   enum ConstExprType input_type;
 
-  /* Validate the enabled expression. */
-  enabled_begin_src = begin_src;
-  if (enabled_begin_src == NULL || enabled_begin_src == end_src) {
+  /* Check preconditions. */
+  if (begin_src == NULL || end_src == NULL) {
     *error_column = 0;
+    return 0;
+  }
+
+  /* Validate the enabled expression. */
+  enabled_begin_src = LexerString_CeilToken(begin_src);
+  if (enabled_begin_src == NULL || enabled_begin_src >= end_src) {
+    *error_column = begin_src->line_index;
     return 0;
   }
 
@@ -60,7 +66,7 @@ int ToggleExpr_IsValid(
 
   /* Validate the , operator. */
   comma_op = enabled_begin_src->next_token;
-  if (comma_op == NULL || comma_op == end_src) {
+  if (comma_op == NULL || comma_op >= end_src) {
     *error_column = enabled_begin_src->line_index;
     return 0;
   }
@@ -73,13 +79,8 @@ int ToggleExpr_IsValid(
 
   /* Validate the input expression. */
   input_begin_src = comma_op->next_token;
-  if (input_begin_src == NULL || input_begin_src == end_src) {
+  if (input_begin_src == NULL || input_begin_src >= end_src) {
     *error_column = comma_op->line_index;
-    return 0;
-  }
-
-  if (&input_begin_src[1] != end_src) {
-    *error_column = input_begin_src->line_index;
     return 0;
   }
 
@@ -88,6 +89,12 @@ int ToggleExpr_IsValid(
           input_begin_src->str, input_begin_src->str_length);
   if (input_type != ConstExprType_kString) {
     *error_column = enabled_begin_src->line_index;
+    return 0;
+  }
+
+  /* Check that there are no additional tokens. */
+  if (input_begin_src->next_token != NULL) {
+    *error_column = input_begin_src->next_token->line_index;
     return 0;
   }
 

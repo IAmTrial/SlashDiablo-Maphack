@@ -40,21 +40,18 @@ struct ValueExpr {
 };
 
 /**
- * Checks whether the sequence of LexerString in the range
- * [begin_src, end_src) make up a valid ValueExpr. Returns a non-zero
- * value if valid, or else returns zero and sets error column.
- */
-int ValueExpr_IsValid(
-    const struct LexerString* begin_src,
-    const struct LexerString* end_src,
-    size_t* error_column);
-
-/**
  * Parses a ValueExpr in the range [begin_src, end_src). Returns NULL
  * and sets error column on failure.
  *
  * Does not perform input validation. Call IsValid prior to calling
  * Parse.
+ */
+
+
+/**
+ * Starting from begin_src, parses valid tokens for the value expresion
+ * no further than end_src. Returns a non-zero value on success, or
+ * else returns zero and sets error column.
  */
 struct ValueExpr* ValueExpr_Parse(
     struct ValueExpr* expr,
