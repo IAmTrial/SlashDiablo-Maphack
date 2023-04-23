@@ -27,6 +27,8 @@
 
 #include "bh/config/colonini/internal/lexer.h"
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
+#include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/parser/subscript.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +42,23 @@ void LexerLineVSetUp(
     struct LexerLine* line,
     struct LexerString* strs,
     size_t count,
+    va_list args);
+
+/* va_args: (const char* subkey, ...) */
+void ParserLineBasicSetUp(
+    struct ParserLine* line,
+    const char* value,
+    const char* key,
+    struct Subscript* subscripts,
+    size_t subscripts_count,
+    ...);
+
+void ParserLineBasicVSetUp(
+    struct ParserLine* line,
+    const char* value,
+    const char* key,
+    struct Subscript* subscripts,
+    size_t subscripts_count,
     va_list args);
 
 #ifdef __cplusplus

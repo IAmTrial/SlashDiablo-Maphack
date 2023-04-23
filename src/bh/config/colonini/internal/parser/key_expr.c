@@ -143,6 +143,8 @@ static struct ConstExpr* ParsePrimary(
     *error_column = 0;
     return NULL;
   }
+  /* Primary key is always interpretted as string. */
+  expr->type = ConstExprType_kString;
 
   return expr;
 

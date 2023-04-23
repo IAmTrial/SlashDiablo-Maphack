@@ -19,19 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_reader.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_reader.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/variable.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/variable.h"
 
-        "${CMAKE_CURRENT_SOURCE_DIR}/lexer.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/lexer.h"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/parser.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/parser.h"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/semantic_analyzer.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/semantic_analyzer.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/variable_table.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/variable_table.h"
 )
-
-add_subdirectory("lexer")
-add_subdirectory("parser")
-add_subdirectory("semantic_analyzer")

@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Tests.BH.Config.Colonini.Internal)
+project(Tests.Colonini.Internal)
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)
@@ -78,4 +78,16 @@ target_include_directories(${PROJECT_NAME}.ParserTest
 target_link_libraries(${PROJECT_NAME}.ParserTest
     PRIVATE
         BH.Config.Colonini
-        Tests.BH.Config.Colonini.Internal.Helper)
+        ${PROJECT_NAME}.Helper)
+
+add_executable(${PROJECT_NAME}.SemanticAnalyzerTest "semantic_analyzer_test.c")
+add_dependencies(${PROJECT_NAME}.SemanticAnalyzerTest ${PROJECT_NAME}.Helper)
+target_compile_definitions(${PROJECT_NAME}.SemanticAnalyzerTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.SemanticAnalyzerTest
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src"
+        "${CMAKE_SOURCE_DIR}/tests")
+target_link_libraries(${PROJECT_NAME}.SemanticAnalyzerTest
+    PRIVATE
+        BH.Config.Colonini
+        ${PROJECT_NAME}.Helper)

@@ -27,6 +27,13 @@
 
 #include "bh/config/colonini/internal/lexer.h"
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
+#include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/parser/const_expr.h"
+#include "bh/config/colonini/internal/parser/const_expr_type.h"
+#include "bh/config/colonini/internal/parser/key_expr.h"
+#include "bh/config/colonini/internal/parser/subscript.h"
+#include "bh/config/colonini/internal/parser/value_expr.h"
+#include "bh/config/colonini/internal/parser/value_expr_type.h"
 
 void LexerLineSetUp(
     struct LexerLine* line, struct LexerString* strs, size_t count, ...) {
@@ -82,4 +89,54 @@ void LexerLineVSetUp(
 
     total_line_index += strs[i].str_length;
   }
+}
+
+void ParserLineBasicSetUp(
+    struct ParserLine* line,
+    const char* value,
+    const char* key,
+    struct Subscript* subscripts,
+    size_t subscripts_count,
+    ...) {
+  va_list args;
+
+  va_start(args, subscripts_count);
+  ParserLineBasicVSetUp(line, value, key, subscripts, subscripts_count, args);
+  va_end(args);
+}
+
+void ParserLineBasicVSetUp(
+    struct ParserLine* line,
+    const char* value,
+    const char* key,
+    struct Subscript* subscripts,
+    size_t subscripts_count,
+    va_list args) {
+  struct AssignStatement* assign_statement;
+  struct KeyExpr* key_expr;
+  struct ValueExpr* value_expr;
+
+  line->type = ParserLineType_kAssignStatement;
+  assign_statement = &line->variant.assign_statement;
+  key_expr = &assign_statement->key_expr;
+  key_expr->constexpr.expr = (char*)key;
+  key_expr->constexpr.length = strlen(key);
+
+  key_expr->subscripts = subscripts;
+  for (key_expr->subscripts_count = 0;
+      key_expr->subscripts_count < subscripts_count;
+      ++key_expr->subscripts_count) {
+    struct Subscript* current;
+
+    current = &key_expr->subscripts[key_expr->subscripts_count];
+    current->expr.expr = va_arg(args, char*);
+    current->expr.length = strlen(current->expr.expr);
+    current->expr.type = ConstExprType_kString;
+  }
+
+  value_expr = &assign_statement->value_expr;
+  value_expr->type = ValueExprType_kConst;
+  value_expr->variant.as_constexpr.expr = (char*)value;
+  value_expr->variant.as_constexpr.length = strlen(value);
+  value_expr->variant.as_constexpr.type = ConstExprType_kString;
 }
