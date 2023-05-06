@@ -43,14 +43,30 @@ struct VariableTable* VariableTable_Init(
 
 void VariableTable_Deinit(struct VariableTable* table);
 
-int VariableTable_CheckLine(
-    struct VariableTable* table, struct ParserLine* line);
-
 struct Variable* VariableTable_AddFromLine(
     struct VariableTable* table, const struct ParserLine* line);
 
+int VariableTable_CheckLine(
+    struct VariableTable* table, struct ParserLine* line);
+
+/**
+ * Returns whether a duplicate variable (matching by name and subkeys)
+ * is added to the table.
+ *
+ * Precondition: Table must be sorted via VariableTable_Sort.
+ */
+int VariableTable_ContainsDuplicate(const struct VariableTable* table);
+
+/**
+ * Resolves the type differences of keys, subkeys, and value by
+ * converting to string, if possible.
+ */
+int VariableTable_ResolveTypeDiffs(struct VariableTable* table);
+
 struct Variable* VariableTable_SearchTableByName(
     struct VariableTable* table, const char* name, size_t length);
+
+void VariableTable_Sort(struct VariableTable* table);
 
 #ifdef __cplusplus
 }  /* extern "C" */

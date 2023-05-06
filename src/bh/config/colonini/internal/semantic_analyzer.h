@@ -25,17 +25,41 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/semantic_analyzer/variable_table.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
+
+struct SemanticAnalyzer {
+  struct VariableTable var_table;
+};
+
+struct SemanticAnalyzer* SemanticAnalyzer_Init(
+    struct SemanticAnalyzer* analyzer,
+    const struct ParserLine* lines,
+    size_t count);
+
+void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer);
+
+/**
+ * Adds the semantic context from a contiguous array of ParserLine.
+ * Returns a non-zero value on success, or else zero on failure.
+ */
+int SemanticAnalyzer_LoadLines(
+    struct SemanticAnalyzer* analyzer,
+    const struct ParserLine* lines,
+    size_t count);
 
 /**
  * Checks a contiguous array of ParserLine for matching field types
  * and converts types as needed. Returns a non-zero value on
  * success, or else zero on failure.
  */
-int SemanticAnalyzer_Check(struct ParserLine* line, size_t count);
+int SemanticAnalyzer_CheckLines(
+    struct SemanticAnalyzer* analyzer,
+    struct ParserLine* lines,
+    size_t count);
 
 #ifdef __cplusplus
 }  /* extern "C" */

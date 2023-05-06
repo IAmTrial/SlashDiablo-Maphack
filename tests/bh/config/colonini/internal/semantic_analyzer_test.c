@@ -35,6 +35,7 @@ static void BeforeAllSetUp(void) {
 
 static void Check_TwoKeys_Success(void) {
   int actual;
+  struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
 
@@ -44,14 +45,74 @@ static void Check_TwoKeys_Success(void) {
    */
   ParserLineBasicSetUp(&lines[0], "value", "key1", subscripts[0], 0);
   ParserLineBasicSetUp(&lines[1], "value", "key2", subscripts[1], 0);
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
-  actual = SemanticAnalyzer_Check(lines, 2);
+  actual =
+      SemanticAnalyzer_CheckLines(
+          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
   assert(actual);
+
+  SemanticAnalyzer_Deinit(&analyzer);
+}
+
+static void Check_DuplicateNames_Failure(void) {
+  int actual;
+  struct SemanticAnalyzer analyzer;
+  struct ParserLine lines[2];
+  struct Subscript subscripts[2][1];
+
+  /*
+   * key: value1
+   * key: value2
+   */
+  ParserLineBasicSetUp(&lines[0], "value1", "key", subscripts[0], 0);
+  ParserLineBasicSetUp(&lines[1], "value2", "key", subscripts[1], 0);
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+
+  actual =
+      SemanticAnalyzer_CheckLines(
+          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+
+  assert(!actual);
+
+  SemanticAnalyzer_Deinit(&analyzer);
+}
+
+static void Check_DuplicateSubkeys_Failure(void) {
+  int actual;
+  struct SemanticAnalyzer analyzer;
+  struct ParserLine lines[2];
+  struct Subscript subscripts[2][1];
+
+  /*
+   * key[subkey]: value1
+   * key[subkey]: value2
+   */
+  ParserLineBasicSetUp(
+      &lines[0], "value1", "key", subscripts[0], 1, "subkey");
+  ParserLineBasicSetUp(
+      &lines[1], "value2", "key", subscripts[1], 1, "subkey");
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+
+  actual =
+      SemanticAnalyzer_CheckLines(
+          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+
+  assert(!actual);
+
+  SemanticAnalyzer_Deinit(&analyzer);
 }
 
 static void Check_SameKeyMismatch_Failure(void) {
   int actual;
+  struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
 
@@ -61,14 +122,22 @@ static void Check_SameKeyMismatch_Failure(void) {
    */
   ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "subkey");
   ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 0);
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
-  actual = SemanticAnalyzer_Check(lines, 2);
+  actual =
+      SemanticAnalyzer_CheckLines(
+          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
   assert(!actual);
+
+  SemanticAnalyzer_Deinit(&analyzer);
 }
 
 static void Check_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
   int actual;
+  struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
   struct ValueExpr* value_expr[2];
@@ -83,16 +152,24 @@ static void Check_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
   value_expr[0]->variant.as_constexpr.type = ConstExprType_kUnsignedInt;
   value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
-  actual = SemanticAnalyzer_Check(lines, 2);
+  actual =
+      SemanticAnalyzer_CheckLines(
+            &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
   assert(actual);
   assert(value_expr[0]->variant.as_constexpr.type == ConstExprType_kString);
   assert(value_expr[1]->variant.as_constexpr.type == ConstExprType_kString);
+
+  SemanticAnalyzer_Deinit(&analyzer);
 }
 
 static void Check_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   int actual;
+  struct SemanticAnalyzer analyzer;
   struct LexerLine lline;
   struct LexerString lstr[4];
   struct ParserLine lines[2];
@@ -136,8 +213,13 @@ static void Check_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   /* Set up second line. */
   value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
-  actual = SemanticAnalyzer_Check(lines, 2);
+  actual =
+      SemanticAnalyzer_CheckLines(
+          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
   assert(actual);
   assert(value_expr[0]->type == ValueExprType_kConst);
@@ -148,10 +230,13 @@ static void Check_SameKeyDifferentValueTypes_ResolveDifferences(void) {
       memcmp(const_exprs[0]->expr, "true, VK_A", sizeof("true, VK_A")) == 0);
   const_exprs[1] = &value_expr[1]->variant.as_constexpr;
   assert(const_exprs[1]->type == ConstExprType_kString);
+
+  SemanticAnalyzer_Deinit(&analyzer);
 }
 
 static void Check_SameKeyDifferentSubkeyTypes_ResolveDifferences(void) {
   int actual;
+  struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
   struct KeyExpr* key_expr[2];
@@ -166,12 +251,19 @@ static void Check_SameKeyDifferentSubkeyTypes_ResolveDifferences(void) {
   key_expr[0]->subscripts[0].expr.type = ConstExprType_kString;
   key_expr[1] = &lines[1].variant.assign_statement.key_expr;
   key_expr[1]->subscripts[0].expr.type = ConstExprType_kSignedInt;
+  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_LoadLines(
+      &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
-  actual = SemanticAnalyzer_Check(lines, 2);
+  actual =
+      SemanticAnalyzer_CheckLines(
+          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
 
   assert(actual);
   assert(key_expr[0]->subscripts[0].expr.type == ConstExprType_kString);
   assert(key_expr[1]->subscripts[0].expr.type == ConstExprType_kString);
+
+  SemanticAnalyzer_Deinit(&analyzer);
 }
 
 int main(int argc, char** argv) {
@@ -183,6 +275,8 @@ int main(int argc, char** argv) {
 
   static TestFunc* const kTests[] = {
     &Check_TwoKeys_Success,
+    &Check_DuplicateNames_Failure,
+    &Check_DuplicateSubkeys_Failure,
     &Check_SameKeyMismatch_Failure,
     &Check_SameKeyDifferentValueConstTypes_ResolveDifferences,
     &Check_SameKeyDifferentValueTypes_ResolveDifferences,

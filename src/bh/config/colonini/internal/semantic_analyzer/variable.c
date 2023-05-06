@@ -35,30 +35,27 @@
 #include "bh/config/colonini/internal/parser/value_expr_type.h"
 
 struct Variable* Variable_Init(
-    struct Variable* variable,
-    const struct AssignStatement* assign_statement) {
+    struct Variable* variable, const struct ParserLine* line) {
+  const struct AssignStatement* assign_statement;
   const struct KeyExpr* keys;
   const struct ConstExpr* primary_key;
   const struct ValueExpr* value;
 
+  /* Copy the line number. */
+  variable->line_number = line->line_number;
+
+  assign_statement = &line->variant.assign_statement;
   keys = &assign_statement->key_expr;
   primary_key = &keys->constexpr;
 
   /* Copy the primary key name. */
-  variable->name =
-      malloc((primary_key->length + 1) * sizeof(variable->name[0]));
-  if (variable->name == NULL) {
-    goto error;
-  }
-  memcpy(variable->name, primary_key->expr, primary_key->length);
-  variable->name[primary_key->length] = '\0';
-  variable->name_length = primary_key->length;
+  variable->key_expr = keys;
 
   /* Copy the subkeys' types */
   variable->subkey_types =
       malloc(keys->subscripts_count * sizeof(variable->subkey_types[0]));
   if (variable->subkey_types == NULL) {
-    goto error_free_name;
+    goto error;
   }
 
   for (variable->subkey_types_count = 0;
@@ -78,11 +75,6 @@ struct Variable* Variable_Init(
 
   return variable;
 
-error_free_name:
-  variable->name_length = 0;
-  free(variable->name);
-  variable->name = NULL;
-
 error:
   return NULL;
 }
@@ -95,33 +87,54 @@ void Variable_Deinit(struct Variable* variable) {
   variable->subkey_types_count = 0;
   variable->subkey_types = NULL;
 
-  variable->name_length = 0;
-  free(variable->name);
-  variable->name = NULL;
+  variable->key_expr = NULL;
+  variable->line_number = 0;
 }
 
 int Variable_CompareName(
     const struct Variable* left, const struct Variable* right) {
+  const struct ConstExpr* left_expr;
+  const struct ConstExpr* right_expr;
+
   int is_lengths_same;
   int is_left_shorter;
-  const struct Variable* shorter;
-  int name_compare_result;
+  const struct ConstExpr* shorter_expr;
+  int name_cmp_result;
 
-  is_lengths_same = (left->name_length == right->name_length);
+  left_expr = &left->key_expr->constexpr;
+  right_expr = &right->key_expr->constexpr;
+
+  is_lengths_same = (left_expr->length == right_expr->length);
   if (is_lengths_same) {
-    return memcmp(left->name, right->name, left->name_length);
+    return memcmp(left_expr->expr, right_expr->expr, left_expr->length);
   }
 
-  is_left_shorter = (left->name_length < right->name_length);
-  shorter = (is_left_shorter) ? left : right;
+  is_left_shorter = (left_expr->length < right_expr->length);
+  shorter_expr = (is_left_shorter) ? left_expr : right_expr;
 
-  name_compare_result =
-      memcmp(left->name, right->name, shorter->name_length);
-  if (name_compare_result == 0) {
+  name_cmp_result =
+      memcmp(left_expr->expr, right_expr->expr, shorter_expr->length);
+  if (name_cmp_result == 0) {
     return (is_left_shorter) ? -1 : 1;
   }
 
-  return name_compare_result;
+  return name_cmp_result;
+}
+
+int Variable_CompareNameAndLineNumber(
+    const struct Variable* left, const struct Variable* right) {
+  int name_cmp_result;
+
+  name_cmp_result = Variable_CompareName(left, right);
+  if (name_cmp_result == 0) {
+    return left->line_number - right->line_number;
+  }
+  return name_cmp_result;
+}
+
+int Variable_EqualKeys(
+    const struct Variable* left, const struct Variable* right) {
+  return KeyExpr_Equal(left->key_expr, right->key_expr);
 }
 
 int Variable_EqualLineTypes(
@@ -153,6 +166,49 @@ int Variable_EqualLineTypes(
 
     right_value_as_constexpr = &right_value->variant.as_constexpr;
     return (left->value_as_constexpr_type == right_value_as_constexpr->type);
+  }
+
+  return 1;
+}
+
+int Variable_EqualName(
+    const struct Variable* left, const struct Variable* right) {
+  return ConstExpr_Equal(
+      &left->key_expr->constexpr, &right->key_expr->constexpr);
+}
+
+int Variable_ResolveTypesDiffs(
+    struct Variable* left, struct Variable* right) {
+  size_t i;
+  int equal_result;
+
+  /* Base variable name needs to be the same for a resolve to be valid. */
+  if (!Variable_EqualName(left, right)) {
+    return 0;
+  }
+
+  /* Subkey count needs to be the same to resolve subkey types. */
+  if (left->subkey_types_count != right->subkey_types_count) {
+    return 0;
+  }
+
+  for (i = 0; i < left->subkey_types_count; ++i) {
+    if (left->subkey_types[i] != right->subkey_types[i]) {
+      left->subkey_types[i] = ConstExprType_kString;
+      right->subkey_types[i] = ConstExprType_kString;
+    }
+  }
+
+  /* Resolve value types. */
+  if (left->value_type != right->value_type) {
+    left->value_type = ValueExprType_kConst;
+    right->value_type = ValueExprType_kConst;
+    left->value_as_constexpr_type = ConstExprType_kString;
+    right->value_as_constexpr_type = ConstExprType_kString;
+  } else if (left->value_type == ValueExprType_kConst
+      && left->value_as_constexpr_type != right->value_as_constexpr_type) {
+    left->value_as_constexpr_type = ConstExprType_kString;
+    right->value_as_constexpr_type = ConstExprType_kString;
   }
 
   return 1;

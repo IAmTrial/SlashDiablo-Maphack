@@ -25,6 +25,7 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/parser/key_expr.h"
 #include "bh/config/colonini/internal/parser/const_expr_type.h"
 #include "bh/config/colonini/internal/parser/value_expr_type.h"
 
@@ -33,8 +34,8 @@ extern "C" {
 #endif  /* __cplusplus */
 
 struct Variable {
-  char* name;
-  size_t name_length;
+  size_t line_number;
+  const struct KeyExpr* key_expr;
 
   /** Types for subkeys. Primary key is always string. */
   enum ConstExprType* subkey_types;
@@ -45,15 +46,39 @@ struct Variable {
 };
 
 struct Variable* Variable_Init(
-    struct Variable* variable, const struct AssignStatement* assign_statement);
+    struct Variable* variable, const struct ParserLine* line);
 
 void Variable_Deinit(struct Variable* variable);
 
 int Variable_CompareName(
     const struct Variable* left, const struct Variable* right);
 
+int Variable_CompareNameAndLineNumber(
+    const struct Variable* left, const struct Variable* right);
+
+/**
+ * Returns whether the key and subkeys of two Variable are equivalents.
+ */
+int Variable_EqualKeys(
+    const struct Variable* left, const struct Variable* right);
+
 int Variable_EqualLineTypes(
     const struct Variable* left, const struct ParserLine* right);
+
+/**
+ * Returns whether the primary key (name) of two Variable are
+ * equivalents.
+*/
+int Variable_EqualName(
+    const struct Variable* left, const struct Variable* right);
+
+/**
+ * Resolves the type differences between two varaibles, converting to
+ * string type as needed. Returns a non-zero value on success, or zero
+ * on failure.
+*/
+int Variable_ResolveTypesDiffs(
+    struct Variable* left, struct Variable* right);
 
 int Variable_ResolveLineTypeDifference(
     struct Variable* left, struct ParserLine* right);
