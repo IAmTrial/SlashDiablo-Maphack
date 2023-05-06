@@ -73,6 +73,13 @@ struct Subscript* Subscript_Parse(
  */
 void Subscript_Deinit(struct Subscript* subscript);
 
+/**
+ * Returns whether the constant expressions of two Subscript are
+ * equivalents.
+ */
+int Subscript_Equal(
+    const struct Subscript* left, const struct Subscript* right);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */

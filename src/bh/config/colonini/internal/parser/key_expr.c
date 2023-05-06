@@ -272,3 +272,24 @@ void KeyExpr_Deinit(struct KeyExpr* expr) {
 
   ConstExpr_Deinit(&expr->constexpr);
 }
+
+int KeyExpr_Equal(
+    const struct KeyExpr* left, const struct KeyExpr* right) {
+  size_t i;
+
+  if (!ConstExpr_Equal(&left->constexpr, &right->constexpr)) {
+    return 0;
+  }
+
+  if (left->subscripts_count != right->subscripts_count) {
+    return 0;
+  }
+
+  for (i = 0; i < left->subscripts_count; ++i) {
+    if (!ConstExpr_Equal(&left->subscripts[i], &right->subscripts[i])) {
+      return 0;
+    }
+  }
+
+  return 1;
+}

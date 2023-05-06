@@ -54,6 +54,13 @@ struct KeyExpr* KeyExpr_Parse(
  */
 void KeyExpr_Deinit(struct KeyExpr* expr);
 
+/**
+ * Returns whether the keys and subkeys of two KeyExpr are
+ * equivalents.
+ */
+int KeyExpr_Equal(
+    const struct KeyExpr* left, const struct KeyExpr* right);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */

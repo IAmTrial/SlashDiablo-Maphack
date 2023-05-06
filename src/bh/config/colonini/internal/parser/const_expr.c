@@ -80,3 +80,16 @@ void ConstExpr_Deinit(struct ConstExpr* expr) {
   expr->begin_src = NULL;
   expr->type = ConstExprType_kUnspecified;
 }
+
+int ConstExpr_Equal(
+    const struct ConstExpr* left, const struct ConstExpr* right) {
+  if (left->type != right->type) {
+    return 0;
+  }
+
+  if (left->length != right->length) {
+    return 0;
+  }
+
+  return (memcmp(left->expr, right->expr, left->length) == 0);
+}

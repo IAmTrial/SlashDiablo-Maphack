@@ -190,3 +190,8 @@ error:
 void Subscript_Deinit(struct Subscript* subscript) {
   ConstExpr_Deinit(&subscript->expr);
 }
+
+int Subscript_Equal(
+    const struct Subscript* left, const struct Subscript* right) {
+  return ConstExpr_Equal(&left->expr, &right->expr);
+}

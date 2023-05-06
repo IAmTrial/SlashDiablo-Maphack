@@ -54,6 +54,12 @@ struct ConstExpr* ConstExpr_Init(
  */
 void ConstExpr_Deinit(struct ConstExpr* expr);
 
+/**
+ * Returns whether the expressions of two ConstExpr are equivalents.
+ */
+int ConstExpr_Equal(
+    const struct ConstExpr* left, const struct ConstExpr* right);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
