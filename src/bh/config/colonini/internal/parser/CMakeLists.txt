@@ -31,6 +31,12 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/key_expr.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/key_expr.h"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser_line.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser_line.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser_line_type.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser_line_type.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/subscript.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/subscript.h"
 

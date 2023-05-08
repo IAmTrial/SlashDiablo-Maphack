@@ -19,43 +19,35 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_PARSER_LINE_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_PARSER_LINE_H_
 
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer.h"
-#include "bh/config/colonini/internal/parser/parser_line.h"
+#include "bh/config/colonini/internal/parser/assign_statement.h"
+#include "bh/config/colonini/internal/parser/parser_line_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct Parser {
-  size_t line_count;
-  struct ParserLine* lines;
+struct ParserLine {
+  int line_number;
+
+  enum ParserLineType type;
+  union {
+    struct AssignStatement assign_statement;
+  } variant;
 };
 
 /**
- * Initializes a Parser with space allocated for the specified number
- * of ParserLine.
+ * Parses a LexerLine into a ParserLine, resolving the key, subkeys,
+ * value type, and value. If the line is invalid, NULL is returned.
  */
-struct Parser* Parser_Init(struct Parser* parser, size_t lines_count);
-
-/**
- * Deinitializes a Parser, freeing up resources that were allocated.
- */
-void Parser_Deinit(struct Parser* parser);
-
-/**
- * Parses the state of Colonini lines from the Lexer. Returns a
- * non-zero value on success, or returns zero and sets error column on
- * failure.
- */
-int Parser_Parse(
-    struct Parser* parser,
-    struct LexerLine* llines,
-    size_t lline_count,
+struct ParserLine* ParserLine_ParseLine(
+    struct ParserLine* parser_line,
+    const struct LexerLine* lexer_line,
     size_t* error_column);
 
 /**
@@ -67,4 +59,4 @@ void ParserLine_Deinit(struct ParserLine* parser_line);
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_PARSER_LINE_H_ */

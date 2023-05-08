@@ -23,84 +23,55 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "bh/config/colonini/internal/lexer.h"
-#include "bh/config/colonini/internal/parser/assign_statement.h"
-
-/*
- * Parse rules:
- * S -> K : V
- *
- * K -> sP
- * P -> AP
- * A -> [d]
- * A -> [s]
- * P -> e
- * V -> R
- * R -> bT
- * T -> , s
- * T -> e
- * R -> s
- * V -> d
- * V -> h
- *
- * Terminals (regex):
- * e(mpty) ->
- * b(oolean) -> (true)|(false)
- * d(ecimal) -> (0|([1-9][0-9]{0,9}))
- * h(exadecimal) -> 0(x|X)[0-9A-Fa-f]{1,7}
- * s(tring) -> [^\t\n\v\f\r ][^\[\]:]*[^\[\]:\t\n\v\f\r ]
- */
+#include "bh/config/colonini/internal/parser/parser_line.h"
 
 /**
  * External
  */
 
-struct ParserLine* ParserLine_ParseLine(
-    struct ParserLine* parser_line,
-    const struct LexerLine* lexer_line,
-    size_t* error_column) {
-  struct AssignStatement* parse_assign_statement_result;
-
-  parser_line->line_number = lexer_line->line_number;
-
-  if (lexer_line->tokens_count == 0) {
-    parser_line->type = ParserLineType_kNoOp;
-    return parser_line;
+struct Parser* Parser_Init(struct Parser* parser, size_t lines_count) {
+  parser->lines = malloc(lines_count * sizeof(parser->lines[0]));
+  if (parser->lines == NULL) {
+    goto error;
   }
+  parser->line_count = 0;
 
-  parse_assign_statement_result =
-      AssignStatement_Parse(
-          &parser_line->variant.assign_statement,
-          lexer_line->first_token,
-          &lexer_line->last_token[1],
-          error_column);
-  if (parse_assign_statement_result == NULL) {
-    parser_line->type = ParserLineType_kInvalid;
-    return NULL;
-  }
+  return parser;
 
-  parser_line->type = ParserLineType_kAssignStatement;
-
-  return parser_line;
+error:
+  return NULL;
 }
 
-void ParserLine_Deinit(struct ParserLine* parser_line) {
-  switch (parser_line->type) {
-    case ParserLineType_kNoOp:
-    case ParserLineType_kInvalid: {
-      break;
-    }
+void Parser_Deinit(struct Parser* parser) {
+  for (; parser->line_count > 0; --parser->line_count) {
+    ParserLine_Deinit(&parser->lines[parser->line_count - 1]);
+  }
+  free(parser->lines);
+  parser->lines = NULL;
+}
 
-    case ParserLineType_kAssignStatement: {
-      AssignStatement_Deinit(&parser_line->variant.assign_statement);
-      break;
-    }
-
-    default: {
-      assert(0 && "This should never happen.");
-      return;
+int Parser_Parse(
+    struct Parser* parser,
+    struct LexerLine* llines,
+    size_t lline_count,
+    size_t* error_column) {
+  for (parser->line_count = 0;
+      parser->line_count < lline_count;
+      ++parser->line_count) {
+    struct ParserLine* parse_result;
+      
+    parse_result =
+        ParserLine_ParseLine(
+            &parser->lines[parser->line_count],
+            &llines[parser->line_count],
+            error_column);
+    if (parse_result == NULL) {
+      return 0;
     }
   }
-  parser_line->line_number = 0;
+
+  return 1;
 }
