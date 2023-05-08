@@ -54,19 +54,16 @@ void Parser_Deinit(struct Parser* parser) {
 }
 
 int Parser_Parse(
-    struct Parser* parser,
-    struct LexerLine* llines,
-    size_t lline_count,
-    size_t* error_column) {
+    struct Parser* parser, struct Lexer* lexer, size_t* error_column) {
   for (parser->line_count = 0;
-      parser->line_count < lline_count;
+      parser->line_count < lexer->count;
       ++parser->line_count) {
     struct ParserLine* parse_result;
       
     parse_result =
         ParserLine_ParseLine(
             &parser->lines[parser->line_count],
-            &llines[parser->line_count],
+            &lexer->lines[parser->line_count],
             error_column);
     if (parse_result == NULL) {
       return 0;

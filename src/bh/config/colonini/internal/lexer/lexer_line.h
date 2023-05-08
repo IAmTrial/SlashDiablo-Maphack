@@ -19,42 +19,44 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_LEXER_H_
-#define BH_CONFIG_COLONINI_INTERNAL_LEXER_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_LEXER_LEXER_LINE_H_
+#define BH_CONFIG_COLONINI_INTERNAL_LEXER_LEXER_LINE_H_
 
 #include <stddef.h>
 
-#include "bh/config/colonini/internal/lexer/lexer_line.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct Lexer {
-  size_t count;
-  struct LexerLine* lines;
+struct LexerLine {
+  size_t line_number;
+  struct LexerString* strs;
+  size_t strs_count;
+
+  struct LexerString* first_token;
+  struct LexerString* last_token;
+  size_t tokens_count;
 };
 
 /**
- * Initializes a Lexer with space allocated for the specified number
- * of LexerLine.
+ * Lexes a line of the specified length into separated tokens and
+ * whitespaces.
  */
-struct Lexer* Lexer_Init(struct Lexer* lexer, size_t line_count);
+struct LexerLine* LexerLine_LexLine(
+    struct LexerLine* line,
+    size_t line_number,
+    const char* raw_line,
+    size_t raw_line_length);
 
 /**
- * Deinitializes a Lexer, freeing up resources that were allocated.
+ * Deinitializes a LexerLine, freeing up resources that were allocated.
  */
-void Lexer_Deinit(struct Lexer* lexer);
-
-/**
- * Lexes a specified contiguous number of null-terminated, UTF-8
- * encoded lines. Returns a non-zero value on success, or a zero value
- * on failure.
- */
-int Lexer_Lex(struct Lexer* lexer, char* const* lines, size_t count);
+void LexerLine_Deinit(struct LexerLine* line);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_LEXER_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_LEXER_LEXER_LINE_H_ */

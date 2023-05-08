@@ -53,15 +53,7 @@ void Parser_Deinit(struct Parser* parser);
  * failure.
  */
 int Parser_Parse(
-    struct Parser* parser,
-    struct LexerLine* llines,
-    size_t lline_count,
-    size_t* error_column);
-
-/**
- * Deinitializes a ParserLine, freeing up resources that were allocated.
- */
-void ParserLine_Deinit(struct ParserLine* parser_line);
+    struct Parser* parser, struct Lexer* lexer, size_t* error_column);
 
 #ifdef __cplusplus
 }  /* extern "C" */

@@ -19,6 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/lexer_line.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/lexer_line.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/lexer_string.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/lexer_string.h"
 )

@@ -27,404 +27,366 @@
 #include <shlwapi.h>
 
 #include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/lexer/lexer_line.h"
 
-static const char kKeyValueLine[] = "key : value";
-static const char kSpacedKeyValueLine[] = "\t     key\v : \tvalue     ";
-static const char kNoSpaceKeyValueLine[] = "key:value";
-static const char kMappedKeyValueLine[] = "key[innerKey]: value, true";
-static const char kOnlySpacesLine[] = "\t \t\v";
-static const char kCommentLine[] = "// key : value";
-enum {
-  kKeyValueLineLength = (sizeof(kKeyValueLine) / sizeof(kKeyValueLine[0])) - 1,
-  kSpacedKeyValueLineLength =
-      (sizeof(kSpacedKeyValueLine) / sizeof(kSpacedKeyValueLine[0])) - 1,
-  kNoSpaceKeyValueLineLength =
-      (sizeof(kNoSpaceKeyValueLine) / sizeof(kNoSpaceKeyValueLine[0])) - 1,
-  kMappedKeyValueLineLength =
-      (sizeof(kMappedKeyValueLine) / sizeof(kMappedKeyValueLine[0])) - 1,
-  kOnlySpacesLineLength =
-      (sizeof(kOnlySpacesLine) / sizeof(kOnlySpacesLine[0])) - 1,
-  kCommentLineLength = (sizeof(kCommentLine) / sizeof(kCommentLine[0])) - 1
-};
+static char* const kKeyValueLine = "key : value";
+static char* const kSpacedKeyValueLine = "\t     key\v : \tvalue     ";
+static char* const kNoSpaceKeyValueLine = "key:value";
+static char* const kMappedKeyValueLine = "key[innerKey]: value, true";
+static char* const kOnlySpacesLine = "\t \t\v";
+static char* const kEmptyLine = "";
+static char* const kCommentLine = "// key : value";
 
 static void BeforeAllSetUp(void) {
 }
 
-typedef void TestFunc(void);
+struct EachContext {
+  struct Lexer lexer;
+};
 
-static void LexLine_KeyValue_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+typedef void TestFunc(struct EachContext* context);
 
-  result = LexerLine_LexLine(&line, 1, kKeyValueLine, kKeyValueLineLength);
+static void BeforeEach(struct EachContext* context) {
+  struct Lexer* result;
 
-  assert(result == &line);
-
-  LexerLine_Deinit(&line);
+  result = Lexer_Init(&context->lexer, 16);
+  assert(result == &context->lexer);
 }
 
-static void LexLine_KeyValue_LexedStrings(void) {
-  struct LexerLine line;
-
-  LexerLine_LexLine(&line, 1, kKeyValueLine, kKeyValueLineLength);
-
-  assert(line.strs_count == 5);
-  assert(strcmp(line.strs[0].str, "key") == 0);
-  assert(line.strs[0].str_length == 3);
-  assert(line.strs[0].line_index == 0);
-  assert(strcmp(line.strs[1].str, " ") == 0);
-  assert(line.strs[1].str_length == 1);
-  assert(line.strs[1].line_index == 3);
-  assert(strcmp(line.strs[2].str, ":") == 0);
-  assert(line.strs[2].str_length == 1);
-  assert(line.strs[2].line_index == 4);
-  assert(strcmp(line.strs[3].str, " ") == 0);
-  assert(line.strs[3].str_length == 1);
-  assert(line.strs[3].line_index == 5);
-  assert(strcmp(line.strs[4].str, "value") == 0);
-  assert(line.strs[4].str_length == 5);
-  assert(line.strs[4].line_index == 6);
-
-  LexerLine_Deinit(&line);
+static void AfterEach(struct EachContext* context) {
+  Lexer_Deinit(&context->lexer);
 }
 
-static void LexLine_KeyValue_LexedTokens(void) {
-  struct LexerLine line;
+static void Lex_KeyValue_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  LexerLine_LexLine(&line, 1, kKeyValueLine, kKeyValueLineLength);
+  result = Lexer_Lex(&context->lexer, &kKeyValueLine, 1);
 
-  assert(line.tokens_count == 3);
-  assert(line.first_token == &line.strs[0]);
-  assert(line.last_token == &line.strs[4]);
-  assert(line.strs[0].previous_token == NULL);
-  assert(line.strs[0].next_token == &line.strs[2]);
-  assert(line.strs[1].previous_token == &line.strs[0]);
-  assert(line.strs[1].next_token == &line.strs[2]);
-  assert(line.strs[2].previous_token == &line.strs[0]);
-  assert(line.strs[2].next_token == &line.strs[4]);
-  assert(line.strs[3].previous_token == &line.strs[2]);
-  assert(line.strs[3].next_token == &line.strs[4]);
-  assert(line.strs[4].previous_token == &line.strs[2]);
-  assert(line.strs[4].next_token == NULL);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_MappedKeyValue_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+static void Lex_KeyValue_LexedStrings(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  result =
-      LexerLine_LexLine(
-          &line, 1, kMappedKeyValueLine, kMappedKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kKeyValueLine, 1);
 
-  assert(result == &line);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 5);
+  assert(strcmp(lline->strs[0].str, "key") == 0);
+  assert(lline->strs[0].str_length == 3);
+  assert(lline->strs[0].line_index == 0);
+  assert(strcmp(lline->strs[1].str, " ") == 0);
+  assert(lline->strs[1].str_length == 1);
+  assert(lline->strs[1].line_index == 3);
+  assert(strcmp(lline->strs[2].str, ":") == 0);
+  assert(lline->strs[2].str_length == 1);
+  assert(lline->strs[2].line_index == 4);
+  assert(strcmp(lline->strs[3].str, " ") == 0);
+  assert(lline->strs[3].str_length == 1);
+  assert(lline->strs[3].line_index == 5);
+  assert(strcmp(lline->strs[4].str, "value") == 0);
+  assert(lline->strs[4].str_length == 5);
+  assert(lline->strs[4].line_index == 6);
 }
 
-static void LexLine_MappedKeyValue_LexedStrings(void) {
-  struct LexerLine line;
+static void Lex_KeyValue_LexedTokens(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(&line, 1, kMappedKeyValueLine, kMappedKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kKeyValueLine, 1);
 
-  assert(line.strs_count == 10);
-  assert(strcmp(line.strs[0].str, "key") == 0);
-  assert(line.strs[0].str_length == 3);
-  assert(line.strs[0].line_index == 0);
-  assert(strcmp(line.strs[1].str, "[") == 0);
-  assert(line.strs[1].str_length == 1);
-  assert(line.strs[1].line_index == 3);
-  assert(strcmp(line.strs[2].str, "innerKey") == 0);
-  assert(line.strs[2].str_length == 8);
-  assert(line.strs[2].line_index == 4);
-  assert(strcmp(line.strs[3].str, "]") == 0);
-  assert(line.strs[3].str_length == 1);
-  assert(line.strs[3].line_index == 12);
-  assert(strcmp(line.strs[4].str, ":") == 0);
-  assert(line.strs[4].str_length == 1);
-  assert(line.strs[4].line_index == 13);
-  assert(strcmp(line.strs[5].str, " ") == 0);
-  assert(line.strs[5].str_length == 1);
-  assert(line.strs[5].line_index == 14);
-  assert(strcmp(line.strs[6].str, "value") == 0);
-  assert(line.strs[6].str_length == 5);
-  assert(line.strs[6].line_index == 15);
-  assert(strcmp(line.strs[7].str, ",") == 0);
-  assert(line.strs[7].str_length == 1);
-  assert(line.strs[7].line_index == 20);
-  assert(strcmp(line.strs[8].str, " ") == 0);
-  assert(line.strs[8].str_length == 1);
-  assert(line.strs[8].line_index == 21);
-  assert(strcmp(line.strs[9].str, "true") == 0);
-  assert(line.strs[9].str_length == 4);
-  assert(line.strs[9].line_index == 22);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->tokens_count == 3);
+  assert(lline->first_token == &lline->strs[0]);
+  assert(lline->last_token == &lline->strs[4]);
+  assert(lline->strs[0].previous_token == NULL);
+  assert(lline->strs[0].next_token == &lline->strs[2]);
+  assert(lline->strs[1].previous_token == &lline->strs[0]);
+  assert(lline->strs[1].next_token == &lline->strs[2]);
+  assert(lline->strs[2].previous_token == &lline->strs[0]);
+  assert(lline->strs[2].next_token == &lline->strs[4]);
+  assert(lline->strs[3].previous_token == &lline->strs[2]);
+  assert(lline->strs[3].next_token == &lline->strs[4]);
+  assert(lline->strs[4].previous_token == &lline->strs[2]);
+  assert(lline->strs[4].next_token == NULL);
 }
 
-static void LexLine_MappedKeyValue_LexedTokens(void) {
-  struct LexerLine line;
+static void Lex_MappedKeyValue_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  LexerLine_LexLine(&line, 1, kMappedKeyValueLine, kMappedKeyValueLineLength);
+  result = Lexer_Lex(&context->lexer, &kMappedKeyValueLine, 1);
 
-  assert(line.tokens_count == 8);
-  assert(line.first_token == &line.strs[0]);
-  assert(line.last_token == &line.strs[9]);
-  assert(line.strs[0].previous_token == NULL);
-  assert(line.strs[0].next_token == &line.strs[1]);
-  assert(line.strs[1].previous_token == &line.strs[0]);
-  assert(line.strs[1].next_token == &line.strs[2]);
-  assert(line.strs[2].previous_token == &line.strs[1]);
-  assert(line.strs[2].next_token == &line.strs[3]);
-  assert(line.strs[3].previous_token == &line.strs[2]);
-  assert(line.strs[3].next_token == &line.strs[4]);
-  assert(line.strs[4].previous_token == &line.strs[3]);
-  assert(line.strs[4].next_token == &line.strs[6]);
-  assert(line.strs[5].previous_token == &line.strs[4]);
-  assert(line.strs[5].next_token == &line.strs[6]);
-  assert(line.strs[6].previous_token == &line.strs[4]);
-  assert(line.strs[6].next_token == &line.strs[7]);
-  assert(line.strs[7].previous_token == &line.strs[6]);
-  assert(line.strs[7].next_token == &line.strs[9]);
-  assert(line.strs[8].previous_token == &line.strs[7]);
-  assert(line.strs[8].next_token == &line.strs[9]);
-  assert(line.strs[9].previous_token == &line.strs[7]);
-  assert(line.strs[9].next_token == NULL);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_SpacedKeyValue_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+static void Lex_MappedKeyValue_LexedStrings(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  result =
-      LexerLine_LexLine(
-          &line, 1, kSpacedKeyValueLine, kSpacedKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kMappedKeyValueLine, 1);
 
-  assert(result == &line);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 10);
+  assert(strcmp(lline->strs[0].str, "key") == 0);
+  assert(lline->strs[0].str_length == 3);
+  assert(lline->strs[0].line_index == 0);
+  assert(strcmp(lline->strs[1].str, "[") == 0);
+  assert(lline->strs[1].str_length == 1);
+  assert(lline->strs[1].line_index == 3);
+  assert(strcmp(lline->strs[2].str, "innerKey") == 0);
+  assert(lline->strs[2].str_length == 8);
+  assert(lline->strs[2].line_index == 4);
+  assert(strcmp(lline->strs[3].str, "]") == 0);
+  assert(lline->strs[3].str_length == 1);
+  assert(lline->strs[3].line_index == 12);
+  assert(strcmp(lline->strs[4].str, ":") == 0);
+  assert(lline->strs[4].str_length == 1);
+  assert(lline->strs[4].line_index == 13);
+  assert(strcmp(lline->strs[5].str, " ") == 0);
+  assert(lline->strs[5].str_length == 1);
+  assert(lline->strs[5].line_index == 14);
+  assert(strcmp(lline->strs[6].str, "value") == 0);
+  assert(lline->strs[6].str_length == 5);
+  assert(lline->strs[6].line_index == 15);
+  assert(strcmp(lline->strs[7].str, ",") == 0);
+  assert(lline->strs[7].str_length == 1);
+  assert(lline->strs[7].line_index == 20);
+  assert(strcmp(lline->strs[8].str, " ") == 0);
+  assert(lline->strs[8].str_length == 1);
+  assert(lline->strs[8].line_index == 21);
+  assert(strcmp(lline->strs[9].str, "true") == 0);
+  assert(lline->strs[9].str_length == 4);
+  assert(lline->strs[9].line_index == 22);
 }
 
-static void LexLine_SpacedKeyValue_LexedStrings(void) {
-  struct LexerLine line;
+static void Lex_MappedKeyValue_LexedTokens(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(
-      &line, 1, kSpacedKeyValueLine, kSpacedKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kMappedKeyValueLine, 1);
 
-  assert(line.strs_count == 7);
-  assert(strcmp(line.strs[0].str, "\t     ") == 0);
-  assert(line.strs[0].str_length == 6);
-  assert(line.strs[0].line_index == 0);
-  assert(strcmp(line.strs[1].str, "key") == 0);
-  assert(line.strs[1].str_length == 3);
-  assert(line.strs[1].line_index == 6);
-  assert(strcmp(line.strs[2].str, "\v ") == 0);
-  assert(line.strs[2].str_length == 2);
-  assert(line.strs[2].line_index == 9);
-  assert(strcmp(line.strs[3].str, ":") == 0);
-  assert(line.strs[3].str_length == 1);
-  assert(line.strs[3].line_index == 11);
-  assert(strcmp(line.strs[4].str, " \t") == 0);
-  assert(line.strs[4].str_length == 2);
-  assert(line.strs[4].line_index == 12);
-  assert(strcmp(line.strs[5].str, "value") == 0);
-  assert(line.strs[5].str_length == 5);
-  assert(line.strs[5].line_index == 14);
-  assert(strcmp(line.strs[6].str, "     ") == 0);
-  assert(line.strs[6].str_length == 5);
-  assert(line.strs[6].line_index == 19);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->tokens_count == 8);
+  assert(lline->first_token == &lline->strs[0]);
+  assert(lline->last_token == &lline->strs[9]);
+  assert(lline->strs[0].previous_token == NULL);
+  assert(lline->strs[0].next_token == &lline->strs[1]);
+  assert(lline->strs[1].previous_token == &lline->strs[0]);
+  assert(lline->strs[1].next_token == &lline->strs[2]);
+  assert(lline->strs[2].previous_token == &lline->strs[1]);
+  assert(lline->strs[2].next_token == &lline->strs[3]);
+  assert(lline->strs[3].previous_token == &lline->strs[2]);
+  assert(lline->strs[3].next_token == &lline->strs[4]);
+  assert(lline->strs[4].previous_token == &lline->strs[3]);
+  assert(lline->strs[4].next_token == &lline->strs[6]);
+  assert(lline->strs[5].previous_token == &lline->strs[4]);
+  assert(lline->strs[5].next_token == &lline->strs[6]);
+  assert(lline->strs[6].previous_token == &lline->strs[4]);
+  assert(lline->strs[6].next_token == &lline->strs[7]);
+  assert(lline->strs[7].previous_token == &lline->strs[6]);
+  assert(lline->strs[7].next_token == &lline->strs[9]);
+  assert(lline->strs[8].previous_token == &lline->strs[7]);
+  assert(lline->strs[8].next_token == &lline->strs[9]);
+  assert(lline->strs[9].previous_token == &lline->strs[7]);
+  assert(lline->strs[9].next_token == NULL);
 }
 
-static void LexLine_SpacedKeyValue_LexedTokens(void) {
-  struct LexerLine line;
+static void Lex_SpacedKeyValue_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  LexerLine_LexLine(
-      &line, 1, kSpacedKeyValueLine, kSpacedKeyValueLineLength);
+  result = Lexer_Lex(&context->lexer, &kSpacedKeyValueLine, 1);
 
-  assert(line.tokens_count == 3);
-  assert(line.first_token == &line.strs[1]);
-  assert(line.last_token == &line.strs[5]);
-  assert(line.strs[0].previous_token == NULL);
-  assert(line.strs[0].next_token == &line.strs[1]);
-  assert(line.strs[1].previous_token == NULL);
-  assert(line.strs[1].next_token == &line.strs[3]);
-  assert(line.strs[2].previous_token == &line.strs[1]);
-  assert(line.strs[2].next_token == &line.strs[3]);
-  assert(line.strs[3].previous_token == &line.strs[1]);
-  assert(line.strs[3].next_token == &line.strs[5]);
-  assert(line.strs[4].previous_token == &line.strs[3]);
-  assert(line.strs[4].next_token == &line.strs[5]);
-  assert(line.strs[5].previous_token == &line.strs[3]);
-  assert(line.strs[5].next_token == NULL);
-  assert(line.strs[6].previous_token == &line.strs[5]);
-  assert(line.strs[6].next_token == NULL);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_NoSpaceKeyValue_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+static void Lex_SpacedKeyValue_LexedStrings(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  result =
-      LexerLine_LexLine(
-          &line, 1, kNoSpaceKeyValueLine, kNoSpaceKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kSpacedKeyValueLine, 1);
 
-  assert(result == &line);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 7);
+  assert(strcmp(lline->strs[0].str, "\t     ") == 0);
+  assert(lline->strs[0].str_length == 6);
+  assert(lline->strs[0].line_index == 0);
+  assert(strcmp(lline->strs[1].str, "key") == 0);
+  assert(lline->strs[1].str_length == 3);
+  assert(lline->strs[1].line_index == 6);
+  assert(strcmp(lline->strs[2].str, "\v ") == 0);
+  assert(lline->strs[2].str_length == 2);
+  assert(lline->strs[2].line_index == 9);
+  assert(strcmp(lline->strs[3].str, ":") == 0);
+  assert(lline->strs[3].str_length == 1);
+  assert(lline->strs[3].line_index == 11);
+  assert(strcmp(lline->strs[4].str, " \t") == 0);
+  assert(lline->strs[4].str_length == 2);
+  assert(lline->strs[4].line_index == 12);
+  assert(strcmp(lline->strs[5].str, "value") == 0);
+  assert(lline->strs[5].str_length == 5);
+  assert(lline->strs[5].line_index == 14);
+  assert(strcmp(lline->strs[6].str, "     ") == 0);
+  assert(lline->strs[6].str_length == 5);
+  assert(lline->strs[6].line_index == 19);
 }
 
-static void LexLine_NoSpaceKeyValue_LexedStrings(void) {
-  struct LexerLine line;
+static void Lex_SpacedKeyValue_LexedTokens(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(
-      &line, 1, kNoSpaceKeyValueLine, kNoSpaceKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kSpacedKeyValueLine, 1);
 
-  assert(line.strs_count == 3);
-  assert(strcmp(line.strs[0].str, "key") == 0);
-  assert(line.strs[0].str_length == 3);
-  assert(line.strs[0].line_index == 0);
-  assert(strcmp(line.strs[1].str, ":") == 0);
-  assert(line.strs[1].str_length == 1);
-  assert(line.strs[1].line_index == 3);
-  assert(strcmp(line.strs[2].str, "value") == 0);
-  assert(line.strs[2].str_length == 5);
-  assert(line.strs[2].line_index == 4);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->tokens_count == 3);
+  assert(lline->first_token == &lline->strs[1]);
+  assert(lline->last_token == &lline->strs[5]);
+  assert(lline->strs[0].previous_token == NULL);
+  assert(lline->strs[0].next_token == &lline->strs[1]);
+  assert(lline->strs[1].previous_token == NULL);
+  assert(lline->strs[1].next_token == &lline->strs[3]);
+  assert(lline->strs[2].previous_token == &lline->strs[1]);
+  assert(lline->strs[2].next_token == &lline->strs[3]);
+  assert(lline->strs[3].previous_token == &lline->strs[1]);
+  assert(lline->strs[3].next_token == &lline->strs[5]);
+  assert(lline->strs[4].previous_token == &lline->strs[3]);
+  assert(lline->strs[4].next_token == &lline->strs[5]);
+  assert(lline->strs[5].previous_token == &lline->strs[3]);
+  assert(lline->strs[5].next_token == NULL);
+  assert(lline->strs[6].previous_token == &lline->strs[5]);
+  assert(lline->strs[6].next_token == NULL);
 }
 
-static void LexLine_NoSpaceKeyValue_LexedTokens(void) {
-  struct LexerLine line;
+static void Lex_NoSpaceKeyValue_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  LexerLine_LexLine(
-      &line, 1, kNoSpaceKeyValueLine, kNoSpaceKeyValueLineLength);
+  result = Lexer_Lex(&context->lexer, &kNoSpaceKeyValueLine, 1);
 
-  assert(line.tokens_count == 3);
-  assert(line.first_token == &line.strs[0]);
-  assert(line.last_token == &line.strs[2]);
-  assert(line.strs[0].previous_token == NULL);
-  assert(line.strs[0].next_token == &line.strs[1]);
-  assert(line.strs[1].previous_token == &line.strs[0]);
-  assert(line.strs[1].next_token == &line.strs[2]);
-  assert(line.strs[2].previous_token == &line.strs[1]);
-  assert(line.strs[2].next_token == NULL);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_OnlySpaces_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+static void Lex_NoSpaceKeyValue_LexedStrings(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  result = LexerLine_LexLine(&line, 1, kOnlySpacesLine, kOnlySpacesLineLength);
+  Lexer_Lex(&context->lexer, &kNoSpaceKeyValueLine, 1);
 
-  assert(result == &line);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 3);
+  assert(strcmp(lline->strs[0].str, "key") == 0);
+  assert(lline->strs[0].str_length == 3);
+  assert(lline->strs[0].line_index == 0);
+  assert(strcmp(lline->strs[1].str, ":") == 0);
+  assert(lline->strs[1].str_length == 1);
+  assert(lline->strs[1].line_index == 3);
+  assert(strcmp(lline->strs[2].str, "value") == 0);
+  assert(lline->strs[2].str_length == 5);
+  assert(lline->strs[2].line_index == 4);
 }
 
-static void LexLine_OnlySpaces_OneString(void) {
-  struct LexerLine line;
+static void Lex_NoSpaceKeyValue_LexedTokens(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(&line, 1, kOnlySpacesLine, kOnlySpacesLineLength);
+  Lexer_Lex(&context->lexer, &kNoSpaceKeyValueLine, 1);
 
-  assert(line.strs_count == 1);
-  assert(strcmp(line.strs[0].str, "\t \t\v") == 0);
-  assert(line.strs[0].str_length == 4);
-  assert(line.strs[0].line_index == 0);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->tokens_count == 3);
+  assert(lline->first_token == &lline->strs[0]);
+  assert(lline->last_token == &lline->strs[2]);
+  assert(lline->strs[0].previous_token == NULL);
+  assert(lline->strs[0].next_token == &lline->strs[1]);
+  assert(lline->strs[1].previous_token == &lline->strs[0]);
+  assert(lline->strs[1].next_token == &lline->strs[2]);
+  assert(lline->strs[2].previous_token == &lline->strs[1]);
+  assert(lline->strs[2].next_token == NULL);
 }
 
-static void LexLine_OnlySpaces_NoTokens(void) {
-  struct LexerLine line;
+static void Lex_OnlySpaces_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  LexerLine_LexLine(&line, 1, kOnlySpacesLine, kOnlySpacesLineLength);
+  result = Lexer_Lex(&context->lexer, &kOnlySpacesLine, 1);
 
-  assert(line.tokens_count == 0);
-  assert(line.first_token == NULL);
-  assert(line.last_token == NULL);
-  assert(line.strs[0].previous_token == NULL);
-  assert(line.strs[0].next_token == NULL);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_Empty_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+static void Lex_OnlySpaces_OneString(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  result = LexerLine_LexLine(&line, 1, "unused", 0);
+  Lexer_Lex(&context->lexer, &kOnlySpacesLine, 1);
 
-  assert(result == &line);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 1);
+  assert(strcmp(lline->strs[0].str, "\t \t\v") == 0);
+  assert(lline->strs[0].str_length == 4);
+  assert(lline->strs[0].line_index == 0);
 }
 
-static void LexLine_Empty_NoStrings(void) {
-  struct LexerLine line;
+static void Lex_OnlySpaces_NoTokens(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(&line, 1, "unused", 0);
+  Lexer_Lex(&context->lexer, &kOnlySpacesLine, 1);
 
-  assert(line.strs_count == 0);
-  assert(line.tokens_count == 0);
-  assert(line.first_token == NULL);
-  assert(line.last_token == NULL);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->tokens_count == 0);
+  assert(lline->first_token == NULL);
+  assert(lline->last_token == NULL);
+  assert(lline->strs[0].previous_token == NULL);
+  assert(lline->strs[0].next_token == NULL);
 }
 
-static void LexLine_CommentLine_ReturnsSuccess(void) {
-  struct LexerLine line;
-  struct LexerLine* result;
+static void Lex_Empty_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  result = LexerLine_LexLine(&line, 1, kCommentLine, kCommentLineLength);
+  result = Lexer_Lex(&context->lexer, &kEmptyLine, 1);
 
-  assert(result == &line);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_CommentLine_OneString(void) {
-  struct LexerLine line;
+static void Lex_Empty_NoStrings(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(&line, 1, kCommentLine, kCommentLineLength);
+  Lexer_Lex(&context->lexer, &kEmptyLine, 1);
 
-  assert(line.strs_count == 1);
-  assert(strcmp(line.strs[0].str, kCommentLine) == 0);
-  assert(line.strs[0].str_length == kCommentLineLength);
-  assert(line.strs[0].line_index == 0);
-
-  LexerLine_Deinit(&line);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 0);
+  assert(lline->tokens_count == 0);
+  assert(lline->first_token == NULL);
+  assert(lline->last_token == NULL);
 }
 
-static void LexLine_CommentLine_NoTokens(void) {
-  struct LexerLine line;
+static void Lex_CommentLine_ReturnsSuccess(struct EachContext* context) {
+  int result;
 
-  LexerLine_LexLine(&line, 1, kCommentLine, kCommentLineLength);
+  result = Lexer_Lex(&context->lexer, &kCommentLine, 1);
 
-  assert(line.tokens_count == 0);
-  assert(line.first_token == NULL);
-  assert(line.last_token == NULL);
-  assert(line.strs[0].previous_token == NULL);
-  assert(line.strs[0].next_token == NULL);
-
-  LexerLine_Deinit(&line);
+  assert(result);
 }
 
-static void LexLine_SetLineNumber_ReturnsSuccessWithLineNumber(void) {
-  struct LexerLine line;
+static void Lex_CommentLine_OneString(struct EachContext* context) {
+  struct LexerLine* lline;
 
-  LexerLine_LexLine(&line, 42, kKeyValueLine, kKeyValueLineLength);
+  Lexer_Lex(&context->lexer, &kCommentLine, 1);
 
-  assert(line.line_number == 42);
+  lline = &context->lexer.lines[0];
+  assert(lline->strs_count == 1);
+  assert(strcmp(lline->strs[0].str, kCommentLine) == 0);
+  assert(lline->strs[0].str_length == strlen(kCommentLine));
+  assert(lline->strs[0].line_index == 0);
+}
 
-  LexerLine_Deinit(&line);
+static void Lex_CommentLine_NoTokens(struct EachContext* context) {
+  struct LexerLine* lline;
+
+  Lexer_Lex(&context->lexer, &kCommentLine, 1);
+
+  lline = &context->lexer.lines[0];
+  assert(lline->tokens_count == 0);
+  assert(lline->first_token == NULL);
+  assert(lline->last_token == NULL);
+  assert(lline->strs[0].previous_token == NULL);
+  assert(lline->strs[0].next_token == NULL);
+}
+
+static void Lex_SetLineNumber_ReturnsSuccessWithLineNumber(struct EachContext* context) {
+  struct LexerLine* lline;
+
+  Lexer_Lex(&context->lexer, &kKeyValueLine, 1);
+
+  lline = &context->lexer.lines[0];
+  assert(lline->line_number == 1);
 }
 
 int main(int argc, char** argv) {
@@ -435,34 +397,34 @@ int main(int argc, char** argv) {
 #else
 
   static TestFunc* const kTests[] = {
-    &LexLine_KeyValue_ReturnsSuccess,
-    &LexLine_KeyValue_LexedStrings,
-    &LexLine_KeyValue_LexedTokens,
+    &Lex_KeyValue_ReturnsSuccess,
+    &Lex_KeyValue_LexedStrings,
+    &Lex_KeyValue_LexedTokens,
 
-    &LexLine_MappedKeyValue_ReturnsSuccess,
-    &LexLine_MappedKeyValue_LexedStrings,
-    &LexLine_MappedKeyValue_LexedTokens,
+    &Lex_MappedKeyValue_ReturnsSuccess,
+    &Lex_MappedKeyValue_LexedStrings,
+    &Lex_MappedKeyValue_LexedTokens,
 
-    &LexLine_SpacedKeyValue_ReturnsSuccess,
-    &LexLine_SpacedKeyValue_LexedStrings,
-    &LexLine_SpacedKeyValue_LexedTokens,
+    &Lex_SpacedKeyValue_ReturnsSuccess,
+    &Lex_SpacedKeyValue_LexedStrings,
+    &Lex_SpacedKeyValue_LexedTokens,
 
-    &LexLine_NoSpaceKeyValue_ReturnsSuccess,
-    &LexLine_NoSpaceKeyValue_LexedStrings,
-    &LexLine_NoSpaceKeyValue_LexedTokens,
+    &Lex_NoSpaceKeyValue_ReturnsSuccess,
+    &Lex_NoSpaceKeyValue_LexedStrings,
+    &Lex_NoSpaceKeyValue_LexedTokens,
 
-    &LexLine_OnlySpaces_ReturnsSuccess,
-    &LexLine_OnlySpaces_OneString,
-    &LexLine_OnlySpaces_NoTokens,
+    &Lex_OnlySpaces_ReturnsSuccess,
+    &Lex_OnlySpaces_OneString,
+    &Lex_OnlySpaces_NoTokens,
 
-    &LexLine_Empty_ReturnsSuccess,
-    &LexLine_Empty_NoStrings,
+    &Lex_Empty_ReturnsSuccess,
+    &Lex_Empty_NoStrings,
 
-    &LexLine_CommentLine_ReturnsSuccess,
-    &LexLine_CommentLine_OneString,
-    &LexLine_CommentLine_NoTokens,
+    &Lex_CommentLine_ReturnsSuccess,
+    &Lex_CommentLine_OneString,
+    &Lex_CommentLine_NoTokens,
 
-    &LexLine_SetLineNumber_ReturnsSuccessWithLineNumber
+    &Lex_SetLineNumber_ReturnsSuccessWithLineNumber
   };
 
   enum {
@@ -475,7 +437,11 @@ int main(int argc, char** argv) {
 
   printf("Running %u test(s).\n", kTestsCount);
   for (i = 0; i < kTestsCount; ++i) {
-    kTests[i]();
+    struct EachContext context;
+
+    BeforeEach(&context);
+    kTests[i](&context);
+    AfterEach(&context);
   }
   printf("Ran %u test(s).\n", kTestsCount);
 
