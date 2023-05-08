@@ -286,7 +286,7 @@ int KeyExpr_Equal(
   }
 
   for (i = 0; i < left->subscripts_count; ++i) {
-    if (!ConstExpr_Equal(&left->subscripts[i], &right->subscripts[i])) {
+    if (!Subscript_Equal(&left->subscripts[i], &right->subscripts[i])) {
       return 0;
     }
   }
