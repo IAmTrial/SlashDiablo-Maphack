@@ -1,5 +1,5 @@
 # SlashDiablo Maphack
-# Copyright (C) 2012-2022  SlashDiablo Team
+# Copyright (C) 2012-2023  SlashDiablo Team
 #
 # This file is part of SlashDiablo Maphack.
 #
@@ -17,7 +17,11 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH.Common)
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/red_black_color.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/red_black_color.h"
 
-add_subdirectory("data_struct")
-add_subdirectory("string_util")
+        "${CMAKE_CURRENT_SOURCE_DIR}/red_black_node.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/red_black_node.h"
+)

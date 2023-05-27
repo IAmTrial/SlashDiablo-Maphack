@@ -1,5 +1,5 @@
 # SlashDiablo Maphack
-# Copyright (C) 2012-2022  SlashDiablo Team
+# Copyright (C) 2012-2023  SlashDiablo Team
 #
 # This file is part of SlashDiablo Maphack.
 #
@@ -17,7 +17,22 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH.Common)
+cmake_minimum_required(VERSION 3.20)
 
-add_subdirectory("data_struct")
-add_subdirectory("string_util")
+project(Tests.BH.Common.DataStruct)
+
+# Define requirements for C
+set(CMAKE_C_STANDARD 90)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+unset(CMAKE_CXX_STANDARD)
+unset(CMAKE_CXX_STANDARD_REQUIRED)
+
+# Remove MinGW compiled binary "lib" prefix
+if (MINGW)
+    set(CMAKE_IMPORT_LIBRARY_PREFIX "")
+    set(CMAKE_SHARED_LIBRARY_PREFIX "")
+    set(CMAKE_STATIC_LIBRARY_PREFIX "")
+endif (MINGW)
+
+add_subdirectory("red_black_tree")
