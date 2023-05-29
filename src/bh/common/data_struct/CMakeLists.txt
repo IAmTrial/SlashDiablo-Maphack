@@ -17,4 +17,10 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/red_black_tree.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/red_black_tree.h"
+)
+
 add_subdirectory("red_black_tree")

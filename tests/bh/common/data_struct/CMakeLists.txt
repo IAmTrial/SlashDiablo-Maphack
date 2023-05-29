@@ -35,4 +35,12 @@ if (MINGW)
     set(CMAKE_STATIC_LIBRARY_PREFIX "")
 endif (MINGW)
 
+# Define test targets
+add_executable(${PROJECT_NAME}.RedBlackTreeTest "red_black_tree_test.c")
+target_compile_definitions(${PROJECT_NAME}.RedBlackTreeTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.RedBlackTreeTest 
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.RedBlackTreeTest PRIVATE BH.Common)
+
 add_subdirectory("red_black_tree")
