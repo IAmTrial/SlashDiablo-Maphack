@@ -45,6 +45,15 @@ const char* RedBlackColor_GetDisplayName(
       return kDisplayName;
     }
 
+    case RedBlackColor_kDoubleBlack: {
+      static const char kDisplayName[] = "Double Black";
+
+      if (length != NULL) {
+        *length = (sizeof(kDisplayName) / sizeof(kDisplayName[0])) - 1;
+      }
+      return kDisplayName;
+    }
+
     default: {
       assert(0 && "This should never happen.");
       return NULL;

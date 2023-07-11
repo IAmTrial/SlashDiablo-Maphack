@@ -33,6 +33,7 @@ enum RedBlackColor {
 
   RedBlackColor_kRed = 1,
   RedBlackColor_kBlack = 2,
+  RedBlackColor_kDoubleBlack = 3
 };
 
 const char* RedBlackColor_GetDisplayName(
