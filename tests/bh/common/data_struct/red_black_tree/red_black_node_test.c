@@ -330,6 +330,126 @@ static void RotateRight_TriangleTenOneFive_TriangleInOrder(
   }
 }
 
+static void RotateAwayFromChild_AwayFromLeftChild_RotatedRight(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->ten_node, &context->one_node);
+  RedBlackNode_SetRight(&context->one_node, &context->five_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  RedBlackNode_RotateAwayFromChild(&context->ten_node, &context->one_node);
+
+  assert(RedBlackNode_IsRoot(&context->one_node));
+  assert(context->one_node.left == NULL);
+  assert(context->one_node.right == &context->ten_node);
+  assert(context->ten_node.left == &context->five_node);
+  assert(context->ten_node.right == &context->twenty_node);
+}
+
+static void RotateAwayFromChild_AwayFromRightChild_RotatedLeft(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->twenty_node);
+  RedBlackNode_SetLeft(&context->twenty_node, &context->ten_node);
+
+  RedBlackNode_RotateAwayFromChild(&context->five_node, &context->twenty_node);
+
+  assert(RedBlackNode_IsRoot(&context->twenty_node));
+  assert(context->twenty_node.left == &context->five_node);
+  assert(context->twenty_node.right == NULL);
+  assert(context->five_node.left == &context->one_node);
+  assert(context->five_node.right == &context->ten_node);
+}
+
+static void RotateTowardChild_TowardLeftChild_RotatedLeft(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->twenty_node);
+  RedBlackNode_SetLeft(&context->twenty_node, &context->ten_node);
+
+  RedBlackNode_RotateTowardChild(&context->five_node, &context->one_node);
+
+  assert(RedBlackNode_IsRoot(&context->twenty_node));
+  assert(context->twenty_node.left == &context->five_node);
+  assert(context->twenty_node.right == NULL);
+  assert(context->five_node.left == &context->one_node);
+  assert(context->five_node.right == &context->ten_node);
+}
+
+static void RotateTowardChild_TowardRightChild_RotatedRight(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->ten_node, &context->one_node);
+  RedBlackNode_SetRight(&context->one_node, &context->five_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  RedBlackNode_RotateTowardChild(&context->ten_node, &context->twenty_node);
+
+  assert(RedBlackNode_IsRoot(&context->one_node));
+  assert(context->one_node.left == NULL);
+  assert(context->one_node.right == &context->ten_node);
+  assert(context->ten_node.left == &context->five_node);
+  assert(context->ten_node.right == &context->twenty_node);
+}
+
+static void RotateAwayFromSibling_AwayFromLeftSibling_RotatedRight(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->twenty_node);
+  RedBlackNode_SetLeft(&context->twenty_node, &context->ten_node);
+
+  RedBlackNode_RotateAwayFromSibling(&context->twenty_node);
+
+  assert(RedBlackNode_IsLeaf(&context->twenty_node));
+  assert(context->twenty_node.parent == &context->ten_node);
+  assert(context->ten_node.right == &context->twenty_node);
+  assert(context->ten_node.parent == &context->five_node);
+  assert(context->five_node.right == &context->ten_node);
+}
+
+static void RotateAwayFromSibling_AwayFromRightSibling_RotatedLeft(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->ten_node, &context->one_node);
+  RedBlackNode_SetRight(&context->one_node, &context->five_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  RedBlackNode_RotateAwayFromSibling(&context->one_node);
+
+  assert(RedBlackNode_IsLeaf(&context->one_node));
+  assert(context->one_node.parent == &context->five_node);
+  assert(context->five_node.left == &context->one_node);
+  assert(context->five_node.parent == &context->ten_node);
+  assert(context->ten_node.left == &context->five_node);
+}
+
+static void RotateTowardSibling_TowardLeftSibling_RotatedLeft(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  RedBlackNode_RotateTowardSibling(&context->ten_node);
+
+  assert(RedBlackNode_IsLeaf(&context->ten_node));
+  assert(context->ten_node.parent == &context->twenty_node);
+  assert(context->twenty_node.left == &context->ten_node);
+  assert(context->twenty_node.parent == &context->five_node);
+  assert(context->five_node.right == &context->twenty_node);
+}
+
+static void RotateTowardSibling_TowardRightSibling_RotatedRight(
+    struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->ten_node, &context->five_node);
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  RedBlackNode_RotateTowardSibling(&context->five_node);
+
+  assert(RedBlackNode_IsLeaf(&context->five_node));
+  assert(context->five_node.parent == &context->one_node);
+  assert(context->one_node.right == &context->five_node);
+  assert(context->one_node.parent == &context->ten_node);
+  assert(context->ten_node.left == &context->one_node);
+}
+
 static void GetGrandparent_GrandparentIsTen_GetsTen(
     struct EachContext* context) {
   struct RedBlackNode* grandparent;
@@ -347,6 +467,14 @@ static void GetGrandparent_NoGrandparent_GetsNull(
   struct RedBlackNode* grandparent;
 
   RedBlackNode_SetLeft(&context->ten_node, &context->one_node);
+
+  grandparent = RedBlackNode_GetGrandparent(&context->one_node);
+
+  assert(grandparent == NULL);
+}
+
+static void GetGrandparent_NoParent_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* grandparent;
 
   grandparent = RedBlackNode_GetGrandparent(&context->one_node);
 
@@ -376,8 +504,7 @@ static void GetUncle_NoUncle_GetsNull(struct EachContext* context) {
   assert(uncle == NULL);
 }
 
-static void GetUncle_NoGrandparent_GetsNull(
-    struct EachContext* context) {
+static void GetUncle_NoGrandparent_GetsNull(struct EachContext* context) {
   struct RedBlackNode* uncle;
 
   RedBlackNode_SetLeft(&context->ten_node, &context->one_node);
@@ -385,6 +512,352 @@ static void GetUncle_NoGrandparent_GetsNull(
   uncle = RedBlackNode_GetUncle(&context->one_node);
 
   assert(uncle == NULL);
+}
+
+static void GetUncle_NoParent_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* uncle;
+
+  uncle = RedBlackNode_GetUncle(&context->one_node);
+
+  assert(uncle == NULL);
+}
+
+static void GetSibling_LeftSiblingIsOne_GetsOne(struct EachContext* context) {
+  struct RedBlackNode* sibling;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  sibling = RedBlackNode_GetSibling(&context->ten_node);
+
+  assert(sibling == &context->one_node);
+}
+
+static void GetSibling_RightSiblingIsTen_GetsTen(
+    struct EachContext* context) {
+  struct RedBlackNode* sibling;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  sibling = RedBlackNode_GetSibling(&context->one_node);
+
+  assert(sibling == &context->ten_node);
+}
+
+static void GetSibling_NoLeftSibling_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* sibling;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+
+  sibling = RedBlackNode_GetSibling(&context->one_node);
+
+  assert(sibling == NULL);
+}
+
+static void GetSibling_NoRightSibling_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* sibling;
+
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  sibling = RedBlackNode_GetSibling(&context->ten_node);
+
+  assert(sibling == NULL);
+}
+
+static void GetSibling_NoParent_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* sibling;
+
+  sibling = RedBlackNode_GetSibling(&context->one_node);
+
+  assert(sibling == NULL);
+}
+
+static void GetFarNephew_LeftNephewIsOne_GetsOne(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->ten_node, &context->five_node);
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  nephew = RedBlackNode_GetFarNephew(&context->twenty_node);
+
+  assert(nephew == &context->one_node);
+}
+
+static void GetFarNephew_RightNephewIsTwenty_GetsTwenty(
+    struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  nephew = RedBlackNode_GetFarNephew(&context->one_node);
+
+  assert(nephew == &context->twenty_node);
+}
+
+static void GetFarNephew_NoLeftNephew_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetFarNephew(&context->ten_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetFarNephew_NoRightNephew_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetFarNephew(&context->one_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetFarNephew_NoLeftSibling_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetFarNephew(&context->ten_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetFarNephew_NoRightSibling_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+
+  nephew = RedBlackNode_GetFarNephew(&context->one_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetFarNephew_NoParent_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  nephew = RedBlackNode_GetFarNephew(&context->one_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetNearNephew_LeftNephewIsFive_GetsFive(
+    struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->ten_node, &context->one_node);
+  RedBlackNode_SetRight(&context->one_node, &context->five_node);
+  RedBlackNode_SetRight(&context->ten_node, &context->twenty_node);
+
+  nephew = RedBlackNode_GetNearNephew(&context->twenty_node);
+
+  assert(nephew == &context->five_node);
+}
+
+static void GetNearNephew_RightNephewIsTen_GetsTen(
+    struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->twenty_node);
+  RedBlackNode_SetLeft(&context->twenty_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetNearNephew(&context->one_node);
+
+  assert(nephew == &context->ten_node);
+}
+
+static void GetNearNephew_NoLeftNephew_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetNearNephew(&context->ten_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetNearNephew_NoRightNephew_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetNearNephew(&context->one_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetNearNephew_NoLeftSibling_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  nephew = RedBlackNode_GetNearNephew(&context->ten_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetNearNephew_NoRightSibling_GetsNull(
+    struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+
+  nephew = RedBlackNode_GetNearNephew(&context->one_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetNearNephew_NoParent_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* nephew;
+
+  nephew = RedBlackNode_GetNearNephew(&context->one_node);
+
+  assert(nephew == NULL);
+}
+
+static void GetInorderSuccessor_LeftSuccessorIsTen_GetsTen(
+    struct EachContext* context) {
+  struct RedBlackNode* successor;
+
+  RedBlackNode_SetLeft(&context->twenty_node, &context->one_node);
+  RedBlackNode_SetRight(&context->one_node, &context->ten_node);
+  RedBlackNode_SetLeft(&context->ten_node, &context->five_node);
+
+  successor = RedBlackNode_GetInOrderSuccessor(&context->twenty_node);
+
+  assert(successor == &context->ten_node);
+}
+
+static void GetInorderSuccessor_RightSuccessorIsFive_GetsFive(
+    struct EachContext* context) {
+  struct RedBlackNode* successor;
+
+  RedBlackNode_SetRight(&context->one_node, &context->twenty_node);
+  RedBlackNode_SetLeft(&context->twenty_node, &context->five_node);
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  successor = RedBlackNode_GetInOrderSuccessor(&context->one_node);
+
+  assert(successor == &context->five_node);
+}
+
+static void GetInorderSuccessor_None_GetsNull(struct EachContext* context) {
+  struct RedBlackNode* successor;
+
+  successor = RedBlackNode_GetInOrderSuccessor(&context->one_node);
+
+  assert(successor == NULL);
+}
+
+static void AddBlack_IsRed_IsBlack(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kRed;
+
+  RedBlackNode_AddBlack(&context->one_node);
+
+  assert(context->one_node.color == RedBlackColor_kBlack);
+}
+
+static void AddBlack_IsBlack_IsDoubleBlack(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kBlack;
+
+  RedBlackNode_AddBlack(&context->one_node);
+
+  assert(context->one_node.color == RedBlackColor_kDoubleBlack);
+}
+
+static void IsBlack_Red_False(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kRed;
+
+  assert(!RedBlackNode_IsBlack(&context->one_node));
+}
+
+static void IsBlack_Black_True(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kBlack;
+
+  assert(RedBlackNode_IsBlack(&context->one_node));
+}
+
+static void IsBlack_DoubleBlack_False(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kDoubleBlack;
+
+  assert(!RedBlackNode_IsBlack(&context->one_node));
+}
+
+static void IsBlack_Null_True(struct EachContext* context) {
+  assert(RedBlackNode_IsBlack(NULL));
+}
+
+static void IsLeaf_NoLeftRight_True(struct EachContext* context) {
+  assert(RedBlackNode_IsLeaf(&context->five_node));
+}
+
+static void IsLeaf_HasLeft_False(struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+
+  assert(!RedBlackNode_IsLeaf(&context->five_node));
+}
+
+static void IsLeaf_HasRight_False(struct EachContext* context) {
+  RedBlackNode_SetRight(&context->five_node, &context->ten_node);
+
+  assert(!RedBlackNode_IsLeaf(&context->five_node));
+}
+
+static void IsRed_Red_True(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kRed;
+
+  assert(RedBlackNode_IsRed(&context->one_node));
+}
+
+static void IsRed_Black_False(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kBlack;
+
+  assert(!RedBlackNode_IsRed(&context->one_node));
+}
+
+static void IsRed_DoubleBlack_False(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kDoubleBlack;
+
+  assert(!RedBlackNode_IsRed(&context->one_node));
+}
+
+static void IsRed_Null_False(struct EachContext* context) {
+  assert(!RedBlackNode_IsRed(NULL));
+}
+
+static void IsRoot_NoParent_True(struct EachContext* context) {
+  assert(RedBlackNode_IsRoot(&context->five_node));
+}
+
+static void IsRoot_HasParent_False(struct EachContext* context) {
+  RedBlackNode_SetRight(&context->five_node, &context->one_node);
+
+  assert(!RedBlackNode_IsRoot(&context->one_node));
+}
+
+static void Detach_HasParent_Disowned(struct EachContext* context) {
+  RedBlackNode_SetLeft(&context->five_node, &context->one_node);
+
+  RedBlackNode_Detach(&context->one_node);
+
+  assert(context->one_node.parent == NULL);
+  assert(context->one_node.next == NULL);
+  assert(context->five_node.left == NULL);
+  assert(context->five_node.previous == NULL);
+}
+
+static void Detach_NoParent_DoNothing(struct EachContext* context) {
+  RedBlackNode_Detach(&context->one_node);
 }
 
 static void ComparePointerData_OneTen_Negative(struct EachContext* context) {
@@ -417,6 +890,16 @@ static void ComparePointerData_TenOne_Positive(struct EachContext* context) {
   assert(cmp_result > 0);
 }
 
+static void SwapColor_RedAndBlack_BlackAndRed(struct EachContext* context) {
+  context->one_node.color = RedBlackColor_kRed;
+  context->five_node.color = RedBlackColor_kBlack;
+
+  RedBlackNode_SwapColor(&context->one_node, &context->five_node);
+
+  assert(context->one_node.color == RedBlackColor_kBlack);
+  assert(context->five_node.color == RedBlackColor_kRed);
+}
+
 int main(int argc, char** argv) {
 #ifdef NDEBUG
 
@@ -444,16 +927,81 @@ int main(int argc, char** argv) {
     &RotateLeft_TriangleOneTenFive_TriangleInOrder,
     &RotateRight_TriangleTenOneFive_TriangleInOrder,
 
+    &RotateAwayFromChild_AwayFromLeftChild_RotatedRight,
+    &RotateAwayFromChild_AwayFromRightChild_RotatedLeft,
+
+    &RotateTowardChild_TowardLeftChild_RotatedLeft,
+    &RotateTowardChild_TowardRightChild_RotatedRight,
+
+    &RotateAwayFromSibling_AwayFromLeftSibling_RotatedRight,
+    &RotateAwayFromSibling_AwayFromRightSibling_RotatedLeft,
+
+    &RotateTowardSibling_TowardLeftSibling_RotatedLeft,
+    &RotateTowardSibling_TowardRightSibling_RotatedRight,
+
     &GetGrandparent_GrandparentIsTen_GetsTen,
     &GetGrandparent_NoGrandparent_GetsNull,
+    &GetGrandparent_NoParent_GetsNull,
 
     &GetUncle_UncleIsOne_GetsOne,
     &GetUncle_NoUncle_GetsNull,
     &GetUncle_NoGrandparent_GetsNull,
+    &GetUncle_NoParent_GetsNull,
+
+    &GetSibling_LeftSiblingIsOne_GetsOne,
+    &GetSibling_RightSiblingIsTen_GetsTen,
+    &GetSibling_NoLeftSibling_GetsNull,
+    &GetSibling_NoRightSibling_GetsNull,
+    &GetSibling_NoParent_GetsNull,
+
+    &GetFarNephew_LeftNephewIsOne_GetsOne,
+    &GetFarNephew_RightNephewIsTwenty_GetsTwenty,
+    &GetFarNephew_NoLeftNephew_GetsNull,
+    &GetFarNephew_NoRightNephew_GetsNull,
+    &GetFarNephew_NoLeftSibling_GetsNull,
+    &GetFarNephew_NoRightSibling_GetsNull,
+    &GetFarNephew_NoParent_GetsNull,
+
+    &GetNearNephew_LeftNephewIsFive_GetsFive,
+    &GetNearNephew_RightNephewIsTen_GetsTen,
+    &GetNearNephew_NoLeftNephew_GetsNull,
+    &GetNearNephew_NoRightNephew_GetsNull,
+    &GetNearNephew_NoLeftSibling_GetsNull,
+    &GetNearNephew_NoRightSibling_GetsNull,
+    &GetNearNephew_NoParent_GetsNull,
+
+    &GetInorderSuccessor_LeftSuccessorIsTen_GetsTen,
+    &GetInorderSuccessor_RightSuccessorIsFive_GetsFive,
+    &GetInorderSuccessor_None_GetsNull,
+
+    &AddBlack_IsRed_IsBlack,
+    &AddBlack_IsBlack_IsDoubleBlack,
+
+    &IsBlack_Red_False,
+    &IsBlack_Black_True,
+    &IsBlack_DoubleBlack_False,
+    &IsBlack_Null_True,
+
+    &IsLeaf_NoLeftRight_True,
+    &IsLeaf_HasLeft_False,
+    &IsLeaf_HasRight_False,
+
+    &IsRed_Red_True,
+    &IsRed_Black_False,
+    &IsRed_DoubleBlack_False,
+    &IsRed_Null_False,
+
+    &IsRoot_NoParent_True,
+    &IsRoot_HasParent_False,
+
+    &Detach_HasParent_Disowned,
+    &Detach_NoParent_DoNothing,
 
     &ComparePointerData_OneTen_Negative,
     &ComparePointerData_OneOne_Zero,
-    &ComparePointerData_TenOne_Positive
+    &ComparePointerData_TenOne_Positive,
+
+    &SwapColor_RedAndBlack_BlackAndRed
   };
 
   enum {

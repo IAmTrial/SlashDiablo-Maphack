@@ -43,6 +43,25 @@ struct RedBlackNode* RedBlackNode_InitDefault(struct RedBlackNode* node) {
 
 void RedBlackNode_Deinit(struct RedBlackNode* node) {}
 
+void RedBlackNode_AddBlack(struct RedBlackNode* node) {
+  switch (node->color) {
+    case RedBlackColor_kRed: {
+      node->color = RedBlackColor_kBlack;
+      break;
+    }
+
+    case RedBlackColor_kBlack: {
+      node->color = RedBlackColor_kDoubleBlack;
+      break;
+    }
+
+    default: {
+      assert(0 && "This should never happen.");
+      break;
+    }
+  }
+}
+
 int RedBlackNode_ComparePointerData(
     const struct RedBlackNode* left,
     const struct RedBlackNode* right,
@@ -51,6 +70,53 @@ int RedBlackNode_ComparePointerData(
   assert(right != NULL);
 
   return compare_func(left->ptr, right->ptr);
+}
+
+void RedBlackNode_Detach(struct RedBlackNode* node) {
+  struct RedBlackNode* parent;
+
+  parent = node->parent;
+  if (parent == NULL) {
+    return;
+  }
+
+  if (RedBlackNode_IsLeft(node)) {
+    parent->left = NULL;
+  } else {
+    assert(RedBlackNode_IsRight(node));
+
+    parent->right = NULL;
+  }
+
+  if (node->next != NULL) {
+    node->next->previous = node->previous;
+    node->next = NULL;
+  }
+
+  if (node->previous != NULL) {
+    node->previous->next = node->next;
+    node->previous = NULL;
+  }
+
+  node->parent = NULL;
+}
+
+struct RedBlackNode* RedBlackNode_GetFarNephew(
+    const struct RedBlackNode* node) {
+  struct RedBlackNode* sibling;
+
+  sibling = RedBlackNode_GetSibling(node);
+  if (sibling == NULL) {
+    return NULL;
+  }
+
+  if (RedBlackNode_IsLeft(node)) {
+    return sibling->right;
+  } else {
+    assert(RedBlackNode_IsRight(node));
+
+    return sibling->left;
+  }
 }
 
 struct RedBlackNode* RedBlackNode_GetGrandparent(
@@ -62,6 +128,64 @@ struct RedBlackNode* RedBlackNode_GetGrandparent(
   }
 
   return node->parent->parent;
+}
+
+struct RedBlackNode* RedBlackNode_GetInOrderSuccessor(
+    const struct RedBlackNode* node) {
+  const struct RedBlackNode* successor;
+
+  if (node->left != NULL) {
+    for (successor = node->left;
+        successor->right != NULL;
+        successor = successor->right) {}
+  } else if (node->right != NULL) {
+    for (successor = node->right;
+        successor->left != NULL;
+        successor = successor->left) {}
+  } else {
+    assert(node->left == NULL);
+    assert(node->right == NULL);
+
+    return NULL;
+  }
+
+  return (struct RedBlackNode*)successor;
+}
+
+struct RedBlackNode* RedBlackNode_GetNearNephew(
+    const struct RedBlackNode* node) {
+  struct RedBlackNode* sibling;
+
+  sibling = RedBlackNode_GetSibling(node);
+  if (sibling == NULL) {
+    return NULL;
+  }
+
+  if (RedBlackNode_IsLeft(node)) {
+    return sibling->left;
+  } else {
+    assert(RedBlackNode_IsRight(node));
+
+    return sibling->right;
+  }
+}
+
+struct RedBlackNode* RedBlackNode_GetSibling(
+    const struct RedBlackNode* node) {
+  const struct RedBlackNode* parent;
+
+  parent = node->parent;
+  if (node->parent == NULL) {
+    return NULL;
+  }
+
+  if (RedBlackNode_IsLeft(node)) {
+    return (struct RedBlackNode*)parent->right;
+  } else {
+    assert(RedBlackNode_IsRight(node));
+
+    return (struct RedBlackNode*)parent->left;
+  }
 }
 
 struct RedBlackNode* RedBlackNode_GetUncle(const struct RedBlackNode* node) {
@@ -81,8 +205,12 @@ struct RedBlackNode* RedBlackNode_GetUncle(const struct RedBlackNode* node) {
   }
 }
 
-int RedBlackNode_IsRoot(const struct RedBlackNode* node) {
-  return (node->parent == NULL);
+int RedBlackNode_IsBlack(const struct RedBlackNode* node) {
+  return (node == NULL || node->color == RedBlackColor_kBlack);
+}
+
+int RedBlackNode_IsLeaf(const struct RedBlackNode* node) {
+  return (node->left == NULL && node->right == NULL);
 }
 
 int RedBlackNode_IsLeft(const struct RedBlackNode* node) {
@@ -96,6 +224,10 @@ int RedBlackNode_IsLeft(const struct RedBlackNode* node) {
   return (node == parent->left);
 }
 
+int RedBlackNode_IsRed(const struct RedBlackNode* node) {
+  return (node != NULL && node->color == RedBlackColor_kRed);
+}
+
 int RedBlackNode_IsRight(const struct RedBlackNode* node) {
   const struct RedBlackNode* parent;
 
@@ -105,6 +237,33 @@ int RedBlackNode_IsRight(const struct RedBlackNode* node) {
   }
 
   return (node == parent->right);
+}
+
+int RedBlackNode_IsRoot(const struct RedBlackNode* node) {
+  return (node->parent == NULL);
+}
+
+void RedBlackNode_RotateAwayFromChild(
+    struct RedBlackNode* node, struct RedBlackNode* child) {
+  if (node->left == child) {
+    RedBlackNode_RotateRight(node);
+  } else if (node->right == child) {
+    RedBlackNode_RotateLeft(node);
+  }
+}
+
+void RedBlackNode_RotateAwayFromSibling(struct RedBlackNode* node) {
+  if (RedBlackNode_IsRoot(node)) {
+    return;
+  }
+
+  if (RedBlackNode_IsLeft(node)) {
+    RedBlackNode_RotateLeft(node);
+  } else {
+    assert(RedBlackNode_IsRight(node));
+
+    RedBlackNode_RotateRight(node);
+  }
 }
 
 void RedBlackNode_RotateLeft(struct RedBlackNode* node) {
@@ -167,6 +326,29 @@ void RedBlackNode_RotateRight(struct RedBlackNode* node) {
   old_left->parent = old_parent;
 }
 
+void RedBlackNode_RotateTowardChild(
+    struct RedBlackNode* node, struct RedBlackNode* child) {
+  if (node->left == child) {
+    RedBlackNode_RotateLeft(node);
+  } else if (node->right == child) {
+    RedBlackNode_RotateRight(node);
+  }
+}
+
+void RedBlackNode_RotateTowardSibling(struct RedBlackNode* node) {
+  if (RedBlackNode_IsRoot(node)) {
+    return;
+  }
+
+  if (RedBlackNode_IsLeft(node)) {
+    RedBlackNode_RotateRight(node);
+  } else {
+    assert(RedBlackNode_IsRight(node));
+
+    RedBlackNode_RotateLeft(node);
+  }
+}
+
 void RedBlackNode_SetLeft(
     struct RedBlackNode* node, struct RedBlackNode* child) {
   assert(node->left == NULL);
@@ -197,4 +379,13 @@ void RedBlackNode_SetRight(
     node->next->previous = child;
   }
   node->next = child;
+}
+
+void RedBlackNode_SwapColor(
+    struct RedBlackNode* left, struct RedBlackNode* right) {
+  enum RedBlackColor temp;
+
+  temp = left->color;
+  left->color = right->color;
+  right->color = temp;
 }
