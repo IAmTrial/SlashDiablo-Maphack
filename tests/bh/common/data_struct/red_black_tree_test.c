@@ -306,7 +306,7 @@ static void Compare_Equal_Zero(struct EachContext* context) {
   assert(cmp_result == 0);
 }
 
-static int Compare_LessThan_Negative(struct EachContext* context) {
+static void Compare_LessThan_Negative(struct EachContext* context) {
   size_t i;
   int cmp_result;
 
@@ -325,7 +325,7 @@ static int Compare_LessThan_Negative(struct EachContext* context) {
   assert(cmp_result < 0);
 }
 
-static int Compare_FewerCount_Negative(struct EachContext* context) {
+static void Compare_FewerCount_Negative(struct EachContext* context) {
   size_t i;
   int cmp_result;
 
@@ -343,7 +343,7 @@ static int Compare_FewerCount_Negative(struct EachContext* context) {
   assert(cmp_result < 0);
 }
 
-static int Compare_GreaterThan_Positive(struct EachContext* context) {
+static void Compare_GreaterThan_Positive(struct EachContext* context) {
   size_t i;
   int cmp_result;
 
@@ -362,7 +362,7 @@ static int Compare_GreaterThan_Positive(struct EachContext* context) {
   assert(cmp_result > 0);
 }
 
-static int Compare_MoreCount_Positive(struct EachContext* context) {
+static void Compare_MoreCount_Positive(struct EachContext* context) {
   size_t i;
   int cmp_result;
 
@@ -378,6 +378,225 @@ static int Compare_MoreCount_Positive(struct EachContext* context) {
           &context->tree, &context->tree2, &CompareIntAsVoid);
 
   assert(cmp_result > 0);
+}
+
+static void Remove_EmptyTree_Same(struct EachContext* context) {
+  int kOne;
+
+  kOne = 1;
+
+  RedBlackTree_Remove(&context->tree, &kOne, &CompareIntAsVoid);
+
+  assert(RedBlackTree_IsEmpty(&context->tree));
+  assert(context->tree.first == NULL);
+  assert(context->tree.last == NULL);
+  assert(context->tree.root == NULL);
+}
+
+static void Remove_NotFound_Same(struct EachContext* context) {
+  size_t i;
+  int k4096;
+
+  k4096 = 4096;
+  for (i = 0; i < k0To4096Count; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+  for (i = 0; i < k0To4096Count; ++i) {
+    RedBlackTree_Insert(&context->tree2, &k0To4096[i], &CompareIntAsVoid);
+  }
+
+  RedBlackTree_Remove(&context->tree, &k4096, &CompareIntAsVoid);
+
+  assert(context->tree.count == k0To4096Count);
+  assert(
+      RedBlackTree_Compare(
+          &context->tree, &context->tree2, &CompareIntAsVoid) == 0);
+}
+
+static void Remove_RootValue_Success(struct EachContext* context) {
+  size_t i;
+  int* value;
+
+  for (i = 0; i < k0To4096Count; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+  value = context->tree.root->ptr;
+
+  RedBlackTree_Remove(&context->tree, value, &CompareIntAsVoid);
+
+  assert(context->tree.count == k0To4096Count - 1);
+  assert(context->tree.root->ptr != value);
+  assert(!RedBlackTree_Contains(&context->tree, value, &CompareIntAsVoid));
+}
+
+static void Remove_DeleteRoot_Success(struct EachContext* context) {
+  RedBlackTree_Insert(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+
+  assert(RedBlackTree_IsEmpty(&context->tree));
+  assert(context->tree.root == NULL);
+  assert(context->tree.first == NULL);
+  assert(context->tree.last == NULL);
+}
+
+static void Remove_DeleteRed_Success(struct EachContext* context) {
+  size_t i;
+  struct RedBlackNode* current;
+
+  for (i = 0; i < 4; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[3], &CompareIntAsVoid);
+
+  assert(context->tree.count == 3);
+  for (current = context->tree.first;
+      current != NULL;
+      current = current->next) {
+    assert(current->color == RedBlackColor_kBlack);
+  }
+}
+
+static void Remove_DeleteBlackWithRedSibling_Success(
+    struct EachContext* context) {
+  size_t i;
+  struct RedBlackNode* current;
+
+  for (i = 0; i < 6; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+  
+  assert(context->tree.count == 5);
+  assert(CompareInt(context->tree.root->ptr, &k0To4096[3]) == 0);
+}
+
+static void Remove_DeleteBlackWithFarRedNephew_Success(
+    struct EachContext* context) {
+  size_t i;
+  struct RedBlackNode* current;
+
+  for (i = 0; i < 4; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+  
+  assert(context->tree.count == 3);
+  for (current = context->tree.first;
+      current != NULL;
+      current = current->next) {
+    assert(current->color == RedBlackColor_kBlack);
+  }
+}
+
+static void Remove_DeleteBlackWithNearRedNephew_Success(
+    struct EachContext* context) {
+  struct RedBlackNode* current;
+
+  RedBlackTree_Insert(&context->tree, &k0To4096[1], &CompareIntAsVoid);
+  RedBlackTree_Insert(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+  RedBlackTree_Insert(&context->tree, &k0To4096[3], &CompareIntAsVoid);
+  RedBlackTree_Insert(&context->tree, &k0To4096[2], &CompareIntAsVoid);
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+
+  assert(context->tree.count == 3);
+  for (current = context->tree.first;
+      current != NULL;
+      current = current->next) {
+    assert(current->color == RedBlackColor_kBlack);
+  }
+}
+
+static void Remove_DeleteBlackWithBothRedNephew_Success(
+    struct EachContext* context) {
+  size_t i;
+  struct RedBlackNode* current;
+
+  for (i = 0; i < 5; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[0], &CompareIntAsVoid);
+
+  assert(context->tree.count == 4);
+  for (current = context->tree.first;
+      current != NULL;
+      current = current->next) {
+    int cmp_result;
+
+    cmp_result = CompareInt(current->ptr, &k0To4096[2]);
+    if (cmp_result == 0) {
+      assert(current->color == RedBlackColor_kRed);
+    } else {
+      assert(current->color == RedBlackColor_kBlack);
+    }
+  }
+}
+
+static void Remove_DeleteBlackWithBothBlackNephews_Success(
+    struct EachContext* context) {
+  size_t i;
+  struct RedBlackNode* current;
+
+  for (i = 0; i < 6; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+  RedBlackTree_Remove(&context->tree, &k0To4096[5], &CompareIntAsVoid);
+
+  RedBlackTree_Remove(&context->tree, &k0To4096[4], &CompareIntAsVoid);
+
+  assert(context->tree.count == 4);
+  for (current = context->tree.first;
+      current != NULL;
+      current = current->next) {
+    int cmp_result;
+
+    cmp_result = CompareInt(current->ptr, &k0To4096[2]);
+    if (cmp_result == 0) {
+      assert(current->color == RedBlackColor_kRed);
+    } else {
+      assert(current->color == RedBlackColor_kBlack);
+    }
+  }
+}
+
+static void Remove_All_Empty(struct EachContext* context) {
+  size_t i;
+
+  for (i = 0; i < k0To4096Count; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+  
+  for (i = k0To4096Count; i-- > 0; ) {
+    RedBlackTree_Remove(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+  }
+
+  assert(RedBlackTree_IsEmpty(&context->tree));
+}
+
+static void Remove_AllInterleaved_Success(struct EachContext* context) {
+  size_t i;
+
+  for (i = 0; i < k0To4096Count; ++i) {
+    RedBlackTree_Insert(&context->tree, &k0To4096[i], &CompareIntAsVoid);
+    RedBlackTree_Remove(
+        &context->tree, &k0To4096[k0To4096Count - 1 - i], &CompareIntAsVoid);
+  }
+
+  for (i = 0; i < k0To4096Count / 2; ++i) {
+    assert(
+        !RedBlackTree_Contains(
+            &context->tree, &k0To4096[i], &CompareIntAsVoid));
+  }
+  for (i = k0To4096Count / 2; i < k0To4096Count; ++i) {
+    assert(
+        RedBlackTree_Contains(
+            &context->tree, &k0To4096[i], &CompareIntAsVoid));
+  }
 }
 
 int main(int argc, char** argv) {
@@ -406,7 +625,20 @@ int main(int argc, char** argv) {
     &Compare_LessThan_Negative,
     &Compare_FewerCount_Negative,
     &Compare_GreaterThan_Positive,
-    &Compare_MoreCount_Positive
+    &Compare_MoreCount_Positive,
+
+    &Remove_EmptyTree_Same,
+    &Remove_NotFound_Same,
+    &Remove_RootValue_Success,
+    &Remove_DeleteRoot_Success,
+    &Remove_DeleteRed_Success,
+    &Remove_DeleteBlackWithRedSibling_Success,
+    &Remove_DeleteBlackWithFarRedNephew_Success,
+    &Remove_DeleteBlackWithNearRedNephew_Success,
+    &Remove_DeleteBlackWithBothRedNephew_Success,
+    &Remove_DeleteBlackWithBothBlackNephews_Success,
+    &Remove_All_Empty,
+    &Remove_AllInterleaved_Success
   };
 
   enum {

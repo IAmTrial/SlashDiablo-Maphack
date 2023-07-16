@@ -83,10 +83,23 @@ int RedBlackTree_Insert(
     RedBlackNode_CompareFuncType* compare_func);
 
 /**
+ * Returns whether the tree is empty.
+ */
+int RedBlackTree_IsEmpty(const struct RedBlackTree* tree);
+
+/**
  * Returns a pointer to the node that is equal to the specified data.
  */
 struct RedBlackNode* RedBlackTree_Find(
     const struct RedBlackTree* tree,
+    const void* data,
+    RedBlackNode_CompareFuncType* compare_func);
+
+/**
+ * Removes a node that is equal to the specified data.
+ */
+void RedBlackTree_Remove(
+    struct RedBlackTree* tree,
     const void* data,
     RedBlackNode_CompareFuncType* compare_func);
 

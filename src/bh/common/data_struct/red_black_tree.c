@@ -262,12 +262,7 @@ int RedBlackTree_Insert(
   /* Fall-through is intentional. */
 
   /* Case 6: Current's value is less/greater than parent and grandparent. */
-  if (RedBlackNode_IsLeft(parent)) {
-    RedBlackNode_RotateRight(grandparent);
-  } else {
-    assert(RedBlackNode_IsRight(parent));
-    RedBlackNode_RotateLeft(grandparent);
-  }
+  RedBlackNode_RotateAwayFromChild(grandparent, parent);
 
   grandparent->color = RedBlackColor_kRed;
   parent->color = RedBlackColor_kBlack;
@@ -282,9 +277,117 @@ error:
   return 0;
 }
 
+int RedBlackTree_IsEmpty(const struct RedBlackTree* tree) {
+  return (tree->count == 0);
+}
+
 struct RedBlackNode* RedBlackTree_Find(
     const struct RedBlackTree* tree,
     const void* data,
     RedBlackNode_CompareFuncType* compare_func) {
   return *RedBlackTree_FindNodeRef(tree, data, compare_func);
+}
+
+void RedBlackTree_Remove(
+    struct RedBlackTree* tree,
+    const void* data,
+    RedBlackNode_CompareFuncType* compare_func) {
+  struct RedBlackNode* target_node;
+  struct RedBlackNode* successor;
+  struct RedBlackNode* current_node;
+
+  target_node = RedBlackTree_Find(tree, data, compare_func);
+  if (target_node == NULL) {
+    return;
+  }
+
+  /*
+   * Only leaf nodes are deleted from the tree. Replace non-leaf with
+   * data from the in-order successor. This will override the data
+   * in the first target node.
+   */
+  for (; !RedBlackNode_IsLeaf(target_node); target_node = successor) {
+    successor = RedBlackNode_GetInOrderSuccessor(target_node);
+    target_node->ptr = successor->ptr;
+  }
+  --tree->count;
+  RedBlackNode_AddBlack(target_node);
+
+  /* Case 1: Target node is root. */
+  if (RedBlackNode_IsRoot(target_node)) {
+    tree->first = NULL;
+    tree->last = NULL;
+    tree->root = NULL;
+  }
+
+  /* Case 2: If target node is red, loop won't run. */
+  for (current_node = target_node;
+      current_node->color == RedBlackColor_kDoubleBlack; ) {
+    struct RedBlackNode* parent;
+    struct RedBlackNode* sibling;
+    struct RedBlackNode* near_nephew;
+    struct RedBlackNode* far_nephew;
+
+    /* Current node is now double-black, so fixes must be applied. */
+
+    /* Case 1: Current node is root. */
+    if (RedBlackNode_IsRoot(current_node)) {
+      current_node->color = RedBlackColor_kBlack;
+      break;
+    }
+    parent = current_node->parent;
+    assert(parent != NULL);
+
+    /* Case 3: Sibling is red. */
+    sibling = RedBlackNode_GetSibling(current_node);
+    assert(sibling != NULL);
+    if (sibling->color == RedBlackColor_kRed) {
+      RedBlackNode_SwapColor(sibling, parent);
+      RedBlackNode_RotateTowardChild(parent, current_node);
+      if (tree->root == parent) {
+        tree->root = sibling;
+      }
+      continue;
+    }
+    assert(sibling->color == RedBlackColor_kBlack);
+
+    /* Case 4: Sibling is black, far nephew is red. */
+    far_nephew = RedBlackNode_GetFarNephew(current_node);
+    if (RedBlackNode_IsRed(far_nephew)) {
+      RedBlackNode_SwapColor(parent, sibling);
+      RedBlackNode_RotateTowardChild(parent, current_node);
+      far_nephew->color = RedBlackColor_kBlack;
+      current_node->color = RedBlackColor_kBlack;
+      if (tree->root == parent) {
+        tree->root = sibling;
+      }
+      break;
+    }
+    assert(RedBlackNode_IsBlack(far_nephew));
+
+    /* Case 5: Sibling is black, far nephew is black, near nephew is red. */
+    near_nephew = RedBlackNode_GetNearNephew(current_node);
+    if (RedBlackNode_IsRed(near_nephew)) {
+      RedBlackNode_SwapColor(near_nephew, sibling);
+      RedBlackNode_RotateAwayFromSibling(sibling);
+      continue;
+    }
+    assert(RedBlackNode_IsBlack(near_nephew));
+
+    /* Case 6: Sibling is black, both nephews are black. */
+    RedBlackNode_AddBlack(parent);
+    current_node->color = RedBlackColor_kBlack;
+    sibling->color = RedBlackColor_kRed;
+
+    current_node = parent;
+  }
+
+  if (target_node == tree->first) {
+    tree->first = target_node->next;
+  } else if (target_node == tree->last) {
+    tree->last = target_node->previous;
+  }
+  RedBlackNode_Detach(target_node);
+  RedBlackNode_Deinit(target_node);
+  free(target_node);
 }
