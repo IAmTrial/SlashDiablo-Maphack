@@ -19,6 +19,12 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/typing.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/typing.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/typing_table.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/typing_table.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/variable.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/variable.h"
 
