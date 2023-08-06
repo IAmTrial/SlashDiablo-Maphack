@@ -25,6 +25,7 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/parser/parser_line_type.h"
 #include "bh/config/colonini/internal/semantic_analyzer/variable.h"
 #include "bh/config/colonini/internal/semantic_analyzer/variable_table.h"
 
@@ -36,6 +37,7 @@ struct SemanticAnalyzer* SemanticAnalyzer_Init(
     struct SemanticAnalyzer* analyzer,
     const struct ParserLine* lines,
     size_t count) {
+  struct TypingTable* typing_table_init_result;
   struct VariableTable* var_table_init_result;
 
   size_t i;
@@ -60,12 +62,21 @@ struct SemanticAnalyzer* SemanticAnalyzer_Init(
     }
   }
 
-  var_table_init_result = VariableTable_Init(&analyzer->var_table, var_count);
-  if (var_table_init_result == NULL) {
+  typing_table_init_result =
+      TypingTable_Init(&analyzer->typing_table, var_count);
+  if (typing_table_init_result == NULL) {
     goto error;
   }
 
+  var_table_init_result = VariableTable_Init(&analyzer->var_table, var_count);
+  if (var_table_init_result == NULL) {
+    goto error_deinit_typing_table;
+  }
+
   return analyzer;
+
+error_deinit_typing_table:
+  TypingTable_Deinit(&analyzer->typing_table);
 
 error:
   return NULL;
@@ -81,65 +92,39 @@ int SemanticAnalyzer_LoadLines(
     size_t count) {
   size_t i;
 
+  /* Determine typing for each variable. */
   for (i = 0; i < count; ++i) {
-    switch (lines[i].type) {
-      case ParserLineType_kAssignStatement: {
-        struct Variable* add_result;
+    struct Typing* insert_result;
 
-        add_result =
-            VariableTable_AddFromLine(&analyzer->var_table, &lines[i]);
-        if (add_result == NULL) {
-          goto error;
-        }
-        break;
-      }
+    if (lines[i].type == ParserLineType_kNoOp) {
+      continue;
+    }
 
-      case ParserLineType_kNoOp: {
-        break;
-      }
-
-      default: {
-        assert(0 && "This should never happen.");
-        return 0;
-      }
+    insert_result =
+        TypingTable_InsertOrResolveFromLine(&analyzer->typing_table, &lines[i]);
+    if (insert_result == NULL) {
+      goto error;
     }
   }
 
-  VariableTable_Sort(&analyzer->var_table);
+  /* Add to the variable table. */
+  for (i = 0; i < count; ++i) {
+    struct Variable* add_result;
+
+    const struct Typing* typing;
+
+    if (lines[i].type == ParserLineType_kNoOp) {
+      continue;
+    }
+
+    add_result =
+        VariableTable_InsertFromLine(&analyzer->var_table, &lines[i]);
+    if (add_result == NULL) {
+      return 0;
+    }
+  }
 
   return 1;
-
-error:
-  return 0;
-}
-
-int SemanticAnalyzer_CheckLines(
-    struct SemanticAnalyzer* analyzer,
-    struct ParserLine* lines,
-    size_t count) {
-  size_t i;
-
-  int resolve_result;
-  int check_result;
-
-  if (VariableTable_ContainsDuplicate(&analyzer->var_table)) {
-    return 0;
-  }
-
-  resolve_result = VariableTable_ResolveTypeDiffs(&analyzer->var_table);
-  if (!resolve_result) {
-    return 0;
-  }
-
-  for (i = 0; i < count; ++i) {
-    check_result =
-        VariableTable_CheckLine(&analyzer->var_table, &lines[i]);
-    if (!check_result) {
-      break;
-    }
-  }
-
-  return check_result;
 
 error:
   return 0;

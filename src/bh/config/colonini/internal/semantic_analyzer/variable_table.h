@@ -24,7 +24,8 @@
 
 #include <stddef.h>
 
-#include "bh/config/colonini/internal/parser.h"
+#include "bh/common/data_struct/red_black_tree.h"
+#include "bh/config/colonini/internal/parser/parser_line.h"
 #include "bh/config/colonini/internal/semantic_analyzer/variable.h"
 
 #ifdef __cplusplus
@@ -34,39 +35,17 @@ extern "C" {
 struct VariableTable {
   struct Variable* vars;
   size_t capacity;
-  size_t unsorted_count;
-  size_t sorted_count;
+  size_t count;
+  struct RedBlackTree tree;
 };
 
 struct VariableTable* VariableTable_Init(
-    struct VariableTable* table, size_t initial_capacity);
+    struct VariableTable* table, size_t capacity);
 
 void VariableTable_Deinit(struct VariableTable* table);
 
-struct Variable* VariableTable_AddFromLine(
+struct Variable* VariableTable_InsertFromLine(
     struct VariableTable* table, const struct ParserLine* line);
-
-int VariableTable_CheckLine(
-    struct VariableTable* table, struct ParserLine* line);
-
-/**
- * Returns whether a duplicate variable (matching by name and subkeys)
- * is added to the table.
- *
- * Precondition: Table must be sorted via VariableTable_Sort.
- */
-int VariableTable_ContainsDuplicate(const struct VariableTable* table);
-
-/**
- * Resolves the type differences of keys, subkeys, and value by
- * converting to string, if possible.
- */
-int VariableTable_ResolveTypeDiffs(struct VariableTable* table);
-
-struct Variable* VariableTable_SearchTableByName(
-    struct VariableTable* table, const char* name, size_t length);
-
-void VariableTable_Sort(struct VariableTable* table);
 
 #ifdef __cplusplus
 }  /* extern "C" */
