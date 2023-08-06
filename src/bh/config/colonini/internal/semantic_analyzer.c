@@ -26,6 +26,8 @@
 
 #include "bh/config/colonini/internal/parser.h"
 #include "bh/config/colonini/internal/parser/parser_line_type.h"
+#include "bh/config/colonini/internal/semantic_analyzer/typing.h"
+#include "bh/config/colonini/internal/semantic_analyzer/typing_table.h"
 #include "bh/config/colonini/internal/semantic_analyzer/variable.h"
 #include "bh/config/colonini/internal/semantic_analyzer/variable_table.h"
 
@@ -35,8 +37,7 @@
 
 struct SemanticAnalyzer* SemanticAnalyzer_Init(
     struct SemanticAnalyzer* analyzer,
-    const struct ParserLine* lines,
-    size_t count) {
+    const struct Parser* parser) {
   struct TypingTable* typing_table_init_result;
   struct VariableTable* var_table_init_result;
 
@@ -44,8 +45,8 @@ struct SemanticAnalyzer* SemanticAnalyzer_Init(
   size_t var_count;
 
   var_count = 0;
-  for (i = 0; i < count; ++i) {
-    switch (lines[i].type) {
+  for (i = 0; i < parser->line_count; ++i) {
+    switch (parser->lines[i].type) {
       case ParserLineType_kAssignStatement: {
         ++var_count;
         break;
@@ -88,37 +89,37 @@ void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer) {
 
 int SemanticAnalyzer_LoadLines(
     struct SemanticAnalyzer* analyzer,
-    const struct ParserLine* lines,
-    size_t count) {
+    const struct Parser* parser) {
   size_t i;
 
   /* Determine typing for each variable. */
-  for (i = 0; i < count; ++i) {
+  for (i = 0; i < parser->line_count; ++i) {
     struct Typing* insert_result;
 
-    if (lines[i].type == ParserLineType_kNoOp) {
+    if (parser->lines[i].type == ParserLineType_kNoOp) {
       continue;
     }
 
     insert_result =
-        TypingTable_InsertOrResolveFromLine(&analyzer->typing_table, &lines[i]);
+        TypingTable_InsertOrResolveFromLine(
+            &analyzer->typing_table, &parser->lines[i]);
     if (insert_result == NULL) {
       goto error;
     }
   }
 
   /* Add to the variable table. */
-  for (i = 0; i < count; ++i) {
+  for (i = 0; i < parser->line_count; ++i) {
     struct Variable* add_result;
 
     const struct Typing* typing;
 
-    if (lines[i].type == ParserLineType_kNoOp) {
+    if (parser->lines[i].type == ParserLineType_kNoOp) {
       continue;
     }
 
     add_result =
-        VariableTable_InsertFromLine(&analyzer->var_table, &lines[i]);
+        VariableTable_InsertFromLine(&analyzer->var_table, &parser->lines[i]);
     if (add_result == NULL) {
       return 0;
     }

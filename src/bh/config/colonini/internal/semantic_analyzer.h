@@ -39,8 +39,7 @@ struct SemanticAnalyzer {
 
 struct SemanticAnalyzer* SemanticAnalyzer_Init(
     struct SemanticAnalyzer* analyzer,
-    const struct ParserLine* lines,
-    size_t count);
+    const struct Parser* parser);
 
 void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer);
 
@@ -50,8 +49,7 @@ void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer);
  */
 int SemanticAnalyzer_LoadLines(
     struct SemanticAnalyzer* analyzer,
-    const struct ParserLine* lines,
-    size_t count);
+    const struct Parser* parser);
 
 #ifdef __cplusplus
 }  /* extern "C" */

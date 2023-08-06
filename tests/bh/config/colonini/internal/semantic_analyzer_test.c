@@ -38,6 +38,7 @@ static void LoadLines_TwoKeys_Success(void) {
   struct SemanticAnalyzer analyzer;
   struct ParserLine lines[9];
   struct Subscript subscripts[9][1];
+  struct Parser parser;
 
   /*
    * key01: value
@@ -50,6 +51,8 @@ static void LoadLines_TwoKeys_Success(void) {
    * key08[0x1]: value
    * key09[true]: value
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "value", "key01", subscripts[0], 0);
   ParserLineBasicSetUp(&lines[1], "42", "key02", subscripts[1], 0);
   lines[1].variant.assign_statement.value_expr.variant.as_constexpr.type =
@@ -72,11 +75,9 @@ static void LoadLines_TwoKeys_Success(void) {
   ParserLineBasicSetUp(&lines[8], "value", "key09", subscripts[8], 1, "true");
   lines[8].variant.assign_statement.key_expr.subscripts[0].expr.type =
       ConstExprType_kBoolean;
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
   assert(analyzer.typing_table.typings[0].value_type == ValueExprType_kConst);
@@ -121,18 +122,19 @@ static void LoadLines_DuplicateNames_Failure(void) {
   struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
+  struct Parser parser;
 
   /*
    * key: value1
    * key: value2
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "value1", "key", subscripts[0], 0);
   ParserLineBasicSetUp(&lines[1], "value2", "key", subscripts[1], 0);
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(!actual);
 
@@ -144,20 +146,21 @@ static void LoadLines_DuplicateSubkeys_Failure(void) {
   struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
+  struct Parser parser;
 
   /*
    * key[subkey]: value1
    * key[subkey]: value2
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(
       &lines[0], "value1", "key", subscripts[0], 1, "subkey");
   ParserLineBasicSetUp(
       &lines[1], "value2", "key", subscripts[1], 1, "subkey");
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(!actual);
 
@@ -169,18 +172,19 @@ static void LoadLines_SameKeyMismatch_Failure(void) {
   struct SemanticAnalyzer analyzer;
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
+  struct Parser parser;
 
   /*
    * key[subkey]: value
    * key: value
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "subkey");
   ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 0);
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(!actual);
 
@@ -193,22 +197,23 @@ static void LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
   struct ValueExpr* value_expr[2];
+  struct Parser parser;
 
   /*
    * key[1]: 0x1
    * key[2]: 2
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "0x1");
   ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 1, "2");
   value_expr[0] = &lines[0].variant.assign_statement.value_expr;
   value_expr[0]->variant.as_constexpr.type = ConstExprType_kUnsignedInt;
   value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-            &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
   assert(
@@ -228,6 +233,7 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   struct ValueExpr* value_expr[2];
   struct ToggleExpr* toggle_expr;
   struct ConstExpr* const_exprs[2];
+  struct Parser parser;
 
   LexerLineSetUp(
       &lline,
@@ -242,6 +248,8 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
    * key[1]: true, VK_A
    * key[2]: 2
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "", "key", subscripts[0], 1, "1");
   ParserLineBasicSetUp(&lines[1], "2", "key", subscripts[1], 1, "2");
   value_expr[0] = &lines[0].variant.assign_statement.value_expr;
@@ -264,11 +272,9 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   /* Set up second line. */
   value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
   assert(
@@ -286,22 +292,23 @@ static void LoadLines_SameKeyDifferentSubkeyTypes_ResolveDifferences(void) {
   struct ParserLine lines[2];
   struct Subscript subscripts[2][1];
   struct KeyExpr* key_expr[2];
+  struct Parser parser;
 
   /*
    * key[subkey]: value
    * key[2]: value
    */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "subkey");
   ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 1, "2");
   key_expr[0] = &lines[0].variant.assign_statement.key_expr;
   key_expr[0]->subscripts[0].expr.type = ConstExprType_kString;
   key_expr[1] = &lines[1].variant.assign_statement.key_expr;
   key_expr[1]->subscripts[0].expr.type = ConstExprType_kSignedInt;
-  SemanticAnalyzer_Init(&analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  SemanticAnalyzer_Init(&analyzer, &parser);
 
-  actual =
-      SemanticAnalyzer_LoadLines(
-          &analyzer, lines, sizeof(lines) / sizeof(lines[0]));
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
   assert(
