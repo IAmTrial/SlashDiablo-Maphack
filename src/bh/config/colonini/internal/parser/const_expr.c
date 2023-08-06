@@ -81,6 +81,22 @@ void ConstExpr_Deinit(struct ConstExpr* expr) {
   expr->type = ConstExprType_kUnspecified;
 }
 
+int ConstExpr_CompareExprAsString(
+    const struct ConstExpr* left, const struct ConstExpr* right) {
+  int is_left_shorter;
+  size_t max_length;
+  int cmp_result;
+
+  is_left_shorter = (left->length < right->length);
+  max_length = is_left_shorter ? left->length : right->length;
+  cmp_result = memcmp(left->expr, right->expr, max_length);
+  if (cmp_result != 0) {
+    return cmp_result;
+  }
+
+  return is_left_shorter ? -1 : left->length - right->length;
+}
+
 int ConstExpr_Equal(
     const struct ConstExpr* left, const struct ConstExpr* right) {
   if (left->type != right->type) {

@@ -54,6 +54,9 @@ struct KeyExpr* KeyExpr_Parse(
  */
 void KeyExpr_Deinit(struct KeyExpr* expr);
 
+int KeyExpr_CompareKeysAsStrings(
+    const struct KeyExpr* left, const struct KeyExpr* right);
+
 /**
  * Returns whether the keys and subkeys of two KeyExpr are
  * equivalents.
