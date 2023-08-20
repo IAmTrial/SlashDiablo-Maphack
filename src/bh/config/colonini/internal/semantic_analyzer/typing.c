@@ -42,19 +42,7 @@ static struct Typing* Typing_InitFromAssignStatement(
   /* Init the key typing info. */
   keys = &assign_statement->key_expr;
   typing->key_name = &keys->constexpr;
-
-  /* Copy the subkeys' types */
-  typing->subkey_types =
-      malloc(keys->subscripts_count * sizeof(typing->subkey_types[0]));
-  if (typing->subkey_types == NULL) {
-    goto error;
-  }
-  for (typing->subkey_type_count = 0;
-      typing->subkey_type_count < keys->subscripts_count;
-      ++typing->subkey_type_count) {
-    typing->subkey_types[typing->subkey_type_count] =
-        keys->subscripts[typing->subkey_type_count].expr.type;
-  }
+  typing->subkey_count = keys->subscripts_count;
 
   /* Copy the value's type. */
   value = &assign_statement->value_expr;
@@ -77,21 +65,11 @@ static int Typing_ResolveLineDiffFromAssignStatement(
   const struct KeyExpr* right_key;
   const struct ValueExpr* right_value;
   const struct ConstExpr* right_value_as_constexpr;
-
+  
   /* Cannot resolve if subkey count is different. */
   right_key = &assign_statement->key_expr;
-  if (typing->subkey_type_count != right_key->subscripts_count) {
+  if (typing->subkey_count != right_key->subscripts_count) {
     return 0;
-  }
-
-  /* Resolve subkey type differences. */
-  for (i = 0; i < typing->subkey_type_count; ++i) {
-    struct ConstExpr* subkey;
-
-    subkey = &right_key->subscripts[i].expr;
-    if (typing->subkey_types[i] != subkey->type) {
-      typing->subkey_types[i] = ConstExprType_kString;
-    }
   }
 
   /* Resolve value type differences. */
@@ -131,11 +109,7 @@ struct Typing* Typing_Init(
 void Typing_Deinit(struct Typing* typing) {
   typing->value_as_constexpr_type = ConstExprType_kUnspecified;
   typing->value_type = ValueExprType_kUnspecified;
-
-  typing->subkey_type_count = 0;
-  free(typing->subkey_types);
-  typing->subkey_types = NULL;
-
+  typing->subkey_count = 0;
   typing->key_name = NULL;
 }
 
@@ -147,18 +121,12 @@ int Typing_CompareKeyName(
 int Typing_Equal(const struct Typing* left, const struct Typing* right) {
   size_t i;
 
+  if (left->subkey_count != right->subkey_count) {
+    return 0;
+  }
+
   if (!ConstExpr_Equal(left->key_name, right->key_name)) {
     return 0;
-  }
-
-  if (left->subkey_type_count != right->subkey_type_count) {
-    return 0;
-  }
-
-  for (i = 0; i < left->subkey_type_count; ++i) {
-    if (left->subkey_types[i] != right->subkey_types[i]) {
-      return 0;
-    }
   }
 
   if (left->value_type != right->value_type) {
@@ -176,16 +144,20 @@ int Typing_Equal(const struct Typing* left, const struct Typing* right) {
 int Typing_ResolveDiff(struct Typing* left, struct Typing* right) {
   size_t i;
 
-  if (left->subkey_type_count != right->subkey_type_count) {
+  /* Cannot resolve if subkey count is different. */
+  if (left->subkey_count != right->subkey_count) {
     return 0;
   }
 
   /* String is the only type that is compatible with all other types. */
-  for (i = 0; i < left->subkey_type_count; ++i) {
-    if (left->subkey_types[i] != right->subkey_types[i]) {
-      left->subkey_types[i] = ConstExprType_kString;
-      right->subkey_types[i] = ConstExprType_kString;
-    }
+  if (left->value_type != right->value_type) {
+    left->value_type = ValueExprType_kConst;
+    right->value_type = ValueExprType_kConst;
+    left->value_as_constexpr_type = ConstExprType_kString;
+    right->value_as_constexpr_type = ConstExprType_kString;
+  } else if (left->value_as_constexpr_type != right->value_as_constexpr_type) {
+    left->value_as_constexpr_type = ConstExprType_kString;
+    right->value_as_constexpr_type = ConstExprType_kString;
   }
 
   return 1;

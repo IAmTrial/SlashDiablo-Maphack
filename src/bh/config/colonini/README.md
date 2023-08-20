@@ -34,23 +34,25 @@ Lose the game button: None
 Infravision: false, VK_O   // First value indicates starting value.
 Deal no damage: true, None
 
-// List, indexed by number (starting from 0, all values must be the same type)
+// Table (string to string)
 Food[0]: Carrot
 Food[1]: Tomato
 Food[2]: Celery
 Food[3]: Potato
-// Food[4]: 12      // This is invalid!
+Food[4]: 12      // This will be interpretted as a string
 
-// Table (basically a list indexed by text)
+// Table (string to number)
 Level[Bob]: 12
 Level[Joe]: 99
 Level[Tom]: 87
+// Level[Ron]: Ninety-nine      // This will treat other values as strings!
 
-// Nested (requires all values and subvalues to have the same type)
-House[Kitchen][Stove][0]: Grilled asparagus
+// Nested (requires all values and subvalues to have the same count)
+House[Kitchen][Stove][Back Left]: Grilled asparagus
 House[Kitchen][Freezer][0]: Ice
 House[Kitchen][Freezer][1]: Frozen broccoli
-House[Bedroom][Bed][0]: Blanket
+House[Bedroom][Bed][Top]: Blanket
+// House[Chimney]: Log      // This is invalid!
 
 // Keys can also have extra spaces at the start and end that will be ignored
     Hello   :   World!        // Will be interpretted as "Hello: World!"

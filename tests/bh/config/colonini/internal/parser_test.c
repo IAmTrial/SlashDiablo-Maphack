@@ -1161,7 +1161,7 @@ static void Parse_MixedMappedKeyValue_ParsedStrings(struct EachContext* context)
   assert(subscripts[1].expr.type == ConstExprType_kString);
   assert(subscripts[1].expr.length == 8);
   assert(strcmp(subscripts[1].expr.expr, "sub key2") == 0);
-  assert(subscripts[2].expr.type == ConstExprType_kSignedInt);
+  assert(subscripts[2].expr.type == ConstExprType_kString);
   assert(subscripts[2].expr.length == 1);
   assert(strcmp(subscripts[2].expr.expr, "0") == 0);
   value_expr = &pline->variant.assign_statement.value_expr;

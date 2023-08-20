@@ -67,14 +67,8 @@ static void LoadLines_TwoKeys_Success(void) {
   lines[4].variant.assign_statement.value_expr.type = ValueExprType_kToggle;
   ParserLineBasicSetUp(&lines[5], "value", "key06", subscripts[5], 1, "subkey");
   ParserLineBasicSetUp(&lines[6], "value", "key07", subscripts[6], 1, "42");
-  lines[6].variant.assign_statement.key_expr.subscripts[0].expr.type =
-      ConstExprType_kSignedInt;
   ParserLineBasicSetUp(&lines[7], "value", "key08", subscripts[7], 1, "0x1");
-  lines[7].variant.assign_statement.key_expr.subscripts[0].expr.type =
-      ConstExprType_kUnsignedInt;
   ParserLineBasicSetUp(&lines[8], "value", "key09", subscripts[8], 1, "true");
-  lines[8].variant.assign_statement.key_expr.subscripts[0].expr.type =
-      ConstExprType_kBoolean;
   SemanticAnalyzer_Init(&analyzer, &parser);
 
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
@@ -100,19 +94,6 @@ static void LoadLines_TwoKeys_Success(void) {
   assert(
       analyzer.typing_table.typings[4].value_type
           == ValueExprType_kToggle);
-  assert(analyzer.typing_table.typings[5].subkey_type_count == 1);
-  assert(
-      analyzer.typing_table.typings[5].subkey_types[0]
-          == ConstExprType_kString);
-  assert(
-      analyzer.typing_table.typings[6].subkey_types[0]
-          == ConstExprType_kSignedInt);
-  assert(
-      analyzer.typing_table.typings[7].subkey_types[0]
-          == ConstExprType_kUnsignedInt);
-  assert(
-      analyzer.typing_table.typings[8].subkey_types[0]
-          == ConstExprType_kBoolean);
 
   SemanticAnalyzer_Deinit(&analyzer);
 }
@@ -258,6 +239,7 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   /* Set up enabled. */
   toggle_expr->enabled_expr.type = ConstExprType_kBoolean;
   toggle_expr->enabled_expr.expr = malloc(sizeof("true"));
+  assert(toggle_expr->enabled_expr.expr != NULL);
   memcpy(toggle_expr->enabled_expr.expr, "true", sizeof("true"));
   toggle_expr->enabled_expr.length = 4;
   toggle_expr->enabled_expr.begin_src = &lstr[0];
@@ -265,6 +247,7 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   /* Set up input. */
   toggle_expr->input_expr.type = ConstExprType_kString;
   toggle_expr->input_expr.expr = malloc(sizeof("VK_A"));
+  assert(toggle_expr->input_expr.expr != NULL);
   memcpy(toggle_expr->input_expr.expr, "VK_A", sizeof("VK_A"));
   toggle_expr->input_expr.length = 4;
   toggle_expr->input_expr.begin_src = &lstr[3];
@@ -286,38 +269,6 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   SemanticAnalyzer_Deinit(&analyzer);
 }
 
-static void LoadLines_SameKeyDifferentSubkeyTypes_ResolveDifferences(void) {
-  int actual;
-  struct SemanticAnalyzer analyzer;
-  struct ParserLine lines[2];
-  struct Subscript subscripts[2][1];
-  struct KeyExpr* key_expr[2];
-  struct Parser parser;
-
-  /*
-   * key[subkey]: value
-   * key[2]: value
-   */
-  parser.lines = lines;
-  parser.line_count = sizeof(lines) / sizeof(lines[0]);
-  ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "subkey");
-  ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 1, "2");
-  key_expr[0] = &lines[0].variant.assign_statement.key_expr;
-  key_expr[0]->subscripts[0].expr.type = ConstExprType_kString;
-  key_expr[1] = &lines[1].variant.assign_statement.key_expr;
-  key_expr[1]->subscripts[0].expr.type = ConstExprType_kSignedInt;
-  SemanticAnalyzer_Init(&analyzer, &parser);
-
-  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
-
-  assert(actual);
-  assert(
-      analyzer.typing_table.typings[0].subkey_types[0]
-          == ConstExprType_kString);
-
-  SemanticAnalyzer_Deinit(&analyzer);
-}
-
 int main(int argc, char** argv) {
 #ifdef NDEBUG
 
@@ -332,7 +283,6 @@ int main(int argc, char** argv) {
     &LoadLines_SameKeyMismatch_Failure,
     &LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences,
     &LoadLines_SameKeyDifferentValueTypes_ResolveDifferences,
-    &LoadLines_SameKeyDifferentSubkeyTypes_ResolveDifferences
   };
 
   enum {

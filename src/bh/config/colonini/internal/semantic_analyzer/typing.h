@@ -34,11 +34,11 @@ extern "C" {
 #endif  /* __cplusplus */
 
 struct Typing {
+  /** The primary key name. */
   const struct ConstExpr* key_name;
 
-  /** Types for subkeys. Primary key is always string. */
-  enum ConstExprType* subkey_types;
-  size_t subkey_type_count;
+  /** The subkeys count for the key-value pair. */
+  size_t subkey_count;
 
   enum ValueExprType value_type;
   enum ConstExprType value_as_constexpr_type;
