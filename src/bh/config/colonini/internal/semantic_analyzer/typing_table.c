@@ -33,137 +33,157 @@
 #include "bh/config/colonini/internal/parser/parser_line_type.h"
 #include "bh/config/colonini/internal/semantic_analyzer/typing.h"
 
-static int Typing_CompareKeyNameAsVoid(const void* left, const void* right) {
-  return Typing_CompareKeyName(left, right);
-}
+static struct TypingTableEntry* TypingTableEntry_Init(
+    struct TypingTableEntry* entry,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value) {
+  struct Typing* typing_init_result;
 
-static struct Typing* TypingTable_SearchWithPrimaryKeyFromAssignStatement(
-    const struct TypingTable* table,
-    const struct AssignStatement* assign_statement) {
-  return TypingTable_SearchWithPrimaryKey(
-      table, &assign_statement->key_expr.constexpr);
-}
-
-static struct Typing* TypingTable_SearchWithPrimaryKeyFromLine(
-    const struct TypingTable* table, const struct ParserLine* line) {
-  switch (line->type) {
-    case ParserLineType_kAssignStatement: {
-      return TypingTable_SearchWithPrimaryKeyFromAssignStatement(
-          table, &line->variant.assign_statement);
-    }
-
-    default: {
-      assert(0 && "This should never happen.");
-      return NULL;
-    }
+  typing_init_result = Typing_Init(&entry->typing, keys, value);
+  if (typing_init_result == NULL) {
+    goto error;
   }
+
+  return entry;
+
+error:
+  return NULL;
+}
+
+static void TypingTableEntry_Deinit(struct TypingTableEntry* entry) {
+  entry->previous = NULL;
+  Typing_Deinit(&entry->typing);
+}
+
+static int TypingTableEntry_CompareKeyName(
+    const struct TypingTableEntry* left,
+    const struct TypingTableEntry* right) {
+  return Typing_CompareKeyName(&left->typing, &right->typing);
+}
+
+static int TypingTableEntry_CompareKeyNameAsVoid(
+    const void* left, const void* right) {
+  return TypingTableEntry_CompareKeyName(left, right);
+}
+
+static int TypingTable_InsertFromKeysAndValue(
+    struct TypingTable* table,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value) {
+  struct TypingTableEntry* entry_init_result;
+  int tree_insert_succeeded;
+
+  struct Typing* find_typing;
+  struct TypingTableEntry* entry;
+
+  find_typing = TypingTable_FindFromPrimaryKey(table, &keys->constexpr);
+  if (find_typing != NULL) {
+    return 0;
+  }
+
+  /* Typing is not found, so insert into the table. */
+  entry = malloc(sizeof(*entry));
+  if (entry == NULL) {
+    goto error;
+  }
+
+  entry_init_result = TypingTableEntry_Init(entry, keys, value);
+  if (entry_init_result == NULL) {
+    goto error_free_entry;
+  }
+
+  tree_insert_succeeded =
+      RedBlackTree_Insert(
+          &table->tree, entry, &TypingTableEntry_CompareKeyNameAsVoid);
+  if (!tree_insert_succeeded) {
+    goto error_deinit_entry;
+  }
+
+  entry->previous = table->tail;
+  table->tail = entry;
+  ++table->count;
+
+  return 1;
+
+error_deinit_entry:
+  TypingTableEntry_Deinit(entry);
+
+error_free_entry:
+  free(entry);
+
+error:
+  return 0;
+}
+
+static int TypingTableEntry_ResolveDiff(
+    struct TypingTableEntry* left, struct TypingTableEntry* right) {
+  return Typing_ResolveDiff(&left->typing, &right->typing);
 }
 
 /**
  * External
  */
 
-struct TypingTable* TypingTable_Init(
-    struct TypingTable* table, size_t capacity) {
-  struct RedBlackTree* init_tree_result;
+struct TypingTable* TypingTable_Init(struct TypingTable* table) {
+  struct RedBlackTree* tree_init_result;
 
-  table->typings = malloc(capacity * sizeof(table->typings[0]));
-  if (table->typings == NULL) {
-    goto error;
-  }
-  table->capacity = capacity;
+  table->tail = NULL;
   table->count = 0;
-
-  init_tree_result = RedBlackTree_Init(&table->tree);
-  if (init_tree_result == NULL) {
-    goto error_free_typings;
+  tree_init_result = RedBlackTree_Init(&table->tree);
+  if (tree_init_result == NULL) {
+    goto error;
   }
 
   return table;
-
-error_free_typings:
-  table->capacity = 0;
-  free(table->typings);
-  table->typings = NULL;
 
 error:
   return NULL;
 }
 
 void TypingTable_Deinit(struct TypingTable* table) {
+  struct TypingTableEntry* current;
+  struct TypingTableEntry* previous;
+
   RedBlackTree_Deinit(&table->tree);
-  while (table->count-- > 0) {
-    Typing_Deinit(&table->typings[table->count]);
+
+  for (current = table->tail;
+      current != NULL;
+      current = previous, --table->count) {
+    previous = current->previous;
+    TypingTableEntry_Deinit(current);
   }
-  table->capacity = 0;
-  free(table->typings);
-  table->typings = NULL;
+  table->tail = NULL;
 }
 
-struct Typing* TypingTable_InsertFromLine(
-    struct TypingTable* table, const struct ParserLine* line) {
-  struct Typing* init_typing_result;
-
-  int insert_succeeded;
-
-  if (table->count == table->capacity) {
-    return 0;
-  }
-
-  init_typing_result = Typing_Init(&table->typings[table->count], line);
-  if (init_typing_result == NULL) {
-    goto error;
-  }
-
-  insert_succeeded =
-      RedBlackTree_Insert(
-          &table->tree,
-          &table->typings[table->count],
-          &Typing_CompareKeyNameAsVoid);
-  if (!insert_succeeded) {
-    Typing_Deinit(&table->typings[table->count]);
-    return NULL;
-  }
-
-  ++table->count;
-
-  return &table->typings[table->count - 1];
-
-error:
-  return NULL;
-}
-
-struct Typing* TypingTable_InsertOrResolveFromLine(
-    struct TypingTable* table, const struct ParserLine* line) {
-  struct Typing* search_result;
-  int resolve_succeeded;
-
-  search_result = TypingTable_SearchWithPrimaryKeyFromLine(table, line);
-  if (search_result == NULL) {
-    return TypingTable_InsertFromLine(table, line);
-  }
-
-  resolve_succeeded = Typing_ResolveLineDiff(search_result, line);
-  if (!resolve_succeeded) {
-    return NULL;
-  }
-
-  return search_result;
-}
-
-struct Typing* TypingTable_SearchWithPrimaryKey(
+struct Typing* TypingTable_FindFromPrimaryKey(
     const struct TypingTable* table, const struct ConstExpr* expr) {
-  struct Typing search_key;
-  struct RedBlackNode* search_result;
+  struct TypingTableEntry find_key;
+  struct RedBlackNode* find_result;
+  struct TypingTableEntry* find_entry;
 
-  search_key.key_name = expr;
+  find_key.typing.key_name = expr;
 
-  search_result =
+  find_result =
       RedBlackTree_Find(
-          &table->tree, &search_key, &Typing_CompareKeyNameAsVoid);
-  if (search_result == NULL) {
+          &table->tree, &find_key, &TypingTableEntry_CompareKeyNameAsVoid);
+  if (find_result == NULL) {
     return NULL;
   }
 
-  return search_result->ptr;
+  find_entry = find_result->ptr;
+  return &find_entry->typing;
+}
+
+int TypingTable_InsertOrResolveFromKeysAndValue(
+    struct TypingTable* table,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value) {
+  struct Typing* find_typing;
+
+  find_typing = TypingTable_FindFromPrimaryKey(table, &keys->constexpr);
+  if (find_typing != NULL) {
+    return Typing_ResolveDiffFromKeysAndValue(find_typing, keys, value);
+  }
+
+  return TypingTable_InsertFromKeysAndValue(table, keys, value);
 }

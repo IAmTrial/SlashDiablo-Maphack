@@ -19,50 +19,56 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_TYPING_TABLE_H_
-#define BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_TYPING_TABLE_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_KEY_TABLE_H_
+#define BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_KEY_TABLE_H_
 
 #include <stddef.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
 #include "bh/config/colonini/internal/parser/const_expr.h"
-#include "bh/config/colonini/internal/parser/parser_line.h"
-#include "bh/config/colonini/internal/semantic_analyzer/typing.h"
+#include "bh/config/colonini/internal/parser/key_expr.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct TypingTableEntry {
-  struct Typing typing;
-  struct TypingTableEntry* previous;
-};
+struct KeyTableEntry;
 
-struct TypingTable {
+struct KeyTable {
+  struct KeyTableEntry* tail;
   size_t count;
-  struct TypingTableEntry* tail;
   struct RedBlackTree tree;
 };
 
-struct TypingTable* TypingTable_Init(struct TypingTable* table);
+struct KeyTableEntry {
+  const struct ConstExpr* expr;
+  struct KeyTable table;
 
-void TypingTable_Deinit(struct TypingTable* table);
+  struct KeyTableEntry* previous;
+};
 
-struct Typing* TypingTable_FindFromPrimaryKey(
-    const struct TypingTable* table, const struct ConstExpr* expr);
+struct KeyTable* KeyTable_Init(struct KeyTable* table);
 
-int TypingTable_InsertFromKeysAndValue(
-    struct TypingTable* table,
-    const struct KeyExpr* keys,
-    const struct ValueExpr* value);
+void KeyTable_Deinit(struct KeyTable* table);
 
-int TypingTable_InsertOrResolveFromKeysAndValue(
-    struct TypingTable* table,
-    const struct KeyExpr* keys,
-    const struct ValueExpr* value);
+struct KeyTable* KeyTable_FindFromKey(
+    const struct KeyTable* table, const struct ConstExpr* key);
+
+struct KeyTable* KeyTable_FindFromKeys(
+    const struct KeyTable* table, const struct KeyExpr* keys);
+
+size_t KeyTable_InsertFromKey(
+    struct KeyTable* table, const struct ConstExpr* key);
+
+/**
+ * Inserts the key and subkeys of a key expression into the key table.
+ * Returns the total count of key and subkeys inserted.
+ */
+size_t KeyTable_InsertFromKeys(
+    struct KeyTable* table, const struct KeyExpr* keys);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_TYPING_TABLE_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_KEY_TABLE_H_ */

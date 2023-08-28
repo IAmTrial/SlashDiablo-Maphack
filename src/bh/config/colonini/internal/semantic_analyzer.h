@@ -25,8 +25,8 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/semantic_analyzer/key_table.h"
 #include "bh/config/colonini/internal/semantic_analyzer/typing_table.h"
-#include "bh/config/colonini/internal/semantic_analyzer/variable_table.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +34,7 @@ extern "C" {
 
 struct SemanticAnalyzer {
   struct TypingTable typing_table;
-  struct VariableTable var_table;
+  struct KeyTable key_table;
 };
 
 struct SemanticAnalyzer* SemanticAnalyzer_Init(

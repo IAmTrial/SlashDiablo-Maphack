@@ -26,10 +26,64 @@
 
 #include "bh/config/colonini/internal/parser.h"
 #include "bh/config/colonini/internal/parser/parser_line_type.h"
-#include "bh/config/colonini/internal/semantic_analyzer/typing.h"
+#include "bh/config/colonini/internal/semantic_analyzer/key_table.h"
 #include "bh/config/colonini/internal/semantic_analyzer/typing_table.h"
-#include "bh/config/colonini/internal/semantic_analyzer/variable.h"
-#include "bh/config/colonini/internal/semantic_analyzer/variable_table.h"
+
+static int SemanticAnalyzer_LoadLine(
+    struct SemanticAnalyzer* analyzer,
+    const struct ParserLine* line) {
+  switch (line->type) {
+    case ParserLineType_kNoOp: {
+      return 1;
+    }
+
+    case ParserLineType_kAssignStatement: {
+      const struct AssignStatement* assign_statement;
+      int typing_insert_or_resolve_succeeded;
+      size_t key_table_insert_count;
+
+      assign_statement = &line->variant.assign_statement;
+
+      /* Determine typing for each variable. */
+      typing_insert_or_resolve_succeeded =
+          TypingTable_InsertOrResolveFromKeysAndValue(
+              &analyzer->typing_table,
+              &assign_statement->key_expr,
+              &assign_statement->value_expr);
+      if (!typing_insert_or_resolve_succeeded) {
+        goto error;
+      }
+
+      /* Add to the key table. */
+      key_table_insert_count =
+          KeyTable_InsertFromKeys(
+              &analyzer->key_table, &assign_statement->key_expr);
+      if (key_table_insert_count == 0) {
+        return 0;
+      }
+
+      return 1;
+    }
+
+    case ParserLineType_kUnspecified: {
+      assert(0 && ParserLineType_kUnspecified && "This should never happen.");
+      return 0;
+    }
+
+    case ParserLineType_kInvalid: {
+      assert(0 && ParserLineType_kInvalid && "This should never happen.");
+      return 0;
+    }
+
+    default: {
+      assert(0 && "This should never happen.");
+      return 0;
+    }
+  }
+
+error:
+  return 0;
+}
 
 /**
  * External
@@ -39,38 +93,16 @@ struct SemanticAnalyzer* SemanticAnalyzer_Init(
     struct SemanticAnalyzer* analyzer,
     const struct Parser* parser) {
   struct TypingTable* typing_table_init_result;
-  struct VariableTable* var_table_init_result;
-
-  size_t i;
-  size_t var_count;
-
-  var_count = 0;
-  for (i = 0; i < parser->line_count; ++i) {
-    switch (parser->lines[i].type) {
-      case ParserLineType_kAssignStatement: {
-        ++var_count;
-        break;
-      }
-
-      case ParserLineType_kNoOp: {
-        break;
-      }
-
-      default: {
-        assert(0 && "This should never happen.");
-        return NULL;
-      }
-    }
-  }
+  struct KeyTable* key_table_init_result;
 
   typing_table_init_result =
-      TypingTable_Init(&analyzer->typing_table, var_count);
+      TypingTable_Init(&analyzer->typing_table);
   if (typing_table_init_result == NULL) {
     goto error;
   }
 
-  var_table_init_result = VariableTable_Init(&analyzer->var_table, var_count);
-  if (var_table_init_result == NULL) {
+  key_table_init_result = KeyTable_Init(&analyzer->key_table);
+  if (key_table_init_result == NULL) {
     goto error_deinit_typing_table;
   }
 
@@ -84,7 +116,8 @@ error:
 }
 
 void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer) {
-  VariableTable_Deinit(&analyzer->var_table);
+  KeyTable_Deinit(&analyzer->key_table);
+  TypingTable_Deinit(&analyzer->typing_table);
 }
 
 int SemanticAnalyzer_LoadLines(
@@ -92,36 +125,13 @@ int SemanticAnalyzer_LoadLines(
     const struct Parser* parser) {
   size_t i;
 
-  /* Determine typing for each variable. */
   for (i = 0; i < parser->line_count; ++i) {
-    struct Typing* insert_result;
+    int load_line_succeeded;
 
-    if (parser->lines[i].type == ParserLineType_kNoOp) {
-      continue;
-    }
-
-    insert_result =
-        TypingTable_InsertOrResolveFromLine(
-            &analyzer->typing_table, &parser->lines[i]);
-    if (insert_result == NULL) {
+    load_line_succeeded =
+        SemanticAnalyzer_LoadLine(analyzer, &parser->lines[i]);
+    if (!load_line_succeeded) {
       goto error;
-    }
-  }
-
-  /* Add to the variable table. */
-  for (i = 0; i < parser->line_count; ++i) {
-    struct Variable* add_result;
-
-    const struct Typing* typing;
-
-    if (parser->lines[i].type == ParserLineType_kNoOp) {
-      continue;
-    }
-
-    add_result =
-        VariableTable_InsertFromLine(&analyzer->var_table, &parser->lines[i]);
-    if (add_result == NULL) {
-      return 0;
     }
   }
 

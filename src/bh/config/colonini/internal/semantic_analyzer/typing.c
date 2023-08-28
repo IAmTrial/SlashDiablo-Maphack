@@ -33,19 +33,17 @@
 #include "bh/config/colonini/internal/parser/value_expr.h"
 #include "bh/config/colonini/internal/parser/value_expr_type.h"
 
-static struct Typing* Typing_InitFromAssignStatement(
-    struct Typing* typing, const struct AssignStatement* assign_statement) {
-  const struct KeyExpr* keys;
-  const struct ConstExpr* primary_key;
-  const struct ValueExpr* value;
+/**
+ * External
+ */
 
-  /* Init the key typing info. */
-  keys = &assign_statement->key_expr;
+struct Typing* Typing_Init(
+    struct Typing* typing,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value) {
   typing->key_name = &keys->constexpr;
   typing->subkey_count = keys->subscripts_count;
 
-  /* Copy the value's type. */
-  value = &assign_statement->value_expr;
   typing->value_type = value->type;
   typing->value_as_constexpr_type =
       (typing->value_type == ValueExprType_kConst)
@@ -53,57 +51,6 @@ static struct Typing* Typing_InitFromAssignStatement(
           : ConstExprType_kUnspecified;
 
   return typing;
-
-error:
-  return NULL;
-}
-
-static int Typing_ResolveLineDiffFromAssignStatement(
-    struct Typing* typing, const struct AssignStatement* assign_statement) {
-  size_t i;
-
-  const struct KeyExpr* right_key;
-  const struct ValueExpr* right_value;
-  const struct ConstExpr* right_value_as_constexpr;
-  
-  /* Cannot resolve if subkey count is different. */
-  right_key = &assign_statement->key_expr;
-  if (typing->subkey_count != right_key->subscripts_count) {
-    return 0;
-  }
-
-  /* Resolve value type differences. */
-  right_value = &assign_statement->value_expr;
-  if (typing->value_type != right_value->type) {
-    typing->value_type = ValueExprType_kConst;
-    typing->value_as_constexpr_type = ConstExprType_kString;
-    return 1;
-  }
-
-  right_value_as_constexpr = &right_value->variant.as_constexpr;
-  if (typing->value_as_constexpr_type != right_value_as_constexpr->type) {
-    typing->value_as_constexpr_type = ConstExprType_kString;
-  }
-
-  return 1;
-}
-
-/**
- * External
- */
-
-struct Typing* Typing_Init(
-    struct Typing* typing, const struct ParserLine* line) {
-  switch (line->type) {
-    case ParserLineType_kAssignStatement: {
-      return Typing_InitFromAssignStatement(typing, &line->variant.assign_statement);
-    }
-
-    default: {
-      assert(0 && "This should not happen.");
-      return NULL;
-    }
-  }
 }
 
 void Typing_Deinit(struct Typing* typing) {
@@ -155,25 +102,54 @@ int Typing_ResolveDiff(struct Typing* left, struct Typing* right) {
     right->value_type = ValueExprType_kConst;
     left->value_as_constexpr_type = ConstExprType_kString;
     right->value_as_constexpr_type = ConstExprType_kString;
-  } else if (left->value_as_constexpr_type != right->value_as_constexpr_type) {
-    left->value_as_constexpr_type = ConstExprType_kString;
-    right->value_as_constexpr_type = ConstExprType_kString;
+
+    return 1;
   }
+
+  if (left->value_type == ValueExprType_kToggle) {
+    return 1;
+  }
+
+  if (left->value_as_constexpr_type == right->value_as_constexpr_type) {
+    return 1;
+  }
+
+  /* Signed int and unsigned int are compatible. */
+  if (left->value_as_constexpr_type == ConstExprType_kSignedInt
+      && right->value_as_constexpr_type == ConstExprType_kUnsignedInt) {
+    return 1;
+  }
+  if (left->value_as_constexpr_type == ConstExprType_kUnsignedInt
+      && right->value_as_constexpr_type == ConstExprType_kSignedInt) {
+    return 1;
+  }
+
+  left->value_as_constexpr_type = ConstExprType_kString;
+  right->value_as_constexpr_type = ConstExprType_kString;
 
   return 1;
 }
 
-int Typing_ResolveLineDiff(
-    struct Typing* typing, const struct ParserLine* line) {
-  switch (line->type) {
-    case ParserLineType_kAssignStatement: {
-      return Typing_ResolveLineDiffFromAssignStatement(
-          typing, &line->variant.assign_statement);
-    }
+int Typing_ResolveDiffFromKeysAndValue(
+    struct Typing* typing,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value) {
+  struct Typing* temp_init_result;
 
-    default: {
-      assert(0 && "This should not happen.");
-      return 0;
-    }
+  struct Typing temp;
+  int resolve_succeeded;
+
+  temp_init_result = Typing_Init(&temp, keys, value);
+  if (temp_init_result == NULL) {
+    goto error;
   }
+
+  resolve_succeeded = Typing_ResolveDiff(typing, &temp);
+
+  Typing_Deinit(&temp);
+
+  return resolve_succeeded;
+
+error:
+  return 0;
 }

@@ -33,12 +33,17 @@ typedef void TestFunc(void);
 static void BeforeAllSetUp(void) {
 }
 
-static void LoadLines_TwoKeys_Success(void) {
+static void LoadLines_MultipleKeys_Success(void) {
+  enum {
+    kLineCount = 9
+  };
+  size_t i;
   int actual;
   struct SemanticAnalyzer analyzer;
-  struct ParserLine lines[9];
-  struct Subscript subscripts[9][1];
+  struct ParserLine lines[kLineCount];
+  struct Subscript subscripts[kLineCount][1];
   struct Parser parser;
+  struct Typing* typings[kLineCount];
 
   /*
    * key01: value
@@ -74,26 +79,21 @@ static void LoadLines_TwoKeys_Success(void) {
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
-  assert(analyzer.typing_table.typings[0].value_type == ValueExprType_kConst);
-  assert(
-      analyzer.typing_table.typings[0].value_as_constexpr_type
-          == ConstExprType_kString);
-  assert(
-      analyzer.typing_table.typings[1].value_type == ValueExprType_kConst);
-  assert(
-      analyzer.typing_table.typings[1].value_as_constexpr_type
-          == ConstExprType_kSignedInt);
-  assert(analyzer.typing_table.typings[2].value_type == ValueExprType_kConst);
-  assert(
-      analyzer.typing_table.typings[2].value_as_constexpr_type
-          == ConstExprType_kUnsignedInt);
-  assert(analyzer.typing_table.typings[3].value_type == ValueExprType_kConst);
-  assert(
-      analyzer.typing_table.typings[3].value_as_constexpr_type
-          == ConstExprType_kBoolean);
-  assert(
-      analyzer.typing_table.typings[4].value_type
-          == ValueExprType_kToggle);
+  for (i = 0; i < kLineCount; ++i) {
+    typings[i] =
+        TypingTable_FindFromPrimaryKey(
+            &analyzer.typing_table,
+            &lines[i].variant.assign_statement.key_expr.constexpr);
+  }
+  assert(typings[0]->value_type == ValueExprType_kConst);
+  assert(typings[0]->value_as_constexpr_type == ConstExprType_kString);
+  assert(typings[1]->value_type == ValueExprType_kConst);
+  assert(typings[1]->value_as_constexpr_type == ConstExprType_kSignedInt);
+  assert(typings[2]->value_type == ValueExprType_kConst);
+  assert(typings[2]->value_as_constexpr_type == ConstExprType_kUnsignedInt);
+  assert(typings[3]->value_type == ValueExprType_kConst);
+  assert(typings[3]->value_as_constexpr_type == ConstExprType_kBoolean);
+  assert(typings[4]->value_type == ValueExprType_kToggle);
 
   SemanticAnalyzer_Deinit(&analyzer);
 }
@@ -179,6 +179,42 @@ static void LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
   struct Subscript subscripts[2][1];
   struct ValueExpr* value_expr[2];
   struct Parser parser;
+  struct Typing* typing;
+
+  /*
+   * key[1]: 0x1
+   * key[2]: 2
+   */
+  parser.lines = lines;
+  parser.line_count = sizeof(lines) / sizeof(lines[0]);
+  ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "true");
+  ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 1, "2");
+  value_expr[0] = &lines[0].variant.assign_statement.value_expr;
+  value_expr[0]->variant.as_constexpr.type = ConstExprType_kBoolean;
+  value_expr[1] = &lines[1].variant.assign_statement.value_expr;
+  value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
+  SemanticAnalyzer_Init(&analyzer, &parser);
+
+  actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
+
+  assert(actual);
+  typing =
+      TypingTable_FindFromPrimaryKey(
+          &analyzer.typing_table,
+          &lines[0].variant.assign_statement.key_expr.constexpr);
+  assert(typing->value_as_constexpr_type == ConstExprType_kString);
+
+  SemanticAnalyzer_Deinit(&analyzer);
+}
+
+static void LoadLines_SameKeyDifferentValueIntContTypes_NoDifferences(void) {
+  int actual;
+  struct SemanticAnalyzer analyzer;
+  struct ParserLine lines[2];
+  struct Subscript subscripts[2][1];
+  struct ValueExpr* value_expr[2];
+  struct Parser parser;
+  struct Typing* typing;
 
   /*
    * key[1]: 0x1
@@ -197,14 +233,18 @@ static void LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
-  assert(
-      analyzer.typing_table.typings[0].value_as_constexpr_type
-          == ConstExprType_kString);
+  typing =
+      TypingTable_FindFromPrimaryKey(
+          &analyzer.typing_table,
+          &lines[0].variant.assign_statement.key_expr.constexpr);
+  assert(typing->value_as_constexpr_type == ConstExprType_kUnsignedInt
+      || typing->value_as_constexpr_type == ConstExprType_kSignedInt);
 
   SemanticAnalyzer_Deinit(&analyzer);
 }
 
 static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
+  size_t i;
   int actual;
   struct SemanticAnalyzer analyzer;
   struct LexerLine lline;
@@ -215,6 +255,7 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   struct ToggleExpr* toggle_expr;
   struct ConstExpr* const_exprs[2];
   struct Parser parser;
+  struct Typing* typings[2];
 
   LexerLineSetUp(
       &lline,
@@ -260,11 +301,14 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
 
   assert(actual);
-  assert(
-      analyzer.typing_table.typings[0].value_type == ValueExprType_kConst);
-  assert(
-      analyzer.typing_table.typings[0].value_as_constexpr_type
-          == ConstExprType_kString);
+  for (i = 0; i < 2; ++i) {
+    typings[i] =
+        TypingTable_FindFromPrimaryKey(
+            &analyzer.typing_table,
+            &lines[i].variant.assign_statement.key_expr.constexpr);
+  }
+  assert(typings[0]->value_type == ValueExprType_kConst);
+  assert(typings[0]->value_as_constexpr_type == ConstExprType_kString);
 
   SemanticAnalyzer_Deinit(&analyzer);
 }
@@ -277,11 +321,12 @@ int main(int argc, char** argv) {
 #else
 
   static TestFunc* const kTests[] = {
-    &LoadLines_TwoKeys_Success,
+    &LoadLines_MultipleKeys_Success,
     &LoadLines_DuplicateNames_Failure,
     &LoadLines_DuplicateSubkeys_Failure,
     &LoadLines_SameKeyMismatch_Failure,
     &LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences,
+    &LoadLines_SameKeyDifferentValueIntContTypes_NoDifferences,
     &LoadLines_SameKeyDifferentValueTypes_ResolveDifferences,
   };
 

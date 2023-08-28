@@ -45,7 +45,9 @@ struct Typing {
 };
 
 struct Typing* Typing_Init(
-    struct Typing* typing, const struct ParserLine* line);
+    struct Typing* typing,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value);
 
 void Typing_Deinit(struct Typing* typing);
 
@@ -62,12 +64,14 @@ int Typing_Equal(const struct Typing* left, const struct Typing* right);
 int Typing_ResolveDiff(struct Typing* left, struct Typing* right);
 
 /**
- * Determines the type differences between a Typing and a ParserLine,
+ * Determines the type differences between a Typing and a ValueExpr,
  * changing the typing to string type as needed. Returns a non-zero
  * value on success, or zero on failure.
  */
-int Typing_ResolveLineDiff(
-    struct Typing* typing, const struct ParserLine* line);
+int Typing_ResolveDiffFromKeysAndValue(
+    struct Typing* typing,
+    const struct KeyExpr* keys,
+    const struct ValueExpr* value);
 
 #ifdef __cplusplus
 }  /* extern "C" */
