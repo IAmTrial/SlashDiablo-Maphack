@@ -94,7 +94,7 @@ int ConstExpr_CompareExprAsString(
     return cmp_result;
   }
 
-  return is_left_shorter ? -1 : left->length - right->length;
+  return is_left_shorter ? -1 : (left->length > right->length);
 }
 
 int ConstExpr_Equal(
