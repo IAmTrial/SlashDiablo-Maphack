@@ -121,6 +121,7 @@ void ParserLineBasicVSetUp(
   key_expr = &assign_statement->key_expr;
   key_expr->constexpr.expr = (char*)key;
   key_expr->constexpr.length = strlen(key);
+  key_expr->constexpr.type = ConstExprType_kString;
 
   key_expr->subscripts = subscripts;
   for (key_expr->subscripts_count = 0;
