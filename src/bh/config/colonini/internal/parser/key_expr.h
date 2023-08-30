@@ -33,9 +33,9 @@ extern "C" {
 #endif  /* __cplusplus */
 
 struct KeyExpr {
-  struct ConstExpr constexpr;
+  struct ConstExpr primary;
   struct Subscript* subscripts;
-  size_t subscripts_count;
+  size_t subscript_count;
 };
 
 /**

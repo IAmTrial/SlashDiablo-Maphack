@@ -76,9 +76,9 @@ struct AssignStatement* AssignStatement_Parse(
   }
 
   key_end_src =
-      (key->subscripts_count == 0)
-          ? key->constexpr.end_src
-          : key->subscripts[key->subscripts_count - 1].end_src;
+      (key->subscript_count == 0)
+          ? key->primary.end_src
+          : key->subscripts[key->subscript_count - 1].end_src;
   if (key_end_src == NULL || key_end_src >= end_src) {
     *error_column = first_token->line_index;
     return NULL;

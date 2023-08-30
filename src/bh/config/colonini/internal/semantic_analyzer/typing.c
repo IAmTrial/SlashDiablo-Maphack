@@ -41,8 +41,8 @@ struct Typing* Typing_Init(
     struct Typing* typing,
     const struct KeyExpr* keys,
     const struct ValueExpr* value) {
-  typing->key_name = &keys->constexpr;
-  typing->subkey_count = keys->subscripts_count;
+  typing->key_name = &keys->primary;
+  typing->subkey_count = keys->subscript_count;
 
   typing->value_type = value->type;
   typing->value_as_constexpr_type =

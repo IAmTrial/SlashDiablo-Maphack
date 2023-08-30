@@ -50,7 +50,7 @@ void ParserLineBasicSetUp(
     const char* value,
     const char* key,
     struct Subscript* subscripts,
-    size_t subscripts_count,
+    size_t subscript_count,
     ...);
 
 void ParserLineBasicVSetUp(
@@ -58,7 +58,7 @@ void ParserLineBasicVSetUp(
     const char* value,
     const char* key,
     struct Subscript* subscripts,
-    size_t subscripts_count,
+    size_t subscript_count,
     va_list args);
 
 #ifdef __cplusplus

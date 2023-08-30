@@ -33,11 +33,11 @@ extern "C" {
 struct LexerLine {
   size_t line_number;
   struct LexerString* strs;
-  size_t strs_count;
+  size_t str_count;
 
   struct LexerString* first_token;
   struct LexerString* last_token;
-  size_t tokens_count;
+  size_t token_count;
 };
 
 /**

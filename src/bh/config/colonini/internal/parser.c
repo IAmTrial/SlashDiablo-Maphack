@@ -32,8 +32,8 @@
  * External
  */
 
-struct Parser* Parser_Init(struct Parser* parser, size_t lines_count) {
-  parser->lines = malloc(lines_count * sizeof(parser->lines[0]));
+struct Parser* Parser_Init(struct Parser* parser, size_t line_count) {
+  parser->lines = malloc(line_count * sizeof(parser->lines[0]));
   if (parser->lines == NULL) {
     goto error;
   }

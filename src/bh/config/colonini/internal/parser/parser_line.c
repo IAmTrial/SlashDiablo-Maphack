@@ -64,7 +64,7 @@ struct ParserLine* ParserLine_ParseLine(
 
   parser_line->line_number = lexer_line->line_number;
 
-  if (lexer_line->tokens_count == 0) {
+  if (lexer_line->token_count == 0) {
     parser_line->type = ParserLineType_kNoOp;
     return parser_line;
   }

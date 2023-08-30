@@ -164,14 +164,14 @@ struct LexerLine* LexerLine_LexLine(
   size_t i_raw_line;
   size_t i_strs;
   size_t capture_length;
-  size_t reserved_strs_count;
+  size_t reserved_str_count;
 
   line->line_number = line_number;
 
   if (raw_line_length == 0) {
     line->strs = NULL;
-    line->strs_count = 0;
-    line->tokens_count = 0;
+    line->str_count = 0;
+    line->token_count = 0;
     line->first_token = NULL;
     line->last_token = NULL;
 
@@ -179,9 +179,9 @@ struct LexerLine* LexerLine_LexLine(
   }
 
   /* Determine the number of LexerString to reserve. */
-  for (i_raw_line = 0, reserved_strs_count = 0;
+  for (i_raw_line = 0, reserved_str_count = 0;
       i_raw_line < raw_line_length;
-      i_raw_line += capture_length, ++reserved_strs_count) {
+      i_raw_line += capture_length, ++reserved_str_count) {
     enum CaptureRuleCategory category;
     const struct CaptureRule* rule;
     size_t remaining_line_length;
@@ -206,19 +206,19 @@ struct LexerLine* LexerLine_LexLine(
     assert(capture_length > 0);
   }
 
-  line->strs = malloc(reserved_strs_count * sizeof(line->strs[0]));
+  line->strs = malloc(reserved_str_count * sizeof(line->strs[0]));
   if (line->strs == NULL) {
     goto error;
   }
 
   /* Lex the line into individual LexerString. */
-  line->strs_count = 0;
-  line->tokens_count = 0;
+  line->str_count = 0;
+  line->token_count = 0;
   line->last_token = NULL;
   for (i_raw_line = 0;
       i_raw_line < raw_line_length;
-      i_raw_line += line->strs[line->strs_count].str_length,
-          ++line->strs_count) {
+      i_raw_line += line->strs[line->str_count].str_length,
+          ++line->str_count) {
     struct LexerString* init_str_component_result;
     struct LexerString* current_str;
     size_t str_length;
@@ -226,7 +226,7 @@ struct LexerLine* LexerLine_LexLine(
     const struct CaptureRule* rule;
     size_t remaining_line_length;
 
-    current_str = &line->strs[line->strs_count];
+    current_str = &line->strs[line->str_count];
     current_str->previous_token = line->last_token;
 
     remaining_line_length = raw_line_length - i_raw_line;
@@ -257,19 +257,19 @@ struct LexerLine* LexerLine_LexLine(
               (line->last_token == NULL)
                   ? 0
                   : line->last_token - line->strs;
-          i_strs < line->strs_count;
+          i_strs < line->str_count;
           ++i_strs) {
         line->strs[i_strs].next_token = current_str;
       }
 
       line->last_token = current_str;
-      ++line->tokens_count;
+      ++line->token_count;
     }
   }
 
   /* Set the ending LexerString to have no token. */
   for (i_strs = (line->last_token == NULL) ? 0 : line->last_token - line->strs;
-      i_strs < line->strs_count;
+      i_strs < line->str_count;
       ++i_strs) {
     line->strs[i_strs].next_token = NULL;
   }
@@ -297,13 +297,13 @@ error:
 void LexerLine_Deinit(struct LexerLine* line) {
   size_t i;
 
-  for (i = line->strs_count; i-- > 0; ) {
+  for (i = line->str_count; i-- > 0; ) {
     LexerString_Deinit(&line->strs[i]);
   }
-  line->strs_count = 0;
+  line->str_count = 0;
   free(line->strs);
   line->strs = NULL;
   line->first_token = NULL;
   line->last_token = NULL;
-  line->tokens_count = 0;
+  line->token_count = 0;
 }

@@ -76,7 +76,7 @@ static int TypingTable_InsertFromKeysAndValue(
   struct Typing* find_typing;
   struct TypingTableEntry* entry;
 
-  find_typing = TypingTable_FindFromPrimaryKey(table, &keys->constexpr);
+  find_typing = TypingTable_FindFromPrimaryKey(table, &keys->primary);
   if (find_typing != NULL) {
     return 0;
   }
@@ -180,7 +180,7 @@ int TypingTable_InsertOrResolveFromKeysAndValue(
     const struct ValueExpr* value) {
   struct Typing* find_typing;
 
-  find_typing = TypingTable_FindFromPrimaryKey(table, &keys->constexpr);
+  find_typing = TypingTable_FindFromPrimaryKey(table, &keys->primary);
   if (find_typing != NULL) {
     return Typing_ResolveDiffFromKeysAndValue(find_typing, keys, value);
   }

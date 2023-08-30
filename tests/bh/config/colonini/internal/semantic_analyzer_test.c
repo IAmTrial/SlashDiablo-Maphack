@@ -83,7 +83,7 @@ static void LoadLines_MultipleKeys_Success(void) {
     typings[i] =
         TypingTable_FindFromPrimaryKey(
             &analyzer.typing_table,
-            &lines[i].variant.assign_statement.key_expr.constexpr);
+            &lines[i].variant.assign_statement.key_expr.primary);
   }
   assert(typings[0]->value_type == ValueExprType_kConst);
   assert(typings[0]->value_as_constexpr_type == ConstExprType_kString);
@@ -201,7 +201,7 @@ static void LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
   typing =
       TypingTable_FindFromPrimaryKey(
           &analyzer.typing_table,
-          &lines[0].variant.assign_statement.key_expr.constexpr);
+          &lines[0].variant.assign_statement.key_expr.primary);
   assert(typing->value_as_constexpr_type == ConstExprType_kString);
 
   SemanticAnalyzer_Deinit(&analyzer);
@@ -236,7 +236,7 @@ static void LoadLines_SameKeyDifferentValueIntContTypes_NoDifferences(void) {
   typing =
       TypingTable_FindFromPrimaryKey(
           &analyzer.typing_table,
-          &lines[0].variant.assign_statement.key_expr.constexpr);
+          &lines[0].variant.assign_statement.key_expr.primary);
   assert(typing->value_as_constexpr_type == ConstExprType_kUnsignedInt
       || typing->value_as_constexpr_type == ConstExprType_kSignedInt);
 
@@ -305,7 +305,7 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
     typings[i] =
         TypingTable_FindFromPrimaryKey(
             &analyzer.typing_table,
-            &lines[i].variant.assign_statement.key_expr.constexpr);
+            &lines[i].variant.assign_statement.key_expr.primary);
   }
   assert(typings[0]->value_type == ValueExprType_kConst);
   assert(typings[0]->value_as_constexpr_type == ConstExprType_kString);

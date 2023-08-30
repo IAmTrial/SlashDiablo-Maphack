@@ -53,13 +53,13 @@ void LexerLineVSetUp(
   size_t total_line_index;
 
   line->strs = strs;
-  line->strs_count = count;
+  line->str_count = count;
 
-  line->tokens_count = 0;
+  line->token_count = 0;
   total_line_index = 0;
   line->first_token = NULL;
   line->last_token = NULL;
-  for (i = 0; i < line->strs_count; ++i) {
+  for (i = 0; i < line->str_count; ++i) {
     int is_token;
 
     strs[i].str = va_arg(args, char*);
@@ -75,7 +75,7 @@ void LexerLineVSetUp(
       if (line->first_token == NULL) {
         line->first_token = &strs[i];
       }
-      ++line->tokens_count;
+      ++line->token_count;
 
       for (ii = (line->last_token == NULL)
               ? 0
@@ -96,12 +96,12 @@ void ParserLineBasicSetUp(
     const char* value,
     const char* key,
     struct Subscript* subscripts,
-    size_t subscripts_count,
+    size_t subscript_count,
     ...) {
   va_list args;
 
-  va_start(args, subscripts_count);
-  ParserLineBasicVSetUp(line, value, key, subscripts, subscripts_count, args);
+  va_start(args, subscript_count);
+  ParserLineBasicVSetUp(line, value, key, subscripts, subscript_count, args);
   va_end(args);
 }
 
@@ -110,7 +110,7 @@ void ParserLineBasicVSetUp(
     const char* value,
     const char* key,
     struct Subscript* subscripts,
-    size_t subscripts_count,
+    size_t subscript_count,
     va_list args) {
   struct AssignStatement* assign_statement;
   struct KeyExpr* key_expr;
@@ -119,17 +119,17 @@ void ParserLineBasicVSetUp(
   line->type = ParserLineType_kAssignStatement;
   assign_statement = &line->variant.assign_statement;
   key_expr = &assign_statement->key_expr;
-  key_expr->constexpr.expr = (char*)key;
-  key_expr->constexpr.length = strlen(key);
-  key_expr->constexpr.type = ConstExprType_kString;
+  key_expr->primary.expr = (char*)key;
+  key_expr->primary.length = strlen(key);
+  key_expr->primary.type = ConstExprType_kString;
 
   key_expr->subscripts = subscripts;
-  for (key_expr->subscripts_count = 0;
-      key_expr->subscripts_count < subscripts_count;
-      ++key_expr->subscripts_count) {
+  for (key_expr->subscript_count = 0;
+      key_expr->subscript_count < subscript_count;
+      ++key_expr->subscript_count) {
     struct Subscript* current;
 
-    current = &key_expr->subscripts[key_expr->subscripts_count];
+    current = &key_expr->subscripts[key_expr->subscript_count];
     current->expr.expr = va_arg(args, char*);
     current->expr.length = strlen(current->expr.expr);
     current->expr.type = ConstExprType_kString;

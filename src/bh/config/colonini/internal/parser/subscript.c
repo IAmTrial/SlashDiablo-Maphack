@@ -58,7 +58,7 @@ int Subscript_Peek(
     return 0;
   }
 
-  /* Valid subscript consist of [ operator, constexpr, and ] operator. */
+  /* Valid subscript consist of [ operator, ConstExpr, and ] operator. */
   if (begin_src->next_token == NULL) {
     *error_column = begin_src->line_index;
     return 0;

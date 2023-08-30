@@ -162,15 +162,15 @@ static struct KeyExpr* ParseSubkeys(
     const struct LexerString* begin_src,
     const struct LexerString* end_src,
     size_t* error_column) {
-  size_t subscripts_count;
+  size_t subscript_count;
   const struct LexerString* current;
   const struct LexerString* lbracket_src;
   const struct LexerString* rbracket_src;
 
   /* Determine the number of subkeys. */
-  for (current = begin_src, subscripts_count = 0;
+  for (current = begin_src, subscript_count = 0;
       current != NULL && current < end_src;
-      current = rbracket_src->next_token, ++subscripts_count) {
+      current = rbracket_src->next_token, ++subscript_count) {
     int peek_result;
 
     peek_result =
@@ -185,30 +185,30 @@ static struct KeyExpr* ParseSubkeys(
     }
   }
 
-  if (subscripts_count == 0) {
+  if (subscript_count == 0) {
     expr->subscripts = NULL;
-    expr->subscripts_count = 0;
+    expr->subscript_count = 0;
     return expr;
   }
 
   /* Allocate space for the subkeys. */
   expr->subscripts =
-      malloc(subscripts_count * sizeof(expr->subscripts[0]));
+      malloc(subscript_count * sizeof(expr->subscripts[0]));
   if (expr->subscripts == NULL) {
     *error_column = 0;
     goto error;
   }
 
   /* Parse the subkeys. */
-  for (current = begin_src, expr->subscripts_count = 0;
-      expr->subscripts_count < subscripts_count;
-      current = expr->subscripts[expr->subscripts_count].end_src,
-          ++expr->subscripts_count) {
+  for (current = begin_src, expr->subscript_count = 0;
+      expr->subscript_count < subscript_count;
+      current = expr->subscripts[expr->subscript_count].end_src,
+          ++expr->subscript_count) {
     struct Subscript* parse_result;
 
     parse_result =
         Subscript_Parse(
-            &expr->subscripts[expr->subscripts_count],
+            &expr->subscripts[expr->subscript_count],
             current,
             end_src,
             error_column);
@@ -248,13 +248,13 @@ struct KeyExpr* KeyExpr_Parse(
   }
 
   parse_primary_result =
-      ParsePrimary(&expr->constexpr, begin_src, end_src, error_column);
+      ParsePrimary(&expr->primary, begin_src, end_src, error_column);
   if (parse_primary_result == NULL) {
     return NULL;
   }
 
   parse_subkeys_result =
-      ParseSubkeys(expr, expr->constexpr.end_src, end_src, error_column);
+      ParseSubkeys(expr, expr->primary.end_src, end_src, error_column);
   if (parse_subkeys_result == NULL) {
     return NULL;
   }
@@ -266,11 +266,11 @@ error:
 }
 
 void KeyExpr_Deinit(struct KeyExpr* expr) {
-  while (expr->subscripts_count-- > 0) {
-    Subscript_Deinit(&expr->subscripts[expr->subscripts_count]);
+  while (expr->subscript_count-- > 0) {
+    Subscript_Deinit(&expr->subscripts[expr->subscript_count]);
   }
 
-  ConstExpr_Deinit(&expr->constexpr);
+  ConstExpr_Deinit(&expr->primary);
 }
 
 int KeyExpr_CompareKeysAsStrings(
@@ -282,14 +282,14 @@ int KeyExpr_CompareKeysAsStrings(
   int cmp_result;
 
   cmp_result =
-      ConstExpr_CompareExprAsString(&left->constexpr, &right->constexpr);
+      ConstExpr_CompareExprAsString(&left->primary, &right->primary);
   if (cmp_result != 0) {
     return cmp_result;
   }
 
-  is_left_shorter = (left->subscripts_count < right->subscripts_count);
+  is_left_shorter = (left->subscript_count < right->subscript_count);
   max_count =
-      is_left_shorter ? left->subscripts_count : right->subscripts_count;
+      is_left_shorter ? left->subscript_count : right->subscript_count;
   for (i = 0; i < max_count; ++i) {
     cmp_result =
         ConstExpr_CompareExprAsString(
@@ -299,7 +299,7 @@ int KeyExpr_CompareKeysAsStrings(
     }
   }
 
-  if (left->subscripts_count != right->subscripts_count) {
+  if (left->subscript_count != right->subscript_count) {
     if (is_left_shorter) {
       return -1;
     } else {
@@ -314,15 +314,15 @@ int KeyExpr_Equal(
     const struct KeyExpr* left, const struct KeyExpr* right) {
   size_t i;
 
-  if (!ConstExpr_Equal(&left->constexpr, &right->constexpr)) {
+  if (!ConstExpr_Equal(&left->primary, &right->primary)) {
     return 0;
   }
 
-  if (left->subscripts_count != right->subscripts_count) {
+  if (left->subscript_count != right->subscript_count) {
     return 0;
   }
 
-  for (i = 0; i < left->subscripts_count; ++i) {
+  for (i = 0; i < left->subscript_count; ++i) {
     if (!Subscript_Equal(&left->subscripts[i], &right->subscripts[i])) {
       return 0;
     }

@@ -40,7 +40,7 @@ struct Parser {
  * Initializes a Parser with space allocated for the specified number
  * of ParserLine.
  */
-struct Parser* Parser_Init(struct Parser* parser, size_t lines_count);
+struct Parser* Parser_Init(struct Parser* parser, size_t line_count);
 
 /**
  * Deinitializes a Parser, freeing up resources that were allocated.
