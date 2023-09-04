@@ -36,6 +36,13 @@ if (MINGW)
 endif (MINGW)
 
 # Define test targets
+add_executable(${PROJECT_NAME}.DataTest "data_test.c")
+target_compile_definitions(${PROJECT_NAME}.DataTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.DataTest
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.DataTest PRIVATE shlwapi BH.Config.Colonini)
+
 add_executable(${PROJECT_NAME}.StringTest "string_test.c")
 target_compile_definitions(${PROJECT_NAME}.StringTest PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}.StringTest

@@ -19,40 +19,28 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_TYPE_DATA_H_
-#define BH_CONFIG_COLONINI_TYPE_DATA_H_
+#ifndef BH_CONFIG_COLONINI_TYPE_DATA_TYPE_H_
+#define BH_CONFIG_COLONINI_TYPE_DATA_TYPE_H_
 
 #include <stddef.h>
-
-#include "bh/config/colonini/type/data_type.h"
-#include "bh/config/colonini/type/string.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct Colonini_Data {
-  enum Colonini_DataType type;
-  union {
-    unsigned char as_boolean;
-    unsigned int as_integer;
-    struct Colonini_String as_string;
-  } variant;
+enum Colonini_DataType {
+  Colonini_DataType_kUnspecified = 0,
+
+  Colonini_DataType_kBoolean,
+  Colonini_DataType_kInteger,
+  Colonini_DataType_kString
 };
 
-struct Colonini_Data* Colonini_Data_InitAsBoolean(
-    struct Colonini_Data* data, unsigned int value);
-
-struct Colonini_Data* Colonini_Data_InitAsInteger(
-    struct Colonini_Data* data, unsigned int value);
-
-struct Colonini_Data* Colonini_Data_InitAsString(
-    struct Colonini_Data* data, const char* str, size_t str_length);
-
-void Colonini_Data_Deinit(struct Colonini_Data* data);
+const char* Colonini_DataType_GetDisplayName(
+    enum Colonini_DataType type, size_t* length);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_TYPE_DATA_H_ */
+#endif  /* BH_CONFIG_COLONINI_TYPE_DATA_TYPE_H_ */
