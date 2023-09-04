@@ -24,5 +24,9 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/key.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/list.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/map.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/string.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/string.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/value.h"
 )

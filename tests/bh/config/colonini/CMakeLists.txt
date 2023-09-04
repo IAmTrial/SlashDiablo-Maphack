@@ -20,3 +20,4 @@
 project(Tests.BH.Config.Colonini)
 
 add_subdirectory("internal")
+add_subdirectory("type")
