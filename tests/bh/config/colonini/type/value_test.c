@@ -113,6 +113,22 @@ static void InitAsInteger_42_Is42(struct EachContext* context) {
 
   Colonini_Value_Deinit(&value);
 }
+
+static void InitAsMap_IsEmptyMap(struct EachContext* context) {
+  struct Colonini_Value value;
+  struct Colonini_Value* value_init_result;
+  struct Colonini_Map* map;
+
+  value_init_result = Colonini_Value_InitAsMap(&value);
+
+  assert(value_init_result != NULL);
+  assert(value.type == Colonini_ValueType_kMap);
+  map = &value.variant.as_map;
+  assert(map->count == 0);
+
+  Colonini_Value_Deinit(&value);
+}
+
 static void InitAsString_Empty_IsEmpty(struct EachContext* context) {
   static const char kExpected[] = "";
   enum {
@@ -174,6 +190,8 @@ int main(int argc, char** argv) {
 
     &InitAsInteger_Zero_IsZero,
     &InitAsInteger_42_Is42,
+
+    &InitAsMap_IsEmptyMap,
 
     &InitAsString_Empty_IsEmpty,
     &InitAsString_Hello_EqualText

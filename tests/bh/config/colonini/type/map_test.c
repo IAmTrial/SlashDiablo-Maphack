@@ -135,6 +135,21 @@ static void PutInteger_42_Is42(struct EachContext* context) {
   assert(data->variant.as_integer == kExpected);
 }
 
+static void PutMap_IsEmptyMap(struct EachContext* context) {
+  struct Colonini_Map* result;
+  struct Colonini_Value* value;
+  struct Colonini_Map* submap;
+
+  result = Colonini_Map_PutMap(&context->map, kKey, kKeyLength);
+
+  assert(result != NULL);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kMap);
+  submap = &value->variant.as_map;
+  assert(result == submap);
+  assert(submap->count == 0);
+}
+
 static void PutString_Empty_IsEmpty(struct EachContext* context) {
   static const char kExpected[] = "";
   enum {
@@ -200,6 +215,8 @@ int main(int argc, char** argv) {
 
     &PutInteger_Zero_IsZero,
     &PutInteger_42_Is42,
+
+    &PutMap_IsEmptyMap,
 
     &PutString_Empty_IsEmpty,
     &PutString_Hello_EqualText

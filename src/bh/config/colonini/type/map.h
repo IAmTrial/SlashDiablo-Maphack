@@ -68,6 +68,9 @@ unsigned int* Colonini_Map_PutInteger(
     size_t key_length,
     unsigned int value);
 
+struct Colonini_Map* Colonini_Map_PutMap(
+    struct Colonini_Map* map, const char* key, size_t key_length);
+
 struct Colonini_String* Colonini_Map_PutString(
     struct Colonini_Map* map,
     const char* key,

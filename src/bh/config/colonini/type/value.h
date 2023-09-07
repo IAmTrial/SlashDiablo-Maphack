@@ -44,6 +44,8 @@ struct Colonini_Value* Colonini_Value_InitAsBoolean(
 struct Colonini_Value* Colonini_Value_InitAsInteger(
     struct Colonini_Value* value, unsigned int data);
 
+struct Colonini_Value* Colonini_Value_InitAsMap(struct Colonini_Value* value);
+
 struct Colonini_Value* Colonini_Value_InitAsString(
     struct Colonini_Value* value, const char* str, size_t str_length);
 

@@ -207,6 +207,27 @@ error:
   return NULL;
 }
 
+struct Colonini_Map* Colonini_Map_PutMap(
+    struct Colonini_Map* map, const char* key, size_t key_length) {
+  struct Colonini_Entry* entry;
+  struct Colonini_Value* entry_value;
+
+  entry = Colonini_Map_PutEmpty(map, key, key_length);
+  if (entry == NULL) {
+    goto error;
+  }
+
+  entry_value = Colonini_Value_InitAsMap(&entry->value);
+  if (entry_value == NULL) {
+    goto error;
+  }
+
+  return &entry_value->variant.as_map;
+
+error:
+  return NULL;
+}
+
 struct Colonini_String* Colonini_Map_PutString(
     struct Colonini_Map* map,
     const char* key,

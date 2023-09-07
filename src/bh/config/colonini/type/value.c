@@ -65,6 +65,21 @@ error:
   return NULL;
 }
 
+struct Colonini_Value* Colonini_Value_InitAsMap(struct Colonini_Value* value) {
+  struct Colonini_Map* map_init_result;
+
+  map_init_result = Colonini_Map_Init(&value->variant.as_map);
+  if (map_init_result == NULL) {
+    goto error;
+  }
+  value->type = Colonini_ValueType_kMap;
+  
+  return value;
+
+error:
+  return NULL;
+}
+
 struct Colonini_Value* Colonini_Value_InitAsString(
     struct Colonini_Value* value, const char* str, size_t str_length) {
   struct Colonini_Data* data_init_result;
@@ -87,6 +102,12 @@ void Colonini_Value_Deinit(struct Colonini_Value* value) {
     case Colonini_ValueType_kData: {
       value->type = Colonini_ValueType_kUnspecified;
       Colonini_Data_Deinit(&value->variant.as_data);
+      break;
+    }
+
+    case Colonini_ValueType_kMap: {
+      value->type = Colonini_ValueType_kUnspecified;
+      Colonini_Map_Deinit(&value->variant.as_map);
       break;
     }
 
