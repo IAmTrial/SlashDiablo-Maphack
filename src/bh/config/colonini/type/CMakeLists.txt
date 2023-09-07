@@ -25,6 +25,7 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/data_type.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/data_type.h"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/entry.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/entry.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/key.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/list.h"

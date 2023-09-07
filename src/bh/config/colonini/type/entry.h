@@ -1,6 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) 2012-2022  SlashDiablo Team
+ * Copyright (C) 2012-2023  SlashDiablo Team
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -22,7 +22,9 @@
 #ifndef BH_CONFIG_COLONINI_TYPE_ENTRY_H_
 #define BH_CONFIG_COLONINI_TYPE_ENTRY_H_
 
-#include "bh/config/colonini/type/key.h"
+#include <stddef.h>
+
+#include "bh/config/colonini/type/string.h"
 #include "bh/config/colonini/type/value.h"
 
 #ifdef __cplusplus
@@ -30,9 +32,22 @@ extern "C" {
 #endif  /* __cplusplus */
 
 struct Colonini_Entry {
-  struct Colonini_Key key;
+  struct Colonini_String key;
   struct Colonini_Value value;
+
+  struct Colonini_Entry* previous;
+  struct Colonini_Entry* next;
 };
+
+struct Colonini_Entry* Colonini_Entry_InitDefault(
+    struct Colonini_Entry* entry,
+    const char* key,
+    size_t key_length);
+
+void Colonini_Entry_Deinit(struct Colonini_Entry* entry);
+
+int Colonini_Entry_CompareKey(
+    const struct Colonini_Entry* left, const struct Colonini_Entry* right);
 
 #ifdef __cplusplus
 }  /* extern "C" */
