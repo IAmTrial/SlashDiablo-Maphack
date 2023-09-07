@@ -27,8 +27,8 @@ target_sources(${PROJECT_NAME}
 
         "${CMAKE_CURRENT_SOURCE_DIR}/entry.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/entry.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/key.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/list.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/map.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/map.h"
 
         "${CMAKE_CURRENT_SOURCE_DIR}/string.c"
