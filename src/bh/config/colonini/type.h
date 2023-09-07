@@ -24,8 +24,6 @@
 
 #include "bh/config/colonini/type/data.h"
 #include "bh/config/colonini/type/entry.h"
-#include "bh/config/colonini/type/key.h"
-#include "bh/config/colonini/type/list.h"
 #include "bh/config/colonini/type/map.h"
 #include "bh/config/colonini/type/value.h"
 
