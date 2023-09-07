@@ -49,3 +49,10 @@ target_include_directories(${PROJECT_NAME}.StringTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.StringTest PRIVATE shlwapi BH.Config.Colonini)
+
+add_executable(${PROJECT_NAME}.ValueTest "value_test.c")
+target_compile_definitions(${PROJECT_NAME}.ValueTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.ValueTest
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.ValueTest PRIVATE shlwapi BH.Config.Colonini)
