@@ -22,6 +22,8 @@
 #ifndef BH_CONFIG_COLONINI_TYPE_VALUE_H_
 #define BH_CONFIG_COLONINI_TYPE_VALUE_H_
 
+#include <stddef.h>
+
 #include "bh/config/colonini/type/data.h"
 #include "bh/config/colonini/type/map.h"
 #include "bh/config/colonini/type/value_type.h"

@@ -25,8 +25,7 @@
 #include <stddef.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
-#include "bh/config/colonini/internal/parser.h"
-#include "bh/config/colonini/type/value_type.h"
+#include "bh/config/colonini/type/value.h"
 /*
  * entry.h must be not be included, otherwise there will be a circular
  * dependency.
@@ -38,6 +37,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
+
+struct Colonini_Entry;
 
 struct Colonini_Map {
   size_t count;

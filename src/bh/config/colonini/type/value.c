@@ -22,6 +22,7 @@
 #include "bh/config/colonini/type/value.h"
 
 #include <assert.h>
+#include <stddef.h>
 
 #include "bh/config/colonini/type/data.h"
 #include "bh/config/colonini/type/map.h"

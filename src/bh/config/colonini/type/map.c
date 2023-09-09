@@ -25,8 +25,8 @@
 #include <stdlib.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
-#include "bh/config/colonini/internal/parser.h"
 #include "bh/config/colonini/type/entry.h"
+#include "bh/config/colonini/type/value.h"
 #include "bh/config/colonini/type/value_type.h"
 
 static int Colonini_Entry_CompareKeyAsVoid(

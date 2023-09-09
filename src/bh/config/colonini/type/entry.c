@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "bh/config/colonini/type/string.h"
 #include "bh/config/colonini/type/value.h"
 
 /**
