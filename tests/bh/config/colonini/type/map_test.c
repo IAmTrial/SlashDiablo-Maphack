@@ -24,11 +24,17 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "bh/config/colonini/type/entry.h"
+#include "bh/config/colonini/type/map.h"
 #include "bh/config/colonini/type/value.h"
 
 static const char kKey[] = "key";
+static const char kKey2[] = "key2";
+static const char kKey3[] = "key3";
 enum {
-  kKeyLength = sizeof(kKey) / sizeof(kKey[0])
+  kKeyLength = sizeof(kKey) / sizeof(kKey[0]),
+  kKey2Length = sizeof(kKey2) / sizeof(kKey2[0]),
+  kKey3Length = sizeof(kKey3) / sizeof(kKey3[0])
 };
 
 static void BeforeAllSetUp(void) {}
@@ -70,6 +76,7 @@ static void PutBoolean_False_IsFalse(struct EachContext* context) {
   result = Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, kExpected);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kData);
   data = &value->variant.as_data;
@@ -89,6 +96,7 @@ static void PutBoolean_True_IsTrue(struct EachContext* context) {
   result = Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, kExpected);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kData);
   data = &value->variant.as_data;
@@ -108,6 +116,7 @@ static void PutInteger_Zero_IsZero(struct EachContext* context) {
   result = Colonini_Map_PutInteger(&context->map, kKey, kKeyLength, kExpected);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kData);
   data = &value->variant.as_data;
@@ -127,6 +136,7 @@ static void PutInteger_42_Is42(struct EachContext* context) {
   result = Colonini_Map_PutInteger(&context->map, kKey, kKeyLength, kExpected);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kData);
   data = &value->variant.as_data;
@@ -143,6 +153,7 @@ static void PutMap_IsEmptyMap(struct EachContext* context) {
   result = Colonini_Map_PutMap(&context->map, kKey, kKeyLength);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kMap);
   submap = &value->variant.as_map;
@@ -165,6 +176,7 @@ static void PutString_Empty_IsEmpty(struct EachContext* context) {
           &context->map, kKey, kKeyLength, kExpected, kExpectedLength);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kData);
   data = &value->variant.as_data;
@@ -190,6 +202,7 @@ static void PutString_Hello_EqualText(struct EachContext* context) {
           &context->map, kKey, kKeyLength, kExpected, kExpectedLength);
 
   assert(result != NULL);
+  assert(context->map.count == 1);
   value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
   assert(value->type == Colonini_ValueType_kData);
   data = &value->variant.as_data;
@@ -198,6 +211,67 @@ static void PutString_Hello_EqualText(struct EachContext* context) {
   assert(result == str);
   assert(str->length == kExpectedLength);
   assert(memcmp(str->str, kExpected, kExpectedLength) == 0);
+}
+
+static void Remove_OneEntryAndExists_Empty(struct EachContext* context) {
+  int removed;
+
+  Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, 1);
+
+  removed = Colonini_Map_Remove(&context->map, kKey, kKeyLength);
+
+  assert(removed);
+  assert(context->map.count == 0);
+  assert(context->map.head_entry == NULL);
+  assert(context->map.tail_entry == NULL);
+}
+
+static void Remove_TwoEntriesAndExists_Removed(struct EachContext* context) {
+  int removed;
+
+  Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, 1);
+  Colonini_Map_PutBoolean(&context->map, kKey2, kKey2Length, 0);
+
+  removed = Colonini_Map_Remove(&context->map, kKey, kKeyLength);
+
+  assert(removed);
+  assert(context->map.count == 1);
+  assert(context->map.head_entry == context->map.tail_entry);
+  assert(context->map.head_entry->previous == NULL);
+  assert(context->map.head_entry->next == NULL);
+}
+
+static void Remove_ThreeEntriesAndExists_Removed(struct EachContext* context) {
+  int removed;
+
+  Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, 1);
+  Colonini_Map_PutBoolean(&context->map, kKey2, kKey2Length, 1);
+  Colonini_Map_PutBoolean(&context->map, kKey3, kKey3Length, 1);
+
+  removed = Colonini_Map_Remove(&context->map, kKey, kKeyLength);
+
+  assert(removed);
+  assert(context->map.count == 2);
+  assert(context->map.head_entry != NULL);
+  assert(context->map.tail_entry != NULL);
+  assert(context->map.head_entry->previous == NULL);
+  assert(context->map.head_entry->next == context->map.tail_entry);
+  assert(context->map.tail_entry->previous == context->map.head_entry);
+  assert(context->map.tail_entry->next == NULL);
+}
+
+static void Remove_NotExists_DoesNothing(struct EachContext* context) {
+  int removed;
+
+  Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, 1);
+
+  removed = Colonini_Map_Remove(&context->map, kKey2, kKey2Length);
+
+  assert(!removed);
+  assert(context->map.count == 1);
+  assert(context->map.head_entry == context->map.tail_entry);
+  assert(context->map.head_entry->previous == NULL);
+  assert(context->map.head_entry->next == NULL);
 }
 
 int main(int argc, char** argv) {
@@ -219,7 +293,12 @@ int main(int argc, char** argv) {
     &PutMap_IsEmptyMap,
 
     &PutString_Empty_IsEmpty,
-    &PutString_Hello_EqualText
+    &PutString_Hello_EqualText,
+
+    &Remove_OneEntryAndExists_Empty,
+    &Remove_TwoEntriesAndExists_Removed,
+    &Remove_ThreeEntriesAndExists_Removed,
+    &Remove_NotExists_DoesNothing
   };
 
   enum {

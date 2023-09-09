@@ -78,6 +78,9 @@ struct Colonini_String* Colonini_Map_PutString(
     const char* str,
     size_t str_length);
 
+int Colonini_Map_Remove(
+    struct Colonini_Map* map, const char* key, size_t key_length);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */

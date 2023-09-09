@@ -79,6 +79,7 @@ static struct Colonini_Entry* Colonini_Map_PutEmpty(
     if (!entry_inserted) {
       goto error_free_entry;
     }
+    ++map->count;
   }
 
   return entry;
@@ -251,4 +252,33 @@ struct Colonini_String* Colonini_Map_PutString(
 
 error:
   return NULL;
+}
+
+int Colonini_Map_Remove(
+    struct Colonini_Map* map, const char* key, size_t key_length) {
+  struct Colonini_Entry search_key;
+  struct Colonini_Entry* entry;
+
+  entry = Colonini_Map_Find(map, key, key_length);
+  if (entry == NULL) {
+    return 0;
+  }
+
+  --map->count;
+
+  search_key.key.str = (char*)key;
+  search_key.key.length = key_length;
+  RedBlackTree_Remove(
+      &map->tree, &search_key, &Colonini_Entry_CompareKeyAsVoid);
+
+  if (entry == map->head_entry) {
+    map->head_entry = entry->next;
+  }
+  if (entry == map->tail_entry) {
+    map->tail_entry = entry->previous;
+  }
+
+  Colonini_Entry_Deinit(entry);
+
+  return 1;
 }
