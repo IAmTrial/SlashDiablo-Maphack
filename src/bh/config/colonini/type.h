@@ -23,8 +23,11 @@
 #define BH_CONFIG_COLONINI_TYPE_H_
 
 #include "bh/config/colonini/type/data.h"
+#include "bh/config/colonini/type/data_type.h"
 #include "bh/config/colonini/type/entry.h"
 #include "bh/config/colonini/type/map.h"
+#include "bh/config/colonini/type/string.h"
 #include "bh/config/colonini/type/value.h"
+#include "bh/config/colonini/type/value_type.h"
 
 #endif  /* BH_CONFIG_COLONINI_TYPE_H_ */
