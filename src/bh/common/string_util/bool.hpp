@@ -1,6 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) 2012-2022  SlashDiablo Team
+ * Copyright (C) 2012-2023  SlashDiablo Team
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -48,20 +48,19 @@ inline constexpr std::optional<bool> ToBool(
   constexpr CharT kTrueStr[] = {
     CharT('t'), CharT('r'), CharT('u'), CharT('e'), CharT('\0')
   };
-  constexpr std::basic_string_view<CharT> kTrueStrView = kTrueStr;
   constexpr CharT kFalseStr[] = {
     CharT('f'), CharT('a'), CharT('l'), CharT('s'), CharT('e'), CharT('\0')
   };
-  constexpr std::basic_string_view<CharT> kFalseStrView = kFalseStr;
+  constexpr std::char_traits<CharT> ct;
 
-  if (str.length() > kFalseStrView.length()) {
+  if (str.length() > std::char_traits<CharT>::length(kFalseStr)) {
     return std::nullopt;
   }
 
   std::basic_string<CharT> lower_str = ascii::ToLower(str);
-  if (lower_str == kTrueStrView) {
+  if (lower_str == kTrueStr) {
     return std::make_optional(true);
-  } else if (lower_str == kFalseStrView) {
+  } else if (lower_str == kFalseStr) {
     return std::make_optional(false);
   }
 
