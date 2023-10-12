@@ -1,5 +1,5 @@
 # SlashDiablo Maphack
-# Copyright (C) 2012-2022  SlashDiablo Team
+# Copyright (C) 2012-2023  SlashDiablo Team
 #
 # This file is part of SlashDiablo Maphack.
 #
@@ -17,24 +17,4 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/ascii.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ascii_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/bool.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/bool_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/integer.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/integer_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/memstring.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/memstring.h"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/trim.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/trim_tests.cpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/wide.hpp"
-)
-
-add_subdirectory("internal")
+add_subdirectory("memstring")

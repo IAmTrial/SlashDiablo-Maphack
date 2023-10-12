@@ -153,6 +153,19 @@ static void MemSpn_HelloWorldOnW_ReturnsWIndex(void) {
   assert(actual == 6);
 }
 
+static void MemSpn_HelloWorldOnO_ReturnsFirstOIndex(void) {
+  static const char kSearch[] = "o";
+  enum {
+    kSearchLength = (sizeof(kSearch) / sizeof(kSearch[0])) - 1
+  };
+
+  size_t actual;
+
+  actual = MemSpn(kHelloWorld, kHelloWorldLength, kSearch, kSearchLength);
+
+  assert(actual == 4);
+}
+
 static void MemSpn_HelloWorldOnX_ReturnsLength(void) {
   size_t actual;
 
@@ -218,6 +231,7 @@ int main(int argc, char** argv) {
     &MemStr_HelloWorldOnEmpty_ReturnsNull,
 
     &MemSpn_HelloWorldOnW_ReturnsWIndex,
+    &MemSpn_HelloWorldOnO_ReturnsFirstOIndex,
     &MemSpn_HelloWorldOnX_ReturnsLength,
     &MemSpn_HelloWorldOnEmpty_ReturnsLength,
     &MemSpn_EmptyStr_ReturnsLength,

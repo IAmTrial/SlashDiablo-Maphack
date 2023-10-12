@@ -23,113 +23,54 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <wchar.h>
 
-size_t MemCSpn(
-    const void* data,
-    size_t data_size,
-    const void* search,
-    size_t search_size) {
-  const char* str;
-  size_t i_str;
-  const char* chars;
+/**
+ * External
+ */
 
-  if (data_size <= 0) {
-    return 0;
-  }
+/**
+ * Define memcspn
+ */
 
-  if (search_size <= 0) {
-    return 0;
-  }
+#define T_CHAR char
+#define T_INPUT void
+#define T_FUNC_NAME MemCSpn
+#include "bh/common/string_util/internal/memstring/memcspn_template.h"
 
-  str = data;
-  chars = search;
+#define T_CHAR wchar_t
+#define T_INPUT wchar_t
+#define T_FUNC_NAME WMemCSpn
+#include "bh/common/string_util/internal/memstring/memcspn_template.h"
 
-  /* Scan str for a character that is not in chars. */
-  for (i_str = 0; i_str < data_size; ++i_str) {
-    size_t i_chars;
+/**
+ * Define memstr
+ */
 
-    for (i_chars = 0; i_chars < search_size; ++i_chars) {
-      if (str[i_str] == chars[i_chars]) {
-        break;
-      }
-    }
+#define T_CHAR char
+#define T_INPUT void
+#define T_MEMCHR_FUNC_NAME memchr
+#define T_MEMCMP_FUNC_NAME memcmp
+#define T_FUNC_NAME MemStr
+#include "bh/common/string_util/internal/memstring/memstr_template.h"
 
-    if (i_chars >= search_size) {
-      return i_str;
-    }
-  }
+#define T_CHAR wchar_t
+#define T_INPUT wchar_t
+#define T_MEMCHR_FUNC_NAME wmemchr
+#define T_MEMCMP_FUNC_NAME wmemcmp
+#define T_FUNC_NAME WMemStr
+#include "bh/common/string_util/internal/memstring/memstr_template.h"
 
-  return data_size;
-}
+/**
+ * Define memspn
+ */
 
-void* MemStr(
-    const void* data, size_t data_size, const void* sub, size_t sub_size) {
-  const char* str;
-  const char* substr;
-  const char* first_ch;
+#define T_CHAR char
+#define T_INPUT void
+#define T_FUNC_NAME MemSpn
+#include "bh/common/string_util/internal/memstring/memspn_template.h"
 
-  if (data_size <= 0) {
-    return NULL;
-  }
-
-  if (sub_size <= 0) {
-    return NULL;
-  }
-
-  str = data;
-  substr = sub;
-
-  first_ch = str;
-  do {
-    int compare_result;
-    size_t str_remaining_size;
-
-    str_remaining_size = &str[data_size] - first_ch;
-    if (str_remaining_size < sub_size) {
-      return NULL;
-    }
-
-    compare_result = memcmp(first_ch, sub, sub_size);
-    if (compare_result == 0) {
-      return (char*)first_ch;
-    }
-
-    first_ch =
-        memchr(&first_ch[1], substr[0], str_remaining_size);
-  } while (first_ch != NULL);
-
-  return NULL;
-}
-
-size_t MemSpn(
-    const void* data,
-    size_t data_size,
-    const void* search,
-    size_t search_size) {
-  const char* str;
-  size_t i_str;
-  const char* chars;
-  size_t i_chars;
-
-  if (data_size <= 0) {
-    return data_size;
-  }
-
-  if (search_size <= 0) {
-    return data_size;
-  }
-
-  str = data;
-  chars = search;
-
-  /* Scan str for a character that is in chars. */
-  for (i_str = 0; i_str < data_size; ++i_str) {
-    for (i_chars = 0; i_chars < search_size; ++i_chars) {
-      if (str[i_str] == chars[i_chars]) {
-        return i_str;
-      }
-    }
-  }
-
-  return data_size;
-}
+#define T_CHAR wchar_t
+#define T_INPUT wchar_t
+#define T_FUNC_NAME WMemSpn
+#include "bh/common/string_util/internal/memstring/memspn_template.h"
