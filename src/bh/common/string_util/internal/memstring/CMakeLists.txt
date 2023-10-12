@@ -19,7 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcrspn_template.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memcspn_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memrspn_template.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memspn_template.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memstr_template.h"
 )

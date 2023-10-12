@@ -30,6 +30,28 @@ extern "C" {
 
 /**
  * Finds characters NOT in the search, similar to strcspn, but with
+ * size specifiers similar to the mem-variant functions. Searches in
+ * the reverse direction.
+ */
+size_t MemCRSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size);
+
+/**
+ * Finds characters NOT in the search, similar to strcspn, but with
+ * size specifiers similar to the mem-variant functions. Searches in
+ * the reverse direction.
+ */
+size_t WMemCRSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size);
+
+/**
+ * Finds characters NOT in the search, similar to strcspn, but with
  * size specifiers similar to the mem-variant functions.
  */
 size_t MemCSpn(
@@ -43,6 +65,48 @@ size_t MemCSpn(
  * size specifiers similar to the mem-variant functions.
  */
 size_t WMemCSpn(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* search,
+    size_t search_size);
+
+/**
+ * Finds characters in the search, similar to strspn, but with size
+ * specifiers similar to the mem-variant functions. Searches in
+ * the reverse direction.
+ */
+size_t MemRSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size);
+
+/**
+ * Finds characters in the search, similar to strspn, but with size
+ * specifiers similar to the mem-variant functions. Searches in
+ * the reverse direction.
+ */
+size_t WMemRSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size);
+
+/**
+ * Finds characters in the search, similar to strspn, but with size
+ * specifiers similar to the mem-variant functions.
+ */
+size_t MemSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size);
+
+/**
+ * Finds characters in the search, similar to strspn, but with size
+ * specifiers similar to the mem-variant functions.
+ */
+size_t WMemSpn(
     const wchar_t* data,
     size_t data_size,
     const wchar_t* search,
@@ -64,26 +128,6 @@ wchar_t* WMemStr(
     size_t data_size,
     const wchar_t* sub,
     size_t sub_size);
-
-/**
- * Finds characters in the search, similar to strspn, but with size
- * specifiers similar to the mem-variant functions.
- */
-size_t MemSpn(
-    const void* data,
-    size_t data_size,
-    const void* search,
-    size_t search_size);
-
-/**
- * Finds characters in the search, similar to strspn, but with size
- * specifiers similar to the mem-variant functions.
- */
-size_t WMemSpn(
-    const wchar_t* data,
-    size_t data_size,
-    const wchar_t* search,
-    size_t search_size);
 
 #ifdef __cplusplus
 }  /* extern "C" */
