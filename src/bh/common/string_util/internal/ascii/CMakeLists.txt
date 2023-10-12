@@ -17,5 +17,11 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("ascii")
-add_subdirectory("memstring")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_char_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_str_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_char_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_str_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/trim_whitespace_chars_template.h"
+)

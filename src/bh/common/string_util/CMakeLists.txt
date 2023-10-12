@@ -19,6 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/ascii.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ascii.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/ascii.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ascii_tests.cpp"
 
