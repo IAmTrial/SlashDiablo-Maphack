@@ -43,6 +43,13 @@ target_include_directories(${PROJECT_NAME}.AsciiTest
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.AsciiTest PRIVATE BH.Common)
 
+add_executable(${PROJECT_NAME}.BoolTest "bool_test.c")
+target_compile_definitions(${PROJECT_NAME}.BoolTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.BoolTest 
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.BoolTest PRIVATE BH.Common)
+
 add_executable(${PROJECT_NAME}.MemstringTest "memstring_test.c")
 target_compile_definitions(${PROJECT_NAME}.MemstringTest PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}.MemstringTest 
