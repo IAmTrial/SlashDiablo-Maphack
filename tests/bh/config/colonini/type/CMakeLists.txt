@@ -57,6 +57,13 @@ target_include_directories(${PROJECT_NAME}.StringTest
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.StringTest PRIVATE shlwapi BH.Config.Colonini)
 
+add_executable(${PROJECT_NAME}.ToggleTest "toggle_test.c")
+target_compile_definitions(${PROJECT_NAME}.ToggleTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.ToggleTest
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.ToggleTest PRIVATE shlwapi BH.Config.Colonini)
+
 add_executable(${PROJECT_NAME}.ValueTest "value_test.c")
 target_compile_definitions(${PROJECT_NAME}.ValueTest PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}.ValueTest

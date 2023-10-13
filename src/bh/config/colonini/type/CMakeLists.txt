@@ -34,6 +34,9 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/string.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/string.h"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/toggle.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/toggle.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/value.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/value.h"
 
