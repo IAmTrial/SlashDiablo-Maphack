@@ -17,7 +17,9 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH)
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/config.hpp"
+)
 
-add_subdirectory("common")
-add_subdirectory("config")
+add_subdirectory("colonini")

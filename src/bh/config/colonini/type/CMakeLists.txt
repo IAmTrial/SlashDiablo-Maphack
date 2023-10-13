@@ -17,7 +17,12 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH)
-
-add_subdirectory("common")
-add_subdirectory("config")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/data.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/entry.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/key.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/list.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/map.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/value.h"
+)

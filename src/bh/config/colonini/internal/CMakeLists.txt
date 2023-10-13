@@ -17,7 +17,11 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH)
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_reader.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_reader.h"
 
-add_subdirectory("common")
-add_subdirectory("config")
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser.h"
+)

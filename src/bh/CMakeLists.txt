@@ -18,6 +18,7 @@
 # <http://www.gnu.org/licenses/>.
 
 add_subdirectory("common")
+add_subdirectory("config")
 add_subdirectory("d2")
 add_subdirectory("global")
 add_subdirectory("internal")
