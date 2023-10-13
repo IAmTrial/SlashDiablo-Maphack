@@ -177,6 +177,60 @@ static void InitAsString_Hello_EqualText(struct EachContext* context) {
   Colonini_Value_Deinit(&value);
 }
 
+static void InitAsToggle_Enabled_IsEnabled(struct EachContext* context) {
+  struct Colonini_Value value;
+  struct Colonini_Value* value_init_result;
+  struct Colonini_Data* data;
+  struct Colonini_Toggle* toggle;
+
+  value_init_result = Colonini_Value_InitAsToggle(&value, 1, 0);
+
+  assert(value_init_result != NULL);
+  assert(value.type == Colonini_ValueType_kData);
+  data = &value.variant.as_data;
+  assert(data->type == Colonini_DataType_kToggle);
+  toggle = &data->variant.as_toggle;
+  assert(toggle->enabled);
+
+  Colonini_Value_Deinit(&value);
+}
+
+static void InitAsToggle_Disabled_IsDisabled(struct EachContext* context) {
+  struct Colonini_Value value;
+  struct Colonini_Value* value_init_result;
+  struct Colonini_Data* data;
+  struct Colonini_Toggle* toggle;
+
+  value_init_result = Colonini_Value_InitAsToggle(&value, 0, 0);
+
+  assert(value_init_result != NULL);
+  assert(value.type == Colonini_ValueType_kData);
+  data = &value.variant.as_data;
+  assert(data->type == Colonini_DataType_kToggle);
+  toggle = &data->variant.as_toggle;
+  assert(!toggle->enabled);
+
+  Colonini_Value_Deinit(&value);
+}
+
+static void InitAsToggle_Key_SetKeyCode(struct EachContext* context) {
+  struct Colonini_Value value;
+  struct Colonini_Value* value_init_result;
+  struct Colonini_Data* data;
+  struct Colonini_Toggle* toggle;
+
+  value_init_result = Colonini_Value_InitAsToggle(&value, 0, 42);
+
+  assert(value_init_result != NULL);
+  assert(value.type == Colonini_ValueType_kData);
+  data = &value.variant.as_data;
+  assert(data->type == Colonini_DataType_kToggle);
+  toggle = &data->variant.as_toggle;
+  assert(toggle->key_code == 42);
+
+  Colonini_Value_Deinit(&value);
+}
+
 int main(int argc, char** argv) {
 #ifdef NDEBUG
 
@@ -194,7 +248,11 @@ int main(int argc, char** argv) {
     &InitAsMap_IsEmptyMap,
 
     &InitAsString_Empty_IsEmpty,
-    &InitAsString_Hello_EqualText
+    &InitAsString_Hello_EqualText,
+
+    &InitAsToggle_Enabled_IsEnabled,
+    &InitAsToggle_Disabled_IsDisabled,
+    &InitAsToggle_Key_SetKeyCode
   };
 
   enum {

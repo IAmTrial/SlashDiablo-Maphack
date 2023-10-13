@@ -254,6 +254,31 @@ error:
   return NULL;
 }
 
+struct Colonini_Toggle* Colonini_Map_PutToggle(
+    struct Colonini_Map* map,
+    const char* key,
+    size_t key_length,
+    unsigned char enabled,
+    BYTE key_code) {
+  struct Colonini_Entry* entry;
+  struct Colonini_Value* entry_value;
+
+  entry = Colonini_Map_PutEmpty(map, key, key_length);
+  if (entry == NULL) {
+    goto error;
+  }
+
+  entry_value = Colonini_Value_InitAsToggle(&entry->value, enabled, key_code);
+  if (entry_value == NULL) {
+    goto error;
+  }
+
+  return &entry_value->variant.as_data.variant.as_string;
+
+error:
+  return NULL;
+}
+
 int Colonini_Map_Remove(
     struct Colonini_Map* map, const char* key, size_t key_length) {
   struct Colonini_Entry search_key;

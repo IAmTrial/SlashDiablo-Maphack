@@ -33,7 +33,8 @@ enum Colonini_DataType {
 
   Colonini_DataType_kBoolean,
   Colonini_DataType_kInteger,
-  Colonini_DataType_kString
+  Colonini_DataType_kString,
+  Colonini_DataType_kToggle
 };
 
 const char* Colonini_DataType_GetDisplayName(

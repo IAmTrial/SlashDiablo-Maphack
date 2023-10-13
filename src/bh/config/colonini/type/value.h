@@ -23,6 +23,7 @@
 #define BH_CONFIG_COLONINI_TYPE_VALUE_H_
 
 #include <stddef.h>
+#include <windows.h>
 
 #include "bh/config/colonini/type/data.h"
 #include "bh/config/colonini/type/map.h"
@@ -50,6 +51,9 @@ struct Colonini_Value* Colonini_Value_InitAsMap(struct Colonini_Value* value);
 
 struct Colonini_Value* Colonini_Value_InitAsString(
     struct Colonini_Value* value, const char* str, size_t str_length);
+
+struct Colonini_Value* Colonini_Value_InitAsToggle(
+    struct Colonini_Value* value, unsigned char enabled, BYTE key_code);
 
 void Colonini_Value_Deinit(struct Colonini_Value* value);
 

@@ -213,6 +213,60 @@ static void PutString_Hello_EqualText(struct EachContext* context) {
   assert(memcmp(str->str, kExpected, kExpectedLength) == 0);
 }
 
+static void PutToggle_Enabled_IsEnabled(struct EachContext* context) {
+  struct Colonini_Toggle* result;
+  struct Colonini_Value* value;
+  struct Colonini_Data* data;
+  struct Colonini_Toggle* toggle;
+
+  result = Colonini_Map_PutToggle(&context->map, kKey, kKeyLength, 1, 0);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kData);
+  data = &value->variant.as_data;
+  assert(data->type == Colonini_DataType_kToggle);
+  toggle = &data->variant.as_toggle;
+  assert(toggle->enabled);
+}
+
+static void PutToggle_Disabled_IsDisabled(struct EachContext* context) {
+  struct Colonini_Toggle* result;
+  struct Colonini_Value* value;
+  struct Colonini_Data* data;
+  struct Colonini_Toggle* toggle;
+
+  result = Colonini_Map_PutToggle(&context->map, kKey, kKeyLength, 0, 0);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kData);
+  data = &value->variant.as_data;
+  assert(data->type == Colonini_DataType_kToggle);
+  toggle = &data->variant.as_toggle;
+  assert(!toggle->enabled);
+}
+
+static void PutToggle_Key_SetKeyCode(struct EachContext* context) {
+  struct Colonini_Toggle* result;
+  struct Colonini_Value* value;
+  struct Colonini_Data* data;
+  struct Colonini_Toggle* toggle;
+
+  result = Colonini_Map_PutToggle(&context->map, kKey, kKeyLength, 0, 42);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kData);
+  data = &value->variant.as_data;
+  assert(data->type == Colonini_DataType_kToggle);
+  toggle = &data->variant.as_toggle;
+  assert(toggle->key_code == 42);
+}
+
 static void Remove_OneEntryAndExists_Empty(struct EachContext* context) {
   int removed;
 
@@ -294,6 +348,10 @@ int main(int argc, char** argv) {
 
     &PutString_Empty_IsEmpty,
     &PutString_Hello_EqualText,
+
+    &PutToggle_Enabled_IsEnabled,
+    &PutToggle_Disabled_IsDisabled,
+    &PutToggle_Key_SetKeyCode,
 
     &Remove_OneEntryAndExists_Empty,
     &Remove_TwoEntriesAndExists_Removed,

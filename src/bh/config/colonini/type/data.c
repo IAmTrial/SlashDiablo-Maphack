@@ -25,9 +25,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 #include "bh/config/colonini/type/data_type.h"
 #include "bh/config/colonini/type/string.h"
+#include "bh/config/colonini/type/toggle.h"
 
 /**
  * External
@@ -66,6 +68,23 @@ error:
   return NULL;
 }
 
+struct Colonini_Data* Colonini_Data_InitAsToggle(
+    struct Colonini_Data* data, int enabled, BYTE key_code) {
+  struct Colonini_Toggle* toggle_init_result;
+
+  toggle_init_result =
+      Colonini_Toggle_Init(&data->variant.as_toggle, enabled, key_code);
+  if (toggle_init_result == NULL) {
+    goto error;
+  }
+  data->type = Colonini_DataType_kToggle;
+
+  return data;
+
+error:
+  return NULL;
+}
+
 void Colonini_Data_Deinit(struct Colonini_Data* data) {
   switch (data->type) {
     case Colonini_DataType_kBoolean: {
@@ -83,6 +102,12 @@ void Colonini_Data_Deinit(struct Colonini_Data* data) {
     case Colonini_DataType_kString: {
       data->type = Colonini_DataType_kUnspecified;
       Colonini_String_Deinit(&data->variant.as_string);
+      break;
+    }
+
+    case Colonini_DataType_kToggle: {
+      data->type = Colonini_DataType_kUnspecified;
+      Colonini_Toggle_Deinit(&data->variant.as_toggle);
       break;
     }
 

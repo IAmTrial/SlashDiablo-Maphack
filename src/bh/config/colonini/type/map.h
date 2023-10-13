@@ -23,9 +23,9 @@
 #define BH_CONFIG_COLONINI_TYPE_MAP_H_
 
 #include <stddef.h>
+#include <windows.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
-#include "bh/config/colonini/type/value.h"
 /*
  * entry.h must be not be included, otherwise there will be a circular
  * dependency.
@@ -78,6 +78,13 @@ struct Colonini_String* Colonini_Map_PutString(
     size_t key_length,
     const char* str,
     size_t str_length);
+
+struct Colonini_Toggle* Colonini_Map_PutToggle(
+    struct Colonini_Map* map,
+    const char* key,
+    size_t key_length,
+    unsigned char enabled,
+    BYTE key_code);
 
 int Colonini_Map_Remove(
     struct Colonini_Map* map, const char* key, size_t key_length);

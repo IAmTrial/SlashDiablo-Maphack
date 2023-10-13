@@ -54,6 +54,15 @@ const char* Colonini_DataType_GetDisplayName(
       return kDisplayName;
     }
 
+    case Colonini_DataType_kToggle: {
+      static const char kDisplayName[] = "Toggle";
+
+      if (length != NULL) {
+        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]) - 1;
+      }
+      return kDisplayName;
+    }
+
     case Colonini_DataType_kUnspecified:
     default: {
       assert(0 && "This should never happen.");

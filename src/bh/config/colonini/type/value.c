@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <windows.h>
 
 #include "bh/config/colonini/type/data.h"
 #include "bh/config/colonini/type/map.h"
@@ -87,6 +88,23 @@ struct Colonini_Value* Colonini_Value_InitAsString(
 
   data_init_result =
       Colonini_Data_InitAsString(&value->variant.as_data, str, str_length);
+  if (data_init_result == NULL) {
+    goto error;
+  }
+  value->type = Colonini_ValueType_kData;
+  
+  return value;
+
+error:
+  return NULL;
+}
+
+struct Colonini_Value* Colonini_Value_InitAsToggle(
+    struct Colonini_Value* value, unsigned char enabled, BYTE key_code) {
+  struct Colonini_Data* data_init_result;
+
+  data_init_result =
+      Colonini_Data_InitAsToggle(&value->variant.as_data, enabled, key_code);
   if (data_init_result == NULL) {
     goto error;
   }

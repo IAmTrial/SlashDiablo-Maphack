@@ -23,9 +23,11 @@
 #define BH_CONFIG_COLONINI_TYPE_DATA_H_
 
 #include <stddef.h>
+#include <windows.h>
 
 #include "bh/config/colonini/type/data_type.h"
 #include "bh/config/colonini/type/string.h"
+#include "bh/config/colonini/type/toggle.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,17 +39,21 @@ struct Colonini_Data {
     unsigned char as_boolean;
     unsigned int as_integer;
     struct Colonini_String as_string;
+    struct Colonini_Toggle as_toggle;
   } variant;
 };
 
 struct Colonini_Data* Colonini_Data_InitAsBoolean(
-    struct Colonini_Data* data, unsigned int value);
+    struct Colonini_Data* data, unsigned char value);
 
 struct Colonini_Data* Colonini_Data_InitAsInteger(
     struct Colonini_Data* data, unsigned int value);
 
 struct Colonini_Data* Colonini_Data_InitAsString(
     struct Colonini_Data* data, const char* str, size_t str_length);
+
+struct Colonini_Data* Colonini_Data_InitAsToggle(
+    struct Colonini_Data* data, int enabled, BYTE key_code);
 
 void Colonini_Data_Deinit(struct Colonini_Data* data);
 
