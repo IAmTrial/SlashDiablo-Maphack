@@ -45,7 +45,7 @@ struct ValueExpr* ValueExpr_Parse(
   }
 
   if (end_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return NULL;
   }
 
@@ -75,7 +75,7 @@ struct ValueExpr* ValueExpr_Parse(
   init_result =
       ConstExpr_Init(&expr->variant.as_constexpr, begin_src, end_src);
   if (init_result == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
 

@@ -49,18 +49,18 @@ static int Peek(
       || begin_token_src == NULL
       || end_token_src == NULL
       || predicate == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return 0;
   }
 
   first_token = LexerString_CeilToken(begin_src);
   if (first_token == NULL) {
-    *error_column = begin_src->line_index;
+    *error_column = begin_src->line_index + 1;
     return 0;
   }
 
   if (!predicate(first_token)) {
-    *error_column = first_token->line_index;
+    *error_column = first_token->line_index + 1;
     return 0;
   }
 
@@ -68,7 +68,7 @@ static int Peek(
       last_token < end_src;
       last_token = last_token->next_token) {
     if (last_token == NULL) {
-      *error_column = first_token->line_index;
+      *error_column = first_token->line_index + 1;
       return 0;
     }
 
@@ -122,7 +122,7 @@ static struct ConstExpr* ParsePrimary(
   }
 
   if (expr == NULL || begin_src == NULL || end_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
 
@@ -140,7 +140,7 @@ static struct ConstExpr* ParsePrimary(
 
   init_primary_result = ConstExpr_Init(expr, begin_key_src, end_key_src);
   if (init_primary_result == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return NULL;
   }
   /* Primary key is always interpretted as string. */
@@ -178,7 +178,7 @@ static struct KeyExpr* ParseSubkeys(
             current, end_src, &lbracket_src, &rbracket_src, error_column);
     if (!peek_result) {
       if (Subscript_IsBegin(current)) {
-        *error_column = current->line_index;
+        *error_column = current->line_index + 1;
         return NULL;
       }
       break;
@@ -195,7 +195,7 @@ static struct KeyExpr* ParseSubkeys(
   expr->subscripts =
       malloc(subscript_count * sizeof(expr->subscripts[0]));
   if (expr->subscripts == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
 
@@ -243,7 +243,7 @@ struct KeyExpr* KeyExpr_Parse(
   }
 
   if (expr == NULL || begin_src == NULL || end_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
 

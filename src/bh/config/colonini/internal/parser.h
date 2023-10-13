@@ -53,7 +53,10 @@ void Parser_Deinit(struct Parser* parser);
  * failure.
  */
 int Parser_Parse(
-    struct Parser* parser, struct Lexer* lexer, size_t* error_column);
+    struct Parser* parser,
+    const struct Lexer* lexer,
+    size_t* error_line,
+    size_t* error_column);
 
 #ifdef __cplusplus
 }  /* extern "C" */

@@ -54,20 +54,20 @@ int Subscript_Peek(
       || end_src == NULL
       || lbracket_src == NULL
       || rbracket_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return 0;
   }
 
   /* Valid subscript consist of [ operator, ConstExpr, and ] operator. */
   if (begin_src->next_token == NULL) {
-    *error_column = begin_src->line_index;
+    *error_column = begin_src->line_index + 1;
     return 0;
   }
 
   temp_lbracket_src = LexerString_CeilToken(begin_src);
   if (temp_lbracket_src->next_token == NULL
       || temp_lbracket_src->next_token->next_token == NULL) {
-    *error_column = temp_lbracket_src->line_index;
+    *error_column = temp_lbracket_src->line_index + 1;
     return 0;
   }
   
@@ -75,12 +75,12 @@ int Subscript_Peek(
   assert(temp_lbracket_src->str_length >= 1);
   if (temp_lbracket_src->str_length != 1
       || memcmp(temp_lbracket_src->str, kLBracket, sizeof(kLBracket)) != 0) {
-    *error_column = temp_lbracket_src->line_index;
+    *error_column = temp_lbracket_src->line_index + 1;
     return 0;
   }
 
   if (temp_lbracket_src >= end_src) {
-    *error_column = temp_lbracket_src->line_index;
+    *error_column = temp_lbracket_src->line_index + 1;
     return 0;
   }
 
@@ -90,7 +90,7 @@ int Subscript_Peek(
       current_src < end_src;
       current_src = current_src->next_token) {
     if (current_src == NULL) {
-      *error_column = temp_lbracket_src->line_index;
+      *error_column = temp_lbracket_src->line_index + 1;
       return 0;
     }
 
@@ -104,7 +104,7 @@ int Subscript_Peek(
       ++nest_level;
     } else if (memcmp(current_src->str, kRBracket, sizeof(kRBracket)) == 0) {
       if (nest_level <= 0) {
-        *error_column = current_src->line_index;
+        *error_column = current_src->line_index + 1;
         return 0;
       }
       --nest_level;
@@ -117,7 +117,7 @@ int Subscript_Peek(
   }
 
   if (nest_level != 0 && current_src >= end_src) {
-    *error_column = temp_lbracket_src->line_index;
+    *error_column = temp_lbracket_src->line_index + 1;
     return 0;
   }
 
@@ -158,14 +158,14 @@ struct Subscript* Subscript_Parse(
   }
 
   if (begin_src == NULL || end_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return NULL;
   }
   peek_result =
       Subscript_Peek(
           begin_src, end_src, &lbracket_src, &rbracket_src, error_column);
   if (!peek_result) {
-    *error_column = begin_src->line_index;
+    *error_column = begin_src->line_index + 1;
     return NULL;
   }
 
@@ -174,7 +174,7 @@ struct Subscript* Subscript_Parse(
 
   init_result = ConstExpr_Init(&subscript->expr, expr_begin_src, expr_end_src);
   if (init_result == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
   /* All subscripts are of type string. */
