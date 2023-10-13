@@ -60,7 +60,7 @@ struct LexerString* LexerString_CeilToken(const struct LexerString* lstr) {
     return lstr->next_token;
   }
 
-  return lstr;
+  return (struct LexerString*)lstr;
 }
 
 struct LexerString* LexerString_FloorToken(const struct LexerString* lstr) {
@@ -68,5 +68,5 @@ struct LexerString* LexerString_FloorToken(const struct LexerString* lstr) {
     return lstr->previous_token;
   }
 
-  return lstr;
+  return (struct LexerString*)lstr;
 }
