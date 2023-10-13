@@ -1,5 +1,5 @@
 # SlashDiablo Maphack
-# Copyright (C) 2012-2022  SlashDiablo Team
+# Copyright (C) 2012-2023  SlashDiablo Team
 #
 # This file is part of SlashDiablo Maphack.
 #
@@ -17,18 +17,16 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.20)
 
-# Name of the project, also is the name of the file
-project(BH.Common)
+project("Tests.BH.Common.Input")
 
 # Define requirements for C
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Define requirements for C++
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+unset(CMAKE_CXX_STANDARD)
+unset(CMAKE_CXX_STANDARD_REQUIRED)
 
 # Remove MinGW compiled binary "lib" prefix
 if (MINGW)
@@ -37,22 +35,10 @@ if (MINGW)
     set(CMAKE_STATIC_LIBRARY_PREFIX "")
 endif (MINGW)
 
-# Define DLL target
-add_library(${PROJECT_NAME} STATIC)
-
-target_sources(${PROJECT_NAME}
+# Define test targets
+add_executable(${PROJECT_NAME}.VirtualKeyTest "virtual_key_test.c")
+target_compile_definitions(${PROJECT_NAME}.VirtualKeyTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.VirtualKeyTest 
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/input.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/input.hpp"
-)
-
-add_subdirectory("data_struct")
-add_subdirectory("input")
-add_subdirectory("logging")
-add_subdirectory("string_util")
-add_subdirectory("windows")
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
         "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.VirtualKeyTest PRIVATE BH.Common)
