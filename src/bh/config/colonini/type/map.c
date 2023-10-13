@@ -273,7 +273,7 @@ struct Colonini_Toggle* Colonini_Map_PutToggle(
     goto error;
   }
 
-  return &entry_value->variant.as_data.variant.as_string;
+  return &entry_value->variant.as_data.variant.as_toggle;
 
 error:
   return NULL;
