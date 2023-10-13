@@ -35,7 +35,7 @@ static void BeforeAllSetUp(void) {
 
 static void LoadLines_MultipleKeys_Success(void) {
   enum {
-    kLineCount = 9
+    kLineCount = 10
   };
   size_t i;
   int actual;
@@ -55,6 +55,7 @@ static void LoadLines_MultipleKeys_Success(void) {
    * key07[42]: value
    * key08[0x1]: value
    * key09[true]: value
+   * key10:
    */
   parser.lines = lines;
   parser.line_count = sizeof(lines) / sizeof(lines[0]);
@@ -74,6 +75,8 @@ static void LoadLines_MultipleKeys_Success(void) {
   ParserLineBasicSetUp(&lines[6], "value", "key07", subscripts[6], 1, "42");
   ParserLineBasicSetUp(&lines[7], "value", "key08", subscripts[7], 1, "0x1");
   ParserLineBasicSetUp(&lines[8], "value", "key09", subscripts[8], 1, "true");
+  ParserLineBasicSetUp(&lines[9], "", "key10", subscripts[9], 0);
+  lines[9].variant.assign_statement.value_expr.type = ValueExprType_kEmpty;
   SemanticAnalyzer_Init(&analyzer, &parser);
 
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
@@ -94,6 +97,7 @@ static void LoadLines_MultipleKeys_Success(void) {
   assert(typings[3]->value_type == ValueExprType_kConst);
   assert(typings[3]->value_as_constexpr_type == ConstExprType_kBoolean);
   assert(typings[4]->value_type == ValueExprType_kToggle);
+  assert(typings[9]->value_type == ValueExprType_kEmpty);
 
   SemanticAnalyzer_Deinit(&analyzer);
 }
@@ -173,26 +177,34 @@ static void LoadLines_SameKeyMismatch_Failure(void) {
 }
 
 static void LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
+  enum {
+    kLineCount = 3
+  };
+  size_t i;
   int actual;
   struct SemanticAnalyzer analyzer;
-  struct ParserLine lines[2];
-  struct Subscript subscripts[2][1];
-  struct ValueExpr* value_expr[2];
+  struct ParserLine lines[kLineCount];
+  struct Subscript subscripts[kLineCount][1];
+  struct ValueExpr* value_expr[kLineCount];
   struct Parser parser;
   struct Typing* typing;
 
   /*
-   * key[1]: 0x1
+   * key[1]: true
    * key[2]: 2
+   * key[3]:
    */
   parser.lines = lines;
   parser.line_count = sizeof(lines) / sizeof(lines[0]);
-  ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "true");
-  ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 1, "2");
-  value_expr[0] = &lines[0].variant.assign_statement.value_expr;
+  ParserLineBasicSetUp(&lines[0], "true", "key", subscripts[0], 1, "1");
+  ParserLineBasicSetUp(&lines[1], "2", "key", subscripts[1], 1, "2");
+  ParserLineBasicSetUp(&lines[2], "", "key", subscripts[2], 1, "3");
+  for (i = 0; i < kLineCount; ++i) {
+    value_expr[i] = &lines[i].variant.assign_statement.value_expr;
+  }
   value_expr[0]->variant.as_constexpr.type = ConstExprType_kBoolean;
-  value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
+  value_expr[2]->type = ValueExprType_kEmpty;
   SemanticAnalyzer_Init(&analyzer, &parser);
 
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
@@ -208,26 +220,34 @@ static void LoadLines_SameKeyDifferentValueConstTypes_ResolveDifferences(void) {
 }
 
 static void LoadLines_SameKeyDifferentValueIntContTypes_NoDifferences(void) {
+  enum {
+    kLineCount = 3
+  };
+  size_t i;
   int actual;
   struct SemanticAnalyzer analyzer;
-  struct ParserLine lines[2];
-  struct Subscript subscripts[2][1];
-  struct ValueExpr* value_expr[2];
+  struct ParserLine lines[kLineCount];
+  struct Subscript subscripts[kLineCount][1];
+  struct ValueExpr* value_expr[kLineCount];
   struct Parser parser;
   struct Typing* typing;
 
   /*
    * key[1]: 0x1
    * key[2]: 2
+   * key[3]:
    */
   parser.lines = lines;
   parser.line_count = sizeof(lines) / sizeof(lines[0]);
-  ParserLineBasicSetUp(&lines[0], "value", "key", subscripts[0], 1, "0x1");
-  ParserLineBasicSetUp(&lines[1], "value", "key", subscripts[1], 1, "2");
-  value_expr[0] = &lines[0].variant.assign_statement.value_expr;
+  ParserLineBasicSetUp(&lines[0], "0x1", "key", subscripts[0], 1, "1");
+  ParserLineBasicSetUp(&lines[1], "2", "key", subscripts[1], 1, "2");
+  ParserLineBasicSetUp(&lines[2], "", "key", subscripts[2], 1, "3");
+  for (i = 0; i < kLineCount; ++i) {
+    value_expr[i] = &lines[i].variant.assign_statement.value_expr;
+  }
   value_expr[0]->variant.as_constexpr.type = ConstExprType_kUnsignedInt;
-  value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
+  value_expr[2]->type = ValueExprType_kEmpty;
   SemanticAnalyzer_Init(&analyzer, &parser);
 
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
@@ -244,18 +264,21 @@ static void LoadLines_SameKeyDifferentValueIntContTypes_NoDifferences(void) {
 }
 
 static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
+  enum {
+    kLineCount = 3
+  };
   size_t i;
   int actual;
   struct SemanticAnalyzer analyzer;
   struct LexerLine lline;
   struct LexerString lstr[4];
-  struct ParserLine lines[2];
-  struct Subscript subscripts[2][1];
-  struct ValueExpr* value_expr[2];
+  struct ParserLine lines[kLineCount];
+  struct Subscript subscripts[kLineCount][1];
+  struct ValueExpr* value_expr[kLineCount];
   struct ToggleExpr* toggle_expr;
-  struct ConstExpr* const_exprs[2];
+  struct ConstExpr* const_exprs[kLineCount];
   struct Parser parser;
-  struct Typing* typings[2];
+  struct Typing* typings[kLineCount];
 
   LexerLineSetUp(
       &lline,
@@ -269,12 +292,16 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   /*
    * key[1]: true, VK_A
    * key[2]: 2
+   * key[3]:
    */
   parser.lines = lines;
   parser.line_count = sizeof(lines) / sizeof(lines[0]);
   ParserLineBasicSetUp(&lines[0], "", "key", subscripts[0], 1, "1");
   ParserLineBasicSetUp(&lines[1], "2", "key", subscripts[1], 1, "2");
-  value_expr[0] = &lines[0].variant.assign_statement.value_expr;
+  ParserLineBasicSetUp(&lines[2], "", "key", subscripts[2], 1, "3");
+  for (i = 0; i < kLineCount; ++i) {
+    value_expr[i] = &lines[i].variant.assign_statement.value_expr;
+  }
   value_expr[0]->type = ValueExprType_kToggle;
   toggle_expr = &value_expr[0]->variant.as_toggleexpr;
   /* Set up enabled. */
@@ -294,8 +321,9 @@ static void LoadLines_SameKeyDifferentValueTypes_ResolveDifferences(void) {
   toggle_expr->input_expr.begin_src = &lstr[3];
   toggle_expr->input_expr.end_src = &lstr[4];
   /* Set up second line. */
-  value_expr[1] = &lines[1].variant.assign_statement.value_expr;
   value_expr[1]->variant.as_constexpr.type = ConstExprType_kSignedInt;
+  /* Set up third line. */
+  value_expr[2]->type = ValueExprType_kEmpty;
   SemanticAnalyzer_Init(&analyzer, &parser);
 
   actual = SemanticAnalyzer_LoadLines(&analyzer, &parser);
