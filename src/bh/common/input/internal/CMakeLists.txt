@@ -1,5 +1,5 @@
 # SlashDiablo Maphack
-# Copyright (C) 2012-2022  SlashDiablo Team
+# Copyright (C) 2012-2023  SlashDiablo Team
 #
 # This file is part of SlashDiablo Maphack.
 #
@@ -17,8 +17,8 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH.Common)
-
-add_subdirectory("data_struct")
-add_subdirectory("input")
-add_subdirectory("string_util")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/virtual_key_symbol_name_table.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/virtual_key_symbol_name_table.h"
+)
