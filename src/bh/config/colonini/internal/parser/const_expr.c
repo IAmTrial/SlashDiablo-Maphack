@@ -46,7 +46,7 @@ struct ConstExpr* ConstExpr_Init(
   /* Determine the size needed to store the full string. */
   total_length = 0;
   for (current_src = begin_src; current_src != end_src; ++current_src) {
-    total_length += current_src->str_length;
+    total_length += current_src->str.length;
   }
 
   /* Allocate space for the expression. */
@@ -59,8 +59,10 @@ struct ConstExpr* ConstExpr_Init(
   expr->length = 0;
   for (current_src = begin_src; current_src != end_src; ++current_src) {
     memcpy(
-        &expr->expr[expr->length], current_src->str, current_src->str_length);
-    expr->length += current_src->str_length;
+        &expr->expr[expr->length],
+        current_src->str.str,
+        current_src->str.length);
+    expr->length += current_src->str.length;
   }
   expr->expr[expr->length] = '\0';
 

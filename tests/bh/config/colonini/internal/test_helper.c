@@ -62,8 +62,8 @@ void LexerLineVSetUp(
   for (i = 0; i < line->str_count; ++i) {
     int is_token;
 
-    strs[i].str = va_arg(args, char*);
-    strs[i].str_length = strlen(strs[i].str);
+    strs[i].str.str = va_arg(args, char*);
+    strs[i].str.length = strlen(strs[i].str.str);
     strs[i].line_index = total_line_index;
     strs[i].previous_token = line->last_token;
     strs[i].next_token = NULL;
@@ -87,7 +87,7 @@ void LexerLineVSetUp(
       line->last_token = &strs[i];
     }
 
-    total_line_index += strs[i].str_length;
+    total_line_index += strs[i].str.length;
   }
 }
 

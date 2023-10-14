@@ -26,18 +26,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "bh/config/colonini/type/string.h"
+
 struct LexerString* LexerString_InitStrComponent(
     struct LexerString* lstr,
     const char* src,
     size_t length,
     size_t line_index) {
-  lstr->str = malloc((length + 1) * sizeof(lstr->str[0]));
-  if (lstr->str == NULL) {
+  struct Colonini_String* str_init_result;
+
+  str_init_result = Colonini_String_Init(&lstr->str, src, length);
+  if (str_init_result == NULL) {
     goto error;
   }
-  memcpy(lstr->str, src, length);
-  lstr->str[length] = '\0';
-  lstr->str_length = length;
 
   lstr->line_index = line_index;
 
@@ -50,13 +51,11 @@ error:
 void LexerString_Deinit(struct LexerString* lstr) {
   lstr->next_token = NULL;
   lstr->previous_token = NULL;
-  lstr->str_length = 0;
-  free(lstr->str);
-  lstr->str = NULL;
+  Colonini_String_Deinit(&lstr->str);
 }
 
 struct LexerString* LexerString_CeilToken(const struct LexerString* lstr) {
-  if (isspace(lstr->str[0])) {
+  if (isspace(lstr->str.str[0])) {
     return lstr->next_token;
   }
 
@@ -64,7 +63,7 @@ struct LexerString* LexerString_CeilToken(const struct LexerString* lstr) {
 }
 
 struct LexerString* LexerString_FloorToken(const struct LexerString* lstr) {
-  if (isspace(lstr->str[0])) {
+  if (isspace(lstr->str.str[0])) {
     return lstr->previous_token;
   }
 

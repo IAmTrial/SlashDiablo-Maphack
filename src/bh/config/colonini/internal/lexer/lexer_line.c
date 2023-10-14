@@ -27,6 +27,7 @@
 
 #include "bh/common/string_util/memstring.h"
 #include "bh/config/colonini/internal/lexer/lexer_string.h"
+#include "bh/config/colonini/type/string.h"
 
 static const char kOperators[] = ":[],";
 static const char kWhitespaces[] = "\t\n\v\f\r ";
@@ -159,8 +160,7 @@ static enum CaptureRuleCategory GetCaptureRuleCategory(
 struct LexerLine* LexerLine_LexLine(
     struct LexerLine* line,
     size_t line_number,
-    const char* raw_line,
-    size_t raw_line_length) {
+    const struct Colonini_String* raw_line) {
   size_t i_raw_line;
   size_t i_strs;
   size_t capture_length;
@@ -168,7 +168,7 @@ struct LexerLine* LexerLine_LexLine(
 
   line->line_number = line_number;
 
-  if (raw_line_length == 0) {
+  if (raw_line->length == 0) {
     line->strs = NULL;
     line->str_count = 0;
     line->token_count = 0;
@@ -180,16 +180,17 @@ struct LexerLine* LexerLine_LexLine(
 
   /* Determine the number of LexerString to reserve. */
   for (i_raw_line = 0, reserved_str_count = 0;
-      i_raw_line < raw_line_length;
+      i_raw_line < raw_line->length;
       i_raw_line += capture_length, ++reserved_str_count) {
     enum CaptureRuleCategory category;
     const struct CaptureRule* rule;
     size_t remaining_line_length;
 
     /* Read the current character to determine which capture rule to apply. */
-    remaining_line_length = raw_line_length - i_raw_line;
+    remaining_line_length = raw_line->length - i_raw_line;
     category =
-        GetCaptureRuleCategory(&raw_line[i_raw_line], remaining_line_length);
+        GetCaptureRuleCategory(
+            &raw_line->str[i_raw_line], remaining_line_length);
     assert(category != CaptureRuleCategory_kUnspecified);
 
     rule = SearchCaptureRuleTable(category);
@@ -199,7 +200,7 @@ struct LexerLine* LexerLine_LexLine(
 
     capture_length =
         rule->capture_func(
-            &raw_line[i_raw_line],
+            &raw_line->str[i_raw_line],
             remaining_line_length,
             rule->capture_str,
             rule->capture_str_length);
@@ -216,8 +217,8 @@ struct LexerLine* LexerLine_LexLine(
   line->token_count = 0;
   line->last_token = NULL;
   for (i_raw_line = 0;
-      i_raw_line < raw_line_length;
-      i_raw_line += line->strs[line->str_count].str_length,
+      i_raw_line < raw_line->length;
+      i_raw_line += line->strs[line->str_count].str.length,
           ++line->str_count) {
     struct LexerString* init_str_component_result;
     struct LexerString* current_str;
@@ -229,9 +230,9 @@ struct LexerLine* LexerLine_LexLine(
     current_str = &line->strs[line->str_count];
     current_str->previous_token = line->last_token;
 
-    remaining_line_length = raw_line_length - i_raw_line;
+    remaining_line_length = raw_line->length - i_raw_line;
     category =
-        GetCaptureRuleCategory(&raw_line[i_raw_line], remaining_line_length);
+        GetCaptureRuleCategory(&raw_line->str[i_raw_line], remaining_line_length);
     rule = SearchCaptureRuleTable(category);
     if (rule == NULL) {
       goto error_deinit_line;
@@ -239,13 +240,13 @@ struct LexerLine* LexerLine_LexLine(
 
     str_length =
         rule->capture_func(
-            &raw_line[i_raw_line],
+            &raw_line->str[i_raw_line],
             remaining_line_length,
             rule->capture_str,
             rule->capture_str_length);
     init_str_component_result =
         LexerString_InitStrComponent(
-            current_str, &raw_line[i_raw_line], str_length, i_raw_line);
+            current_str, &raw_line->str[i_raw_line], str_length, i_raw_line);
     if (init_str_component_result == NULL) {
       goto error_deinit_line;
     }

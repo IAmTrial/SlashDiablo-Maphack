@@ -24,13 +24,14 @@
 
 #include <stddef.h>
 
+#include "bh/config/colonini/type/string.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
 struct LexerString {
-  char* str;
-  size_t str_length;
+  struct Colonini_String str;
   size_t line_index;
 
   /* Convenience members, members are still relatively contiguous. */
