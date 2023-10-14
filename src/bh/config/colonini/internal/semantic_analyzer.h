@@ -19,42 +19,40 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_LEXER_H_
-#define BH_CONFIG_COLONINI_INTERNAL_LEXER_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_H_
+#define BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_H_
 
 #include <stddef.h>
 
-#include "bh/config/colonini/internal/lexer/lexer_line.h"
+#include "bh/config/colonini/internal/parser.h"
+#include "bh/config/colonini/internal/semantic_analyzer/key_table.h"
+#include "bh/config/colonini/internal/semantic_analyzer/typing_table.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct Lexer {
-  size_t count;
-  struct LexerLine* lines;
+struct SemanticAnalyzer {
+  struct TypingTable typing_table;
+  struct KeyTable key_table;
 };
 
-/**
- * Initializes a Lexer with space allocated for the specified number
- * of LexerLine.
- */
-struct Lexer* Lexer_Init(struct Lexer* lexer, size_t line_count);
+struct SemanticAnalyzer* SemanticAnalyzer_Init(
+    struct SemanticAnalyzer* analyzer,
+    const struct Parser* parser);
+
+void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer);
 
 /**
- * Deinitializes a Lexer, freeing up resources that were allocated.
+ * Adds the semantic context from a contiguous array of ParserLine.
+ * Returns a non-zero value on success, or else zero on failure.
  */
-void Lexer_Deinit(struct Lexer* lexer);
-
-/**
- * Lexes a specified contiguous number of null-terminated, UTF-8
- * encoded lines. Returns a non-zero value on success, or a zero value
- * on failure.
- */
-int Lexer_Lex(struct Lexer* lexer, char* const* lines, size_t count);
+int SemanticAnalyzer_LoadLines(
+    struct SemanticAnalyzer* analyzer,
+    const struct Parser* parser);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_LEXER_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_H_ */

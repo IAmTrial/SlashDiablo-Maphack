@@ -177,6 +177,8 @@ struct Subscript* Subscript_Parse(
     *error_column = 0;
     goto error;
   }
+  /* All subscripts are of type string. */
+  subscript->expr.type = ConstExprType_kString;
 
   subscript->begin_src = lbracket_src;
   subscript->end_src = &rbracket_src[1];
@@ -189,4 +191,9 @@ error:
 
 void Subscript_Deinit(struct Subscript* subscript) {
   ConstExpr_Deinit(&subscript->expr);
+}
+
+int Subscript_Equal(
+    const struct Subscript* left, const struct Subscript* right) {
+  return ConstExpr_Equal(&left->expr, &right->expr);
 }

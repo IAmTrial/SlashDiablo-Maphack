@@ -27,7 +27,11 @@ target_sources(${PROJECT_NAME}
 
         "${CMAKE_CURRENT_SOURCE_DIR}/parser.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/parser.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/semantic_analyzer.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/semantic_analyzer.h"
 )
 
 add_subdirectory("lexer")
 add_subdirectory("parser")
+add_subdirectory("semantic_analyzer")

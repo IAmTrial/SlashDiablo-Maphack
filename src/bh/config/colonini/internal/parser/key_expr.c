@@ -143,6 +143,8 @@ static struct ConstExpr* ParsePrimary(
     *error_column = 0;
     return NULL;
   }
+  /* Primary key is always interpretted as string. */
+  expr->type = ConstExprType_kString;
 
   return expr;
 
@@ -269,4 +271,62 @@ void KeyExpr_Deinit(struct KeyExpr* expr) {
   }
 
   ConstExpr_Deinit(&expr->constexpr);
+}
+
+int KeyExpr_CompareKeysAsStrings(
+    const struct KeyExpr* left, const struct KeyExpr* right) {
+  size_t i;
+  int is_left_shorter;
+  size_t max_count;
+
+  int cmp_result;
+
+  cmp_result =
+      ConstExpr_CompareExprAsString(&left->constexpr, &right->constexpr);
+  if (cmp_result != 0) {
+    return cmp_result;
+  }
+
+  is_left_shorter = (left->subscripts_count < right->subscripts_count);
+  max_count =
+      is_left_shorter ? left->subscripts_count : right->subscripts_count;
+  for (i = 0; i < max_count; ++i) {
+    cmp_result =
+        ConstExpr_CompareExprAsString(
+            &left->subscripts[i].expr, &right->subscripts[i].expr);
+    if (cmp_result != 0) {
+      return cmp_result;
+    }
+  }
+
+  if (left->subscripts_count != right->subscripts_count) {
+    if (is_left_shorter) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int KeyExpr_Equal(
+    const struct KeyExpr* left, const struct KeyExpr* right) {
+  size_t i;
+
+  if (!ConstExpr_Equal(&left->constexpr, &right->constexpr)) {
+    return 0;
+  }
+
+  if (left->subscripts_count != right->subscripts_count) {
+    return 0;
+  }
+
+  for (i = 0; i < left->subscripts_count; ++i) {
+    if (!Subscript_Equal(&left->subscripts[i], &right->subscripts[i])) {
+      return 0;
+    }
+  }
+
+  return 1;
 }
