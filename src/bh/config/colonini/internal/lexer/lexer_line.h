@@ -47,8 +47,7 @@ struct LexerLine {
 struct LexerLine* LexerLine_LexLine(
     struct LexerLine* line,
     size_t line_number,
-    const char* raw_line,
-    size_t raw_line_length);
+    const struct Colonini_String* raw_line);
 
 /**
  * Deinitializes a LexerLine, freeing up resources that were allocated.

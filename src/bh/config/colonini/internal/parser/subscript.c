@@ -72,9 +72,12 @@ int Subscript_Peek(
   }
   
   /* The first token encountered must be the left bracket. */
-  assert(temp_lbracket_src->str_length >= 1);
-  if (temp_lbracket_src->str_length != 1
-      || memcmp(temp_lbracket_src->str, kLBracket, sizeof(kLBracket)) != 0) {
+  assert(temp_lbracket_src->str.length >= 1);
+  if (temp_lbracket_src->str.length != 1
+      || memcmp(
+            temp_lbracket_src->str.str,
+            kLBracket,
+            sizeof(kLBracket)) != 0) {
     *error_column = temp_lbracket_src->line_index + 1;
     return 0;
   }
@@ -95,14 +98,14 @@ int Subscript_Peek(
     }
 
     /* Any string before the matching right bracket is copied. */
-    assert(current_src->str_length >= 1);
-    if (current_src->str_length != 1) {
+    assert(current_src->str.length >= 1);
+    if (current_src->str.length != 1) {
       continue;
     }
 
-    if (memcmp(current_src->str, kLBracket, sizeof(kLBracket)) == 0) {
+    if (memcmp(current_src->str.str, kLBracket, sizeof(kLBracket)) == 0) {
       ++nest_level;
-    } else if (memcmp(current_src->str, kRBracket, sizeof(kRBracket)) == 0) {
+    } else if (memcmp(current_src->str.str, kRBracket, sizeof(kRBracket)) == 0) {
       if (nest_level <= 0) {
         *error_column = current_src->line_index + 1;
         return 0;
@@ -135,8 +138,8 @@ int Subscript_IsBegin(const struct LexerString* src) {
   }
 
   ceil_src = LexerString_CeilToken(src);
-  return (ceil_src->str_length == 1
-      && memcmp(ceil_src->str, kLBracket, sizeof(kLBracket)) == 0);
+  return (ceil_src->str.length == 1
+      && memcmp(ceil_src->str.str, kLBracket, sizeof(kLBracket)) == 0);
 }
 
 struct Subscript* Subscript_Parse(

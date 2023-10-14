@@ -58,7 +58,7 @@ int ToggleExpr_IsValid(
 
   enabled_type =
       ConstExprType_MatchString(
-          enabled_begin_src->str, enabled_begin_src->str_length);
+          enabled_begin_src->str.str, enabled_begin_src->str.length);
   if (enabled_type != ConstExprType_kBoolean) {
     *error_column = enabled_begin_src->line_index + 1;
     return 0;
@@ -71,8 +71,8 @@ int ToggleExpr_IsValid(
     return 0;
   }
 
-  if (comma_op->str_length != 1
-      || memcmp(comma_op->str, kComma, sizeof(kComma)) != 0) {
+  if (comma_op->str.length != 1
+      || memcmp(comma_op->str.str, kComma, sizeof(kComma)) != 0) {
     *error_column = comma_op->line_index + 1;
     return 0;
   }
@@ -86,7 +86,7 @@ int ToggleExpr_IsValid(
 
   input_type =
       ConstExprType_MatchString(
-          input_begin_src->str, input_begin_src->str_length);
+          input_begin_src->str.str, input_begin_src->str.length);
   if (input_type != ConstExprType_kString) {
     *error_column = enabled_begin_src->line_index + 1;
     return 0;

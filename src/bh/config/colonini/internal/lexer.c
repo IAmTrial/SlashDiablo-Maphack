@@ -23,9 +23,9 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "bh/config/colonini/internal/lexer/lexer_line.h"
+#include "bh/config/colonini/type/string.h"
 
 /**
  * External
@@ -52,15 +52,15 @@ void Lexer_Deinit(struct Lexer* lexer) {
   lexer->lines = NULL;
 }
 
-int Lexer_Lex(struct Lexer* lexer, char* const* lines, size_t count) {
+int Lexer_Lex(
+    struct Lexer* lexer, const struct Colonini_String* lines, size_t count) {
   size_t i;
 
   for (i = 0; i < count; ++i) {
     struct LexerLine* lex_result;
 
     lex_result =
-        LexerLine_LexLine(
-            &lexer->lines[i], i + 1, lines[i], strlen(lines[i]));
+        LexerLine_LexLine(&lexer->lines[i], i + 1, &lines[i]);
     if (lex_result == NULL) {
       return 0;
     }

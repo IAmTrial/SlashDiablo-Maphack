@@ -95,8 +95,9 @@ static int IsValidPrimaryKeyToken(const struct LexerString* token) {
   size_t i_invalid;
 
   i_invalid =
-      MemCSpn(token->str, token->str_length, kValidChars, kValidCharsLength);
-  return (i_invalid == token->str_length);
+      MemCSpn(
+          token->str.str, token->str.length, kValidChars, kValidCharsLength);
+  return (i_invalid == token->str.length);
 }
 
 /**

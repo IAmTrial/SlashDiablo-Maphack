@@ -25,6 +25,7 @@
 #include <stddef.h>
 
 #include "bh/config/colonini/internal/lexer/lexer_line.h"
+#include "bh/config/colonini/type/string.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,7 +52,8 @@ void Lexer_Deinit(struct Lexer* lexer);
  * encoded lines. Returns a non-zero value on success, or a zero value
  * on failure.
  */
-int Lexer_Lex(struct Lexer* lexer, char* const* lines, size_t count);
+int Lexer_Lex(
+    struct Lexer* lexer, const struct Colonini_String* lines, size_t count);
 
 #ifdef __cplusplus
 }  /* extern "C" */

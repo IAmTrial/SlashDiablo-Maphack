@@ -89,8 +89,8 @@ struct AssignStatement* AssignStatement_Parse(
     return NULL;
   }
 
-  if (colon_op->str_length != 1
-      || memcmp(colon_op->str, kColon, sizeof(kColon)) != 0) {
+  if (colon_op->str.length!= 1
+      || memcmp(colon_op->str.str, kColon, sizeof(kColon)) != 0) {
     *error_column = colon_op->line_index + 1;
     return NULL;
   }
