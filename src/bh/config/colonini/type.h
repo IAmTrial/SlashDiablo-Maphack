@@ -27,6 +27,7 @@
 #include "bh/config/colonini/type/entry.h"
 #include "bh/config/colonini/type/map.h"
 #include "bh/config/colonini/type/string.h"
+#include "bh/config/colonini/type/toggle.h"
 #include "bh/config/colonini/type/value.h"
 #include "bh/config/colonini/type/value_type.h"
 
