@@ -19,51 +19,44 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_VALUE_EXPR_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_VALUE_EXPR_H_
 
-#include <stddef.h>
-
-#include "bh/config/colonini/internal/lexer.h"
-#include "bh/config/colonini/internal/parser/assign_statement.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
+#include "bh/config/colonini/internal/parser/const_expr.h"
+#include "bh/config/colonini/internal/parser/toggle_expr.h"
+#include "bh/config/colonini/internal/parser/value_expr_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-enum ParserLineType {
-  ParserLineType_kUnspecified,
-  ParserLineType_kInvalid,
-
-  ParserLineType_kNoOp,
-  ParserLineType_kAssignStatement
-};
-
-struct ParserLine {
-  int line_number;
-
-  enum ParserLineType type;
+struct ValueExpr {
+  enum ValueExprType type;
   union {
-    struct AssignStatement assign_statement;
+    struct ConstExpr as_constexpr;
+    struct ToggleExpr as_toggleexpr;
   } variant;
 };
 
 /**
- * Parses a LexerLine into a ParserLine, resolving the key, subkeys,
- * value type, and value. If the line is invalid, NULL is returned.
+ * Starting from begin_src, parses a ValueExpr constituted of tokens
+ * and whitespace no further than end_src. Returns a non-NULL on
+ * success, or else returns NULL and sets error column.
  */
-struct ParserLine* ParserLine_ParseLine(
-    struct ParserLine* parser_line,
-    const struct LexerLine* lexer_line,
+struct ValueExpr* ValueExpr_Parse(
+    struct ValueExpr* expr,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src,
     size_t* error_column);
 
 /**
- * Deinitializes a ParserLine, freeing up resources that were allocated.
+ * Deinitializes a ValueExpr, freeing up resources that were allocated.
  */
-void ParserLine_Deinit(struct ParserLine* parser_line);
+void ValueExpr_Deinit(struct ValueExpr* expr);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_VALUE_EXPR_H_ */

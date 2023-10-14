@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Test.BH.Config.Colonini.Internal)
+project(Tests.BH.Config.Colonini.Internal)
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)
@@ -45,17 +45,37 @@ file(
         "data/two_line_newline.cfg"
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug/data)
 
+# Define shared helper library.
+add_library(${PROJECT_NAME}.Helper "test_helper.c")
+target_compile_definitions(${PROJECT_NAME}.Helper PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.Helper
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src"
+        "${CMAKE_SOURCE_DIR}/tests")
+target_link_libraries(${PROJECT_NAME}.Helper PRIVATE BH.Config.Colonini)
+
 # Define test targets
 add_executable(${PROJECT_NAME}.FileReaderTest "file_reader_test.c")
 target_compile_definitions(${PROJECT_NAME}.FileReaderTest PRIVATE NOMINMAX)
-target_include_directories(${PROJECT_NAME}.FileReaderTest 
+target_include_directories(${PROJECT_NAME}.FileReaderTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.FileReaderTest PRIVATE shlwapi BH.Config.Colonini)
 
 add_executable(${PROJECT_NAME}.LexerTest "lexer_test.c")
 target_compile_definitions(${PROJECT_NAME}.LexerTest PRIVATE NOMINMAX)
-target_include_directories(${PROJECT_NAME}.LexerTest 
+target_include_directories(${PROJECT_NAME}.LexerTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.LexerTest PRIVATE BH.Config.Colonini)
+
+add_executable(${PROJECT_NAME}.ParserTest "parser_test.c")
+target_compile_definitions(${PROJECT_NAME}.ParserTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.ParserTest
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src"
+        "${CMAKE_SOURCE_DIR}/tests")
+target_link_libraries(${PROJECT_NAME}.ParserTest
+    PRIVATE
+        BH.Config.Colonini
+        Tests.BH.Config.Colonini.Internal.Helper)

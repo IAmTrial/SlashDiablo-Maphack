@@ -19,51 +19,43 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_H_
-#define BH_CONFIG_COLONINI_INTERNAL_PARSER_H_
+#ifndef BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_H_
+#define BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_H_
 
 #include <stddef.h>
 
-#include "bh/config/colonini/internal/lexer.h"
-#include "bh/config/colonini/internal/parser/assign_statement.h"
+#include "bh/config/colonini/internal/lexer/lexer_string.h"
+#include "bh/config/colonini/internal/parser/const_expr_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-enum ParserLineType {
-  ParserLineType_kUnspecified,
-  ParserLineType_kInvalid,
+struct ConstExpr {
+  enum ConstExprType type;
+  char* expr;
+  size_t length;
 
-  ParserLineType_kNoOp,
-  ParserLineType_kAssignStatement
-};
-
-struct ParserLine {
-  int line_number;
-
-  enum ParserLineType type;
-  union {
-    struct AssignStatement assign_statement;
-  } variant;
+  const struct LexerString* begin_src;
+  const struct LexerString* end_src;
 };
 
 /**
- * Parses a LexerLine into a ParserLine, resolving the key, subkeys,
- * value type, and value. If the line is invalid, NULL is returned.
+ * Initializes a ConstExpr using the strings in the range
+ * [begin_str, end_str).
  */
-struct ParserLine* ParserLine_ParseLine(
-    struct ParserLine* parser_line,
-    const struct LexerLine* lexer_line,
-    size_t* error_column);
+struct ConstExpr* ConstExpr_Init(
+    struct ConstExpr* expr,
+    const struct LexerString* begin_src,
+    const struct LexerString* end_src);
 
 /**
- * Deinitializes a ParserLine, freeing up resources that were allocated.
+ * Deinitializes a ConstExpr, freeing up resources that were allocated.
  */
-void ParserLine_Deinit(struct ParserLine* parser_line);
+void ConstExpr_Deinit(struct ConstExpr* expr);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_H_ */
+#endif  /* BH_CONFIG_COLONINI_INTERNAL_PARSER_CONST_EXPR_H_ */

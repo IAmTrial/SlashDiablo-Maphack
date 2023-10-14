@@ -24,4 +24,10 @@ target_sources(${PROJECT_NAME}
 
         "${CMAKE_CURRENT_SOURCE_DIR}/lexer.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/lexer.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/parser.h"
 )
+
+add_subdirectory("lexer")
+add_subdirectory("parser")

@@ -21,49 +21,86 @@
 
 #include "bh/config/colonini/internal/parser.h"
 
+#include <assert.h>
 #include <stddef.h>
-#include <string.h>
 
-#include "bh/config/colonini/type.h"
+#include "bh/config/colonini/internal/lexer.h"
+#include "bh/config/colonini/internal/parser/assign_statement.h"
 
-/**
- * Finds the comment in the line. Comments start with two consecutive
- * forward slash characters '/'. Returns a pointer to the first
- * slash character of a comment, or NULL if a comment cannot be found.
+/*
+ * Parse rules:
+ * S -> K : V
+ *
+ * K -> sP
+ * P -> AP
+ * A -> [d]
+ * A -> [s]
+ * P -> e
+ * V -> R
+ * R -> bT
+ * T -> , s
+ * T -> e
+ * R -> s
+ * V -> d
+ * V -> h
+ *
+ * Terminals (regex):
+ * e(mpty) ->
+ * b(oolean) -> (true)|(false)
+ * d(ecimal) -> (0|([1-9][0-9]{0,9}))
+ * h(exadecimal) -> 0(x|X)[0-9A-Fa-f]{1,7}
+ * s(tring) -> [^\t\n\v\f\r ][^\[\]:]*[^\[\]:\t\n\v\f\r ]
  */
-static char* FindComment(
-    const char* line, size_t line_length, size_t* i_comment) {
-  const char* first_slash;
-
-  first_slash = &line[-1];
-  do {
-    size_t line_remaining_length;
-
-    line_remaining_length = line_length - (&first_slash[1] - line);
-    first_slash = memchr(&first_slash[1], '/', line_remaining_length);
-    
-    if (first_slash[1] == '/') {
-      *i_comment = line - first_slash;
-      return (char*)first_slash;
-    }
-  } while (first_slash != NULL);
-
-  return NULL;
-}
 
 /**
  * External
  */
 
-struct Colonini_Entry* ParseLine(
-    struct Colonini_Entry* entry, const char* line) {
-  size_t line_length;
-  const char* comment;
-  size_t i_comment;
+struct ParserLine* ParserLine_ParseLine(
+    struct ParserLine* parser_line,
+    const struct LexerLine* lexer_line,
+    size_t* error_column) {
+  struct AssignStatement* parse_assign_statement_result;
 
-  line_length = strlen(line);
-  comment = FindComment(line, line_length, &i_comment);
+  parser_line->line_number = lexer_line->line_number;
 
-  return entry;
+  if (lexer_line->tokens_count == 0) {
+    parser_line->type = ParserLineType_kNoOp;
+    return parser_line;
+  }
+
+  parse_assign_statement_result =
+      AssignStatement_Parse(
+          &parser_line->variant.assign_statement,
+          lexer_line->first_token,
+          &lexer_line->last_token[1],
+          error_column);
+  if (parse_assign_statement_result == NULL) {
+    parser_line->type = ParserLineType_kInvalid;
+    return NULL;
+  }
+
+  parser_line->type = ParserLineType_kAssignStatement;
+
+  return parser_line;
 }
 
+void ParserLine_Deinit(struct ParserLine* parser_line) {
+  switch (parser_line->type) {
+    case ParserLineType_kNoOp:
+    case ParserLineType_kInvalid: {
+      break;
+    }
+
+    case ParserLineType_kAssignStatement: {
+      AssignStatement_Deinit(&parser_line->variant.assign_statement);
+      break;
+    }
+
+    default: {
+      assert(0 && "This should never happen.");
+      return;
+    }
+  }
+  parser_line->line_number = 0;
+}
