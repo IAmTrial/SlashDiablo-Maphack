@@ -19,13 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * BH
- * Copyright (C) 2011  McGod
- *
- * All rights reserved.
- */
-
 #ifndef BH_CONFIG_COLONINI_INTERNAL_FILE_READER_H_
 #define BH_CONFIG_COLONINI_INTERNAL_FILE_READER_H_
 

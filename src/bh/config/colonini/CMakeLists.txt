@@ -41,13 +41,14 @@ add_library(${PROJECT_NAME} STATIC)
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/colini.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/colonini.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/type.h"
 )
 
 add_subdirectory(internal)
 add_subdirectory(type)
 
+target_link_libraries(${PROJECT_NAME} BH.Common)
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}
     PRIVATE

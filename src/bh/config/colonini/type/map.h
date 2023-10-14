@@ -19,13 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * BH
- * Copyright (C) 2011  McGod
- *
- * All rights reserved.
- */
-
 #ifndef BH_CONFIG_COLONINI_TYPE_MAP_H_
 #define BH_CONFIG_COLONINI_TYPE_MAP_H_
 
@@ -34,7 +27,7 @@
  * dependency.
  */
 #if 0
-#include "bh/config/colini/type/entry.h"
+#include "bh/config/colonini/type/entry.h"
 #endif
 
 #ifdef __cplusplus
