@@ -22,28 +22,40 @@
 #ifndef BH_CONFIG_COLONINI_TYPE_VALUE_H_
 #define BH_CONFIG_COLONINI_TYPE_VALUE_H_
 
+#include <stddef.h>
+#include <windows.h>
+
 #include "bh/config/colonini/type/data.h"
-#include "bh/config/colonini/type/list.h"
 #include "bh/config/colonini/type/map.h"
+#include "bh/config/colonini/type/value_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-enum Colonini_ValueType {
-  Colonini_ValueType_kData,
-  Colonini_ValueType_kList,
-  Colonini_ValueType_kMap
-};
-
 struct Colonini_Value {
   enum Colonini_ValueType type;
   union {
     struct Colonini_Data as_data;
-    struct Colonini_List as_list;
     struct Colonini_Map as_map;
   } variant;
 };
+
+struct Colonini_Value* Colonini_Value_InitAsBoolean(
+    struct Colonini_Value* value, unsigned char data);
+
+struct Colonini_Value* Colonini_Value_InitAsInteger(
+    struct Colonini_Value* value, unsigned int data);
+
+struct Colonini_Value* Colonini_Value_InitAsMap(struct Colonini_Value* value);
+
+struct Colonini_Value* Colonini_Value_InitAsString(
+    struct Colonini_Value* value, const char* str, size_t str_length);
+
+struct Colonini_Value* Colonini_Value_InitAsToggle(
+    struct Colonini_Value* value, unsigned char enabled, BYTE key_code);
+
+void Colonini_Value_Deinit(struct Colonini_Value* value);
 
 #ifdef __cplusplus
 }  /* extern "C" */

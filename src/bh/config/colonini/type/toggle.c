@@ -1,6 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) 2012-2022  SlashDiablo Team
+ * Copyright (C) 2012-2023  SlashDiablo Team
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -19,16 +19,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_TYPE_H_
-#define BH_CONFIG_COLONINI_TYPE_H_
-
-#include "bh/config/colonini/type/data.h"
-#include "bh/config/colonini/type/data_type.h"
-#include "bh/config/colonini/type/entry.h"
-#include "bh/config/colonini/type/map.h"
-#include "bh/config/colonini/type/string.h"
 #include "bh/config/colonini/type/toggle.h"
-#include "bh/config/colonini/type/value.h"
-#include "bh/config/colonini/type/value_type.h"
 
-#endif  /* BH_CONFIG_COLONINI_TYPE_H_ */
+#include <windows.h>
+
+/**
+ * External
+ */
+
+struct Colonini_Toggle* Colonini_Toggle_Init(
+    struct Colonini_Toggle* toggle, unsigned char enabled, BYTE key_code) {
+  toggle->enabled = enabled;
+  toggle->key_code = key_code;
+
+  return toggle;
+}
+
+void Colonini_Toggle_Deinit(struct Colonini_Toggle* toggle) {
+  toggle->key_code = 0;
+  toggle->enabled = 0;
+}

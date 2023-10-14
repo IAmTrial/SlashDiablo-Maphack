@@ -59,13 +59,13 @@ struct AssignStatement* AssignStatement_Parse(
   }
 
   if (begin_src == NULL || end_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return NULL;
   }
 
   first_token = LexerString_CeilToken(begin_src);
   if (first_token == NULL || first_token >= end_src) {
-    *error_column = begin_src->line_index;
+    *error_column = begin_src->line_index + 1;
     return NULL;
   }
 
@@ -76,11 +76,11 @@ struct AssignStatement* AssignStatement_Parse(
   }
 
   key_end_src =
-      (key->subscripts_count == 0)
-          ? key->constexpr.end_src
-          : key->subscripts[key->subscripts_count - 1].end_src;
+      (key->subscript_count == 0)
+          ? key->primary.end_src
+          : key->subscripts[key->subscript_count - 1].end_src;
   if (key_end_src == NULL || key_end_src >= end_src) {
-    *error_column = first_token->line_index;
+    *error_column = first_token->line_index + 1;
     return NULL;
   }
 
@@ -91,7 +91,7 @@ struct AssignStatement* AssignStatement_Parse(
 
   if (colon_op->str_length != 1
       || memcmp(colon_op->str, kColon, sizeof(kColon)) != 0) {
-    *error_column = colon_op->line_index;
+    *error_column = colon_op->line_index + 1;
     return NULL;
   }
 

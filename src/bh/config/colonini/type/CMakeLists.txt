@@ -19,10 +19,27 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/data.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/data.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/data_type.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/data_type.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/entry.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/entry.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/key.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/list.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/map.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/map.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/string.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/string.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/toggle.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/toggle.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/value.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/value.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/value_type.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/value_type.h"
 )

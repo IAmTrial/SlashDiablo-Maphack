@@ -45,14 +45,14 @@ int ToggleExpr_IsValid(
 
   /* Check preconditions. */
   if (begin_src == NULL || end_src == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     return 0;
   }
 
   /* Validate the enabled expression. */
   enabled_begin_src = LexerString_CeilToken(begin_src);
   if (enabled_begin_src == NULL || enabled_begin_src >= end_src) {
-    *error_column = begin_src->line_index;
+    *error_column = begin_src->line_index + 1;
     return 0;
   }
 
@@ -60,27 +60,27 @@ int ToggleExpr_IsValid(
       ConstExprType_MatchString(
           enabled_begin_src->str, enabled_begin_src->str_length);
   if (enabled_type != ConstExprType_kBoolean) {
-    *error_column = enabled_begin_src->line_index;
+    *error_column = enabled_begin_src->line_index + 1;
     return 0;
   }
 
   /* Validate the , operator. */
   comma_op = enabled_begin_src->next_token;
   if (comma_op == NULL || comma_op >= end_src) {
-    *error_column = enabled_begin_src->line_index;
+    *error_column = enabled_begin_src->line_index + 1;
     return 0;
   }
 
   if (comma_op->str_length != 1
       || memcmp(comma_op->str, kComma, sizeof(kComma)) != 0) {
-    *error_column = comma_op->line_index;
+    *error_column = comma_op->line_index + 1;
     return 0;
   }
 
   /* Validate the input expression. */
   input_begin_src = comma_op->next_token;
   if (input_begin_src == NULL || input_begin_src >= end_src) {
-    *error_column = comma_op->line_index;
+    *error_column = comma_op->line_index + 1;
     return 0;
   }
 
@@ -88,13 +88,13 @@ int ToggleExpr_IsValid(
       ConstExprType_MatchString(
           input_begin_src->str, input_begin_src->str_length);
   if (input_type != ConstExprType_kString) {
-    *error_column = enabled_begin_src->line_index;
+    *error_column = enabled_begin_src->line_index + 1;
     return 0;
   }
 
   /* Check that there are no additional tokens. */
   if (input_begin_src->next_token != NULL) {
-    *error_column = input_begin_src->next_token->line_index;
+    *error_column = input_begin_src->next_token->line_index + 1;
     return 0;
   }
 
@@ -121,7 +121,7 @@ struct ToggleExpr* ToggleExpr_Parse(
       ConstExpr_Init(
           &expr->enabled_expr, enabled_begin_src, &enabled_begin_src[1]);
   if (enabled_init_result == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
 
@@ -129,7 +129,7 @@ struct ToggleExpr* ToggleExpr_Parse(
       ConstExpr_Init(
           &expr->input_expr, input_begin_src, &input_begin_src[1]);
   if (input_init_result == NULL) {
-    *error_column = 0;
+    *error_column = 1;
     goto error;
   }
 

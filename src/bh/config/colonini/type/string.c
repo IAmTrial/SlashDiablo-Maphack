@@ -19,38 +19,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_TYPE_ENTRY_H_
-#define BH_CONFIG_COLONINI_TYPE_ENTRY_H_
+#include "bh/config/colonini/type/string.h"
 
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "bh/config/colonini/type/string.h"
-#include "bh/config/colonini/type/value.h"
+/**
+ * External
+ */
 
-#ifdef __cplusplus
-extern "C" {
-#endif  /* __cplusplus */
+struct Colonini_String* Colonini_String_Init(
+    struct Colonini_String* dest, const char* src, size_t src_length) {
+  dest->str = malloc((src_length + 1) * sizeof(dest->str[0]));
+  if (dest->str == NULL) {
+    goto error;
+  }
+  memcpy(dest->str, src, src_length);
+  dest->str[src_length] = '\0';
+  dest->length = src_length;
 
-struct Colonini_Entry {
-  struct Colonini_String key;
-  struct Colonini_Value value;
+  return dest;
 
-  struct Colonini_Entry* previous;
-  struct Colonini_Entry* next;
-};
+error:
+  return NULL;
+}
 
-struct Colonini_Entry* Colonini_Entry_InitDefault(
-    struct Colonini_Entry* entry,
-    const char* key,
-    size_t key_length);
-
-void Colonini_Entry_Deinit(struct Colonini_Entry* entry);
-
-int Colonini_Entry_CompareKey(
-    const struct Colonini_Entry* left, const struct Colonini_Entry* right);
-
-#ifdef __cplusplus
-}  /* extern "C" */
-#endif  /* __cplusplus */
-
-#endif  /* BH_CONFIG_COLONINI_TYPE_ENTRY_H_ */
+void Colonini_String_Deinit(struct Colonini_String* str) {
+  str->length = 0;
+  free(str->str);
+  str->str = NULL;
+}

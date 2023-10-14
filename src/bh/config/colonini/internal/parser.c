@@ -32,8 +32,8 @@
  * External
  */
 
-struct Parser* Parser_Init(struct Parser* parser, size_t lines_count) {
-  parser->lines = malloc(lines_count * sizeof(parser->lines[0]));
+struct Parser* Parser_Init(struct Parser* parser, size_t line_count) {
+  parser->lines = malloc(line_count * sizeof(parser->lines[0]));
   if (parser->lines == NULL) {
     goto error;
   }
@@ -54,7 +54,10 @@ void Parser_Deinit(struct Parser* parser) {
 }
 
 int Parser_Parse(
-    struct Parser* parser, struct Lexer* lexer, size_t* error_column) {
+    struct Parser* parser,
+    const struct Lexer* lexer,
+    size_t* error_line,
+    size_t* error_column) {
   for (parser->line_count = 0;
       parser->line_count < lexer->count;
       ++parser->line_count) {
@@ -66,6 +69,7 @@ int Parser_Parse(
             &lexer->lines[parser->line_count],
             error_column);
     if (parse_result == NULL) {
+      *error_line = parser->line_count + 1;
       return 0;
     }
   }

@@ -19,44 +19,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_INTERNAL_LEXER_LEXER_LINE_H_
-#define BH_CONFIG_COLONINI_INTERNAL_LEXER_LEXER_LINE_H_
+#ifndef BH_CONFIG_COLONINI_TYPE_DATA_TYPE_H_
+#define BH_CONFIG_COLONINI_TYPE_DATA_TYPE_H_
 
 #include <stddef.h>
-
-#include "bh/config/colonini/internal/lexer/lexer_string.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-struct LexerLine {
-  size_t line_number;
-  struct LexerString* strs;
-  size_t str_count;
+enum Colonini_DataType {
+  Colonini_DataType_kUnspecified = 0,
 
-  struct LexerString* first_token;
-  struct LexerString* last_token;
-  size_t token_count;
+  Colonini_DataType_kBoolean,
+  Colonini_DataType_kInteger,
+  Colonini_DataType_kString,
+  Colonini_DataType_kToggle
 };
 
-/**
- * Lexes a line of the specified length into separated tokens and
- * whitespaces.
- */
-struct LexerLine* LexerLine_LexLine(
-    struct LexerLine* line,
-    size_t line_number,
-    const char* raw_line,
-    size_t raw_line_length);
-
-/**
- * Deinitializes a LexerLine, freeing up resources that were allocated.
- */
-void LexerLine_Deinit(struct LexerLine* line);
+const char* Colonini_DataType_GetDisplayName(
+    enum Colonini_DataType type, size_t* length);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_INTERNAL_LEXER_LEXER_LINE_H_ */
+#endif  /* BH_CONFIG_COLONINI_TYPE_DATA_TYPE_H_ */

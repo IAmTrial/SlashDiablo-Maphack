@@ -1,6 +1,6 @@
 /**
  * SlashDiablo Maphack
- * Copyright (C) 2012-2022  SlashDiablo Team
+ * Copyright (C) 2012-2023  SlashDiablo Team
  *
  * This file is part of SlashDiablo Maphack.
  *
@@ -19,32 +19,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_TYPE_KEY_H_
-#define BH_CONFIG_COLONINI_TYPE_KEY_H_
+#ifndef BH_CONFIG_COLONINI_TYPE_TOGGLE_H_
+#define BH_CONFIG_COLONINI_TYPE_TOGGLE_H_
 
-#include <stddef.h>
+#include <windows.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-enum Colonini_KeyType {
-  Colonini_KeyType_kUnspecified = 0,
+struct Colonini_Toggle {
+  /** The enable state of the toggle. */
+  unsigned char enabled;
 
-  Colonini_KeyType_kString,
-  Colonini_KeyType_kIndex
+  /**
+   * The internal integer value of the key that switches the toggle
+   * between enabled and disabled.
+   */
+  BYTE key_code;
 };
 
-struct Colonini_Key {
-  enum Colonini_KeyType type;
-  union {
-    char* as_string;
-    size_t as_index;
-  } variant;
-};
+struct Colonini_Toggle* Colonini_Toggle_Init(
+    struct Colonini_Toggle* toggle, unsigned char enabled, BYTE key_code);
+
+void Colonini_Toggle_Deinit(struct Colonini_Toggle* toggle);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_CONFIG_COLONINI_TYPE_KEY_H_ */
+#endif  /* BH_CONFIG_COLONINI_TYPE_TOGGLE_H_ */

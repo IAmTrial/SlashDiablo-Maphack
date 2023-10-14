@@ -66,7 +66,7 @@ static int KeyTableEntry_CompareExprAsVoid(
 static struct ConstExpr* KeyExpr_GetKeyAtLevel(
     const struct KeyExpr* keys, size_t key_level) {
   return (struct ConstExpr*)((key_level == 0)
-          ? &keys->constexpr
+          ? &keys->primary
           : &keys->subscripts[key_level - 1].expr);
 }
 
@@ -77,11 +77,11 @@ static struct KeyTable* KeyTable_FindFromKeysAtLevel(
   const struct ConstExpr* find_key;
   struct KeyTable* found_table;
 
-  assert(key_level <= keys->subscripts_count);
+  assert(key_level <= keys->subscript_count);
   find_key = KeyExpr_GetKeyAtLevel(keys, key_level);
   found_table = KeyTable_FindFromKey(table, find_key);
 
-  return (key_level == keys->subscripts_count)
+  return (key_level == keys->subscript_count)
       ? found_table
       : KeyTable_FindFromKeysAtLevel(table, keys, key_level + 1);
 }
@@ -99,14 +99,14 @@ static size_t KeyTable_InsertFromKeysAtLevel(
   struct KeyTable* subtable;
   size_t subkeys_insert_count;
 
-  assert(key_level <= keys->subscripts_count);
+  assert(key_level <= keys->subscript_count);
   find_key = KeyExpr_GetKeyAtLevel(keys, key_level);
 
   current_inserted = KeyTable_InsertFromKey(table, find_key);
   subtable = KeyTable_FindFromKey(table, find_key);
 
   subkeys_insert_count =
-      (key_level == keys->subscripts_count)
+      (key_level == keys->subscript_count)
           ? 0
           : KeyTable_InsertFromKeysAtLevel(subtable, keys, key_level + 1);
 

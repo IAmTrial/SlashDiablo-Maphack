@@ -40,7 +40,7 @@ struct Parser {
  * Initializes a Parser with space allocated for the specified number
  * of ParserLine.
  */
-struct Parser* Parser_Init(struct Parser* parser, size_t lines_count);
+struct Parser* Parser_Init(struct Parser* parser, size_t line_count);
 
 /**
  * Deinitializes a Parser, freeing up resources that were allocated.
@@ -53,7 +53,10 @@ void Parser_Deinit(struct Parser* parser);
  * failure.
  */
 int Parser_Parse(
-    struct Parser* parser, struct Lexer* lexer, size_t* error_column);
+    struct Parser* parser,
+    const struct Lexer* lexer,
+    size_t* error_line,
+    size_t* error_column);
 
 #ifdef __cplusplus
 }  /* extern "C" */

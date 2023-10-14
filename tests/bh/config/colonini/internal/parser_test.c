@@ -381,16 +381,17 @@ static void AfterEach(struct EachContext* context) {
 static void Parse_StringValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kStringValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kStringValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_StringValue_ParsedStrings(struct EachContext* context) {
-
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -398,14 +399,14 @@ static void Parse_StringValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kStringValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kStringValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -415,6 +416,7 @@ static void Parse_StringValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_StringValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -422,12 +424,12 @@ static void Parse_StringValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kStringValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kStringValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kStringValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kStringValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kStringValue.strs[0]);
+  assert(key_expr->primary.end_src == &kStringValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kStringValue.strs[3]);
@@ -437,15 +439,17 @@ static void Parse_StringValue_SetSources(struct EachContext* context) {
 static void Parse_SIntValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kSIntValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kSIntValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_SIntValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -453,14 +457,14 @@ static void Parse_SIntValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kSIntValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kSIntValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -470,6 +474,7 @@ static void Parse_SIntValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_SIntValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -477,12 +482,12 @@ static void Parse_SIntValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kSIntValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kSIntValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kSIntValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kSIntValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kSIntValue.strs[0]);
+  assert(key_expr->primary.end_src == &kSIntValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kSIntValue.strs[3]);
@@ -493,15 +498,17 @@ static void Parse_UIntValue_Success(struct EachContext* context) {
   int parse_result;
 
   struct ParserLine parser_line;
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kUIntValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kUIntValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_UIntValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -509,14 +516,14 @@ static void Parse_UIntValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kUIntValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kUIntValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -526,6 +533,7 @@ static void Parse_UIntValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_UIntValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -533,12 +541,12 @@ static void Parse_UIntValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kUIntValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kUIntValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kUIntValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kUIntValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kUIntValue.strs[0]);
+  assert(key_expr->primary.end_src == &kUIntValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kUIntValue.strs[3]);
@@ -548,15 +556,17 @@ static void Parse_UIntValue_SetSources(struct EachContext* context) {
 static void Parse_BooleanTrueValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kBooleanTrueValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kBooleanTrueValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_BooleanTrueValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -564,14 +574,14 @@ static void Parse_BooleanTrueValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kBooleanTrueValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kBooleanTrueValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -581,6 +591,7 @@ static void Parse_BooleanTrueValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_BooleanTrueValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -588,12 +599,12 @@ static void Parse_BooleanTrueValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kBooleanTrueValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kBooleanTrueValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kBooleanTrueValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kBooleanTrueValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kBooleanTrueValue.strs[0]);
+  assert(key_expr->primary.end_src == &kBooleanTrueValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kBooleanTrueValue.strs[3]);
@@ -603,15 +614,17 @@ static void Parse_BooleanTrueValue_SetSources(struct EachContext* context) {
 static void Parse_BooleanFalseValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kBooleanFalseValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kBooleanFalseValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_BooleanFalseValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -619,14 +632,14 @@ static void Parse_BooleanFalseValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kBooleanFalseValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kBooleanFalseValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -636,6 +649,7 @@ static void Parse_BooleanFalseValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_BooleanFalseValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -643,12 +657,12 @@ static void Parse_BooleanFalseValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kBooleanFalseValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kBooleanFalseValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kBooleanFalseValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kBooleanFalseValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kBooleanFalseValue.strs[0]);
+  assert(key_expr->primary.end_src == &kBooleanFalseValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kBooleanFalseValue.strs[3]);
@@ -659,15 +673,17 @@ static void Parse_ToggleValue_Success(struct EachContext* context) {
   int parse_result;
 
   struct ParserLine parser_line;
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kToggleValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kToggleValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_ToggleValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -677,14 +693,14 @@ static void Parse_ToggleValue_ParsedStrings(struct EachContext* context) {
   struct ConstExpr* value_enabled;
   struct ConstExpr* value_input;
 
-  Parser_Parse(&context->parser, &kToggleValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kToggleValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kToggle);
   value_toggleexpr = &value_expr->variant.as_toggleexpr;
@@ -699,6 +715,7 @@ static void Parse_ToggleValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_ToggleValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -708,12 +725,12 @@ static void Parse_ToggleValue_SetSources(struct EachContext* context) {
   struct ConstExpr* value_enabled;
   struct ConstExpr* value_input;
 
-  Parser_Parse(&context->parser, &kToggleValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kToggleValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kToggleValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kToggleValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kToggleValue.strs[0]);
+  assert(key_expr->primary.end_src == &kToggleValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_toggleexpr = &value_expr->variant.as_toggleexpr;
   value_enabled = &value_toggleexpr->enabled_expr;
@@ -727,16 +744,18 @@ static void Parse_ToggleValue_SetSources(struct EachContext* context) {
 static void Parse_LeftNotToggleValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
       Parser_Parse(
-          &context->parser, &kLeftNotToggleValueLexer, &error_column);
+          &context->parser, &kLeftNotToggleValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_LeftNotToggleValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -744,14 +763,14 @@ static void Parse_LeftNotToggleValue_ParsedStrings(struct EachContext* context) 
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kLeftNotToggleValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kLeftNotToggleValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -761,6 +780,7 @@ static void Parse_LeftNotToggleValue_ParsedStrings(struct EachContext* context) 
 }
 
 static void Parse_LeftNotToggleValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -768,12 +788,12 @@ static void Parse_LeftNotToggleValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kLeftNotToggleValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kLeftNotToggleValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kLeftNotToggleValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kLeftNotToggleValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kLeftNotToggleValue.strs[0]);
+  assert(key_expr->primary.end_src == &kLeftNotToggleValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kLeftNotToggleValue.strs[3]);
@@ -783,16 +803,18 @@ static void Parse_LeftNotToggleValue_SetSources(struct EachContext* context) {
 static void Parse_RightNotToggleValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
       Parser_Parse(
-          &context->parser, &kRightNotToggleValueLexer, &error_column);
+          &context->parser, &kRightNotToggleValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_RightNotToggleValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -800,14 +822,14 @@ static void Parse_RightNotToggleValue_ParsedStrings(struct EachContext* context)
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kRightNotToggleValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kRightNotToggleValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -817,6 +839,7 @@ static void Parse_RightNotToggleValue_ParsedStrings(struct EachContext* context)
 }
 
 static void Parse_RightNotToggleValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -824,12 +847,12 @@ static void Parse_RightNotToggleValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kRightNotToggleValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kRightNotToggleValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kRightNotToggleValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kRightNotToggleValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kRightNotToggleValue.strs[0]);
+  assert(key_expr->primary.end_src == &kRightNotToggleValue.strs[1]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kRightNotToggleValue.strs[3]);
@@ -839,15 +862,17 @@ static void Parse_RightNotToggleValue_SetSources(struct EachContext* context) {
 static void Parse_EmptyValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kEmptyValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kEmptyValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_EmptyValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -855,19 +880,20 @@ static void Parse_EmptyValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kEmptyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kEmptyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kEmpty);
 }
 
 static void Parse_EmptyValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -875,26 +901,28 @@ static void Parse_EmptyValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kEmptyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kEmptyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kEmptyValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kEmptyValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kEmptyValue.strs[0]);
+  assert(key_expr->primary.end_src == &kEmptyValue.strs[1]);
 }
 
 static void Parse_SpacedKeyValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kSpacedKeyValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kSpacedKeyValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_SpacedKeyValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -902,14 +930,14 @@ static void Parse_SpacedKeyValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kSpacedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kSpacedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 0);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 0);
   value_expr = &pline->variant.assign_statement.value_expr;
   assert(value_expr->type == ValueExprType_kConst);
   value_constexpr = &value_expr->variant.as_constexpr;
@@ -918,6 +946,7 @@ static void Parse_SpacedKeyValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_SpacedKeyValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -925,12 +954,12 @@ static void Parse_SpacedKeyValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kSpacedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kSpacedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kSpacedKeyValue.strs[1]);
-  assert(key_expr->constexpr.end_src == &kSpacedKeyValue.strs[2]);
+  assert(key_expr->primary.begin_src == &kSpacedKeyValue.strs[1]);
+  assert(key_expr->primary.end_src == &kSpacedKeyValue.strs[2]);
   value_expr = &pline->variant.assign_statement.value_expr;
   value_constexpr = &value_expr->variant.as_constexpr;
   assert(value_constexpr->begin_src == &kSpacedKeyValue.strs[5]);
@@ -940,15 +969,17 @@ static void Parse_SpacedKeyValue_SetSources(struct EachContext* context) {
 static void Parse_MappedKeyValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kMappedKeyValueLexer, &error_column);
+      Parser_Parse(&context->parser, &kMappedKeyValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_MappedKeyValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -957,14 +988,14 @@ static void Parse_MappedKeyValue_ParsedStrings(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 1);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 1);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.length == 6);
   assert(strcmp(subscripts[0].expr.expr, "subkey") == 0);
@@ -976,6 +1007,7 @@ static void Parse_MappedKeyValue_ParsedStrings(struct EachContext* context) {
 }
 
 static void Parse_MappedKeyValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -984,12 +1016,12 @@ static void Parse_MappedKeyValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kMappedKeyValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kMappedKeyValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kMappedKeyValue.strs[0]);
+  assert(key_expr->primary.end_src == &kMappedKeyValue.strs[1]);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.begin_src == &kMappedKeyValue.strs[2]);
   assert(subscripts[0].expr.end_src == &kMappedKeyValue.strs[3]);
@@ -1002,16 +1034,18 @@ static void Parse_MappedKeyValue_SetSources(struct EachContext* context) {
 static void Parse_SpacedMappedKeyValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
       Parser_Parse(
-          &context->parser, &kSpacedMappedKeyValueLexer, &error_column);
+          &context->parser, &kSpacedMappedKeyValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_SpacedMappedKeyValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -1020,14 +1054,14 @@ static void Parse_SpacedMappedKeyValue_ParsedStrings(struct EachContext* context
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kSpacedMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kSpacedMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 7);
-  assert(strcmp(key_expr->constexpr.expr, "key key") == 0);
-  assert(key_expr->subscripts_count == 1);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 7);
+  assert(strcmp(key_expr->primary.expr, "key key") == 0);
+  assert(key_expr->subscript_count == 1);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.length == 7);
   assert(strcmp(subscripts[0].expr.expr, "sub key") == 0);
@@ -1039,6 +1073,7 @@ static void Parse_SpacedMappedKeyValue_ParsedStrings(struct EachContext* context
 }
 
 static void Parse_SpacedMappedKeyValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -1047,12 +1082,12 @@ static void Parse_SpacedMappedKeyValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kSpacedMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kSpacedMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kSpacedMappedKeyValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kSpacedMappedKeyValue.strs[3]);
+  assert(key_expr->primary.begin_src == &kSpacedMappedKeyValue.strs[0]);
+  assert(key_expr->primary.end_src == &kSpacedMappedKeyValue.strs[3]);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.begin_src == &kSpacedMappedKeyValue.strs[6]);
   assert(subscripts[0].expr.end_src == &kSpacedMappedKeyValue.strs[9]);
@@ -1065,16 +1100,18 @@ static void Parse_SpacedMappedKeyValue_SetSources(struct EachContext* context) {
 static void Parse_NoSpaceMappedKeyValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
       Parser_Parse(
-          &context->parser, &kNoSpaceMappedKeyValueLexer, &error_column);
+          &context->parser, &kNoSpaceMappedKeyValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_NoSpaceMappedKeyValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -1083,14 +1120,14 @@ static void Parse_NoSpaceMappedKeyValue_ParsedStrings(struct EachContext* contex
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kNoSpaceMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kNoSpaceMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 1);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 1);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.length == 6);
   assert(strcmp(subscripts[0].expr.expr, "subkey") == 0);
@@ -1102,6 +1139,7 @@ static void Parse_NoSpaceMappedKeyValue_ParsedStrings(struct EachContext* contex
 }
 
 static void Parse_NoSpaceMappedKeyValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -1110,12 +1148,12 @@ static void Parse_NoSpaceMappedKeyValue_SetSources(struct EachContext* context) 
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kNoSpaceMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kNoSpaceMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kNoSpaceMappedKeyValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kNoSpaceMappedKeyValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kNoSpaceMappedKeyValue.strs[0]);
+  assert(key_expr->primary.end_src == &kNoSpaceMappedKeyValue.strs[1]);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.begin_src == &kNoSpaceMappedKeyValue.strs[2]);
   assert(subscripts[0].expr.end_src == &kNoSpaceMappedKeyValue.strs[3]);
@@ -1128,16 +1166,18 @@ static void Parse_NoSpaceMappedKeyValue_SetSources(struct EachContext* context) 
 static void Parse_MixedMappedKeyValue_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
       Parser_Parse(
-          &context->parser, &kMixedMappedKeyValueLexer, &error_column);
+          &context->parser, &kMixedMappedKeyValueLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_MixedMappedKeyValue_ParsedStrings(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -1146,14 +1186,14 @@ static void Parse_MixedMappedKeyValue_ParsedStrings(struct EachContext* context)
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kMixedMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kMixedMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.type == ConstExprType_kString);
-  assert(key_expr->constexpr.length == 3);
-  assert(strcmp(key_expr->constexpr.expr, "key") == 0);
-  assert(key_expr->subscripts_count == 3);
+  assert(key_expr->primary.type == ConstExprType_kString);
+  assert(key_expr->primary.length == 3);
+  assert(strcmp(key_expr->primary.expr, "key") == 0);
+  assert(key_expr->subscript_count == 3);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.type == ConstExprType_kString);
   assert(subscripts[0].expr.length == 7);
@@ -1172,6 +1212,7 @@ static void Parse_MixedMappedKeyValue_ParsedStrings(struct EachContext* context)
 }
 
 static void Parse_MixedMappedKeyValue_SetSources(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
   struct ParserLine* pline;
@@ -1180,12 +1221,12 @@ static void Parse_MixedMappedKeyValue_SetSources(struct EachContext* context) {
   struct ValueExpr* value_expr;
   struct ConstExpr* value_constexpr;
 
-  Parser_Parse(&context->parser, &kMixedMappedKeyValueLexer, &error_column);
+  Parser_Parse(&context->parser, &kMixedMappedKeyValueLexer, &error_line, &error_column);
 
   pline = &context->parser.lines[0];
   key_expr = &pline->variant.assign_statement.key_expr;
-  assert(key_expr->constexpr.begin_src == &kMixedMappedKeyValue.strs[0]);
-  assert(key_expr->constexpr.end_src == &kMixedMappedKeyValue.strs[1]);
+  assert(key_expr->primary.begin_src == &kMixedMappedKeyValue.strs[0]);
+  assert(key_expr->primary.end_src == &kMixedMappedKeyValue.strs[1]);
   subscripts = key_expr->subscripts;
   assert(subscripts[0].expr.begin_src == &kMixedMappedKeyValue.strs[4]);
   assert(subscripts[0].expr.end_src == &kMixedMappedKeyValue.strs[5]);
@@ -1202,18 +1243,20 @@ static void Parse_MixedMappedKeyValue_SetSources(struct EachContext* context) {
 static void Parse_Comment_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kCommentLexer, &error_column);
+      Parser_Parse(&context->parser, &kCommentLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_Comment_NoOp(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
-  Parser_Parse(&context->parser, &kCommentLexer, &error_column);
+  Parser_Parse(&context->parser, &kCommentLexer, &error_line, &error_column);
 
   assert(context->parser.lines[0].type == ParserLineType_kNoOp);
 }
@@ -1221,31 +1264,35 @@ static void Parse_Comment_NoOp(struct EachContext* context) {
 static void Parse_Spaces_Success(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
-  parse_result = Parser_Parse(&context->parser, &kSpacesLexer, &error_column);
+  parse_result = Parser_Parse(&context->parser, &kSpacesLexer, &error_line, &error_column);
 
   assert(parse_result);
 }
 
 static void Parse_Spaces_NoOp(struct EachContext* context) {
+  size_t error_line;
   size_t error_column;
 
-  Parser_Parse(&context->parser, &kSpacesLexer, &error_column);
+  Parser_Parse(&context->parser, &kSpacesLexer, &error_line, &error_column);
 
   assert(context->parser.lines[0].type == ParserLineType_kNoOp);
 }
 
-static void Parse_Invalid_SetErrorColumn(struct EachContext* context) {
+static void Parse_Invalid_SetErrorLineAndColumn(struct EachContext* context) {
   int parse_result;
 
+  size_t error_line;
   size_t error_column;
 
   parse_result =
-      Parser_Parse(&context->parser, &kInvalidLexer, &error_column);
+      Parser_Parse(&context->parser, &kInvalidLexer, &error_line, &error_column);
 
   assert(!parse_result);
-  assert(error_column == 3);
+  assert(error_line == 1);
+  assert(error_column == 4);
 }
 
 int main(int argc, char** argv) {
@@ -1318,7 +1365,7 @@ int main(int argc, char** argv) {
     &Parse_Spaces_Success,
     &Parse_Spaces_NoOp,
 
-    &Parse_Invalid_SetErrorColumn
+    &Parse_Invalid_SetErrorLineAndColumn
   };
 
   enum {

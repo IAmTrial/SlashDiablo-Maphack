@@ -41,8 +41,8 @@ struct Typing* Typing_Init(
     struct Typing* typing,
     const struct KeyExpr* keys,
     const struct ValueExpr* value) {
-  typing->key_name = &keys->constexpr;
-  typing->subkey_count = keys->subscripts_count;
+  typing->key_name = &keys->primary;
+  typing->subkey_count = keys->subscript_count;
 
   typing->value_type = value->type;
   typing->value_as_constexpr_type =
@@ -91,9 +91,27 @@ int Typing_Equal(const struct Typing* left, const struct Typing* right) {
 int Typing_ResolveDiff(struct Typing* left, struct Typing* right) {
   size_t i;
 
+  assert(left->value_type != ValueExprType_kUnspecified);
+  assert(right->value_type != ValueExprType_kUnspecified);
+
   /* Cannot resolve if subkey count is different. */
   if (left->subkey_count != right->subkey_count) {
     return 0;
+  }
+
+  /* Empty type can be freely converted to other types. */
+  if (left->value_type == ValueExprType_kEmpty) {
+    left->value_type = right->value_type;
+    if (right->value_type == ValueExprType_kConst) {
+      left->value_as_constexpr_type = right->value_as_constexpr_type;
+    }
+    return 1;
+  } else if (right->value_type == ValueExprType_kEmpty) {
+    right->value_type = left->value_type;
+    if (left->value_type == ValueExprType_kConst) {
+      right->value_as_constexpr_type = left->value_as_constexpr_type;
+    }
+    return 1;
   }
 
   /* String is the only type that is compatible with all other types. */
@@ -118,8 +136,7 @@ int Typing_ResolveDiff(struct Typing* left, struct Typing* right) {
   if (left->value_as_constexpr_type == ConstExprType_kSignedInt
       && right->value_as_constexpr_type == ConstExprType_kUnsignedInt) {
     return 1;
-  }
-  if (left->value_as_constexpr_type == ConstExprType_kUnsignedInt
+  } else if (left->value_as_constexpr_type == ConstExprType_kUnsignedInt
       && right->value_as_constexpr_type == ConstExprType_kSignedInt) {
     return 1;
   }
