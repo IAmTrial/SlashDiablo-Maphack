@@ -17,7 +17,7 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-add_subdirectory("ascii")
-add_subdirectory("bool")
-add_subdirectory("integer")
-add_subdirectory("memstring")
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_template.h"
+)

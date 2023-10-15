@@ -31,6 +31,9 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/bool.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bool_tests.cpp"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/integer.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/integer.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/integer.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/integer_tests.cpp"
 
