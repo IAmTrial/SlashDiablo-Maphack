@@ -20,4 +20,5 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str_template.h"
 )

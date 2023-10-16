@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 #include <wchar.h>
 
 #include "bh/common/string_util/integer.h"
@@ -83,6 +84,156 @@ static void FromDigitChar_OutOfBaseRange_ReturnsNull(
   assert(value_convert_result == NULL);
 }
 
+static void GetBaseFromPrefixStr_Octal_Base8(struct EachContext* context) {
+  static const char kStr[] = "042";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 8);
+}
+
+static void GetBaseFromPrefixStr_NegativeOctal_Base8(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 8);
+}
+
+static void GetBaseFromPrefixStr_OctalZero_Base8(struct EachContext* context) {
+  static const char kStr[] = "00";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 8);
+}
+
+static void GetBaseFromPrefixStr_OctalNegativeZero_Base8(
+    struct EachContext* context) {
+  static const char kStr[] = "-00";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 8);
+}
+
+static void GetBaseFromPrefixStr_Decimal_Base10(struct EachContext* context) {
+  static const char kStr[] = "42";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 10);
+}
+
+static void GetBaseFromPrefixStr_NegativeDecimal_Base10(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 10);
+}
+
+static void GetBaseFromPrefixStr_Zero_Base10(struct EachContext* context) {
+  static const char kStr[] = "0";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 10);
+}
+
+static void GetBaseFromPrefixStr_NegativeZero_Base10(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 10);
+}
+
+static void GetBaseFromPrefixStr_Hexadecimal_Base16(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 16);
+}
+
+static void GetBaseFromPrefixStr_NegativeHexadecimal_Base16(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result != NULL);
+  assert(base == 16);
+}
+
+static void GetBaseFromPrefixStr_Empty_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, 0);
+
+  assert(base_get_result == NULL);
+}
+
+static void GetBaseFromPrefixStr_Missing0Hexadecimal_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "x42";
+
+  int base;
+  int* base_get_result;
+
+  base_get_result = Integer_GetBaseFromPrefixStr(&base, kStr, strlen(kStr));
+
+  assert(base_get_result == NULL);
+}
+
 int main(int argc, char** argv) {
 #ifdef NDEBUG
 
@@ -93,7 +244,20 @@ int main(int argc, char** argv) {
   static TestFunc* const kTests[] = {
     &FromDigitChar_DigitChars_Converted,
     &FromDigitChar_InvalidBase_ReturnsNull,
-    &FromDigitChar_OutOfBaseRange_ReturnsNull
+    &FromDigitChar_OutOfBaseRange_ReturnsNull,
+
+    &GetBaseFromPrefixStr_Octal_Base8,
+    &GetBaseFromPrefixStr_NegativeOctal_Base8,
+    &GetBaseFromPrefixStr_OctalZero_Base8,
+    &GetBaseFromPrefixStr_OctalNegativeZero_Base8,
+    &GetBaseFromPrefixStr_Decimal_Base10,
+    &GetBaseFromPrefixStr_NegativeDecimal_Base10,
+    &GetBaseFromPrefixStr_Zero_Base10,
+    &GetBaseFromPrefixStr_NegativeZero_Base10,
+    &GetBaseFromPrefixStr_Hexadecimal_Base16,
+    &GetBaseFromPrefixStr_NegativeHexadecimal_Base16,
+    &GetBaseFromPrefixStr_Empty_ReturnsNull,
+    &GetBaseFromPrefixStr_Missing0Hexadecimal_ReturnsNull
   };
 
   enum {

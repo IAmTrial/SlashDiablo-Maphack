@@ -51,3 +51,17 @@
 #define T_TO_LOWER_CHAR_FUNC_NAME Ascii_ToLowerWChar
 #define T_FUNC_NAME Integer_FromDigitWChar
 #include "bh/common/string_util/internal/integer/from_digit_char_template.h"
+
+/**
+ * Define Integer_GetBaseFromPrefixStr
+ */
+
+#define T_CHAR char
+#define T_STR_LITERAL_PREFIX
+#define T_FUNC_NAME Integer_GetBaseFromPrefixStr
+#include "bh/common/string_util/internal/integer/get_base_from_prefix_str_template.h"
+
+#define T_CHAR wchar_t
+#define T_STR_LITERAL_PREFIX L
+#define T_FUNC_NAME Integer_GetBaseFromPrefixWStr
+#include "bh/common/string_util/internal/integer/get_base_from_prefix_str_template.h"

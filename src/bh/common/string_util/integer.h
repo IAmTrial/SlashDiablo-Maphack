@@ -29,6 +29,7 @@
 #ifndef BH_COMMON_STRING_UTIL_INTEGER_H_
 #define BH_COMMON_STRING_UTIL_INTEGER_H_
 
+#include <stddef.h>
 #include <wchar.h>
 
 #ifdef __cplusplus
@@ -48,6 +49,29 @@ int* Integer_FromDigitChar(int* value, char ch, int base);
  * was converted, or NULL if the specified character is not a digit.
  */
 int* Integer_FromDigitWChar(int* value, wchar_t ch, int base);
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string's prefix. If the integer-base encoding is detected, then
+ * the function returns a non-NULL value. Otherwise, returns NULL on
+ * failure.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal. Does not
+ * check the actual contents of the string.
+ */
+int* Integer_GetBaseFromPrefixStr(int* base, const char* str, size_t length);
+
+/**
+ * Determines the integer-base encoding that matches the contents of
+ * the string's prefix. If the integer-base encoding is detected, then
+ * the function returns a non-NULL value. Otherwise, returns NULL on
+ * failure.
+ *
+ * Only supports detection of octal, decimal, and hexadecimal. Does not
+ * check the actual contents of the string.
+ */
+int* Integer_GetBaseFromPrefixWStr(
+    int* base, const wchar_t* str, size_t length);
 
 #ifdef __cplusplus
 }  /* extern "C" */
