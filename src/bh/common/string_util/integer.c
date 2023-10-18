@@ -65,3 +65,17 @@
 #define T_STR_LITERAL_PREFIX L
 #define T_FUNC_NAME Integer_GetBaseFromPrefixWStr
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str_template.h"
+
+/**
+ * Integer_IsDigitCharOfBase
+ */
+
+#define T_CHAR char
+#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitChar
+#define T_FUNC_NAME Integer_IsDigitCharOfBase
+#include "bh/common/string_util/internal/integer/is_digit_char_of_base_template.h"
+
+#define T_CHAR wchar_t
+#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitWChar
+#define T_FUNC_NAME Integer_IsDigitWCharOfBase
+#include "bh/common/string_util/internal/integer/is_digit_char_of_base_template.h"

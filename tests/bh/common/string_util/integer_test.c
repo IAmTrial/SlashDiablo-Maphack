@@ -34,7 +34,7 @@ static const char kDigitChars[] = {
 };
 
 enum {
-  kDigitCharsCount = sizeof(kDigitChars) / sizeof(kDigitChars[0])
+  kDigitCharCount = sizeof(kDigitChars) / sizeof(kDigitChars[0])
 };
 
 static void BeforeAllSetUp(void) {}
@@ -52,12 +52,12 @@ static void AfterEach(struct EachContext* context) {}
 static void FromDigitChar_DigitChars_Converted(struct EachContext* context) {
   size_t i;
 
-  for (i = 0; i < kDigitCharsCount; ++i) {
+  for (i = 0; i < kDigitCharCount; ++i) {
     int* value_convert_result;
     int value;
 
     value_convert_result =
-        Integer_FromDigitChar(&value, kDigitChars[i], kDigitCharsCount);
+        Integer_FromDigitChar(&value, kDigitChars[i], kDigitCharCount);
 
     assert(value_convert_result != NULL);
     assert(value == i);
@@ -234,6 +234,37 @@ static void GetBaseFromPrefixStr_Missing0Hexadecimal_ReturnsNull(
   assert(base_get_result == NULL);
 }
 
+static void IsDigitCharOfBase_DigitChars_ReturnsNonZero(
+    struct EachContext* context) {
+  size_t i;
+
+  for (i = 0; i < kDigitCharCount; ++i) {
+    int result;
+
+    result = Integer_IsDigitCharOfBase(kDigitChars[i], 36);
+
+    assert(result);
+  }
+}
+
+static void IsDigitCharOfBase_InvalidBase_ReturnsZero(
+    struct EachContext* context) {
+  int result;
+
+  result = Integer_IsDigitCharOfBase('0', 9999);
+
+  assert(!result);
+}
+
+static void IsDigitCharOfBase_OutOfBaseRange_ReturnsZero(
+    struct EachContext* context) {
+  int result;
+
+  result = Integer_IsDigitCharOfBase('8', 8);
+
+  assert(!result);
+}
+
 int main(int argc, char** argv) {
 #ifdef NDEBUG
 
@@ -257,7 +288,11 @@ int main(int argc, char** argv) {
     &GetBaseFromPrefixStr_Hexadecimal_Base16,
     &GetBaseFromPrefixStr_NegativeHexadecimal_Base16,
     &GetBaseFromPrefixStr_Empty_ReturnsNull,
-    &GetBaseFromPrefixStr_Missing0Hexadecimal_ReturnsNull
+    &GetBaseFromPrefixStr_Missing0Hexadecimal_ReturnsNull,
+
+    &IsDigitCharOfBase_DigitChars_ReturnsNonZero,
+    &IsDigitCharOfBase_InvalidBase_ReturnsZero,
+    &IsDigitCharOfBase_OutOfBaseRange_ReturnsZero
   };
 
   enum {

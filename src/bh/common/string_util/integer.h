@@ -73,6 +73,27 @@ int* Integer_GetBaseFromPrefixStr(int* base, const char* str, size_t length);
 int* Integer_GetBaseFromPrefixWStr(
     int* base, const wchar_t* str, size_t length);
 
+/**
+ * Returns a non-zero value if the specified character is representable
+ * as a number with the specified integer-base encoding. Otherwise,
+ * returns zero.
+ *
+ * Only the values in the interval [1, 36] are valid for base. The
+ * function will always return zero if an invalid base is specified.
+ */
+int Integer_IsDigitCharOfBase(char ch, int base);
+
+
+/**
+ * Returns a non-zero value if the specified character is representable
+ * as a number with the specified integer-base encoding. Otherwise,
+ * returns zero.
+ *
+ * Only the values in the interval [1, 36] are valid for base. The
+ * function will always return zero if an invalid base is specified.
+ */
+int Integer_IsDigitWCharOfBase(wchar_t ch, int base);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
