@@ -51,6 +51,44 @@ int* Integer_FromDigitChar(int* value, char ch, int base);
 int* Integer_FromDigitWChar(int* value, wchar_t ch, int base);
 
 /**
+ * Converts a string to an integer value and sets the value. If
+ * conversion is successful, then a non-zero value is returned.
+ * Otherwise, if conversion fails, such as if the string is not a
+ * number, or cannot be represented with the integer type, then
+ * NULL is returned instead.
+ */
+int* Integer_FromStrToInt(int* value, const char* str, size_t length);
+
+/**
+ * Converts a string to an integer value and sets the value. If
+ * conversion is successful, then a non-zero value is returned.
+ * Otherwise, if conversion fails, such as if the string is not a
+ * number, or cannot be represented with the integer type, then
+ * NULL is returned instead.
+ */
+int* Integer_FromWStrToInt(int* value, const wchar_t* str, size_t length);
+
+/**
+ * Converts a string to an integer value and sets the value. If
+ * conversion is successful, then a non-zero value is returned.
+ * Otherwise, if conversion fails, such as if the string is not a
+ * number, or cannot be represented with the integer type, then
+ * NULL is returned instead.
+ */
+unsigned int* Integer_FromStrToUInt(
+    unsigned int* value, const char* str, size_t length);
+
+/**
+ * Converts a string to an integer value and sets the value. If
+ * conversion is successful, then a non-zero value is returned.
+ * Otherwise, if conversion fails, such as if the string is not a
+ * number, or cannot be represented with the integer type, then
+ * NULL is returned instead.
+ */
+unsigned int* Integer_FromWStrToUInt(
+    unsigned int* value, const wchar_t* str, size_t length);
+
+/**
  * Determines the integer-base encoding that matches the contents of
  * the string's prefix. If the integer-base encoding is detected, then
  * the function returns a non-NULL value. Otherwise, returns NULL on
@@ -82,7 +120,6 @@ int* Integer_GetBaseFromPrefixWStr(
  * function will always return zero if an invalid base is specified.
  */
 int Integer_IsDigitCharOfBase(char ch, int base);
-
 
 /**
  * Returns a non-zero value if the specified character is representable

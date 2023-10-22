@@ -20,6 +20,7 @@
  */
 
 #include <assert.h>
+#include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -82,6 +83,527 @@ static void FromDigitChar_OutOfBaseRange_ReturnsNull(
   value_convert_result = Integer_FromDigitChar(&value, '9', 8);
 
   assert(value_convert_result == NULL);
+}
+
+static void FromStrToInt_Decimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 42);
+}
+
+static void FromStrToInt_NegativeDecimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == -42);
+}
+
+static void FromStrToInt_MaxDecimal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "%d", INT_MAX);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MAX);
+}
+
+static void FromStrToInt_MinDecimal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "%d", INT_MIN);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MIN);
+}
+
+static void FromStrToInt_Octal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 042);
+}
+
+static void FromStrToInt_NegativeOctal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == -042);
+}
+
+static void FromStrToInt_MaxOctal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "0%o", INT_MAX);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MAX);
+}
+
+static void FromStrToInt_MinOctal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "-0%o", INT_MIN);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MIN);
+}
+
+static void FromStrToInt_Hexadecimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 0x42);
+}
+
+static void FromStrToInt_NegativeHexadecimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == -0x42);
+}
+
+static void FromStrToInt_MaxHexadecimal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "0x%X", INT_MAX);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MAX);
+}
+
+static void FromStrToInt_MinHexadecimal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "-0x%x", INT_MIN);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MIN);
+}
+
+static void FromStrToInt_Empty_ReturnsNull(
+    struct EachContext* context) {
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, "", 0);
+
+  assert(result == NULL);
+}
+
+static void FromStrToInt_InvalidChars_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "Hello world!";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToInt_NotInDecimalBase_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "1000a";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToInt_NotInOctalBase_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0888";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToInt_NotInHexadecimalBase_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x00G";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToInt_OutOfMinRange_ReturnsNull(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 1024
+  };
+  size_t i;
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  memset(str, '9', kStrCapacity - 1);
+  str[0] = '-';
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result == NULL);
+}
+
+static void FromStrToInt_OutOfMaxRange_ReturnsNull(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 1024
+  };
+  size_t i;
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  memset(str, '9', kStrCapacity - 1);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToInt(&value, str, strlen(str));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_Decimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 42u);
+}
+
+static void FromStrToUInt_MaxDecimal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "%u", UINT_MAX);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToUInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == UINT_MAX);
+}
+
+static void FromStrToUInt_MinDecimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 0u);
+}
+
+static void FromStrToUInt_Octal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 042u);
+}
+
+static void FromStrToUInt_MaxOctal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "0%o", UINT_MAX);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToUInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == UINT_MAX);
+}
+
+static void FromStrToUInt_MinOctal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrToUInt_Hexadecimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 0x42);
+}
+
+static void FromStrToUInt_MaxHexadecimal_Converted(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 128
+  };
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  _snprintf(str, kStrCapacity, "0x%X", INT_MAX);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToUInt(&value, str, strlen(str));
+
+  assert(result != NULL);
+  assert(value == INT_MAX);
+}
+
+static void FromStrToUInt_MinHexadecimal_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrToUInt_Empty_ReturnsNull(
+    struct EachContext* context) {
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, "", 0);
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_InvalidChars_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "Hello world!";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_NegativeDecimal_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_NegativeOctal_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_NegativeHexadecimal_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_NotInDecimalBase_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "1000a";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_NotInOctalBase_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0888";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_NotInHexadecimalBase_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x00G";
+  int value;
+  int* result;
+
+  result = Integer_FromStrToUInt(&value, kStr, strlen(kStr));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_OutOfMinRange_ReturnsNull(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 1024
+  };
+  size_t i;
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  memset(str, '9', kStrCapacity - 1);
+  str[0] = '-';
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToUInt(&value, str, strlen(str));
+
+  assert(result == NULL);
+}
+
+static void FromStrToUInt_OutOfMaxRange_ReturnsNull(
+    struct EachContext* context) {
+  enum {
+    kStrCapacity = 1024
+  };
+  size_t i;
+  char str[kStrCapacity];
+  int value;
+  int* result;
+
+  memset(str, '9', kStrCapacity - 1);
+  str[kStrCapacity - 1] = '\0';
+
+  result = Integer_FromStrToUInt(&value, str, strlen(str));
+
+  assert(result == NULL);
 }
 
 static void GetBaseFromPrefixStr_Octal_Base8(struct EachContext* context) {
@@ -276,6 +798,46 @@ int main(int argc, char** argv) {
     &FromDigitChar_DigitChars_Converted,
     &FromDigitChar_InvalidBase_ReturnsNull,
     &FromDigitChar_OutOfBaseRange_ReturnsNull,
+
+    &FromStrToInt_Decimal_Converted,
+    &FromStrToInt_NegativeDecimal_Converted,
+    &FromStrToInt_MaxDecimal_Converted,
+    &FromStrToInt_MinDecimal_Converted,
+    &FromStrToInt_Octal_Converted,
+    &FromStrToInt_NegativeOctal_Converted,
+    &FromStrToInt_MaxOctal_Converted,
+    &FromStrToInt_MinOctal_Converted,
+    &FromStrToInt_Hexadecimal_Converted,
+    &FromStrToInt_NegativeHexadecimal_Converted,
+    &FromStrToInt_MaxHexadecimal_Converted,
+    &FromStrToInt_MinHexadecimal_Converted,
+    &FromStrToInt_Empty_ReturnsNull,
+    &FromStrToInt_InvalidChars_ReturnsNull,
+    &FromStrToInt_NotInDecimalBase_ReturnsNull,
+    &FromStrToInt_NotInOctalBase_ReturnsNull,
+    &FromStrToInt_NotInHexadecimalBase_ReturnsNull,
+    &FromStrToInt_OutOfMinRange_ReturnsNull,
+    &FromStrToInt_OutOfMaxRange_ReturnsNull,
+
+    &FromStrToUInt_Decimal_Converted,
+    &FromStrToUInt_MaxDecimal_Converted,
+    &FromStrToUInt_MinDecimal_Converted,
+    &FromStrToUInt_Octal_Converted,
+    &FromStrToUInt_MaxOctal_Converted,
+    &FromStrToUInt_MinOctal_Converted,
+    &FromStrToUInt_Hexadecimal_Converted,
+    &FromStrToUInt_MaxHexadecimal_Converted,
+    &FromStrToUInt_MinHexadecimal_Converted,
+    &FromStrToUInt_Empty_ReturnsNull,
+    &FromStrToUInt_InvalidChars_ReturnsNull,
+    &FromStrToUInt_NegativeDecimal_ReturnsNull,
+    &FromStrToUInt_NegativeOctal_ReturnsNull,
+    &FromStrToUInt_NegativeHexadecimal_ReturnsNull,
+    &FromStrToUInt_NotInDecimalBase_ReturnsNull,
+    &FromStrToUInt_NotInOctalBase_ReturnsNull,
+    &FromStrToUInt_NotInHexadecimalBase_ReturnsNull,
+    &FromStrToUInt_OutOfMinRange_ReturnsNull,
+    &FromStrToUInt_OutOfMaxRange_ReturnsNull,
 
     &GetBaseFromPrefixStr_Octal_Base8,
     &GetBaseFromPrefixStr_NegativeOctal_Base8,
