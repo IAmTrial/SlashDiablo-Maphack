@@ -19,34 +19,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "bh/common/string_util/internal/memstring/memcmp.h"
+
+#include <stddef.h>
+#include <string.h>
+#include <wchar.h>
+
 /**
- * BH
- * Copyright (C) 2011  McGod
- *
- * All rights reserved.
+ * External
  */
 
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
-
-#include "bh/common/preprocessor/concat.h"
-
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
-
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
-
-#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-T_CHAR T_Ascii_ToLowerChar(T_CHAR)(T_CHAR ch) {
-  return (ch >= TEXT_LITERAL('A') && ch <= TEXT_LITERAL('Z'))
-      ? ch + (TEXT_LITERAL('a') - TEXT_LITERAL('A'))
-      : ch;
+int T_MemCmp(void)(const void* left, const void* right, size_t count) {
+  return T_MemCmp(char)(left, right, count);
 }
 
-#undef TEXT_LITERAL
+int T_MemCmp(char)(const char* left, const char* right, size_t count) {
+  return memcmp(left, right, count);
+}
 
-#undef T_STR_LITERAL_PREFIX
-#undef T_CHAR
+int T_MemCmp(wchar_t)(
+    const wchar_t* left, const wchar_t* right, size_t count) {
+  return wmemcmp(left, right, count);
+}

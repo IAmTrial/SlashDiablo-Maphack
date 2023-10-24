@@ -32,29 +32,21 @@
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
 
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
-
 #if !defined(T_TRUE_STR_LITERAL)
-#error Define T_TRUE_STR_LITERAL to specify the lowercase string literal for the true value.
+#error Define T_TRUE_STR_LITERAL to specify the string literal for the true value.
 #endif  /* !defined(T_TRUE_STR_LITERAL) */
 
 #if !defined(T_FALSE_STR_LITERAL)
-#error Define T_FALSE_STR_LITERAL to specify the lowercase string literal for the false value.
+#error Define T_FALSE_STR_LITERAL to specify the string literal for the false value.
 #endif  /* !defined(T_FALSE_STR_LITERAL) */
 
 #if !defined(T_FUNC_NAME)
 #error Define T_FUNC_NAME to specify the function name.
 #endif  /* !defined(T_FUNC_NAME) */
 
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-const T_CHAR* T_FUNC_NAME(int value, size_t* length) {
+const T_CHAR* T_FUNC_NAME(T_CHAR)(int value, size_t* length) {
   if (value) {
-    static const T_CHAR kStr[] = TEXT_LITERAL(T_TRUE_STR_LITERAL);
+    static const T_CHAR kStr[] = T_TRUE_STR_LITERAL;
 
     if (length != NULL) {
       *length = sizeof(kStr) / sizeof(kStr[0]) - 1;
@@ -62,7 +54,7 @@ const T_CHAR* T_FUNC_NAME(int value, size_t* length) {
 
     return kStr;
   } else {
-    static const T_CHAR kStr[] = TEXT_LITERAL(T_FALSE_STR_LITERAL);
+    static const T_CHAR kStr[] = T_FALSE_STR_LITERAL;
 
     if (length != NULL) {
       *length = sizeof(kStr) / sizeof(kStr[0]) - 1;
@@ -72,14 +64,9 @@ const T_CHAR* T_FUNC_NAME(int value, size_t* length) {
   }
 }
 
-#undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
-
 #undef T_FUNC_NAME
 
 #undef T_FALSE_STR_LITERAL
 #undef T_TRUE_STR_LITERAL
 
-#undef T_STR_LITERAL_PREFIX
 #undef T_CHAR

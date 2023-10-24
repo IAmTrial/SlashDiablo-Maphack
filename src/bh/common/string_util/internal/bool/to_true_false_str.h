@@ -26,35 +26,34 @@
  * All rights reserved.
  */
 
+#ifndef BH_COMMON_STRING_UTIL_INTERNAL_BOOL_TO_TRUE_FALSE_STR_H_
+#define BH_COMMON_STRING_UTIL_INTERNAL_BOOL_TO_TRUE_FALSE_STR_H_
+
 #include <stddef.h>
+#include <wchar.h>
 
-#include "bh/common/preprocessor/concat.h"
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
-#include "bh/common/string_util/internal/ascii/to_lower_str.h"
+#include "bh/common/preprocessor/template/identifier.h"
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
+#define T_Bool_ToTrueFalseStr(T_CHAR) \
+    TEMPLATE_IDENTIFIER_1(T_Bool_ToTrueFalseStr, T_CHAR)
 
-#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
+#define T_Bool_ToOnOffStr(T_CHAR) \
+    TEMPLATE_IDENTIFIER_1(T_Bool_ToOnOffStr, T_CHAR)
 
-T_CHAR* T_Ascii_ToLowerStr(T_CHAR)(
-    T_CHAR* dest, const T_CHAR* src, size_t length) {
-  size_t i;
+const char* T_Bool_ToTrueFalseStr(char)(int value, size_t* length);
 
-  for (i = 0; i < length; ++i) {
-    dest[i] = T_Ascii_ToLowerChar(T_CHAR)(src[i]);
-  }
-  dest[i] = TEXT_LITERAL('\0');
+const wchar_t* T_Bool_ToTrueFalseStr(wchar_t)(int value, size_t* length);
 
-  return dest;
-}
+const char* T_Bool_ToOnOffStr(char)(int value, size_t* length);
 
-#undef TEXT_LITERAL
+const wchar_t* T_Bool_ToOnOffStr(wchar_t)(int value, size_t* length);
 
-#undef T_STR_LITERAL_PREFIX
-#undef T_CHAR
+#ifdef __cplusplus
+}  /* extern "C" */
+#endif  /* __cplusplus */
+
+#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_BOOL_TO_TRUE_FALSE_STR_H_ */

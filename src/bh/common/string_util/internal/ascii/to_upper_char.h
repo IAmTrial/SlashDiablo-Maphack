@@ -26,27 +26,25 @@
  * All rights reserved.
  */
 
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
+#ifndef BH_COMMON_STRING_UTIL_INTERNAL_ASCII_TO_UPPER_CHAR_H_
+#define BH_COMMON_STRING_UTIL_INTERNAL_ASCII_TO_UPPER_CHAR_H_
 
-#include "bh/common/preprocessor/concat.h"
+#include <wchar.h>
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+#include "bh/common/preprocessor/template/identifier.h"
 
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
-#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
+#define T_Ascii_ToUpperChar(T_CHAR) \
+    TEMPLATE_IDENTIFIER_1(T_Ascii_ToUpperChar, T_CHAR)
 
-T_CHAR T_Ascii_ToLowerChar(T_CHAR)(T_CHAR ch) {
-  return (ch >= TEXT_LITERAL('A') && ch <= TEXT_LITERAL('Z'))
-      ? ch + (TEXT_LITERAL('a') - TEXT_LITERAL('A'))
-      : ch;
-}
+char T_Ascii_ToUpperChar(char)(char ch);
+wchar_t T_Ascii_ToUpperChar(wchar_t)(wchar_t ch);
 
-#undef TEXT_LITERAL
+#ifdef __cplusplus
+}  /* extern "C" */
+#endif  /* __cplusplus */
 
-#undef T_STR_LITERAL_PREFIX
-#undef T_CHAR
+#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_ASCII_TO_UPPER_CHAR_H_ */

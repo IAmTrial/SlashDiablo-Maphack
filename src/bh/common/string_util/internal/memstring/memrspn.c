@@ -19,34 +19,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "bh/common/string_util/internal/memstring/memrspn.h"
+
+#include <wchar.h>
+
 /**
- * BH
- * Copyright (C) 2011  McGod
- *
- * All rights reserved.
+ * External
  */
 
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
-
-#include "bh/common/preprocessor/concat.h"
-
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
-
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
-
-#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-T_CHAR T_Ascii_ToLowerChar(T_CHAR)(T_CHAR ch) {
-  return (ch >= TEXT_LITERAL('A') && ch <= TEXT_LITERAL('Z'))
-      ? ch + (TEXT_LITERAL('a') - TEXT_LITERAL('A'))
-      : ch;
+size_t T_MemRSpn(void)(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size) {
+  return T_MemRSpn(char)(data, data_size, search, search_size);
 }
 
-#undef TEXT_LITERAL
+#define T_CHAR char
+#include "bh/common/string_util/internal/memstring/memrspn_template.h"
 
-#undef T_STR_LITERAL_PREFIX
-#undef T_CHAR
+#define T_CHAR wchar_t
+#include "bh/common/string_util/internal/memstring/memrspn_template.h"

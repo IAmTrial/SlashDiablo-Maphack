@@ -19,34 +19,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * BH
- * Copyright (C) 2011  McGod
- *
- * All rights reserved.
- */
+#ifndef BH_COMMON_STRING_UTIL_INTERNAL_MEMSTRING_MEMSTR_H_
+#define BH_COMMON_STRING_UTIL_INTERNAL_MEMSTRING_MEMSTR_H_
 
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
+#include <stddef.h>
+#include <wchar.h>
 
-#include "bh/common/preprocessor/concat.h"
+#include "bh/common/preprocessor/template/identifier.h"
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
+#define T_MemStr(T_CHAR) TEMPLATE_IDENTIFIER_1(T_MemStr, T_CHAR)
 
-#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
+void* T_MemStr(void)(
+    const void* data, size_t data_size, const void* sub, size_t sub_size);
 
-T_CHAR T_Ascii_ToLowerChar(T_CHAR)(T_CHAR ch) {
-  return (ch >= TEXT_LITERAL('A') && ch <= TEXT_LITERAL('Z'))
-      ? ch + (TEXT_LITERAL('a') - TEXT_LITERAL('A'))
-      : ch;
-}
+char* T_MemStr(char)(
+    const char* data, size_t data_size, const char* sub, size_t sub_size);
 
-#undef TEXT_LITERAL
+wchar_t* T_MemStr(wchar_t)(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* sub,
+    size_t sub_size);
 
-#undef T_STR_LITERAL_PREFIX
-#undef T_CHAR
+#ifdef __cplusplus
+}  /* extern "C" */
+#endif  /* __cplusplus */
+
+#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_MEMSTRING_MEMSTR_H_ */

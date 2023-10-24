@@ -21,23 +21,16 @@
 
 #include <stddef.h>
 
+#include "bh/common/string_util/internal/memstring/memrspn.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
 
-#if !defined(T_INPUT)
-#error Define T_INPUT to specify the templated parameter type.
-#endif  /* !defined(T_INPUT) */
-
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
-
-
-size_t T_FUNC_NAME(
-    const T_INPUT* data,
+size_t T_MemRSpn(T_CHAR)(
+    const T_CHAR* data,
     size_t data_size,
-    const T_INPUT* search,
+    const T_CHAR* search,
     size_t search_size) {
   const T_CHAR* str;
   size_t i_str;
@@ -67,6 +60,4 @@ size_t T_FUNC_NAME(
   return data_size;
 }
 
-#undef T_FUNC_NAME
-#undef T_INPUT
 #undef T_CHAR
