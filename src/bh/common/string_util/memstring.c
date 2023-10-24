@@ -22,83 +22,91 @@
 #include "bh/common/string_util/memstring.h"
 
 #include <stddef.h>
-#include <string.h>
 #include <wchar.h>
+
+#include "bh/common/string_util/internal/memstring/memcrspn.h"
+#include "bh/common/string_util/internal/memstring/memcspn.h"
+#include "bh/common/string_util/internal/memstring/memrspn.h"
+#include "bh/common/string_util/internal/memstring/memspn.h"
+#include "bh/common/string_util/internal/memstring/memstr.h"
 
 /**
  * External
  */
 
-/**
- * Define memcrspn
- */
+size_t MemCRSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size) {
+  return T_MemCRSpn(void)(data, data_size, search, search_size);
+}
 
-#define T_CHAR char
-#define T_INPUT void
-#define T_FUNC_NAME MemCRSpn
-#include "bh/common/string_util/internal/memstring/memcrspn_template.h"
+size_t WMemCRSpn(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* search,
+    size_t search_size) {
+  return T_MemCRSpn(wchar_t)(data, data_size, search, search_size);
+}
 
-#define T_CHAR wchar_t
-#define T_INPUT wchar_t
-#define T_FUNC_NAME WMemCRSpn
-#include "bh/common/string_util/internal/memstring/memcrspn_template.h"
+size_t MemCSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size) {
+  return T_MemCSpn(void)(data, data_size, search, search_size);
+}
 
-/**
- * Define memcspn
- */
+size_t WMemCSpn(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* search,
+    size_t search_size) {
+  return T_MemCSpn(wchar_t)(data, data_size, search, search_size);
+}
 
-#define T_CHAR char
-#define T_INPUT void
-#define T_FUNC_NAME MemCSpn
-#include "bh/common/string_util/internal/memstring/memcspn_template.h"
+size_t MemRSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size) {
+  return T_MemRSpn(void)(data, data_size, search, search_size);
+}
 
-#define T_CHAR wchar_t
-#define T_INPUT wchar_t
-#define T_FUNC_NAME WMemCSpn
-#include "bh/common/string_util/internal/memstring/memcspn_template.h"
+size_t WMemRSpn(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* search,
+    size_t search_size) {
+  return T_MemRSpn(wchar_t)(data, data_size, search, search_size);
+}
 
-/**
- * Define memrspn
- */
+size_t MemSpn(
+    const void* data,
+    size_t data_size,
+    const void* search,
+    size_t search_size) {
+  return T_MemSpn(void)(data, data_size, search, search_size);
+}
 
-#define T_CHAR char
-#define T_INPUT void
-#define T_FUNC_NAME MemRSpn
-#include "bh/common/string_util/internal/memstring/memrspn_template.h"
+size_t WMemSpn(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* search,
+    size_t search_size) {
+  return T_MemSpn(wchar_t)(data, data_size, search, search_size);
+}
 
-#define T_CHAR wchar_t
-#define T_INPUT wchar_t
-#define T_FUNC_NAME WMemRSpn
-#include "bh/common/string_util/internal/memstring/memrspn_template.h"
+void* MemStr(
+    const void* data, size_t data_size, const void* sub, size_t sub_size) {
+  return T_MemStr(void)(data, data_size, sub, sub_size);
+}
 
-/**
- * Define memspn
- */
-
-#define T_CHAR char
-#define T_INPUT void
-#define T_FUNC_NAME MemSpn
-#include "bh/common/string_util/internal/memstring/memspn_template.h"
-
-#define T_CHAR wchar_t
-#define T_INPUT wchar_t
-#define T_FUNC_NAME WMemSpn
-#include "bh/common/string_util/internal/memstring/memspn_template.h"
-
-/**
- * Define memstr
- */
-
-#define T_CHAR char
-#define T_INPUT void
-#define T_MEMCHR_FUNC_NAME memchr
-#define T_MEMCMP_FUNC_NAME memcmp
-#define T_FUNC_NAME MemStr
-#include "bh/common/string_util/internal/memstring/memstr_template.h"
-
-#define T_CHAR wchar_t
-#define T_INPUT wchar_t
-#define T_MEMCHR_FUNC_NAME wmemchr
-#define T_MEMCMP_FUNC_NAME wmemcmp
-#define T_FUNC_NAME WMemStr
-#include "bh/common/string_util/internal/memstring/memstr_template.h"
+wchar_t* WMemStr(
+    const wchar_t* data,
+    size_t data_size,
+    const wchar_t* sub,
+    size_t sub_size) {
+  return T_MemStr(wchar_t)(data, data_size, sub, sub_size);
+}

@@ -19,45 +19,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "bh/common/string_util/internal/memstring/memchr.h"
+
 #include <stddef.h>
+#include <string.h>
+#include <wchar.h>
 
-#include "bh/common/string_util/internal/memstring/memrspn.h"
+/**
+ * External
+ */
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
-
-size_t T_MemRSpn(T_CHAR)(
-    const T_CHAR* data,
-    size_t data_size,
-    const T_CHAR* search,
-    size_t search_size) {
-  const T_CHAR* str;
-  size_t i_str;
-  const T_CHAR* chars;
-  size_t i_chars;
-
-  if (data_size <= 0) {
-    return data_size;
-  }
-
-  if (search_size <= 0) {
-    return data_size;
-  }
-
-  str = data;
-  chars = search;
-
-  /* Scan str for a character that is in chars. */
-  for (i_str = data_size; i_str-- > 0; ) {
-    for (i_chars = 0; i_chars < search_size; ++i_chars) {
-      if (str[i_str] == chars[i_chars]) {
-        return i_str;
-      }
-    }
-  }
-
-  return data_size;
+void* T_MemChr(void)(const void* data, char ch, size_t count) {
+  return T_MemChr(char)(data, ch, count);
 }
 
-#undef T_CHAR
+char* T_MemChr(char)(const char* data, char ch, size_t count) {
+  return memchr(data, ch, count);
+}
+
+wchar_t* T_MemChr(wchar_t)(const wchar_t* data, wchar_t ch, size_t count) {
+  return wmemchr(data, ch, count);
+}

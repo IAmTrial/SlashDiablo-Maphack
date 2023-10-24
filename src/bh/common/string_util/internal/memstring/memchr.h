@@ -19,45 +19,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef BH_COMMON_STRING_UTIL_INTERNAL_MEMSTRING_MEMCHR_H_
+#define BH_COMMON_STRING_UTIL_INTERNAL_MEMSTRING_MEMCHR_H_
+
 #include <stddef.h>
+#include <wchar.h>
 
-#include "bh/common/string_util/internal/memstring/memrspn.h"
+#include "bh/common/preprocessor/template/identifier.h"
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
-size_t T_MemRSpn(T_CHAR)(
-    const T_CHAR* data,
-    size_t data_size,
-    const T_CHAR* search,
-    size_t search_size) {
-  const T_CHAR* str;
-  size_t i_str;
-  const T_CHAR* chars;
-  size_t i_chars;
+#define T_MemChr(T_CHAR) TEMPLATE_IDENTIFIER_1(T_MemChr, T_CHAR)
 
-  if (data_size <= 0) {
-    return data_size;
-  }
+void* T_MemChr(void)(const void* data, char ch, size_t data_size);
+char* T_MemChr(char)(const char* data, char ch, size_t data_size);
+wchar_t* T_MemChr(wchar_t)(const wchar_t* data, wchar_t ch, size_t data_size);
 
-  if (search_size <= 0) {
-    return data_size;
-  }
+#ifdef __cplusplus
+}  /* extern "C" */
+#endif  /* __cplusplus */
 
-  str = data;
-  chars = search;
-
-  /* Scan str for a character that is in chars. */
-  for (i_str = data_size; i_str-- > 0; ) {
-    for (i_chars = 0; i_chars < search_size; ++i_chars) {
-      if (str[i_str] == chars[i_chars]) {
-        return i_str;
-      }
-    }
-  }
-
-  return data_size;
-}
-
-#undef T_CHAR
+#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_MEMSTRING_MEMCHR_H_ */

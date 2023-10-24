@@ -21,30 +21,18 @@
 
 #include <stddef.h>
 
+#include "bh/common/string_util/internal/memstring/memchr.h"
+#include "bh/common/string_util/internal/memstring/memcmp.h"
+#include "bh/common/string_util/internal/memstring/memstr.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
 
-#if !defined(T_INPUT)
-#error Define T_INPUT to specify the templated parameter type.
-#endif  /* !defined(T_INPUT) */
-
-#if !defined(T_MEMCHR_FUNC_NAME)
-#error Define T_MEMCHR_FUNC_NAME to specify the memchr function name.
-#endif  /* !defined(T_MEMCHR_FUNC_NAME) */
-
-#if !defined(T_MEMCMP_FUNC_NAME)
-#error Define T_MEMCMP_FUNC_NAME to specify the memcmp function name.
-#endif  /* !defined(T_MEMCMP_FUNC_NAME) */
-
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
-
-T_INPUT* T_FUNC_NAME(
-    const T_INPUT* data,
+T_CHAR* T_MemStr(T_CHAR)(
+    const T_CHAR* data,
     size_t data_size,
-    const T_INPUT* sub,
+    const T_CHAR* sub,
     size_t sub_size) {
   const T_CHAR* str;
   const T_CHAR* substr;
@@ -71,22 +59,15 @@ T_INPUT* T_FUNC_NAME(
       return NULL;
     }
 
-    compare_result = T_MEMCMP_FUNC_NAME(first_ch, sub, sub_size);
+    compare_result = T_MemCmp(T_CHAR)(first_ch, sub, sub_size);
     if (compare_result == 0) {
       return (T_CHAR*)first_ch;
     }
 
-    first_ch =
-        T_MEMCHR_FUNC_NAME(&first_ch[1], substr[0], str_remaining_size);
+    first_ch = T_MemChr(T_CHAR)(&first_ch[1], substr[0], str_remaining_size);
   } while (first_ch != NULL);
 
   return NULL;
 }
 
-#undef T_FUNC_NAME
-
-#undef T_MEMCMP_FUNC_NAME
-#undef T_MEMCHR_FUNC_NAME
-
-#undef T_INPUT
 #undef T_CHAR

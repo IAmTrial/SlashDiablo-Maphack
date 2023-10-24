@@ -19,9 +19,32 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/memchr.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memchr.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcmp.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcmp.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcpy.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcpy.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcrspn.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcrspn.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memcrspn_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcspn.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memcspn.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memcspn_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memrspn.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memrspn.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memrspn_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memspn.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memspn.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memspn_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/memstr.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/memstr.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/memstr_template.h"
 )

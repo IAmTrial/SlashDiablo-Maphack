@@ -45,9 +45,9 @@ size_t MemCRSpn(
  * the reverse direction.
  */
 size_t WMemCRSpn(
-    const void* data,
+    const wchar_t* data,
     size_t data_size,
-    const void* search,
+    const wchar_t* search,
     size_t search_size);
 
 /**
@@ -87,9 +87,9 @@ size_t MemRSpn(
  * the reverse direction.
  */
 size_t WMemRSpn(
-    const void* data,
+    const wchar_t* data,
     size_t data_size,
-    const void* search,
+    const wchar_t* search,
     size_t search_size);
 
 /**
