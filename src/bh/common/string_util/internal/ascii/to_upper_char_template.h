@@ -26,6 +26,8 @@
  * All rights reserved.
  */
 
+#include "bh/common/string_util/internal/ascii/to_upper_char.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
@@ -34,24 +36,15 @@
 #error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
 #endif  /* !defined(T_STR_LITERAL_PREFIX) */
 
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
+#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-T_CHAR T_FUNC_NAME(T_CHAR ch) {
+T_CHAR T_Ascii_ToUpperChar(T_CHAR)(T_CHAR ch) {
   return (ch < TEXT_LITERAL('a') || ch > TEXT_LITERAL('z'))
       ? ch
       : ch - (TEXT_LITERAL('a') - TEXT_LITERAL('A'));
 }
 
 #undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
 
-#undef T_FUNC_NAME
 #undef T_STR_LITERAL_PREFIX
 #undef T_CHAR

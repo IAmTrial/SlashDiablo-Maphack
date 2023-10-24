@@ -26,27 +26,18 @@
  * All rights reserved.
  */
 
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
+#include "bh/common/string_util/internal/ascii/trim_whitespace_chars.h"
 
-#include "bh/common/preprocessor/concat.h"
+#include <wchar.h>
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+/**
+ * External
+ */
 
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
+#define T_CHAR char
+#define T_STR_LITERAL_PREFIX
+#include "bh/common/string_util/internal/ascii/trim_whitespace_chars_template.h"
 
-#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-T_CHAR T_Ascii_ToLowerChar(T_CHAR)(T_CHAR ch) {
-  return (ch >= TEXT_LITERAL('A') && ch <= TEXT_LITERAL('Z'))
-      ? ch + (TEXT_LITERAL('a') - TEXT_LITERAL('A'))
-      : ch;
-}
-
-#undef TEXT_LITERAL
-
-#undef T_STR_LITERAL_PREFIX
-#undef T_CHAR
+#define T_CHAR wchar_t
+#define T_STR_LITERAL_PREFIX L
+#include "bh/common/string_util/internal/ascii/trim_whitespace_chars_template.h"

@@ -28,6 +28,12 @@
 
 #include <stddef.h>
 
+#include "bh/common/preprocessor/concat.h"
+#include "bh/common/string_util/internal/ascii/trim_whitespace_chars.h"
+#include "bh/common/string_util/internal/memstring/memcpy.h"
+#include "bh/common/string_util/internal/memstring/memcrspn.h"
+#include "bh/common/string_util/internal/memstring/memcspn.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
@@ -36,27 +42,10 @@
 #error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
 #endif  /* !defined(T_STR_LITERAL_PREFIX) */
 
-#if !defined(T_MEMCRSPN_FUNC_NAME)
-#error Define T_MEMCRSPN_FUNC_NAME to specify the memcrspn function name.
-#endif  /* !defined(T_MEMCRSPN_FUNC_NAME) */
+#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-#if !defined(T_MEMCPY_FUNC_NAME)
-#error Define T_MEMCPY_FUNC_NAME to specify the memcpy function name.
-#endif  /* !defined(T_MEMCPY_FUNC_NAME) */
-
-#if !defined(T_MEMCSPN_FUNC_NAME)
-#error Define T_MEMCSPN_FUNC_NAME to specify the memcspn function name.
-#endif  /* !defined(T_MEMCSPN_FUNC_NAME) */
-
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
-
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-T_CHAR* T_FUNC_NAME(T_CHAR* dest, const T_CHAR* src, size_t length) {
+T_CHAR* T_Ascii_TrimWhitespaceChars(T_CHAR)(
+    T_CHAR* dest, const T_CHAR* src, size_t length) {
   static const T_CHAR kWhitespaceChars[] = {
     TEXT_LITERAL(' '),
     TEXT_LITERAL('\f'),
@@ -74,25 +63,21 @@ T_CHAR* T_FUNC_NAME(T_CHAR* dest, const T_CHAR* src, size_t length) {
   size_t i_begin;
   size_t dest_length;
 
-  i_begin = T_MEMCSPN_FUNC_NAME(src, length, kWhitespaceChars, kWhitespaceCharsCount);
+  i_begin =
+      T_MemCSpn(T_CHAR)(src, length, kWhitespaceChars, kWhitespaceCharsCount);
   dest_length =
-      T_MEMCRSPN_FUNC_NAME(
+      T_MemCRSpn(T_CHAR)(
           &src[i_begin],
           length - i_begin,
           kWhitespaceChars,
           kWhitespaceCharsCount);
 
-  T_MEMCPY_FUNC_NAME(dest, &src[i_begin], dest_length + 1);
+  T_MemCpy(T_CHAR)(dest, &src[i_begin], dest_length + 1);
 
   return dest;
 }
 
 #undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
-#undef T_FUNC_NAME
-#undef T_MEMCSPN_FUNC_NAME
-#undef T_MEMCPY_FUNC_NAME
-#undef T_MEMCRSPN_FUNC_NAME
+
 #undef T_STR_LITERAL_PREFIX
 #undef T_CHAR

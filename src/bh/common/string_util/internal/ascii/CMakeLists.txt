@@ -19,9 +19,23 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_char.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_char.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_char_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_str.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/to_lower_str_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_char.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_char.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_char_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_str.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/to_upper_str_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/trim_whitespace_chars.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/trim_whitespace_chars.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/trim_whitespace_chars_template.h"
 )
