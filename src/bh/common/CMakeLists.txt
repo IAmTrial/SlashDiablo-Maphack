@@ -49,6 +49,7 @@ target_sources(${PROJECT_NAME}
 add_subdirectory("data_struct")
 add_subdirectory("input")
 add_subdirectory("logging")
+add_subdirectory("preprocessor")
 add_subdirectory("string_util")
 add_subdirectory("windows")
 
