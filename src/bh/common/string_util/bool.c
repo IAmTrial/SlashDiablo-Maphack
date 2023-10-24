@@ -32,79 +32,41 @@
 #include <wchar.h>
 
 #include "bh/common/string_util/ascii.h"
+#include "bh/common/string_util/internal/bool/from_true_false_str.h"
+#include "bh/common/string_util/internal/bool/to_true_false_str.h"
 
 /**
  * External
  */
 
-/**
- * Define Bool_FromTrueFalseStr
- */
+int* Bool_FromOnOffStr(int* dest, const char* src, size_t length) {
+  return T_Bool_FromOnOffStr(char)(dest, src, length);
+}
 
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_TRUE_STR_LITERAL "on"
-#define T_FALSE_STR_LITERAL "off"
-#define T_TO_LOWER_STR_FUNC_NAME Ascii_ToLowerStr
-#define T_MEMCMP_FUNC_NAME memcmp
-#define T_FUNC_NAME Bool_FromOnOffStr
-#include "bh/common/string_util/internal/bool/from_true_false_str_template.h"
+int* Bool_FromOnOffWStr(int* dest, const wchar_t* src, size_t length) {
+  return T_Bool_FromOnOffStr(wchar_t)(dest, src, length);
+}
 
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_TRUE_STR_LITERAL "on"
-#define T_FALSE_STR_LITERAL "off"
-#define T_TO_LOWER_STR_FUNC_NAME Ascii_ToLowerWStr
-#define T_MEMCMP_FUNC_NAME wmemcmp
-#define T_FUNC_NAME Bool_FromOnOffWStr
-#include "bh/common/string_util/internal/bool/from_true_false_str_template.h"
+int* Bool_FromTrueFalseStr(int* dest, const char* src, size_t length) {
+  return T_Bool_FromTrueFalseStr(char)(dest, src, length);
+}
 
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_TRUE_STR_LITERAL "true"
-#define T_FALSE_STR_LITERAL "false"
-#define T_TO_LOWER_STR_FUNC_NAME Ascii_ToLowerStr
-#define T_MEMCMP_FUNC_NAME memcmp
-#define T_FUNC_NAME Bool_FromTrueFalseStr
-#include "bh/common/string_util/internal/bool/from_true_false_str_template.h"
+int* Bool_FromTrueFalseWStr(int* dest, const wchar_t* src, size_t length) {
+  return T_Bool_FromTrueFalseStr(wchar_t)(dest, src, length);
+}
 
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_TRUE_STR_LITERAL "true"
-#define T_FALSE_STR_LITERAL "false"
-#define T_TO_LOWER_STR_FUNC_NAME Ascii_ToLowerWStr
-#define T_MEMCMP_FUNC_NAME wmemcmp
-#define T_FUNC_NAME Bool_FromTrueFalseWStr
-#include "bh/common/string_util/internal/bool/from_true_false_str_template.h"
+const char* Bool_ToOnOffStr(int value, size_t* length) {
+  return T_Bool_ToOnOffStr(char)(value, length);
+}
 
-/**
- * Define Bool_ToTrueFalseStr
- */
+const wchar_t* Bool_ToOnOffWStr(int value, size_t* length) {
+  return T_Bool_ToOnOffStr(wchar_t)(value, length);
+}
 
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_TRUE_STR_LITERAL "on"
-#define T_FALSE_STR_LITERAL "off"
-#define T_FUNC_NAME Bool_ToOnOffStr
-#include "bh/common/string_util/internal/bool/to_true_false_str_template.h"
+const char* Bool_ToTrueFalseStr(int value, size_t* length) {
+  return T_Bool_ToTrueFalseStr(char)(value, length);
+}
 
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_TRUE_STR_LITERAL "on"
-#define T_FALSE_STR_LITERAL "off"
-#define T_FUNC_NAME Bool_ToOnOffWStr
-#include "bh/common/string_util/internal/bool/to_true_false_str_template.h"
-
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_TRUE_STR_LITERAL "true"
-#define T_FALSE_STR_LITERAL "false"
-#define T_FUNC_NAME Bool_ToTrueFalseStr
-#include "bh/common/string_util/internal/bool/to_true_false_str_template.h"
-
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_TRUE_STR_LITERAL "true"
-#define T_FALSE_STR_LITERAL "false"
-#define T_FUNC_NAME Bool_ToTrueFalseWStr
-#include "bh/common/string_util/internal/bool/to_true_false_str_template.h"
+const wchar_t* Bool_ToTrueFalseWStr(int value, size_t* length) {
+  return T_Bool_ToTrueFalseStr(wchar_t)(value, length);
+}

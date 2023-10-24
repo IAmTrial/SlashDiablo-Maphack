@@ -18,4 +18,5 @@
 # <http://www.gnu.org/licenses/>.
 
 add_subdirectory("ascii")
+add_subdirectory("bool")
 add_subdirectory("memstring")

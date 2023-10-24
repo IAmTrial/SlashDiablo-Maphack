@@ -29,13 +29,13 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include "bh/common/string_util/internal/ascii/to_lower_str.h"
+#include "bh/common/string_util/internal/bool/from_true_false_str.h"
+#include "bh/common/string_util/internal/memstring/memcmp.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
-
-#if !defined(T_STR_LITERAL_PREFIX)
-#error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
-#endif  /* !defined(T_STR_LITERAL_PREFIX) */
 
 #if !defined(T_TRUE_STR_LITERAL)
 #error Define T_TRUE_STR_LITERAL to specify the lowercase string literal for true value.
@@ -45,25 +45,13 @@
 #error Define T_FALSE_STR_LITERAL to specify the lowercase string literal for true value.
 #endif  /* !defined(T_FALSE_STR_LITERAL) */
 
-#if !defined(T_TO_LOWER_STR_FUNC_NAME)
-#error Define T_TO_LOWER_STR_FUNC_NAME to specify the Ascii_ToLowerStr function name.
-#endif  /* !defined(T_TO_LOWER_STR_FUNC_NAME) */
-
-#if !defined(T_MEMCMP_FUNC_NAME)
-#error Define T_MEMCMP_FUNC_NAME to specify the memcmp function name.
-#endif  /* !defined(T_MEMCMP_FUNC_NAME) */
-
 #if !defined(T_FUNC_NAME)
 #error Define T_FUNC_NAME to specify the function name.
 #endif  /* !defined(T_FUNC_NAME) */
 
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-int* T_FUNC_NAME(int* dest, const T_CHAR* src, size_t length) {
-  static const T_CHAR kTrueStr[] = TEXT_LITERAL(T_TRUE_STR_LITERAL);
-  static const T_CHAR kFalseStr[] = TEXT_LITERAL(T_FALSE_STR_LITERAL);
+int* T_FUNC_NAME(T_CHAR)(int* dest, const T_CHAR* src, size_t length) {
+  static const T_CHAR kTrueStr[] = T_TRUE_STR_LITERAL;
+  static const T_CHAR kFalseStr[] = T_FALSE_STR_LITERAL;
   enum {
     kTrueStrLength = sizeof(kTrueStr) / sizeof(kTrueStr[0]) - 1,
     kFalseStrLength = sizeof(kFalseStr) / sizeof(kFalseStr[0]) - 1,
@@ -74,10 +62,10 @@ int* T_FUNC_NAME(int* dest, const T_CHAR* src, size_t length) {
   const T_CHAR* compare_src;
 
 #if !defined(NDEBUG)
-  T_TO_LOWER_STR_FUNC_NAME(lower_str, kTrueStr, kTrueStrLength);
-  assert(T_MEMCMP_FUNC_NAME(lower_str, kTrueStr, kTrueStrLength) == 0);
-  T_TO_LOWER_STR_FUNC_NAME(lower_str, kFalseStr, kFalseStrLength);
-  assert(T_MEMCMP_FUNC_NAME(lower_str, kFalseStr, kFalseStrLength) == 0);
+  T_Ascii_ToLowerStr(T_CHAR)(lower_str, kTrueStr, kTrueStrLength);
+  assert(T_MemCmp(T_CHAR)(lower_str, kTrueStr, kTrueStrLength) == 0);
+  T_Ascii_ToLowerStr(T_CHAR)(lower_str, kFalseStr, kFalseStrLength);
+  assert(T_MemCmp(T_CHAR)(lower_str, kFalseStr, kFalseStrLength) == 0);
 #endif  /* !defined(NDEBUG) */
 
   if (src == NULL) {
@@ -88,12 +76,12 @@ int* T_FUNC_NAME(int* dest, const T_CHAR* src, size_t length) {
     return NULL;
   }
 
-  T_TO_LOWER_STR_FUNC_NAME(lower_str, src, length);
+  T_Ascii_ToLowerStr(T_CHAR)(lower_str, src, length);
 
-  if (T_MEMCMP_FUNC_NAME(lower_str, kTrueStr, kTrueStrLength) == 0) {
+  if (T_MemCmp(T_CHAR)(lower_str, kTrueStr, kTrueStrLength) == 0) {
     *dest = 1;
     return dest;
-  } else if (T_MEMCMP_FUNC_NAME(lower_str, kFalseStr, kFalseStrLength) == 0) {
+  } else if (T_MemCmp(T_CHAR)(lower_str, kFalseStr, kFalseStrLength) == 0) {
     *dest = 0;
     return dest;
   } else {
@@ -101,17 +89,9 @@ int* T_FUNC_NAME(int* dest, const T_CHAR* src, size_t length) {
   }
 }
 
-#undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
-
 #undef T_FUNC_NAME
-
-#undef T_MEMCMP_FUNC_NAME
-#undef T_TO_LOWER_STR_FUNC_NAME
 
 #undef T_FALSE_STR_LITERAL
 #undef T_TRUE_STR_LITERAL
 
-#undef T_STR_LITERAL_PREFIX
 #undef T_CHAR

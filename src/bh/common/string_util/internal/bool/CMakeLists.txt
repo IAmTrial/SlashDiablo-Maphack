@@ -19,6 +19,11 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_true_false_str.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_true_false_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/from_true_false_str_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_true_false_str.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/to_true_false_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/to_true_false_str_template.h"
 )
