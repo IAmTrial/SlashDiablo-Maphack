@@ -42,3 +42,5 @@ target_include_directories(${PROJECT_NAME}.VirtualKeyTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.VirtualKeyTest PRIVATE BH.Common)
+add_test(NAME ${PROJECT_NAME}.VirtualKeyTest
+    COMMAND ${PROJECT_NAME}.VirtualKeyTest)

@@ -17,6 +17,6 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH.Config)
+project("Tests.BH.Config")
 
 add_subdirectory("colonini")

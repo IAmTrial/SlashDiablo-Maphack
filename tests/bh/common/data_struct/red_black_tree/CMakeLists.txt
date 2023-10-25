@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Tests.BH.Common.DataStruct.RBTree)
+project("Tests.BH.Common.DataStruct.RBTree")
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)
@@ -42,3 +42,5 @@ target_include_directories(${PROJECT_NAME}.RedBlackNodeTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.RedBlackNodeTest PRIVATE BH.Common)
+add_test(NAME ${PROJECT_NAME}.RedBlackNodeTest
+    COMMAND ${PROJECT_NAME}.RedBlackNodeTest)
