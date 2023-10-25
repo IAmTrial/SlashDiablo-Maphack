@@ -17,7 +17,7 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH)
+project("Tests.BH")
 
 add_subdirectory("common")
 add_subdirectory("config")

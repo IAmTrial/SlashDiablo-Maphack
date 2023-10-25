@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Tests.BH.Common.StringUtil)
+project("Tests.BH.Common.StringUtil")
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)
@@ -42,6 +42,8 @@ target_include_directories(${PROJECT_NAME}.AsciiTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.AsciiTest PRIVATE BH.Common)
+add_test(NAME ${PROJECT_NAME}.AsciiTest
+    COMMAND ${PROJECT_NAME}.AsciiTest)
 
 add_executable(${PROJECT_NAME}.BoolTest "bool_test.c")
 target_compile_definitions(${PROJECT_NAME}.BoolTest PRIVATE NOMINMAX)
@@ -49,6 +51,8 @@ target_include_directories(${PROJECT_NAME}.BoolTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.BoolTest PRIVATE BH.Common)
+add_test(NAME ${PROJECT_NAME}.BoolTest
+    COMMAND ${PROJECT_NAME}.BoolTest)
 
 add_executable(${PROJECT_NAME}.MemstringTest "memstring_test.c")
 target_compile_definitions(${PROJECT_NAME}.MemstringTest PRIVATE NOMINMAX)
@@ -56,3 +60,5 @@ target_include_directories(${PROJECT_NAME}.MemstringTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.MemstringTest PRIVATE BH.Common)
+add_test(NAME ${PROJECT_NAME}.MemstringTest
+    COMMAND ${PROJECT_NAME}.MemstringTest)

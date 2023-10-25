@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Tests.Colonini.Internal)
+project("Tests.Colonini.Internal")
 
 # Define requirements for C
 set(CMAKE_C_STANDARD 90)
@@ -66,8 +66,11 @@ add_executable(${PROJECT_NAME}.LexerTest "lexer_test.c")
 target_compile_definitions(${PROJECT_NAME}.LexerTest PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}.LexerTest
     PRIVATE
-        "${CMAKE_SOURCE_DIR}/src")
+        "${CMAKE_SOURCE_DIR}/src"
+        "${CMAKE_SOURCE_DIR}/tests")
 target_link_libraries(${PROJECT_NAME}.LexerTest PRIVATE BH.Config.Colonini)
+add_test(NAME ${PROJECT_NAME}.LexerTest
+    COMMAND ${PROJECT_NAME}.LexerTest)
 
 add_executable(${PROJECT_NAME}.ParserTest "parser_test.c")
 target_compile_definitions(${PROJECT_NAME}.ParserTest PRIVATE NOMINMAX)
@@ -79,6 +82,8 @@ target_link_libraries(${PROJECT_NAME}.ParserTest
     PRIVATE
         BH.Config.Colonini
         ${PROJECT_NAME}.Helper)
+add_test(NAME ${PROJECT_NAME}.ParserTest
+    COMMAND ${PROJECT_NAME}.ParserTest)
 
 add_executable(${PROJECT_NAME}.SemanticAnalyzerTest "semantic_analyzer_test.c")
 add_dependencies(${PROJECT_NAME}.SemanticAnalyzerTest ${PROJECT_NAME}.Helper)
@@ -91,3 +96,5 @@ target_link_libraries(${PROJECT_NAME}.SemanticAnalyzerTest
     PRIVATE
         BH.Config.Colonini
         ${PROJECT_NAME}.Helper)
+add_test(NAME ${PROJECT_NAME}.SemanticAnalyzerTest
+    COMMAND ${PROJECT_NAME}.SemanticAnalyzerTest)

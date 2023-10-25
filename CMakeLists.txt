@@ -55,6 +55,7 @@ add_subdirectory(src)
 
 option(ENABLE_BH_TESTS "Enable tests" OFF)
 if (ENABLE_BH_TESTS)
+    enable_testing()
     add_subdirectory("tests")
 endif (ENABLE_BH_TESTS)
 

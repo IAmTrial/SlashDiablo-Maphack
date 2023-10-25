@@ -42,6 +42,8 @@ target_include_directories(${PROJECT_NAME}.DataTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.DataTest PRIVATE shlwapi BH.Config.Colonini)
+add_test(NAME ${PROJECT_NAME}.DataTest
+    COMMAND ${PROJECT_NAME}.DataTest)
 
 add_executable(${PROJECT_NAME}.MapTest "map_test.c")
 target_compile_definitions(${PROJECT_NAME}.MapTest PRIVATE NOMINMAX)
@@ -49,6 +51,8 @@ target_include_directories(${PROJECT_NAME}.MapTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.MapTest PRIVATE shlwapi BH.Config.Colonini)
+add_test(NAME ${PROJECT_NAME}.MapTest
+    COMMAND ${PROJECT_NAME}.MapTest)
 
 add_executable(${PROJECT_NAME}.StringTest "string_test.c")
 target_compile_definitions(${PROJECT_NAME}.StringTest PRIVATE NOMINMAX)
@@ -56,6 +60,8 @@ target_include_directories(${PROJECT_NAME}.StringTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.StringTest PRIVATE shlwapi BH.Config.Colonini)
+add_test(NAME ${PROJECT_NAME}.StringTest
+    COMMAND ${PROJECT_NAME}.StringTest)
 
 add_executable(${PROJECT_NAME}.ToggleTest "toggle_test.c")
 target_compile_definitions(${PROJECT_NAME}.ToggleTest PRIVATE NOMINMAX)
@@ -63,6 +69,8 @@ target_include_directories(${PROJECT_NAME}.ToggleTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.ToggleTest PRIVATE shlwapi BH.Config.Colonini)
+add_test(NAME ${PROJECT_NAME}.ToggleTest
+    COMMAND ${PROJECT_NAME}.ToggleTest)
 
 add_executable(${PROJECT_NAME}.ValueTest "value_test.c")
 target_compile_definitions(${PROJECT_NAME}.ValueTest PRIVATE NOMINMAX)
@@ -70,3 +78,5 @@ target_include_directories(${PROJECT_NAME}.ValueTest
     PRIVATE
         "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(${PROJECT_NAME}.ValueTest PRIVATE shlwapi BH.Config.Colonini)
+add_test(NAME ${PROJECT_NAME}.ValueTest
+    COMMAND ${PROJECT_NAME}.ValueTest)

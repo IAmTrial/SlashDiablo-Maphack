@@ -17,7 +17,7 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-project(Tests.BH.Common)
+project("Tests.BH.Common")
 
 add_subdirectory("data_struct")
 add_subdirectory("input")
