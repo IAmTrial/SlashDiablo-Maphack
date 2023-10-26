@@ -32,85 +32,51 @@
 #include <stddef.h>
 #include <wchar.h>
 
+#include "bh/common/preprocessor/template/typedef.h"
 #include "bh/common/string_util/ascii.h"
+#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_str_to_int.h"
+#include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
 
 /**
  * External
  */
 
-/**
- * Define Integer_FromDigitChar
- */
 
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_TO_LOWER_CHAR_FUNC_NAME Ascii_ToLowerChar
-#define T_FUNC_NAME Integer_FromDigitChar
-#include "bh/common/string_util/internal/integer/from_digit_char_template.h"
+int* Integer_FromDigitChar(int* value, char ch, int base) {
+  return T_Integer_FromDigitChar(char)(value, ch, base);
+}
 
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_TO_LOWER_CHAR_FUNC_NAME Ascii_ToLowerWChar
-#define T_FUNC_NAME Integer_FromDigitWChar
-#include "bh/common/string_util/internal/integer/from_digit_char_template.h"
+int* Integer_FromDigitWChar(int* value, wchar_t ch, int base) {
+  return T_Integer_FromDigitChar(wchar_t)(value, ch, base);
+}
 
-/**
- * Integer_FromStrToInt
- */
+int* Integer_FromStrToInt(int* value, const char* str, size_t length) {
+  return T_Integer_FromStrToInt(char, int)(value, str, length);
+}
 
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_INT int
-#define T_INT_MIN INT_MIN
-#define T_INT_MAX INT_MAX
-#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitChar
-#define T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME Integer_GetBaseFromPrefixStr
-#define T_FUNC_NAME Integer_FromStrToInt
-#include "bh/common/string_util/internal/integer/from_str_to_int_template.h"
+int* Integer_FromWStrToInt(int* value, const wchar_t* str, size_t length) {
+  return T_Integer_FromStrToInt(wchar_t, int)(value, str, length);
+}
 
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_INT int
-#define T_INT_MIN INT_MIN
-#define T_INT_MAX INT_MAX
-#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitWChar
-#define T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME Integer_GetBaseFromPrefixWStr
-#define T_FUNC_NAME Integer_FromWStrToInt
-#include "bh/common/string_util/internal/integer/from_str_to_int_template.h"
+unsigned int* Integer_FromStrToUInt(
+    unsigned int* value, const char* str, size_t length) {
+  return T_Integer_FromStrToInt(char, unsigned_int)(value, str, length);
+}
 
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_INT unsigned int
-#define T_INT_MIN 0u
-#define T_INT_MAX UINT_MAX
-#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitChar
-#define T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME Integer_GetBaseFromPrefixStr
-#define T_FUNC_NAME Integer_FromStrToUInt
-#include "bh/common/string_util/internal/integer/from_str_to_int_template.h"
+unsigned int* Integer_FromWStrToUInt(
+    unsigned int* value, const wchar_t* str, size_t length) {
+  return T_Integer_FromStrToInt(wchar_t, unsigned_int)(value, str, length);
+}
 
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_INT unsigned int
-#define T_INT_MIN 0u
-#define T_INT_MAX UINT_MAX
-#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitWChar
-#define T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME Integer_GetBaseFromPrefixWStr
-#define T_FUNC_NAME Integer_FromWStrToUInt
-#include "bh/common/string_util/internal/integer/from_str_to_int_template.h"
+int* Integer_GetBaseFromPrefixStr(int* base, const char* str, size_t length) {
+  return T_Integer_GetBaseFromPrefixStr(char)(base, str, length);
+}
 
-/**
- * Define Integer_GetBaseFromPrefixStr
- */
-
-#define T_CHAR char
-#define T_STR_LITERAL_PREFIX
-#define T_FUNC_NAME Integer_GetBaseFromPrefixStr
-#include "bh/common/string_util/internal/integer/get_base_from_prefix_str_template.h"
-
-#define T_CHAR wchar_t
-#define T_STR_LITERAL_PREFIX L
-#define T_FUNC_NAME Integer_GetBaseFromPrefixWStr
-#include "bh/common/string_util/internal/integer/get_base_from_prefix_str_template.h"
+int* Integer_GetBaseFromPrefixWStr(
+    int* base, const wchar_t* str, size_t length) {
+  return T_Integer_GetBaseFromPrefixStr(wchar_t)(base, str, length);
+}
 
 /**
  * Integer_IsDigitCharOfBase

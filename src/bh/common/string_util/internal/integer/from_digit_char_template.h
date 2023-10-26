@@ -29,6 +29,10 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include "bh/common/preprocessor/concat.h"
+#include "bh/common/string_util/internal/ascii/to_lower_char.h"
+#include "bh/common/string_util/internal/integer/from_digit_char.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
@@ -37,19 +41,9 @@
 #error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
 #endif  /* !defined(T_STR_LITERAL_PREFIX) */
 
-#if !defined(T_TO_LOWER_CHAR_FUNC_NAME)
-#error Define T_TO_LOWER_CHAR_FUNC_NAME to specify the Ascii_ToLowerChar function name.
-#endif  /* !defined(T_TO_LOWER_CHAR_FUNC_NAME) */
+#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
-
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-int* T_FUNC_NAME(int* value, T_CHAR ch, int base) {
+int* T_Integer_FromDigitChar(T_CHAR)(int* value, T_CHAR ch, int base) {
   T_CHAR lowercase;
   int temp_value;
 
@@ -60,7 +54,7 @@ int* T_FUNC_NAME(int* value, T_CHAR ch, int base) {
     return NULL;
   }
 
-  lowercase = T_TO_LOWER_CHAR_FUNC_NAME(ch);
+  lowercase = T_Ascii_ToLowerChar(T_CHAR)(ch);
   if (ch >= TEXT_LITERAL('0') && ch <= TEXT_LITERAL('9')) {
     temp_value = ch - TEXT_LITERAL('0');
   } else if (lowercase >= TEXT_LITERAL('a')
@@ -79,12 +73,6 @@ int* T_FUNC_NAME(int* value, T_CHAR ch, int base) {
 }
 
 #undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
-
-#undef T_FUNC_NAME
-
-#undef T_TO_LOWER_CHAR_FUNC_NAME
 
 #undef T_STR_LITERAL_PREFIX
 #undef T_CHAR

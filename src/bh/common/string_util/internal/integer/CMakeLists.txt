@@ -19,8 +19,17 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str_template.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/is_digit_char_of_base_template.h"
 )

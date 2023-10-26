@@ -29,6 +29,11 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include "bh/common/preprocessor/concat.h"
+#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_str_to_int.h"
+#include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
@@ -49,23 +54,10 @@
 #error Define T_INT_MAX to specify the templated maximum value of the integer type.
 #endif  /* !defined(T_INT_MAX) */
 
-#if !defined(T_FROM_DIGIT_CHAR_FUNC_NAME)
-#error Define T_FROM_DIGIT_CHAR_FUNC_NAME to specify the Integer_FromDigitChar function name.
-#endif  /* !defined(T_FROM_DIGIT_CHAR_FUNC_NAME) */
+#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-#if !defined(T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME)
-#error Define T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME to specify the Integer_GetBaseFromPrefix function name.
-#endif  /* !defined(T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME) */
-
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
-
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-T_INT* T_FUNC_NAME(T_INT* value, const T_CHAR* str, size_t length) {
+T_INT* T_Integer_FromStrToInt(T_CHAR, T_INT)(
+    T_INT* value, const T_CHAR* str, size_t length) {
   size_t i;
   int base;
   int* base_get_result;
@@ -84,7 +76,7 @@ T_INT* T_FUNC_NAME(T_INT* value, const T_CHAR* str, size_t length) {
    * Check if the digit is valid for the detected prefix's base. If it
    * is valid, get the value.
    */
-  base_get_result = T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME(&base, str, length);
+  base_get_result = T_Integer_GetBaseFromPrefixStr(T_CHAR)(&base, str, length);
   if (base_get_result == NULL) {
     return NULL;
   }
@@ -125,7 +117,7 @@ T_INT* T_FUNC_NAME(T_INT* value, const T_CHAR* str, size_t length) {
   temp_value = 0;
   for (i = i_start; i < length; ++i) {
     int digit;
-    T_INT* digit_convert_result;
+    int* digit_convert_result;
 
     /* Check if the string has too many digits. */
     if ((is_negative && temp_value < (T_INT_MIN / base))
@@ -138,7 +130,8 @@ T_INT* T_FUNC_NAME(T_INT* value, const T_CHAR* str, size_t length) {
      * Check if the digit is valid for the detected prefix's base. If
      * it is valid, get the value.
      */
-    digit_convert_result = T_FROM_DIGIT_CHAR_FUNC_NAME(&digit, str[i], base);
+    digit_convert_result =
+        T_Integer_FromDigitChar(T_CHAR)(&digit, str[i], base);
     if (digit_convert_result == NULL) {
       return NULL;
     }
@@ -160,13 +153,6 @@ T_INT* T_FUNC_NAME(T_INT* value, const T_CHAR* str, size_t length) {
 }
 
 #undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
-
-#undef T_FUNC_NAME
-
-#undef T_GET_BASE_FROM_PREFIX_STR_FUNC_NAME
-#undef T_FROM_DIGIT_CHAR_FUNC_NAME
 
 #undef T_INT_MAX
 #undef T_INT_MIN

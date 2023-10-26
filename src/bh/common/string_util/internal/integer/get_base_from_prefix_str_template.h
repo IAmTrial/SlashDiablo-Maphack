@@ -29,6 +29,10 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include "bh/common/preprocessor/concat.h"
+#include "bh/common/string_util/internal/ascii/to_lower_char.h"
+#include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
+
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
 #endif  /* !defined(T_CHAR) */
@@ -37,15 +41,10 @@
 #error Define T_STR_LITERAL_PREFIX to specify the templated string literal prefix.
 #endif  /* !defined(T_STR_LITERAL_PREFIX) */
 
-#if !defined(T_FUNC_NAME)
-#error Define T_FUNC_NAME to specify the function name.
-#endif  /* !defined(T_FUNC_NAME) */
+#define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-#define TEXT_LITERAL(lit) CONCAT(T_STR_LITERAL_PREFIX, lit)
-
-int* T_FUNC_NAME(int* base, const T_CHAR* str, size_t length) {
+int* T_Integer_GetBaseFromPrefixStr(T_CHAR)(
+    int* base, const T_CHAR* str, size_t length) {
   int is_negative;
   size_t i_start;
 
@@ -68,8 +67,7 @@ int* T_FUNC_NAME(int* base, const T_CHAR* str, size_t length) {
     }
     assert(length > i_start + 1);
 
-    if (str[i_start + 1] == TEXT_LITERAL('x')
-        || str[i_start + 1] == TEXT_LITERAL('X')) {
+    if (T_Ascii_ToLowerChar(T_CHAR)(str[i_start + 1]) == TEXT_LITERAL('x')) {
       /* The string starts with "0x" or "0X", so the prefix is hexadecimal. */
       *base = 16;
       return base;
@@ -90,10 +88,6 @@ int* T_FUNC_NAME(int* base, const T_CHAR* str, size_t length) {
 }
 
 #undef TEXT_LITERAL
-#undef CONCAT
-#undef CONCAT_IMPL
-
-#undef T_FUNC_NAME
 
 #undef T_STR_LITERAL_PREFIX
 #undef T_CHAR
