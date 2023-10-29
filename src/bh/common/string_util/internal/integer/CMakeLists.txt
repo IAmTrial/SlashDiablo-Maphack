@@ -31,5 +31,7 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str_template.h"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_digit_char_of_base.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_digit_char_of_base.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/is_digit_char_of_base_template.h"
 )

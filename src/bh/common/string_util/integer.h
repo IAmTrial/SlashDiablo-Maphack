@@ -116,8 +116,8 @@ int* Integer_GetBaseFromPrefixWStr(
  * as a number with the specified integer-base encoding. Otherwise,
  * returns zero.
  *
- * Only the values in the interval [1, 36] are valid for base. The
- * function will always return zero if an invalid base is specified.
+ * Only the values in the interval [1, 36] are valid for base. Returns
+ * zero if an invalid base is specified.
  */
 int Integer_IsDigitCharOfBase(char ch, int base);
 
@@ -126,8 +126,8 @@ int Integer_IsDigitCharOfBase(char ch, int base);
  * as a number with the specified integer-base encoding. Otherwise,
  * returns zero.
  *
- * Only the values in the interval [1, 36] are valid for base. The
- * function will always return zero if an invalid base is specified.
+ * Only the values in the interval [1, 36] are valid for base. Returns
+ * zero if an invalid base is specified.
  */
 int Integer_IsDigitWCharOfBase(wchar_t ch, int base);
 

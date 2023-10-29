@@ -26,17 +26,16 @@
  * All rights reserved.
  */
 
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
 #include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+#include <wchar.h>
 
-int T_Integer_IsDigitCharOfBase(T_CHAR)(T_CHAR ch, int base) {
-  int value;
+/**
+ * External
+ */
 
-  return (T_Integer_FromDigitChar(T_CHAR)(&value, ch, base) != NULL);
-}
+#define T_CHAR char
+#include "bh/common/string_util/internal/integer/is_digit_char_of_base_template.h"
 
-#undef T_CHAR
+#define T_CHAR wchar_t
+#include "bh/common/string_util/internal/integer/is_digit_char_of_base_template.h"

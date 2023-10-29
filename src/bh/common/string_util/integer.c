@@ -37,6 +37,7 @@
 #include "bh/common/string_util/internal/integer/from_digit_char.h"
 #include "bh/common/string_util/internal/integer/from_str_to_int.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
+#include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
 
 /**
  * External
@@ -78,16 +79,10 @@ int* Integer_GetBaseFromPrefixWStr(
   return T_Integer_GetBaseFromPrefixStr(wchar_t)(base, str, length);
 }
 
-/**
- * Integer_IsDigitCharOfBase
- */
+int Integer_IsDigitCharOfBase(char ch, int base) {
+  return T_Integer_IsDigitCharOfBase(char)(ch, base);
+}
 
-#define T_CHAR char
-#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitChar
-#define T_FUNC_NAME Integer_IsDigitCharOfBase
-#include "bh/common/string_util/internal/integer/is_digit_char_of_base_template.h"
-
-#define T_CHAR wchar_t
-#define T_FROM_DIGIT_CHAR_FUNC_NAME Integer_FromDigitWChar
-#define T_FUNC_NAME Integer_IsDigitWCharOfBase
-#include "bh/common/string_util/internal/integer/is_digit_char_of_base_template.h"
+int Integer_IsDigitWCharOfBase(wchar_t ch, int base) {
+  return T_Integer_IsDigitCharOfBase(wchar_t)(ch, base);
+}

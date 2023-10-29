@@ -26,17 +26,27 @@
  * All rights reserved.
  */
 
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
-#include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
+#ifndef BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_IS_DIGIT_CHAR_OF_BASE_H_
+#define BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_IS_DIGIT_CHAR_OF_BASE_H_
 
-#if !defined(T_CHAR)
-#error Define T_CHAR to specify the templated character type.
-#endif  /* !defined(T_CHAR) */
+#include <stddef.h>
+#include <wchar.h>
 
-int T_Integer_IsDigitCharOfBase(T_CHAR)(T_CHAR ch, int base) {
-  int value;
+#include "bh/common/preprocessor/template/identifier.h"
 
-  return (T_Integer_FromDigitChar(T_CHAR)(&value, ch, base) != NULL);
-}
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
-#undef T_CHAR
+#define T_Integer_IsDigitCharOfBase(T_CHAR) \
+    TEMPLATE_IDENTIFIER_1(T_Integer_IsDigitCharOfBase, T_CHAR)
+
+int T_Integer_IsDigitCharOfBase(char)(char ch, int base);
+
+int T_Integer_IsDigitCharOfBase(wchar_t)(wchar_t ch, int base);
+
+#ifdef __cplusplus
+}  /* extern "C" */
+#endif  /* __cplusplus */
+
+#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_IS_DIGIT_CHAR_OF_BASE_H_ */

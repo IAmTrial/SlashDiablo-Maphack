@@ -769,11 +769,20 @@ static void IsDigitCharOfBase_DigitChars_ReturnsNonZero(
   }
 }
 
-static void IsDigitCharOfBase_InvalidBase_ReturnsZero(
+static void IsDigitCharOfBase_Base0_ReturnsZero(
     struct EachContext* context) {
   int result;
 
-  result = Integer_IsDigitCharOfBase('0', 9999);
+  result = Integer_IsDigitCharOfBase('0', 0);
+
+  assert(!result);
+}
+
+static void IsDigitCharOfBase_AboveBase36_ReturnsZero(
+    struct EachContext* context) {
+  int result;
+
+  result = Integer_IsDigitCharOfBase('0', 37);
 
   assert(!result);
 }
@@ -853,7 +862,8 @@ int main(int argc, char** argv) {
     &GetBaseFromPrefixStr_Missing0Hexadecimal_ReturnsNull,
 
     &IsDigitCharOfBase_DigitChars_ReturnsNonZero,
-    &IsDigitCharOfBase_InvalidBase_ReturnsZero,
+    &IsDigitCharOfBase_Base0_ReturnsZero,
+    &IsDigitCharOfBase_AboveBase36_ReturnsZero,
     &IsDigitCharOfBase_OutOfBaseRange_ReturnsZero
   };
 
