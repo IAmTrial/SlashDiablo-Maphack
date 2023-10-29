@@ -38,6 +38,7 @@
 #include "bh/common/string_util/internal/integer/from_str_to_int.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
 #include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
+#include "bh/common/string_util/internal/integer/is_str_of_base.h"
 
 /**
  * External
@@ -85,4 +86,12 @@ int Integer_IsDigitCharOfBase(char ch, int base) {
 
 int Integer_IsDigitWCharOfBase(wchar_t ch, int base) {
   return T_Integer_IsDigitCharOfBase(wchar_t)(ch, base);
+}
+
+int Integer_IsStrOfBase(const char* str, size_t length, int base) {
+  return T_Integer_IsStrOfBase(char)(str, length, base);
+}
+
+int Integer_IsWStrOfBase(const wchar_t* str, size_t length, int base) {
+  return T_Integer_IsStrOfBase(wchar_t)(str, length, base);
 }

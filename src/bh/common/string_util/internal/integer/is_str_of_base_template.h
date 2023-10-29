@@ -30,8 +30,9 @@
 #include <stddef.h>
 
 #include "bh/common/preprocessor/concat.h"
-#include "bh/common/string_util/internal/ascii/to_lower_char.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
+#include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
+#include "bh/common/string_util/internal/integer/is_str_of_base.h"
 
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
@@ -43,52 +44,59 @@
 
 #define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-int* T_Integer_GetBaseFromPrefixStr(T_CHAR)(
-    int* base, const T_CHAR* str, size_t length) {
-  int is_negative;
+int T_Integer_IsStrOfBase(T_CHAR)(const T_CHAR* str, size_t length, int base) {
+  size_t i;
   size_t i_start;
+  int guess_base;
+  int* guess_base_result;
+  int is_negative;
 
-  assert(base != NULL);
   assert(str != NULL);
 
-  if (length == 0) {
-    return NULL;
+  if (length <= 0) {
+    return 0;
   }
 
-  /* Track the negative sign. */
   is_negative = (str[0] == TEXT_LITERAL('-'));
+  i_start = (is_negative) ? 1 : 0;
 
-  i_start = is_negative ? 1 : 0;
+  guess_base_result =
+      T_Integer_GetBaseFromPrefixStr(T_CHAR)(&guess_base, str, length);
+  if (guess_base_result != NULL) {
+    switch (guess_base) {
+      case 8:
+      case 16: {
+        if (guess_base != base) {
+          return 0;
+        }
+        i_start += (guess_base == 8) ? 1 : 2;
+        break;
+      }
+
+      case 10: {
+        break;
+      }
+
+      default: {
+        assert(0 && "This should never happen.");
+        return 0;
+      }
+    }
+  } else {
+    i_start = 0;
+  }
+
   if (i_start >= length) {
-    return NULL;
+    return 0;
   }
 
-  if (str[i_start] == TEXT_LITERAL('0')) {
-    if (length == i_start + 1) {
-      /* The string is "0" or "-0", so the prefix is decimal. */
-      *base = 10;
-      return base;
+  for (i = i_start; i < length; ++i) {
+    if (!T_Integer_IsDigitCharOfBase(T_CHAR)(str[i], base)) {
+      return 0;
     }
-    assert(length > i_start + 1);
-
-    if (T_Ascii_ToLowerChar(T_CHAR)(str[i_start + 1]) == TEXT_LITERAL('x')) {
-      /* The string starts with "0x" or "0X", so the prefix is hexadecimal. */
-      *base = 16;
-      return base;
-    }
-
-    /* The string starts with "0", so the prefix is octal. */
-    *base = 8;
-    return base;
   }
 
-  if (str[i_start] >= TEXT_LITERAL('1') && str[i_start] <= TEXT_LITERAL('9')) {
-    /* The prefix is decimal. */
-    *base = 10;
-    return base;
-  }
-
-  return NULL;
+  return 1;
 }
 
 #undef TEXT_LITERAL

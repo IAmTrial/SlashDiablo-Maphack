@@ -131,6 +131,28 @@ int Integer_IsDigitCharOfBase(char ch, int base);
  */
 int Integer_IsDigitWCharOfBase(wchar_t ch, int base);
 
+/**
+ * Returns a non-zero value if the specified string is representable
+ * as a number with the specified integer-base encoding. Otherwise,
+ * returns zero.
+ *
+ * Only the values in the interval [1, 36] are valid for base. Bases 8
+ * and 16 may be optionally prefixed with 0 and 0x, respectively.
+ * Returns zero if an invalid base is specified.
+ */
+int Integer_IsStrOfBase(const char* str, size_t length, int base);
+
+/**
+ * Returns a non-zero value if the specified string is representable
+ * as a number with the specified integer-base encoding. Otherwise,
+ * returns zero.
+ *
+ * Only the values in the interval [1, 36] are valid for base. Bases 8
+ * and 16 may be optionally prefixed with 0 and 0x, respectively.
+ * Returns zero if an invalid base is specified.
+ */
+int Integer_IsWStrOfBase(const wchar_t* str, size_t length, int base);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */

@@ -796,6 +796,396 @@ static void IsDigitCharOfBase_OutOfBaseRange_ReturnsZero(
   assert(!result);
 }
 
+static void IsStrOfBase_OctalBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_NegativeOctalBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_OctalZeroBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "00";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_OctalNegativeZeroBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-00";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessOctalBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessNegativeOctalBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessZeroBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessNegativeZeroBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(result);
+}
+
+static void IsStrOfBase_NonOctalBase8_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "08";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeNonOctalBase8_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-08";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_HexadecimalBase8_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeHexadecimalBase8_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 8);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_DecimalBase10_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(result);
+}
+
+static void IsStrOfBase_NegativeDecimalBase10_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(result);
+}
+
+static void IsStrOfBase_DecimalZeroBase10_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(result);
+}
+
+static void IsStrOfBase_DecimalNegativeZeroBase10_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(result);
+}
+
+static void IsStrOfBase_OctalBase10_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeOctalBase10_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_HexadecimalBase10_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeHexadecimalBase10_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NonDecimalBase10_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "a";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeNonDecimalBase10_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-a";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_HexadecimalBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_NegativeHexadecimalBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_HexadecimalZeroBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0x0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_HexadecimalNegativeZeroBase8_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessHexadecimalBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessNegativeHexadecimalBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessZeroBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_PrefixlessNegativeZeroBase16_ReturnsNonZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(result);
+}
+
+static void IsStrOfBase_OctalBase16_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeOctalBase16_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NonHexadecimalBase16_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0xG";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_NegativeNonHexadecimalBase16_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0xG";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_OnlyHexdecimalPrefixBase16_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0x";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_OnlyNegativeHexdecimalPrefixBase16_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 16);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_Empty_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 10);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_Base0_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 0);
+
+  assert(!result);
+}
+
+static void IsStrOfBase_BaseAbove36_ReturnsZero(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int result;
+
+  result = Integer_IsStrOfBase(kStr, strlen(kStr), 37);
+
+  assert(!result);
+}
+
 int main(int argc, char** argv) {
 #ifdef NDEBUG
 
@@ -864,7 +1254,47 @@ int main(int argc, char** argv) {
     &IsDigitCharOfBase_DigitChars_ReturnsNonZero,
     &IsDigitCharOfBase_Base0_ReturnsZero,
     &IsDigitCharOfBase_AboveBase36_ReturnsZero,
-    &IsDigitCharOfBase_OutOfBaseRange_ReturnsZero
+    &IsDigitCharOfBase_OutOfBaseRange_ReturnsZero,
+
+    &IsStrOfBase_OctalBase8_ReturnsNonZero,
+    &IsStrOfBase_NegativeOctalBase8_ReturnsNonZero,
+    &IsStrOfBase_OctalZeroBase8_ReturnsNonZero,
+    &IsStrOfBase_OctalNegativeZeroBase8_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessOctalBase8_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessNegativeOctalBase8_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessZeroBase8_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessNegativeZeroBase8_ReturnsNonZero,
+    &IsStrOfBase_NonOctalBase8_ReturnsZero,
+    &IsStrOfBase_NegativeNonOctalBase8_ReturnsZero,
+    &IsStrOfBase_HexadecimalBase8_ReturnsZero,
+    &IsStrOfBase_NegativeHexadecimalBase8_ReturnsZero,
+    &IsStrOfBase_DecimalBase10_ReturnsNonZero,
+    &IsStrOfBase_NegativeDecimalBase10_ReturnsNonZero,
+    &IsStrOfBase_DecimalZeroBase10_ReturnsNonZero,
+    &IsStrOfBase_DecimalNegativeZeroBase10_ReturnsNonZero,
+    &IsStrOfBase_OctalBase10_ReturnsZero,
+    &IsStrOfBase_NegativeOctalBase10_ReturnsZero,
+    &IsStrOfBase_HexadecimalBase10_ReturnsZero,
+    &IsStrOfBase_NegativeHexadecimalBase10_ReturnsZero,
+    &IsStrOfBase_NonDecimalBase10_ReturnsZero,
+    &IsStrOfBase_NegativeNonDecimalBase10_ReturnsZero,
+    &IsStrOfBase_HexadecimalBase16_ReturnsNonZero,
+    &IsStrOfBase_NegativeHexadecimalBase16_ReturnsNonZero,
+    &IsStrOfBase_HexadecimalZeroBase16_ReturnsNonZero,
+    &IsStrOfBase_HexadecimalNegativeZeroBase8_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessHexadecimalBase16_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessNegativeHexadecimalBase16_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessZeroBase16_ReturnsNonZero,
+    &IsStrOfBase_PrefixlessNegativeZeroBase16_ReturnsNonZero,
+    &IsStrOfBase_OctalBase16_ReturnsZero,
+    &IsStrOfBase_NegativeOctalBase16_ReturnsZero,
+    &IsStrOfBase_NonHexadecimalBase16_ReturnsZero,
+    &IsStrOfBase_NegativeNonHexadecimalBase16_ReturnsZero,
+    &IsStrOfBase_OnlyHexdecimalPrefixBase16_ReturnsZero,
+    &IsStrOfBase_OnlyNegativeHexdecimalPrefixBase16_ReturnsZero,
+    &IsStrOfBase_Empty_ReturnsZero,
+    &IsStrOfBase_Base0_ReturnsZero,
+    &IsStrOfBase_BaseAbove36_ReturnsZero
   };
 
   enum {
