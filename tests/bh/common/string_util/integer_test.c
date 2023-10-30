@@ -606,6 +606,894 @@ static void FromStrToUInt_OutOfMaxRange_ReturnsNull(
   assert(result == NULL);
 }
 
+static void FromStrOfBaseToInt_OctalBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 042);
+}
+
+static void FromStrOfBaseToInt_NegativeOctalBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == -1 * 042);
+}
+
+static void FromStrOfBaseToInt_OctalZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "00";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_OctalNegativeZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-00";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_PrefixlessOctalBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 042);
+}
+
+static void FromStrOfBaseToInt_PrefixlessNegativeOctalBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == -1 * 042);
+}
+
+static void FromStrOfBaseToInt_PrefixlessZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_PrefixlessNegativeZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_NonOctalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "08";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeNonOctalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-08";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_HexadecimalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeHexadecimalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_DecimalBase10_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result != NULL);
+  assert(value == 42);
+}
+
+static void FromStrOfBaseToInt_NegativeDecimalBase10_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result != NULL);
+  assert(value == -42);
+}
+
+static void FromStrOfBaseToInt_DecimalZeroBase10_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_DecimalNegativeZeroBase10_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_OctalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeOctalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_HexadecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeHexadecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NonDecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "a";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeNonDecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-a";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_HexadecimalBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0x42);
+}
+
+static void FromStrOfBaseToInt_NegativeHexadecimalBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == -1 * 0x42);
+}
+
+static void FromStrOfBaseToInt_HexadecimalZeroBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0x0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_HexadecimalNegativeZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_PrefixlessHexadecimalBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0x42);
+}
+
+static void FromStrOfBaseToInt_PrefixlessNegativeHexadecimalBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == -1 * 0x42);
+}
+
+static void FromStrOfBaseToInt_PrefixlessZeroBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_PrefixlessNegativeZeroBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToInt_OctalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeOctalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NonHexadecimalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0xg";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_NegativeNonHexadecimalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0xg";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_OnlyHexdecimalPrefixBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_OnlyNegativeHexdecimalPrefixBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_Empty_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_Base0_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 0);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToInt_BaseAbove36_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  int value;
+  int* result;
+
+  result = Integer_FromStrOfBaseToInt(&value, kStr, strlen(kStr), 37);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_OctalBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 042);
+}
+
+static void FromStrOfBaseToUInt_NegativeOctalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_OctalZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "00";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToUInt_OctalNegativeZeroBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-00";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessOctalBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 042);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessNegativeOctalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessZeroBase8_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessNegativeZeroBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NonOctalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "08";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeNonOctalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-08";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_HexadecimalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeHexadecimalBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 8);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_DecimalBase10_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result != NULL);
+  assert(value == 42);
+}
+
+static void FromStrOfBaseToUInt_NegativeDecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_DecimalZeroBase10_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToUInt_DecimalNegativeZeroBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_OctalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeOctalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_HexadecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeHexadecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NonDecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "a";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeNonDecimalBase10_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-a";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 10);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_HexadecimalBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0x42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0x42);
+}
+
+static void FromStrOfBaseToUInt_NegativeHexadecimalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_HexadecimalZeroBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0x0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToUInt_HexadecimalNegativeZeroBase8_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessHexadecimalBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0x42);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessNegativeHexadecimalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessZeroBase16_Converted(
+    struct EachContext* context) {
+  static const char kStr[] = "0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result != NULL);
+  assert(value == 0);
+}
+
+static void FromStrOfBaseToUInt_PrefixlessNegativeZeroBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_OctalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "042";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeOctalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-042";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NonHexadecimalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0xg";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_NegativeNonHexadecimalBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0xg";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_OnlyHexdecimalPrefixBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "0x";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_OnlyNegativeHexdecimalPrefixBase16_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "-0x";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_Empty_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 16);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_Base0_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 0);
+
+  assert(result == NULL);
+}
+
+static void FromStrOfBaseToUInt_BaseAbove36_ReturnsNull(
+    struct EachContext* context) {
+  static const char kStr[] = "42";
+  unsigned int value;
+  unsigned int* result;
+
+  result = Integer_FromStrOfBaseToUInt(&value, kStr, strlen(kStr), 37);
+
+  assert(result == NULL);
+}
+
 static void GetBaseFromPrefixStr_Octal_Base8(struct EachContext* context) {
   static const char kStr[] = "042";
 
@@ -1237,6 +2125,86 @@ int main(int argc, char** argv) {
     &FromStrToUInt_NotInHexadecimalBase_ReturnsNull,
     &FromStrToUInt_OutOfMinRange_ReturnsNull,
     &FromStrToUInt_OutOfMaxRange_ReturnsNull,
+
+    &FromStrOfBaseToInt_OctalBase8_Converted,
+    &FromStrOfBaseToInt_NegativeOctalBase8_Converted,
+    &FromStrOfBaseToInt_OctalZeroBase8_Converted,
+    &FromStrOfBaseToInt_OctalNegativeZeroBase8_Converted,
+    &FromStrOfBaseToInt_PrefixlessOctalBase8_Converted,
+    &FromStrOfBaseToInt_PrefixlessNegativeOctalBase8_Converted,
+    &FromStrOfBaseToInt_PrefixlessZeroBase8_Converted,
+    &FromStrOfBaseToInt_PrefixlessNegativeZeroBase8_Converted,
+    &FromStrOfBaseToInt_NonOctalBase8_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeNonOctalBase8_ReturnsNull,
+    &FromStrOfBaseToInt_HexadecimalBase8_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeHexadecimalBase8_ReturnsNull,
+    &FromStrOfBaseToInt_DecimalBase10_Converted,
+    &FromStrOfBaseToInt_NegativeDecimalBase10_Converted,
+    &FromStrOfBaseToInt_DecimalZeroBase10_Converted,
+    &FromStrOfBaseToInt_DecimalNegativeZeroBase10_Converted,
+    &FromStrOfBaseToInt_OctalBase10_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeOctalBase10_ReturnsNull,
+    &FromStrOfBaseToInt_HexadecimalBase10_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeHexadecimalBase10_ReturnsNull,
+    &FromStrOfBaseToInt_NonDecimalBase10_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeNonDecimalBase10_ReturnsNull,
+    &FromStrOfBaseToInt_HexadecimalBase16_Converted,
+    &FromStrOfBaseToInt_NegativeHexadecimalBase16_Converted,
+    &FromStrOfBaseToInt_HexadecimalZeroBase16_Converted,
+    &FromStrOfBaseToInt_HexadecimalNegativeZeroBase8_Converted,
+    &FromStrOfBaseToInt_PrefixlessHexadecimalBase16_Converted,
+    &FromStrOfBaseToInt_PrefixlessNegativeHexadecimalBase16_Converted,
+    &FromStrOfBaseToInt_PrefixlessZeroBase16_Converted,
+    &FromStrOfBaseToInt_PrefixlessNegativeZeroBase16_Converted,
+    &FromStrOfBaseToInt_OctalBase16_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeOctalBase16_ReturnsNull,
+    &FromStrOfBaseToInt_NonHexadecimalBase16_ReturnsNull,
+    &FromStrOfBaseToInt_NegativeNonHexadecimalBase16_ReturnsNull,
+    &FromStrOfBaseToInt_OnlyHexdecimalPrefixBase16_ReturnsNull,
+    &FromStrOfBaseToInt_OnlyNegativeHexdecimalPrefixBase16_ReturnsNull,
+    &FromStrOfBaseToInt_Empty_ReturnsNull,
+    &FromStrOfBaseToInt_Base0_ReturnsNull,
+    &FromStrOfBaseToInt_BaseAbove36_ReturnsNull,
+
+    &FromStrOfBaseToUInt_OctalBase8_Converted,
+    &FromStrOfBaseToUInt_NegativeOctalBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_OctalZeroBase8_Converted,
+    &FromStrOfBaseToUInt_OctalNegativeZeroBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_PrefixlessOctalBase8_Converted,
+    &FromStrOfBaseToUInt_PrefixlessNegativeOctalBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_PrefixlessZeroBase8_Converted,
+    &FromStrOfBaseToUInt_PrefixlessNegativeZeroBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_NonOctalBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeNonOctalBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_HexadecimalBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeHexadecimalBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_DecimalBase10_Converted,
+    &FromStrOfBaseToUInt_NegativeDecimalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_DecimalZeroBase10_Converted,
+    &FromStrOfBaseToUInt_DecimalNegativeZeroBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_OctalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeOctalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_HexadecimalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeHexadecimalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_NonDecimalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeNonDecimalBase10_ReturnsNull,
+    &FromStrOfBaseToUInt_HexadecimalBase16_Converted,
+    &FromStrOfBaseToUInt_NegativeHexadecimalBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_HexadecimalZeroBase16_Converted,
+    &FromStrOfBaseToUInt_HexadecimalNegativeZeroBase8_ReturnsNull,
+    &FromStrOfBaseToUInt_PrefixlessHexadecimalBase16_Converted,
+    &FromStrOfBaseToUInt_PrefixlessNegativeHexadecimalBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_PrefixlessZeroBase16_Converted,
+    &FromStrOfBaseToUInt_PrefixlessNegativeZeroBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_OctalBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeOctalBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_NonHexadecimalBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_NegativeNonHexadecimalBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_OnlyHexdecimalPrefixBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_OnlyNegativeHexdecimalPrefixBase16_ReturnsNull,
+    &FromStrOfBaseToUInt_Empty_ReturnsNull,
+    &FromStrOfBaseToUInt_Base0_ReturnsNull,
+    &FromStrOfBaseToUInt_BaseAbove36_ReturnsNull,
 
     &GetBaseFromPrefixStr_Octal_Base8,
     &GetBaseFromPrefixStr_NegativeOctal_Base8,

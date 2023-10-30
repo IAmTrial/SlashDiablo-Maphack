@@ -89,6 +89,62 @@ unsigned int* Integer_FromWStrToUInt(
     unsigned int* value, const wchar_t* str, size_t length);
 
 /**
+ * Converts a string to an integer value using the specified base for
+ * conversion and sets the value. If conversion is successful, then a
+ * non-zero value is returned. Otherwise, if conversion fails, such as
+ * if the string is not a number, or cannot be represented with the
+ * integer type, then NULL is returned instead.
+ *
+ * Only the values in the interval [1, 36] are valid for base. Bases 8
+ * and 16 may be optionally prefixed with 0 and 0x, respectively.
+ * Returns NULL if an invalid base is specified.
+ */
+int* Integer_FromStrOfBaseToInt(
+    int* value, const char* str, size_t length, int base);
+
+/**
+ * Converts a string to an integer value using the specified base for
+ * conversion and sets the value. If conversion is successful, then a
+ * non-zero value is returned. Otherwise, if conversion fails, such as
+ * if the string is not a number, or cannot be represented with the
+ * integer type, then NULL is returned instead.
+ *
+ * Only the values in the interval [1, 36] are valid for base. Bases 8
+ * and 16 may be optionally prefixed with 0 and 0x, respectively.
+ * Returns NULL if an invalid base is specified.
+ */
+int* Integer_FromWStrOfBaseToInt(
+    int* value, const wchar_t* str, size_t length, int base);
+
+/**
+ * Converts a string to an integer value using the specified base for
+ * conversion and sets the value. If conversion is successful, then a
+ * non-zero value is returned. Otherwise, if conversion fails, such as
+ * if the string is not a number, or cannot be represented with the
+ * integer type, then NULL is returned instead.
+ *
+ * Only the values in the interval [1, 36] are valid for base. Bases 8
+ * and 16 may be optionally prefixed with 0 and 0x, respectively.
+ * Returns NULL if an invalid base is specified.
+ */
+int* Integer_FromStrOfBaseToUInt(
+    unsigned int* value, const char* str, size_t length, int base);
+
+/**
+ * Converts a string to an integer value using the specified base for
+ * conversion and sets the value. If conversion is successful, then a
+ * non-zero value is returned. Otherwise, if conversion fails, such as
+ * if the string is not a number, or cannot be represented with the
+ * integer type, then NULL is returned instead.
+ *
+ * Only the values in the interval [1, 36] are valid for base. Bases 8
+ * and 16 may be optionally prefixed with 0 and 0x, respectively.
+ * Returns NULL if an invalid base is specified.
+ */
+int* Integer_FromWStrOfBaseToUInt(
+    unsigned int* value, const wchar_t* str, size_t length, int base);
+
+/**
  * Determines the integer-base encoding that matches the contents of
  * the string's prefix. If the integer-base encoding is detected, then
  * the function returns a non-NULL value. Otherwise, returns NULL on

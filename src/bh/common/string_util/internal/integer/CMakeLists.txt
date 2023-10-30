@@ -27,6 +27,10 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int_template.h"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_str_of_base_to_int.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_str_of_base_to_int.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_str_of_base_to_int_template.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/get_base_from_prefix_str_template.h"

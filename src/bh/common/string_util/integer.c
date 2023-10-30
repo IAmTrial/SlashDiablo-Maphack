@@ -36,6 +36,7 @@
 #include "bh/common/string_util/ascii.h"
 #include "bh/common/string_util/internal/integer/from_digit_char_of_base.h"
 #include "bh/common/string_util/internal/integer/from_str_to_int.h"
+#include "bh/common/string_util/internal/integer/from_str_of_base_to_int.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
 #include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
 #include "bh/common/string_util/internal/integer/is_str_of_base.h"
@@ -43,7 +44,6 @@
 /**
  * External
  */
-
 
 int* Integer_FromDigitCharOfBase(int* value, char ch, int base) {
   return T_Integer_FromDigitCharOfBase(char)(value, ch, base);
@@ -69,6 +69,27 @@ unsigned int* Integer_FromStrToUInt(
 unsigned int* Integer_FromWStrToUInt(
     unsigned int* value, const wchar_t* str, size_t length) {
   return T_Integer_FromStrToInt(wchar_t, unsigned_int)(value, str, length);
+}
+int* Integer_FromStrOfBaseToInt(
+    int* value, const char* str, size_t length, int base) {
+  return T_Integer_FromStrOfBaseToInt(char, int)(value, str, length, base);
+}
+
+int* Integer_FromWStrOfBaseToInt(
+    int* value, const wchar_t* str, size_t length, int base) {
+  return T_Integer_FromStrOfBaseToInt(wchar_t, int)(value, str, length, base);
+}
+
+int* Integer_FromStrOfBaseToUInt(
+    unsigned int* value, const char* str, size_t length, int base) {
+  return T_Integer_FromStrOfBaseToInt(char, unsigned_int)(
+      value, str, length, base);
+}
+
+int* Integer_FromWStrOfBaseToUInt(
+    unsigned int* value, const wchar_t* str, size_t length, int base) {
+  return T_Integer_FromStrOfBaseToInt(wchar_t, unsigned_int)(
+      value, str, length, base);
 }
 
 int* Integer_GetBaseFromPrefixStr(int* base, const char* str, size_t length) {
