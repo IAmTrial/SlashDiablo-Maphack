@@ -26,7 +26,7 @@
  * All rights reserved.
  */
 
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base.h"
 #include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
 
 #if !defined(T_CHAR)
@@ -36,7 +36,7 @@
 int T_Integer_IsDigitCharOfBase(T_CHAR)(T_CHAR ch, int base) {
   int value;
 
-  return (T_Integer_FromDigitChar(T_CHAR)(&value, ch, base) != NULL);
+  return (T_Integer_FromDigitCharOfBase(T_CHAR)(&value, ch, base) != NULL);
 }
 
 #undef T_CHAR

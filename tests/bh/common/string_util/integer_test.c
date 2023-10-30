@@ -50,7 +50,7 @@ static void BeforeEach(struct EachContext* context) {}
 
 static void AfterEach(struct EachContext* context) {}
 
-static void FromDigitChar_DigitChars_Converted(struct EachContext* context) {
+static void FromDigitCharOfBase_DigitChars_Converted(struct EachContext* context) {
   size_t i;
 
   for (i = 0; i < kDigitCharCount; ++i) {
@@ -58,29 +58,29 @@ static void FromDigitChar_DigitChars_Converted(struct EachContext* context) {
     int value;
 
     value_convert_result =
-        Integer_FromDigitChar(&value, kDigitChars[i], kDigitCharCount);
+        Integer_FromDigitCharOfBase(&value, kDigitChars[i], kDigitCharCount);
 
     assert(value_convert_result != NULL);
     assert(value == i);
   }
 }
 
-static void FromDigitChar_InvalidBase_ReturnsNull(
+static void FromDigitCharOfBase_InvalidBase_ReturnsNull(
     struct EachContext* context) {
   int value;
   int* value_convert_result;
 
-  value_convert_result = Integer_FromDigitChar(&value, '0', 9999);
+  value_convert_result = Integer_FromDigitCharOfBase(&value, '0', 9999);
 
   assert(value_convert_result == NULL);
 }
 
-static void FromDigitChar_OutOfBaseRange_ReturnsNull(
+static void FromDigitCharOfBase_OutOfBaseRange_ReturnsNull(
     struct EachContext* context) {
   int value;
   int* value_convert_result;
 
-  value_convert_result = Integer_FromDigitChar(&value, '9', 8);
+  value_convert_result = Integer_FromDigitCharOfBase(&value, '9', 8);
 
   assert(value_convert_result == NULL);
 }
@@ -1194,9 +1194,9 @@ int main(int argc, char** argv) {
 #else
 
   static TestFunc* const kTests[] = {
-    &FromDigitChar_DigitChars_Converted,
-    &FromDigitChar_InvalidBase_ReturnsNull,
-    &FromDigitChar_OutOfBaseRange_ReturnsNull,
+    &FromDigitCharOfBase_DigitChars_Converted,
+    &FromDigitCharOfBase_InvalidBase_ReturnsNull,
+    &FromDigitCharOfBase_OutOfBaseRange_ReturnsNull,
 
     &FromStrToInt_Decimal_Converted,
     &FromStrToInt_NegativeDecimal_Converted,

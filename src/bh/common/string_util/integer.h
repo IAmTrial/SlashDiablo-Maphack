@@ -41,14 +41,14 @@ extern "C" {
  * output to that value. Returns a non-NULL pointer if the digit
  * was converted, or NULL if the specified character is not a digit.
  */
-int* Integer_FromDigitChar(int* value, char ch, int base);
+int* Integer_FromDigitCharOfBase(int* value, char ch, int base);
 
 /**
  * Converts a character digit into an integer value and sets the
  * output to that value. Returns a non-NULL pointer if the digit
  * was converted, or NULL if the specified character is not a digit.
  */
-int* Integer_FromDigitWChar(int* value, wchar_t ch, int base);
+int* Integer_FromDigitWCharOfBase(int* value, wchar_t ch, int base);
 
 /**
  * Converts a string to an integer value and sets the value. If

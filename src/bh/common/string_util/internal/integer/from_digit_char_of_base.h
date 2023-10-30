@@ -26,8 +26,8 @@
  * All rights reserved.
  */
 
-#ifndef BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_FROM_DIGIT_CHAR_H_
-#define BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_FROM_DIGIT_CHAR_H_
+#ifndef BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_FROM_DIGIT_CHAR_OF_BASE_H_
+#define BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_FROM_DIGIT_CHAR_OF_BASE_H_
 
 #include <stddef.h>
 #include <wchar.h>
@@ -38,14 +38,14 @@
 extern "C" {
 #endif  /* __cplusplus */
 
-#define T_Integer_FromDigitChar(T_CHAR) \
-    TEMPLATE_IDENTIFIER_1(T_Integer_FromDigitChar, T_CHAR)
+#define T_Integer_FromDigitCharOfBase(T_CHAR) \
+    TEMPLATE_IDENTIFIER_1(T_Integer_FromDigitCharOfBase, T_CHAR)
 
-int* T_Integer_FromDigitChar(char)(int* value, char ch, int base);
-int* T_Integer_FromDigitChar(wchar_t)(int* value, wchar_t ch, int base);
+int* T_Integer_FromDigitCharOfBase(char)(int* value, char ch, int base);
+int* T_Integer_FromDigitCharOfBase(wchar_t)(int* value, wchar_t ch, int base);
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_FROM_DIGIT_CHAR_H_ */
+#endif  /* BH_COMMON_STRING_UTIL_INTERNAL_INTEGER_FROM_DIGIT_CHAR_OF_BASE_H_ */

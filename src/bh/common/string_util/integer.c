@@ -34,7 +34,7 @@
 
 #include "bh/common/preprocessor/template/typedef.h"
 #include "bh/common/string_util/ascii.h"
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base.h"
 #include "bh/common/string_util/internal/integer/from_str_to_int.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
 #include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
@@ -45,12 +45,12 @@
  */
 
 
-int* Integer_FromDigitChar(int* value, char ch, int base) {
-  return T_Integer_FromDigitChar(char)(value, ch, base);
+int* Integer_FromDigitCharOfBase(int* value, char ch, int base) {
+  return T_Integer_FromDigitCharOfBase(char)(value, ch, base);
 }
 
-int* Integer_FromDigitWChar(int* value, wchar_t ch, int base) {
-  return T_Integer_FromDigitChar(wchar_t)(value, ch, base);
+int* Integer_FromDigitWCharOfBase(int* value, wchar_t ch, int base) {
+  return T_Integer_FromDigitCharOfBase(wchar_t)(value, ch, base);
 }
 
 int* Integer_FromStrToInt(int* value, const char* str, size_t length) {

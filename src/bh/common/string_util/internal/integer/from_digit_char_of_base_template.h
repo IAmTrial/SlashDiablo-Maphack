@@ -31,7 +31,7 @@
 
 #include "bh/common/preprocessor/concat.h"
 #include "bh/common/string_util/internal/ascii/to_lower_char.h"
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base.h"
 
 #if !defined(T_CHAR)
 #error Define T_CHAR to specify the templated character type.
@@ -43,7 +43,7 @@
 
 #define TEXT_LITERAL(lit) PREPROCESSOR_CONCAT(T_STR_LITERAL_PREFIX, lit)
 
-int* T_Integer_FromDigitChar(T_CHAR)(int* value, T_CHAR ch, int base) {
+int* T_Integer_FromDigitCharOfBase(T_CHAR)(int* value, T_CHAR ch, int base) {
   T_CHAR lowercase;
   int temp_value;
 

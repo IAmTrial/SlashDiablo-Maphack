@@ -30,7 +30,7 @@
 #include <stddef.h>
 
 #include "bh/common/preprocessor/concat.h"
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base.h"
 #include "bh/common/string_util/internal/integer/from_str_to_int.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
 
@@ -131,7 +131,7 @@ T_INT* T_Integer_FromStrToInt(T_CHAR, T_INT)(
      * it is valid, get the value.
      */
     digit_convert_result =
-        T_Integer_FromDigitChar(T_CHAR)(&digit, str[i], base);
+        T_Integer_FromDigitCharOfBase(T_CHAR)(&digit, str[i], base);
     if (digit_convert_result == NULL) {
       return NULL;
     }

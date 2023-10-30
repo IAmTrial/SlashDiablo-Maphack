@@ -19,9 +19,9 @@
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_template.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_of_base.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_of_base.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/from_digit_char_of_base_template.h"
 
         "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/from_str_to_int.h"

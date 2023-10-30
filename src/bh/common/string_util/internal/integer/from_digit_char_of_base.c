@@ -26,7 +26,7 @@
  * All rights reserved.
  */
 
-#include "bh/common/string_util/internal/integer/from_digit_char.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base.h"
 
 #include <wchar.h>
 
@@ -36,8 +36,8 @@
 
 #define T_CHAR char
 #define T_STR_LITERAL_PREFIX
-#include "bh/common/string_util/internal/integer/from_digit_char_template.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base_template.h"
 
 #define T_CHAR wchar_t
 #define T_STR_LITERAL_PREFIX L
-#include "bh/common/string_util/internal/integer/from_digit_char_template.h"
+#include "bh/common/string_util/internal/integer/from_digit_char_of_base_template.h"
