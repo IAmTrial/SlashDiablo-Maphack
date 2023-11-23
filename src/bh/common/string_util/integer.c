@@ -39,6 +39,9 @@
 #include "bh/common/string_util/internal/integer/from_str_of_base_to_int.h"
 #include "bh/common/string_util/internal/integer/get_base_from_prefix_str.h"
 #include "bh/common/string_util/internal/integer/is_digit_char_of_base.h"
+#include "bh/common/string_util/internal/integer/is_str_decimal.h"
+#include "bh/common/string_util/internal/integer/is_str_hexadecimal.h"
+#include "bh/common/string_util/internal/integer/is_str_octal.h"
 #include "bh/common/string_util/internal/integer/is_str_of_base.h"
 
 /**
@@ -107,6 +110,30 @@ int Integer_IsDigitCharOfBase(char ch, int base) {
 
 int Integer_IsDigitWCharOfBase(wchar_t ch, int base) {
   return T_Integer_IsDigitCharOfBase(wchar_t)(ch, base);
+}
+
+int Integer_IsStrDecimal(const char* str, size_t length) {
+  return T_Integer_IsStrDecimal(char)(str, length);
+}
+
+int Integer_IsWStrDecimal(const wchar_t* str, size_t length) {
+  return T_Integer_IsStrDecimal(wchar_t)(str, length);
+}
+
+int Integer_IsStrHexadecimal(const char* str, size_t length) {
+  return T_Integer_IsStrHexadecimal(char)(str, length);
+}
+
+int Integer_IsWStrHexadecimal(const wchar_t* str, size_t length) {
+  return T_Integer_IsStrHexadecimal(wchar_t)(str, length);
+}
+
+int Integer_IsStrOctal(const char* str, size_t length) {
+  return T_Integer_IsStrOctal(char)(str, length);
+}
+
+int Integer_IsWStrOctal(const wchar_t* str, size_t length) {
+  return T_Integer_IsStrOctal(wchar_t)(str, length);
 }
 
 int Integer_IsStrOfBase(const char* str, size_t length, int base) {

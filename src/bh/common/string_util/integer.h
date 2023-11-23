@@ -188,6 +188,50 @@ int Integer_IsDigitCharOfBase(char ch, int base);
 int Integer_IsDigitWCharOfBase(wchar_t ch, int base);
 
 /**
+ * Returns a non-zero value if the specified string is representable as
+ * a number in decimal encoding. Otherwise, returns zero.
+ */
+int Integer_IsStrDecimal(const char* str, size_t length);
+
+/**
+ * Returns a non-zero value if the specified string is representable as
+ * a number in decimal encoding. Otherwise, returns zero.
+ */
+int Integer_IsWStrDecimal(const wchar_t* str, size_t length);
+
+/**
+ * Returns a non-zero value if the specified string is representable as
+ * a number in hexadecimal encoding. Otherwise, returns zero.
+ *
+ * The string may be optionally prefixed with "0x".
+ */
+int Integer_IsStrHexadecimal(const char* str, size_t length);
+
+/**
+ * Returns a non-zero value if the specified string is representable as
+ * a number in hexadecimal encoding. Otherwise, returns zero.
+ *
+ * The string may be optionally prefixed with "0x".
+ */
+int Integer_IsWStrHexadecimal(const wchar_t* str, size_t length);
+
+/**
+ * Returns a non-zero value if the specified string is representable as
+ * a number in octal encoding. Otherwise, returns zero.
+ *
+ * The string may be optionally prefixed with "0".
+ */
+int Integer_IsStrOctal(const char* str, size_t length);
+
+/**
+ * Returns a non-zero value if the specified string is representable as
+ * a number in octal encoding. Otherwise, returns zero.
+ *
+ * The string may be optionally prefixed with "0".
+ */
+int Integer_IsWStrOctal(const wchar_t* str, size_t length);
+
+/**
  * Returns a non-zero value if the specified string is representable
  * as a number with the specified integer-base encoding. Otherwise,
  * returns zero.

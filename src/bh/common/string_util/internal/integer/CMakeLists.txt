@@ -39,6 +39,18 @@ target_sources(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/is_digit_char_of_base.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/is_digit_char_of_base_template.h"
 
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_decimal.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_decimal.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_decimal_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_hexadecimal.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_hexadecimal.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_hexadecimal_template.h"
+
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_octal.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_octal.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/is_str_octal_template.h"
+
         "${CMAKE_CURRENT_SOURCE_DIR}/is_str_of_base.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/is_str_of_base.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/is_str_of_base_template.h"
