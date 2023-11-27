@@ -19,22 +19,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BH_CONFIG_COLONINI_TYPE_VALUE_TYPE_H_
-#define BH_CONFIG_COLONINI_TYPE_VALUE_TYPE_H_
-
 #include <assert.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif  /* __cplusplus */
-
-enum Colonini_ValueType {
-  Colonini_ValueType_kUnspecified = 0,
-
-  Colonini_ValueType_kData,
-  Colonini_ValueType_kMap
-};
+#include "bh/config/colonini/type/value_type.h"
 
 /**
  * External
@@ -43,6 +31,15 @@ enum Colonini_ValueType {
 const char* Colonini_ValueType_GetDisplayName(
     enum Colonini_ValueType type, size_t* length) {
   switch (type) {
+    case Colonini_ValueType_kEmpty: {
+      static const char kDisplayName[] = "Empty";
+
+      if (length != NULL) {
+        *length = sizeof(kDisplayName) / sizeof(kDisplayName[0]) - 1;
+      }
+      return kDisplayName;
+    }
+
     case Colonini_ValueType_kData: {
       static const char kDisplayName[] = "Data";
 
@@ -67,9 +64,3 @@ const char* Colonini_ValueType_GetDisplayName(
     }
   }
 }
-
-#ifdef __cplusplus
-}  /* extern "C" */
-#endif  /* __cplusplus */
-
-#endif  /* BH_CONFIG_COLONINI_TYPE_VALUE_TYPE_H_ */

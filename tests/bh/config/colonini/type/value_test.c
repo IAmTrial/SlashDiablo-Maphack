@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "bh/config/colonini/type/value.h"
+#include "bh/config/colonini/type/value_type.h"
 
 static void BeforeAllSetUp(void) {}
 
@@ -74,6 +75,16 @@ static void InitAsBoolean_True_IsTrue(struct EachContext* context) {
   assert(data->variant.as_boolean == kExpected);
 
   Colonini_Value_Deinit(&value);
+}
+
+static void InitAsEmpty_IsEmpty(struct EachContext* context) {
+  struct Colonini_Value value;
+  struct Colonini_Value* value_init_result;
+
+  value_init_result = Colonini_Value_InitAsEmpty(&value);
+
+  assert(value_init_result != NULL);
+  assert(value.type == Colonini_ValueType_kEmpty);
 }
 
 static void InitAsInteger_Zero_IsZero(struct EachContext* context) {
@@ -241,6 +252,8 @@ int main(int argc, char** argv) {
   static TestFunc* const kTests[] = {
     &InitAsBoolean_False_IsFalse,
     &InitAsBoolean_True_IsTrue,
+
+    &InitAsEmpty_IsEmpty,
 
     &InitAsInteger_Zero_IsZero,
     &InitAsInteger_42_Is42,

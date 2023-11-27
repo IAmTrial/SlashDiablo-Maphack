@@ -31,6 +31,7 @@ extern "C" {
 enum Colonini_ValueType {
   Colonini_ValueType_kUnspecified = 0,
 
+  Colonini_ValueType_kEmpty,
   Colonini_ValueType_kData,
   Colonini_ValueType_kMap
 };
