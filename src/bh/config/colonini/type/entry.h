@@ -39,7 +39,7 @@ struct Colonini_Entry {
   struct Colonini_Entry* next;
 };
 
-struct Colonini_Entry* Colonini_Entry_InitDefault(
+struct Colonini_Entry* Colonini_Entry_InitEmpty(
     struct Colonini_Entry* entry,
     const char* key,
     size_t key_length);

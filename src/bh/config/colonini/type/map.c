@@ -27,7 +27,6 @@
 #include "bh/common/data_struct/red_black_tree.h"
 #include "bh/config/colonini/type/entry.h"
 #include "bh/config/colonini/type/value.h"
-#include "bh/config/colonini/type/value_type.h"
 
 static int Colonini_Entry_CompareKeyAsVoid(
     const void* left, const void* right) {
@@ -35,29 +34,35 @@ static int Colonini_Entry_CompareKeyAsVoid(
 }
 
 static struct Colonini_Entry* Colonini_Map_PutEmpty(
-    struct Colonini_Map* map,
-    const char* key,
-    size_t key_length) {
+    struct Colonini_Map* map, const char* key, size_t key_length) {
   struct Colonini_Entry* entry_init_result;
 
   int contained_entry;
   struct Colonini_Entry* entry;
+  int entry_inserted;
 
   /* Reuse the old entry, if possible. */
   entry = Colonini_Map_Find(map, key, key_length);
   contained_entry = (entry != NULL);
   if (contained_entry) {
-    Colonini_Value_Deinit(&entry->value);
-  } else {
-    entry = malloc(sizeof(*entry));
-    if (entry == NULL) {
-      goto error;
-    }
+    struct Colonini_Value* value_init_result;
 
-    entry_init_result = Colonini_Entry_InitDefault(entry, key, key_length);
-    if (entry_init_result == NULL) {
+    Colonini_Value_Deinit(&entry->value);
+    value_init_result = Colonini_Value_InitAsEmpty(&entry->value);
+    if (value_init_result == NULL) {
       goto error_free_entry;
     }
+    return entry;
+  }
+
+  entry = malloc(sizeof(*entry));
+  if (entry == NULL) {
+    goto error;
+  }
+
+  entry_init_result = Colonini_Entry_InitEmpty(entry, key, key_length);
+  if (entry_init_result == NULL) {
+    goto error_free_entry;
   }
 
   /* Initialize an entry's key and previous/next pointers. */
@@ -70,17 +75,13 @@ static struct Colonini_Entry* Colonini_Map_PutEmpty(
   entry->next = NULL;
   map->tail_entry = entry;
 
-  if (!contained_entry) {
-    int entry_inserted;
-
-    entry_inserted =
-        RedBlackTree_Insert(
-            &map->tree, entry, &Colonini_Entry_CompareKeyAsVoid);
-    if (!entry_inserted) {
-      goto error_free_entry;
-    }
-    ++map->count;
+  entry_inserted =
+      RedBlackTree_Insert(
+          &map->tree, entry, &Colonini_Entry_CompareKeyAsVoid);
+  if (!entry_inserted) {
+    goto error_free_entry;
   }
+  ++map->count;
 
   return entry;
 

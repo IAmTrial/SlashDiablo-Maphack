@@ -43,11 +43,18 @@ struct Colonini_Value* Colonini_Value_InitAsBoolean(
     goto error;
   }
   value->type = Colonini_ValueType_kData;
-  
+
   return value;
 
 error:
   return NULL;
+}
+
+struct Colonini_Value* Colonini_Value_InitAsEmpty(
+    struct Colonini_Value* value) {
+  value->type = Colonini_ValueType_kEmpty;
+
+  return value;
 }
 
 struct Colonini_Value* Colonini_Value_InitAsInteger(
@@ -60,7 +67,7 @@ struct Colonini_Value* Colonini_Value_InitAsInteger(
     goto error;
   }
   value->type = Colonini_ValueType_kData;
-  
+
   return value;
 
 error:
@@ -75,7 +82,7 @@ struct Colonini_Value* Colonini_Value_InitAsMap(struct Colonini_Value* value) {
     goto error;
   }
   value->type = Colonini_ValueType_kMap;
-  
+
   return value;
 
 error:
@@ -92,7 +99,7 @@ struct Colonini_Value* Colonini_Value_InitAsString(
     goto error;
   }
   value->type = Colonini_ValueType_kData;
-  
+
   return value;
 
 error:
@@ -109,7 +116,7 @@ struct Colonini_Value* Colonini_Value_InitAsToggle(
     goto error;
   }
   value->type = Colonini_ValueType_kData;
-  
+
   return value;
 
 error:
@@ -118,6 +125,11 @@ error:
 
 void Colonini_Value_Deinit(struct Colonini_Value* value) {
   switch (value->type) {
+    case Colonini_ValueType_kEmpty: {
+      value->type = Colonini_ValueType_kUnspecified;
+      break;
+    }
+
     case Colonini_ValueType_kData: {
       value->type = Colonini_ValueType_kUnspecified;
       Colonini_Data_Deinit(&value->variant.as_data);

@@ -32,11 +32,12 @@
  * External
  */
 
-struct Colonini_Entry* Colonini_Entry_InitDefault(
+struct Colonini_Entry* Colonini_Entry_InitEmpty(
     struct Colonini_Entry* entry,
     const char* key,
     size_t key_length) {
   struct Colonini_String* key_init_result;
+  struct Colonini_Value* value_init_result;
 
   key_init_result = Colonini_String_Init(&entry->key, key, key_length);
   if (key_init_result == NULL) {
@@ -46,9 +47,15 @@ struct Colonini_Entry* Colonini_Entry_InitDefault(
   entry->previous = NULL;
   entry->next = NULL;
 
-  entry->value.type = Colonini_ValueType_kUnspecified;
+  value_init_result = Colonini_Value_InitAsEmpty(&entry->value);
+  if (value_init_result == NULL) {
+    goto error_deinit_key;
+  }
 
   return entry;
+
+error_deinit_key:
+  Colonini_String_Deinit(&entry->key);
 
 error:
   return NULL;
