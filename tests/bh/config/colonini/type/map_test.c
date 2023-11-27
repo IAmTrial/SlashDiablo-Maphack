@@ -105,6 +105,27 @@ static void PutBoolean_True_IsTrue(struct EachContext* context) {
   assert(data->variant.as_boolean == kExpected);
 }
 
+static void PutBoolean_CallTwice_Replace(struct EachContext* context) {
+  enum {
+    kExpected = 1
+  };
+  unsigned char* result;
+  struct Colonini_Value* value;
+  struct Colonini_Data* data;
+
+  Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, 0);
+  result = Colonini_Map_PutBoolean(&context->map, kKey, kKeyLength, kExpected);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kData);
+  data = &value->variant.as_data;
+  assert(data->type == Colonini_DataType_kBoolean);
+  assert(result == &data->variant.as_boolean);
+  assert(data->variant.as_boolean == kExpected);
+}
+
 static void PutInteger_Zero_IsZero(struct EachContext* context) {
   enum {
     kExpected = 0
@@ -145,11 +166,49 @@ static void PutInteger_42_Is42(struct EachContext* context) {
   assert(data->variant.as_integer == kExpected);
 }
 
+static void PutInteger_CallTwice_Replace(struct EachContext* context) {
+  enum {
+    kExpected = 42
+  };
+  unsigned int* result;
+  struct Colonini_Value* value;
+  struct Colonini_Data* data;
+
+  Colonini_Map_PutInteger(&context->map, kKey, kKeyLength, 0);
+  result = Colonini_Map_PutInteger(&context->map, kKey, kKeyLength, kExpected);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kData);
+  data = &value->variant.as_data;
+  assert(data->type == Colonini_DataType_kInteger);
+  assert(result == &data->variant.as_integer);
+  assert(data->variant.as_integer == kExpected);
+}
+
 static void PutMap_IsEmptyMap(struct EachContext* context) {
   struct Colonini_Map* result;
   struct Colonini_Value* value;
   struct Colonini_Map* submap;
 
+  result = Colonini_Map_PutMap(&context->map, kKey, kKeyLength);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kMap);
+  submap = &value->variant.as_map;
+  assert(result == submap);
+  assert(submap->count == 0);
+}
+
+static void PutMap_CallTwice_Replace(struct EachContext* context) {
+  struct Colonini_Map* result;
+  struct Colonini_Value* value;
+  struct Colonini_Map* submap;
+
+  Colonini_Map_PutMap(&context->map, kKey, kKeyLength);
   result = Colonini_Map_PutMap(&context->map, kKey, kKeyLength);
 
   assert(result != NULL);
@@ -211,6 +270,40 @@ static void PutString_Hello_EqualText(struct EachContext* context) {
   assert(result == str);
   assert(str->length == kExpectedLength);
   assert(memcmp(str->str, kExpected, kExpectedLength) == 0);
+}
+
+static void PutString_CallTwice_Replace(struct EachContext* context) {
+  static const char kHello[] = "Hello";
+  static const char kExpected[] = "Expected";
+  struct Colonini_String* result;
+  struct Colonini_Value* value;
+  struct Colonini_Data* data;
+  struct Colonini_String* str;
+
+  Colonini_Map_PutString(
+      &context->map,
+      kKey,
+      kKeyLength,
+      kHello,
+      strlen(kHello));
+  result =
+      Colonini_Map_PutString(
+          &context->map,
+          kKey,
+          kKeyLength,
+          kExpected,
+          strlen(kExpected));
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kData);
+  data = &value->variant.as_data;
+  assert(data->type == Colonini_DataType_kString);
+  str = &data->variant.as_string;
+  assert(result == str);
+  assert(str->length == strlen(kExpected));
+  assert(strcmp(str->str, kExpected) == 0);
 }
 
 static void PutToggle_Enabled_IsEnabled(struct EachContext* context) {
@@ -340,14 +433,18 @@ int main(int argc, char** argv) {
 
     &PutBoolean_False_IsFalse,
     &PutBoolean_True_IsTrue,
+    &PutBoolean_CallTwice_Replace,
 
     &PutInteger_Zero_IsZero,
     &PutInteger_42_Is42,
+    &PutInteger_CallTwice_Replace,
 
     &PutMap_IsEmptyMap,
+    &PutMap_CallTwice_Replace,
 
     &PutString_Empty_IsEmpty,
     &PutString_Hello_EqualText,
+    &PutString_CallTwice_Replace,
 
     &PutToggle_Enabled_IsEnabled,
     &PutToggle_Disabled_IsDisabled,
