@@ -54,6 +54,15 @@ target_link_libraries(${PROJECT_NAME}.BoolTest PRIVATE BH.Common)
 add_test(NAME ${PROJECT_NAME}.BoolTest
     COMMAND ${PROJECT_NAME}.BoolTest)
 
+add_executable(${PROJECT_NAME}.IntegerTest "integer_test.c")
+target_compile_definitions(${PROJECT_NAME}.IntegerTest PRIVATE NOMINMAX)
+target_include_directories(${PROJECT_NAME}.IntegerTest 
+    PRIVATE
+        "${CMAKE_SOURCE_DIR}/src")
+target_link_libraries(${PROJECT_NAME}.IntegerTest PRIVATE BH.Common)
+add_test(NAME ${PROJECT_NAME}.IntegerTest
+    COMMAND ${PROJECT_NAME}.IntegerTest)
+
 add_executable(${PROJECT_NAME}.MemstringTest "memstring_test.c")
 target_compile_definitions(${PROJECT_NAME}.MemstringTest PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME}.MemstringTest 
