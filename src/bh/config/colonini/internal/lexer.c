@@ -54,13 +54,12 @@ void Lexer_Deinit(struct Lexer* lexer) {
 
 int Lexer_Lex(
     struct Lexer* lexer, const struct Colonini_String* lines, size_t count) {
-  size_t i;
-
-  for (i = 0; i < count; ++i) {
+  for (lexer->count = 0; lexer->count < count; ++lexer->count) {
     struct LexerLine* lex_result;
 
     lex_result =
-        LexerLine_LexLine(&lexer->lines[i], i + 1, &lines[i]);
+        LexerLine_LexLine(
+            &lexer->lines[lexer->count], lexer->count + 1, &lines[lexer->count]);
     if (lex_result == NULL) {
       return 0;
     }

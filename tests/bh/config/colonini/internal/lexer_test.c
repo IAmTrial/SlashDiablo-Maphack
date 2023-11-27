@@ -28,6 +28,7 @@
 
 #include "bh/config/colonini/internal/lexer.h"
 #include "bh/config/colonini/internal/lexer/lexer_line.h"
+#include "bh/config/colonini/type/string.h"
 
 static char* const kKeyValueLine = "key : value";
 static struct Colonini_String kKeyValueLineStr;
@@ -372,6 +373,29 @@ static void Lex_Empty_NoStrings(struct EachContext* context) {
   assert(lline->last_token == NULL);
 }
 
+static void Lex_MultipleEmpty_NoStrings(struct EachContext* context) {
+  enum {
+    kLines = 10
+  };
+  size_t i;
+  struct Colonini_String kEmptyLineStrs[kLines];
+  for (i = 0; i < kLines; ++i) {
+    Colonini_String_Init(&kEmptyLineStrs[i], "", 0);
+  }
+
+  Lexer_Lex(&context->lexer, kEmptyLineStrs, kLines);
+
+  assert(context->lexer.count == kLines);
+  for (i = 0; i < kLines; ++i) {
+    struct LexerLine* lline;
+    lline = &context->lexer.lines[i];
+    assert(lline->str_count == 0);
+    assert(lline->token_count == 0);
+    assert(lline->first_token == NULL);
+    assert(lline->last_token == NULL);
+  }
+}
+
 static void Lex_CommentLine_ReturnsSuccess(struct EachContext* context) {
   int result;
 
@@ -444,6 +468,7 @@ int main(int argc, char** argv) {
 
     &Lex_Empty_ReturnsSuccess,
     &Lex_Empty_NoStrings,
+    &Lex_MultipleEmpty_NoStrings,
 
     &Lex_CommentLine_ReturnsSuccess,
     &Lex_CommentLine_OneString,
