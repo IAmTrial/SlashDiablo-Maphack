@@ -34,15 +34,24 @@ struct LexerString* LexerString_InitStrComponent(
     size_t length,
     size_t line_index) {
   struct Colonini_String* str_init_result;
+  struct Colonini_String* str_concat_result;
 
-  str_init_result = Colonini_String_Init(&lstr->str, src, length);
+  str_init_result = Colonini_String_Init(&lstr->str, length);
   if (str_init_result == NULL) {
     goto error;
+  }
+
+  str_concat_result = Colonini_String_Concat(&lstr->str, src, length);
+  if (str_concat_result == NULL) {
+    goto error_deinit_str;
   }
 
   lstr->line_index = line_index;
 
   return lstr;
+
+error_deinit_str:
+  Colonini_String_Deinit(&lstr->str);
 
 error:
   return NULL;

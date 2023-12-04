@@ -30,16 +30,15 @@
  */
 
 struct Colonini_String* Colonini_String_Init(
-    struct Colonini_String* dest, const char* src, size_t src_length) {
-  dest->str = malloc((src_length + 1) * sizeof(dest->str[0]));
-  if (dest->str == NULL) {
+    struct Colonini_String* str, size_t count) {
+  str->str = malloc((count + 1) * sizeof(str->str[0]));
+  if (str->str == NULL) {
     goto error;
   }
-  memcpy(dest->str, src, src_length);
-  dest->str[src_length] = '\0';
-  dest->length = src_length;
+  str->str[0] = '\0';
+  str->length = 0;
 
-  return dest;
+  return str;
 
 error:
   return NULL;
@@ -49,4 +48,13 @@ void Colonini_String_Deinit(struct Colonini_String* str) {
   str->length = 0;
   free(str->str);
   str->str = NULL;
+}
+
+struct Colonini_String* Colonini_String_Concat(
+    struct Colonini_String* dest, const char* src, size_t src_length) {
+  memcpy(&dest->str[dest->length], src, src_length);
+  dest->str[dest->length + src_length] = '\0';
+  dest->length += src_length;
+
+  return dest;
 }

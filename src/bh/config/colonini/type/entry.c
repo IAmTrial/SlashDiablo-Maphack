@@ -37,11 +37,17 @@ struct Colonini_Entry* Colonini_Entry_InitEmpty(
     const char* key,
     size_t key_length) {
   struct Colonini_String* key_init_result;
+  struct Colonini_String* key_concat_result;
   struct Colonini_Value* value_init_result;
 
-  key_init_result = Colonini_String_Init(&entry->key, key, key_length);
+  key_init_result = Colonini_String_Init(&entry->key, key_length);
   if (key_init_result == NULL) {
     goto error;
+  }
+
+  key_concat_result = Colonini_String_Concat(&entry->key, key, key_length);
+  if (key_concat_result == NULL) {
+    goto error_deinit_key;
   }
 
   entry->previous = NULL;

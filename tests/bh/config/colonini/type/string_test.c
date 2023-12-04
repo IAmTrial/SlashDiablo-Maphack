@@ -39,37 +39,33 @@ static void BeforeEach(struct EachContext* context) {}
 static void AfterEach(struct EachContext* context) {}
 
 static void Init_Empty_IsEmpty(struct EachContext* context) {
-  static const char kExpected[] = "";
-  enum {
-    kExpectedLength = sizeof(kExpected) / sizeof(kExpected[0]) - 1
-  };
-
   struct Colonini_String str;
   struct Colonini_String* str_init_result;
 
-  str_init_result = Colonini_String_Init(&str, kExpected, kExpectedLength);
+  str_init_result = Colonini_String_Init(&str, 0);
 
   assert(str_init_result != NULL);
-  assert(str.length == kExpectedLength);
-  assert(memcmp(str.str, kExpected, kExpectedLength) == 0);
+  assert(str.length == 0);
+  assert(strcmp(str.str, "") == 0);
 
   Colonini_String_Deinit(&str);
 }
 
-static void Init_Hello_EqualText(struct EachContext* context) {
+static void Concat_Hello_Equals(struct EachContext* context) {
   static const char kExpected[] = "Hello";
   enum {
-    kExpectedLength = sizeof(kExpected) / sizeof(kExpected[0]) - 1
+    kExpectedLength = sizeof(kExpected) / sizeof(kExpected[0]) - 1,
   };
-
   struct Colonini_String str;
-  struct Colonini_String* str_init_result;
+  struct Colonini_String* str_concat_result;
 
-  str_init_result = Colonini_String_Init(&str, kExpected, kExpectedLength);
+  Colonini_String_Init(&str, kExpectedLength);
 
-  assert(str_init_result != NULL);
+  str_concat_result = Colonini_String_Concat(&str, kExpected, kExpectedLength);
+
+  assert(str_concat_result != NULL);
   assert(str.length == kExpectedLength);
-  assert(memcmp(str.str, kExpected, kExpectedLength) == 0);
+  assert(strcmp(str.str, kExpected) == 0);
 
   Colonini_String_Deinit(&str);
 }
@@ -83,7 +79,8 @@ int main(int argc, char** argv) {
 
   static TestFunc* const kTests[] = {
     &Init_Empty_IsEmpty,
-    &Init_Hello_EqualText
+
+    &Concat_Hello_Equals
   };
 
   enum {

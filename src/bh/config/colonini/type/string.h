@@ -40,9 +40,12 @@ struct Colonini_String {
 };
 
 struct Colonini_String* Colonini_String_Init(
-    struct Colonini_String* dest, const char* src, size_t src_length);
+    struct Colonini_String* str, size_t count);
 
 void Colonini_String_Deinit(struct Colonini_String* str);
+
+struct Colonini_String* Colonini_String_Concat(
+    struct Colonini_String* dest, const char* src, size_t src_length);
 
 #ifdef __cplusplus
 }  /* extern "C" */
