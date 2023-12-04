@@ -33,68 +33,6 @@ static int Colonini_Entry_CompareKeyAsVoid(
   return Colonini_Entry_CompareKey(left, right);
 }
 
-static struct Colonini_Entry* Colonini_Map_PutEmpty(
-    struct Colonini_Map* map, const char* key, size_t key_length) {
-  struct Colonini_Entry* entry_init_result;
-
-  int contained_entry;
-  struct Colonini_Entry* entry;
-  int entry_inserted;
-
-  /* Reuse the old entry, if possible. */
-  entry = Colonini_Map_Find(map, key, key_length);
-  contained_entry = (entry != NULL);
-  if (contained_entry) {
-    struct Colonini_Value* value_init_result;
-
-    Colonini_Value_Deinit(&entry->value);
-    value_init_result = Colonini_Value_InitAsEmpty(&entry->value);
-    if (value_init_result == NULL) {
-      goto error_free_entry;
-    }
-    return entry;
-  }
-
-  entry = malloc(sizeof(*entry));
-  if (entry == NULL) {
-    goto error;
-  }
-
-  entry_init_result = Colonini_Entry_InitEmpty(entry, key, key_length);
-  if (entry_init_result == NULL) {
-    goto error_free_entry;
-  }
-
-  /* Initialize an entry's key and previous/next pointers. */
-  if (map->head_entry == NULL) {
-    map->head_entry = entry;
-  } else {
-    map->tail_entry->next = entry;
-  }
-  entry->previous = map->tail_entry;
-  entry->next = NULL;
-  map->tail_entry = entry;
-
-  entry_inserted =
-      RedBlackTree_Insert(
-          &map->tree, entry, &Colonini_Entry_CompareKeyAsVoid);
-  if (!entry_inserted) {
-    goto error_free_entry;
-  }
-  ++map->count;
-
-  return entry;
-
-error_free_entry:
-  if (contained_entry) {
-    RedBlackTree_Remove(&map->tree, entry, &Colonini_Entry_CompareKeyAsVoid);
-  }
-  free(entry);
-
-error:
-  return NULL;
-}
-
 /**
  * External
  */
@@ -166,20 +104,82 @@ unsigned char* Colonini_Map_PutBoolean(
     const char* key,
     size_t key_length,
     unsigned char value) {
-  struct Colonini_Entry* entry;
-  struct Colonini_Value* entry_value;
+  struct Colonini_Value* map_value;
+  struct Colonini_Value* value_init_result;
 
-  entry = Colonini_Map_PutEmpty(map, key, key_length);
+  map_value = Colonini_Map_PutEmpty(map, key, key_length);
+  if (map_value == NULL) {
+    goto error;
+  }
+
+  value_init_result = Colonini_Value_InitAsBoolean(map_value, value);
+  if (value_init_result == NULL) {
+    goto error;
+  }
+
+  return &map_value->variant.as_data.variant.as_boolean;
+
+error:
+  return NULL;
+}
+
+struct Colonini_Value* Colonini_Map_PutEmpty(
+    struct Colonini_Map* map, const char* key, size_t key_length) {
+  struct Colonini_Entry* entry_init_result;
+
+  int contained_entry;
+  struct Colonini_Entry* entry;
+  int entry_inserted;
+
+  /* Reuse the old entry, if possible. */
+  entry = Colonini_Map_Find(map, key, key_length);
+  contained_entry = (entry != NULL);
+  if (contained_entry) {
+    struct Colonini_Value* value_init_result;
+
+    Colonini_Value_Deinit(&entry->value);
+    value_init_result = Colonini_Value_InitAsEmpty(&entry->value);
+    if (value_init_result == NULL) {
+      goto error_free_entry;
+    }
+    return &entry->value;
+  }
+
+  entry = malloc(sizeof(*entry));
   if (entry == NULL) {
     goto error;
   }
 
-  entry_value = Colonini_Value_InitAsBoolean(&entry->value, value);
-  if (entry_value == NULL) {
-    goto error;
+  entry_init_result = Colonini_Entry_InitEmpty(entry, key, key_length);
+  if (entry_init_result == NULL) {
+    goto error_free_entry;
   }
 
-  return &entry_value->variant.as_data.variant.as_boolean;
+  /* Initialize an entry's key and previous/next pointers. */
+  if (map->head_entry == NULL) {
+    map->head_entry = entry;
+  } else {
+    map->tail_entry->next = entry;
+  }
+  entry->previous = map->tail_entry;
+  entry->next = NULL;
+  map->tail_entry = entry;
+
+  entry_inserted =
+      RedBlackTree_Insert(
+          &map->tree, entry, &Colonini_Entry_CompareKeyAsVoid);
+  if (!entry_inserted) {
+    goto error_free_entry;
+  }
+  ++map->count;
+
+  return &entry->value;
+
+error_free_entry:
+  if (contained_entry) {
+    RedBlackTree_Remove(&map->tree, entry, &Colonini_Entry_CompareKeyAsVoid);
+  }
+  free(entry);
 
 error:
   return NULL;
@@ -190,20 +190,20 @@ unsigned int* Colonini_Map_PutInteger(
     const char* key,
     size_t key_length,
     unsigned int value) {
-  struct Colonini_Entry* entry;
-  struct Colonini_Value* entry_value;
+  struct Colonini_Value* map_value;
+  struct Colonini_Value* value_init_result;
 
-  entry = Colonini_Map_PutEmpty(map, key, key_length);
-  if (entry == NULL) {
+  map_value = Colonini_Map_PutEmpty(map, key, key_length);
+  if (map_value == NULL) {
     goto error;
   }
 
-  entry_value = Colonini_Value_InitAsInteger(&entry->value, value);
-  if (entry_value == NULL) {
+  value_init_result = Colonini_Value_InitAsInteger(map_value, value);
+  if (value_init_result == NULL) {
     goto error;
   }
 
-  return &entry_value->variant.as_data.variant.as_integer;
+  return &map_value->variant.as_data.variant.as_integer;
 
 error:
   return NULL;
@@ -211,20 +211,20 @@ error:
 
 struct Colonini_Map* Colonini_Map_PutMap(
     struct Colonini_Map* map, const char* key, size_t key_length) {
-  struct Colonini_Entry* entry;
-  struct Colonini_Value* entry_value;
+  struct Colonini_Value* map_value;
+  struct Colonini_Value* value_init_result;
 
-  entry = Colonini_Map_PutEmpty(map, key, key_length);
-  if (entry == NULL) {
+  map_value = Colonini_Map_PutEmpty(map, key, key_length);
+  if (map_value == NULL) {
     goto error;
   }
 
-  entry_value = Colonini_Value_InitAsMap(&entry->value);
-  if (entry_value == NULL) {
+  value_init_result = Colonini_Value_InitAsMap(map_value);
+  if (value_init_result == NULL) {
     goto error;
   }
 
-  return &entry_value->variant.as_map;
+  return &map_value->variant.as_map;
 
 error:
   return NULL;
@@ -236,20 +236,20 @@ struct Colonini_String* Colonini_Map_PutString(
     size_t key_length,
     const char* str,
     size_t str_length) {
-  struct Colonini_Entry* entry;
-  struct Colonini_Value* entry_value;
+  struct Colonini_Value* map_value;
+  struct Colonini_Value* value_init_result;
 
-  entry = Colonini_Map_PutEmpty(map, key, key_length);
-  if (entry == NULL) {
+  map_value = Colonini_Map_PutEmpty(map, key, key_length);
+  if (map_value == NULL) {
     goto error;
   }
 
-  entry_value = Colonini_Value_InitAsString(&entry->value, str, str_length);
-  if (entry_value == NULL) {
+  value_init_result = Colonini_Value_InitAsString(map_value, str, str_length);
+  if (value_init_result == NULL) {
     goto error;
   }
 
-  return &entry_value->variant.as_data.variant.as_string;
+  return &map_value->variant.as_data.variant.as_string;
 
 error:
   return NULL;
@@ -261,20 +261,20 @@ struct Colonini_Toggle* Colonini_Map_PutToggle(
     size_t key_length,
     unsigned char enabled,
     BYTE key_code) {
-  struct Colonini_Entry* entry;
-  struct Colonini_Value* entry_value;
+  struct Colonini_Value* map_value;
+  struct Colonini_Value* value_init_result;
 
-  entry = Colonini_Map_PutEmpty(map, key, key_length);
-  if (entry == NULL) {
+  map_value = Colonini_Map_PutEmpty(map, key, key_length);
+  if (map_value == NULL) {
     goto error;
   }
 
-  entry_value = Colonini_Value_InitAsToggle(&entry->value, enabled, key_code);
-  if (entry_value == NULL) {
+  value_init_result = Colonini_Value_InitAsToggle(map_value, enabled, key_code);
+  if (value_init_result == NULL) {
     goto error;
   }
 
-  return &entry_value->variant.as_data.variant.as_toggle;
+  return &map_value->variant.as_data.variant.as_toggle;
 
 error:
   return NULL;
