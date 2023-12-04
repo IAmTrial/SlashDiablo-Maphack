@@ -27,6 +27,7 @@
 #include "bh/config/colonini/type/entry.h"
 #include "bh/config/colonini/type/map.h"
 #include "bh/config/colonini/type/value.h"
+#include "bh/config/colonini/type/value_type.h"
 
 static const char kKey[] = "key";
 static const char kKey2[] = "key2";
@@ -124,6 +125,31 @@ static void PutBoolean_CallTwice_Replace(struct EachContext* context) {
   assert(data->type == Colonini_DataType_kBoolean);
   assert(result == &data->variant.as_boolean);
   assert(data->variant.as_boolean == kExpected);
+}
+
+static void PutEmpty_IsEmpty(struct EachContext* context) {
+  struct Colonini_Value* result;
+  struct Colonini_Value* value;
+
+  result = Colonini_Map_PutEmpty(&context->map, kKey, kKeyLength);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kEmpty);
+}
+
+static void PutEmpty_CallTwice_IsEmpty(struct EachContext* context) {
+  struct Colonini_Value* result;
+  struct Colonini_Value* value;
+
+  Colonini_Map_PutEmpty(&context->map, kKey, kKeyLength);
+  result = Colonini_Map_PutEmpty(&context->map, kKey, kKeyLength);
+
+  assert(result != NULL);
+  assert(context->map.count == 1);
+  value = Colonini_Map_Get(&context->map, kKey, kKeyLength);
+  assert(value->type == Colonini_ValueType_kEmpty);
 }
 
 static void PutInteger_Zero_IsZero(struct EachContext* context) {
@@ -434,6 +460,9 @@ int main(int argc, char** argv) {
     &PutBoolean_False_IsFalse,
     &PutBoolean_True_IsTrue,
     &PutBoolean_CallTwice_Replace,
+
+    &PutEmpty_IsEmpty,
+    &PutEmpty_CallTwice_IsEmpty,
 
     &PutInteger_Zero_IsZero,
     &PutInteger_42_Is42,
