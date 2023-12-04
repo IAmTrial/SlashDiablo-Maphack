@@ -46,24 +46,37 @@ static char* const kCommentLine = "// key : value";
 static struct Colonini_String kCommentLineStr;
 
 static void BeforeAllSetUp(void) {
-  Colonini_String_Init(
+  Colonini_String_Init(&kKeyValueLineStr, strlen(kKeyValueLine));
+  Colonini_String_Concat(
       &kKeyValueLineStr, kKeyValueLine, strlen(kKeyValueLine));
-  Colonini_String_Init(
+
+  Colonini_String_Init(&kSpacedKeyValueLineStr, strlen(kSpacedKeyValueLine));
+  Colonini_String_Concat(
       &kSpacedKeyValueLineStr,
       kSpacedKeyValueLine,
       strlen(kSpacedKeyValueLine));
-  Colonini_String_Init(
+
+  Colonini_String_Init(&kNoSpaceKeyValueLineStr, strlen(kNoSpaceKeyValueLine));
+  Colonini_String_Concat(
       &kNoSpaceKeyValueLineStr,
       kNoSpaceKeyValueLine,
       strlen(kNoSpaceKeyValueLine));
-  Colonini_String_Init(
+
+  Colonini_String_Init(&kMappedKeyValueLineStr, strlen(kMappedKeyValueLine));
+  Colonini_String_Concat(
       &kMappedKeyValueLineStr,
       kMappedKeyValueLine,
       strlen(kMappedKeyValueLine));
-  Colonini_String_Init(
+
+  Colonini_String_Init(&kOnlySpacesLineStr, strlen(kOnlySpacesLine));
+  Colonini_String_Concat(
       &kOnlySpacesLineStr, kOnlySpacesLine, strlen(kOnlySpacesLine));
-  Colonini_String_Init(&kEmptyLineStr, kEmptyLine, strlen(kEmptyLine));
-  Colonini_String_Init(&kCommentLineStr, kCommentLine, strlen(kCommentLine));
+
+  Colonini_String_Init(&kEmptyLineStr, strlen(kEmptyLine));
+  Colonini_String_Concat(&kEmptyLineStr, kEmptyLine, strlen(kEmptyLine));
+
+  Colonini_String_Init(&kCommentLineStr, strlen(kCommentLine));
+  Colonini_String_Concat(&kCommentLineStr, kCommentLine, strlen(kCommentLine));
 }
 
 struct EachContext {
@@ -380,7 +393,7 @@ static void Lex_MultipleEmpty_NoStrings(struct EachContext* context) {
   size_t i;
   struct Colonini_String kEmptyLineStrs[kLines];
   for (i = 0; i < kLines; ++i) {
-    Colonini_String_Init(&kEmptyLineStrs[i], "", 0);
+    Colonini_String_Init(&kEmptyLineStrs[i], 0);
   }
 
   Lexer_Lex(&context->lexer, kEmptyLineStrs, kLines);

@@ -54,15 +54,25 @@ struct Colonini_Data* Colonini_Data_InitAsInteger(
 struct Colonini_Data* Colonini_Data_InitAsString(
     struct Colonini_Data* data, const char* str, size_t str_length) {
   struct Colonini_String* as_string_init_result;
+  struct Colonini_String* as_string_concat_result;
 
   as_string_init_result =
-      Colonini_String_Init(&data->variant.as_string, str, str_length);
+      Colonini_String_Init(&data->variant.as_string, str_length);
   if (as_string_init_result == NULL) {
     goto error;
+  }
+
+  as_string_concat_result =
+      Colonini_String_Concat(&data->variant.as_string, str, str_length);
+  if (as_string_concat_result == NULL) {
+    goto error_deinit_str;
   }
   data->type = Colonini_DataType_kString;
 
   return data;
+
+error_deinit_str:
+  Colonini_String_Deinit(&data->variant.as_string);
 
 error:
   return NULL;
