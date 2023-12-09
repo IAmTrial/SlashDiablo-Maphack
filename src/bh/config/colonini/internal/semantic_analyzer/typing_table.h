@@ -23,6 +23,7 @@
 #define BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_TYPING_TABLE_H_
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
 #include "bh/config/colonini/internal/parser/const_expr.h"
@@ -60,6 +61,8 @@ int TypingTable_InsertOrResolveFromKeysAndValue(
     struct TypingTable* table,
     const struct KeyExpr* keys,
     const struct ValueExpr* value);
+
+void TypingTable_Print(const struct TypingTable* table, FILE* file);
 
 #ifdef __cplusplus
 }  /* extern "C" */
