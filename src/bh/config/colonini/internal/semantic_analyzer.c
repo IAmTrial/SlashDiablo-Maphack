@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include "bh/config/colonini/internal/parser.h"
 #include "bh/config/colonini/internal/parser/parser_line_type.h"
@@ -139,4 +140,12 @@ int SemanticAnalyzer_LoadLines(
 
 error:
   return 0;
+}
+
+void SemanticAnalyzer_Print(
+    const struct SemanticAnalyzer* analyzer, FILE* file) {
+  fprintf(file, "Semantic Analyzer:\n\n");
+  KeyTable_Print(&analyzer->key_table, file);
+  fprintf(file, "\n");
+  TypingTable_Print(&analyzer->typing_table, file);
 }

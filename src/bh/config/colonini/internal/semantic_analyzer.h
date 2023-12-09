@@ -23,6 +23,7 @@
 #define BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_H_
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "bh/config/colonini/internal/parser.h"
 #include "bh/config/colonini/internal/semantic_analyzer/key_table.h"
@@ -50,6 +51,9 @@ void SemanticAnalyzer_Deinit(struct SemanticAnalyzer* analyzer);
 int SemanticAnalyzer_LoadLines(
     struct SemanticAnalyzer* analyzer,
     const struct Parser* parser);
+
+void SemanticAnalyzer_Print(
+    const struct SemanticAnalyzer* analyzer, FILE* file);
 
 #ifdef __cplusplus
 }  /* extern "C" */
