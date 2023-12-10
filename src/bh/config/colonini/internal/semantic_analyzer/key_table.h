@@ -23,6 +23,7 @@
 #define BH_CONFIG_COLONINI_INTERNAL_SEMANTIC_ANALYZER_KEY_TABLE_H_
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
 #include "bh/config/colonini/internal/parser/const_expr.h"
@@ -66,6 +67,8 @@ size_t KeyTable_InsertFromKey(
  */
 size_t KeyTable_InsertFromKeys(
     struct KeyTable* table, const struct KeyExpr* keys);
+
+void KeyTable_Print(const struct KeyTable* table, FILE* file);
 
 #ifdef __cplusplus
 }  /* extern "C" */

@@ -23,14 +23,17 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
 #include "bh/common/data_struct/red_black_tree/red_black_node.h"
 #include "bh/config/colonini/internal/parser/assign_statement.h"
 #include "bh/config/colonini/internal/parser/const_expr.h"
+#include "bh/config/colonini/internal/parser/const_expr_type.h"
 #include "bh/config/colonini/internal/parser/parser_line.h"
 #include "bh/config/colonini/internal/parser/parser_line_type.h"
+#include "bh/config/colonini/internal/parser/value_expr_type.h"
 #include "bh/config/colonini/internal/semantic_analyzer/typing.h"
 
 static struct TypingTableEntry* TypingTableEntry_Init(
@@ -186,4 +189,23 @@ int TypingTable_InsertOrResolveFromKeysAndValue(
   }
 
   return TypingTable_InsertFromKeysAndValue(table, keys, value);
+}
+
+void TypingTable_Print(const struct TypingTable* table, FILE* file) {
+  const struct TypingTableEntry* current;
+  fprintf(file, "TypingTable:\n");
+  for (current = table->tail; current != NULL; current = current->previous) {
+    const struct Typing* typing;
+
+    typing = &current->typing;
+    fprintf(
+        file,
+        "- %s: Value type: [%s]; Subtype: %s\n",
+        typing->key_name->expr,
+        ValueExprType_GetDisplayName(typing->value_type, NULL),
+        (typing->value_type == ValueExprType_kConst)
+            ? ConstExprType_GetDisplayName(
+                  typing->value_as_constexpr_type, NULL)
+            : "N/A");
+  }
 }

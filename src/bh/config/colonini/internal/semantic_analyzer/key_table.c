@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "bh/common/data_struct/red_black_tree.h"
@@ -114,6 +115,23 @@ static size_t KeyTable_InsertFromKeysAtLevel(
 
 error:
   return 0;
+}
+
+static void KeyTable_PrintInner(
+    const struct KeyTable* table, FILE* file, size_t indent) {
+  size_t i;
+  const struct KeyTableEntry* current;
+
+  for (current = table->tail; current != NULL; current = current->previous) {
+    for (i = 0; i < indent; ++i) {
+      fprintf(file, "-");
+    }
+    if (indent != 0) {
+      fprintf(file, " ");
+    }
+    fprintf(file, "%s\n", current->expr->expr);
+    KeyTable_PrintInner(&current->table, file, indent + 1);
+  }
 }
 
 /**
@@ -227,4 +245,9 @@ error:
 size_t KeyTable_InsertFromKeys(
     struct KeyTable* table, const struct KeyExpr* keys) {
   return KeyTable_InsertFromKeysAtLevel(table, keys, 0);
+}
+
+void KeyTable_Print(const struct KeyTable* table, FILE* file) {
+  fprintf(file, "KeyTable:\n");
+  KeyTable_PrintInner(table, file, 0);
 }
